@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>gov.lanl.cnls</groupId>
+    <artifactId>linkedprocess</artifactId>
+    <version>alpha1</version>
+    <packaging>jar</packaging>
+    <name>CNLS</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.5.2</version>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+    </repositories>
+
+    <build>
+        <directory>${basedir}/target</directory>
+        <finalName>${artifactId}-${version}</finalName>
+        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+        <testSourceDirectory>${basedir}/src/test/java</testSourceDirectory>
+        <outputDirectory>${basedir}/target/classes</outputDirectory>
+        <testOutputDirectory>${basedir}/target/test-classes</testOutputDirectory>
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>${basedir}/src/test/resources</directory>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
