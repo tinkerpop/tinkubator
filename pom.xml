@@ -11,6 +11,11 @@
     <description>Web-Scale Distributed Computing</description>
 
     <dependencies>
+<dependency>
+    <groupId>jivesoftware</groupId>
+    <artifactId>smack</artifactId>
+    <version>3.0.4</version>
+</dependency> 
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
