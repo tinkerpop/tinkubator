@@ -7,7 +7,8 @@
     <artifactId>linkedprocess</artifactId>
     <version>alpha1</version>
     <packaging>jar</packaging>
-    <name>CNLS</name>
+    <name>Linked Process</name>
+    <description>Web-Scale Distributed Computing</description>
 
     <dependencies>
         <dependency>
