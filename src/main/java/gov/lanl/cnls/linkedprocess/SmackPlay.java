@@ -1,67 +1,65 @@
 package gov.lanl.cnls.linkedprocess;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Presence;
 
 public class SmackPlay {
     
-    private static String username = "USERNAME";
-    private static String password = "PASSWORD";
-    
-    public static class MessageParrot implements PacketListener {
-        private XMPPConnection xmppConnection;
+    // this is a development and testing account. please don't use for any other purposes.
+    private static String username = "linked.process.1@gmail.com";
+    private static String password = "linked12";
+    private static String resource = "lop/";
         
-        public MessageParrot(XMPPConnection conn) {
-            xmppConnection = conn;
-        }
-        
-        public void processPacket(Packet packet) {
-			System.out.println("PACKET:");
-			System.out.println(packet.toXML() + "\n\n");
-        }
-    };
-    
-    
-    public static void main( String[] args ) throws Exception {
+    public static void main(String[] args) throws Exception {
+
+        // this will load a Java Swing GUI and allow you to view XMPP XML packets/stanzas
         XMPPConnection.DEBUG_ENABLED = true;
-        System.out.println("Starting IM client");
-        
-        // gtalk requires this or your messages bounce back as errors
+
+        System.out.println("Starting client");
         ConnectionConfiguration connConfig = new ConnectionConfiguration("talk1.l.google.com", 5222);
         XMPPConnection connection = new XMPPConnection(connConfig);
-		SASLAuthentication sasl = connection.getSASLAuthentication();
-		//sasl.supportSASLMechanism("PLAIN");
         
+        // making a connection to an XMPP server is different than logging into an XMPP server
         try {
             connection.connect();
             System.out.println("Connected to " + connection.getHost());
         } catch (XMPPException ex) {
-            //ex.printStackTrace();
             System.out.println("Failed to connect to " + connection.getHost());
 			System.exit(1);
         }
+        // logging into an XMPP server requires a username and password
         try {
-            connection.login(username, password);
+            connection.login(username, password, resource);
             System.out.println("Logged in as " + connection.getUser());
-            
-            //Presence presence = new Presence(Presence.Type.available);
-            //connection.sendPacket(presence);
+            // acknowledge to all "buddies" your presence. This presence uses a custom message and a priority value.
+            Presence presence = new Presence(Presence.Type.available,
+                    "Waiting to process...", 24, Presence.Mode.available);
+            connection.sendPacket(presence);
             
         } catch (XMPPException ex) {
             System.out.println("Failed to log in as " + username);
             System.out.println(ex);
 			System.exit(1);
         }
+
+        // print a collection of statistics about the connection
+        System.out.println();
+        System.out.println("Anonymous: " + connection.isAnonymous());
+        System.out.println("Authenticated: " + connection.isAuthenticated());
+        System.out.println("Connected: " + connection.isConnected());
+        System.out.println("Secure: " + connection.isSecureConnection());
+        System.out.println("Compression: " + connection.isUsingCompression());
+        System.out.println("Transport Layer Security: " + connection.isUsingTLS());
+        System.out.println();
         
+
+        // Smack using a listener framework to receive packets/stanzas and perform operations on packets.
+        // A listener can have a filter to only handle certain types of packets (tags/attributes)
         //PacketFilter filter = new PacketTypeFilter(IQ.class);
-        connection.addPacketListener(new MessageParrot(connection), null);
+        connection.addPacketListener(new GenericPacketListener(), null);
        
-        
-        //connection.disconnect();
     }
 }
 
