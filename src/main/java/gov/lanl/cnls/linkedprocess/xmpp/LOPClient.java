@@ -32,6 +32,7 @@ public class LOPClient {
         ConnectionConfiguration connConfig = new ConnectionConfiguration(xmpp_server, xmpp_port);
         XMPPConnection connection = new XMPPConnection(connConfig);
 
+        
         // making a connection to an XMPP server is different than logging into an XMPP server
         try {
             connection.connect();
