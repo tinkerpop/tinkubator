@@ -8,8 +8,8 @@ import org.jivesoftware.smack.packet.Presence;
 public class SmackPlay {
     
     // this is a development and testing account. please don't use for any other purposes.
-    private static String username = "linked.process.1@gmail.com";
-    private static String password = "linked12";
+    private static String username = "linked.process.2@gmail.com";
+    private static String password = "linked23";
     private static String resource = "lop/";
         
     public static void main(String[] args) throws Exception {
@@ -59,6 +59,7 @@ public class SmackPlay {
         // A listener can have a filter to only handle certain types of packets (tags/attributes)
         //PacketFilter filter = new PacketTypeFilter(IQ.class);
         connection.addPacketListener(new GenericPacketListener(), null);
+
        
     }
 }

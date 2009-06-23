@@ -20,7 +20,7 @@ public class GenericPacketListener implements PacketListener {
             // The JDOM package is used to turn the raw XML into a DOM object for ease of manipulation.
             SAXBuilder builder = new SAXBuilder();
             try {
-                System.out.println();
+                System.out.println("From GenericPacketListener:");
                 Document domPacket = builder.build(new StringReader(packet.toXML()));
                 XMLOutputter out = new XMLOutputter();
                 // print the XML packet/stanza to the command line
