@@ -1,17 +1,18 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
-import org.jivesoftware.smack.provider.ProviderManager;
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import org.apache.log4j.Logger;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.IQTypeFilter;
-import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.apache.log4j.Logger;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -28,7 +29,7 @@ import java.util.Iterator;
  */
 public class LopVirtualMachine {
 
-    public static Logger logger = Logger.getLogger(LopVirtualMachine.class);
+    public static Logger logger = LinkedProcess.getLogger(LopVirtualMachine.class);
 
     private static String username = "linked.process.1@gmail.com";
     private static String password = "linked12";
