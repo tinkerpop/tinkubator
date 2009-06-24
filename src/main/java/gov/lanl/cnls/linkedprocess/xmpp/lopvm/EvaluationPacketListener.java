@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess.xmpp;
+package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPConnection;
@@ -8,6 +8,8 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.Namespace;
 
 import javax.script.ScriptEngine;
+
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.LopVirtualMachine;
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,16 +35,22 @@ public class EvaluationPacketListener implements PacketListener {
             try {
                 System.out.println("From EvaluationPacketListener:");
                 System.out.println(packet.toXML());
+                // TODO: XML string values are being converted weird
                 //Document domPacket = builder.build(new StringReader(packet.toXML()));
                 //String code = domPacket.getRootElement().getChild("eval", LOP_NS).getChild("code", LOP_NS).getTextTrim();
                 String packetString = packet.toXML();
-                String code = packetString.substring(packetString.indexOf("<code>")+6, packetString.indexOf("</code>"));
                 String returnValue = null;
-                try {
-                    returnValue = engine.eval(code).toString();  
-                } catch(Exception e) {
-                    returnValue = e.toString();
+                if(packetString.contains("<code>") && packetString.contains("</code>")) {
+                 String code = packetString.substring(packetString.indexOf("<code>")+6, packetString.indexOf("</code>"));
+                    try {
+                        returnValue = engine.eval(code).toString();
+                    } catch(Exception e) {
+                        returnValue = e.toString();
+                    }
+                } else {
+                    returnValue = "error";
                 }
+
 
                 Message returnMessage = new Message();
                 returnMessage.setTo(packet.getFrom());
@@ -51,7 +59,7 @@ public class EvaluationPacketListener implements PacketListener {
                     returnMessage.setPacketID(packet.getPacketID());
                 }
                 connection.sendPacket(returnMessage);
-                System.out.println(returnValue);
+                System.out.println(returnMessage.toXML());
 
                 //XMLOutputter out = new XMLOutputter();
                 // print the XML packet/stanza to the command line
