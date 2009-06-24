@@ -7,8 +7,12 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.AndFilter;
+import org.jivesoftware.smack.filter.IQTypeFilter;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.apache.log4j.Logger;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -25,6 +29,7 @@ import java.util.Iterator;
  */
 public class LopVirtualMachine {
 
+    public static Logger logger = Logger.getLogger(LopVirtualMachine.class);
 
     private static String username = "linked.process.1@gmail.com";
     private static String password = "linked12";
@@ -40,38 +45,30 @@ public class LopVirtualMachine {
     protected XMPPConnection connection;
 
     public static void main(String[] args) throws Exception {
-        /*ProviderManager pm = ProviderManager.getInstance();
-        pm.addExtensionProvider("query", LOP_NAMESPACE, Time.class);
-        ProviderManager.setInstance(pm);*/
         new LopVirtualMachine();
     }
 
     public LopVirtualMachine() throws Exception {
 
-        System.out.println("Starting " + SCRIPT_ENGINE_NAME + " LoP virtual machine");
+       logger.info("Starting " + SCRIPT_ENGINE_NAME + " LoP virtual machine");
 
         ScriptEngineManager manager = new ScriptEngineManager();
         this.engine = manager.getEngineByName(SCRIPT_ENGINE_NAME);
 
-
         ProviderManager pm = ProviderManager.getInstance();
         pm.addIQProvider(Evaluation.EVALUATION_TAGNAME, LOP_NAMESPACE, new EvaluationProvider());
-        //ProviderManager.setInstance(pm);
 
         try {
             this.logon(server, port, username, password);
             this.initiateFeatures();
-            System.out.println();
             this.printClientStatistics();
-            System.out.println();
         } catch (XMPPException e) {
-            System.out.println("error: " + e);
+            logger.error("error: " + e);
             System.exit(1);
         }
 
-        PacketFilter evalFilter = new PacketTypeFilter(Evaluation.class);
+        PacketFilter evalFilter = new AndFilter(new PacketTypeFilter(Evaluation.class), new IQTypeFilter(IQ.Type.GET));
         connection.addPacketListener(new EvaluationPacketListener(engine, connection), evalFilter);
-        //connection.addPacketListener(new GenericPacketListener(), null);
 
         // process packets until a quit command is sent.
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -80,8 +77,6 @@ public class LopVirtualMachine {
         }
 
         this.logout();
-
-
     }
 
     private void initiateFeatures() {
@@ -108,30 +103,30 @@ public class LopVirtualMachine {
         this.connection = new XMPPConnection(connConfig);
         this.connection.connect();
         
-        System.out.println("Connected to " + connection.getHost());
+        logger.info("Connected to " + connection.getHost());
         connection.login(username, password, RESOURCE_PREFIX);
-        System.out.println("Logged in as " + connection.getUser());
+        logger.info("Logged in as " + connection.getUser());
         String statusMessage = engine.getFactory().getLanguageName() + "(" + engine.getFactory().getLanguageVersion() + "):" + engine.getFactory().getEngineName() + "(" + engine.getFactory().getEngineVersion() + ")";
         Presence presence = new Presence(Presence.Type.available, statusMessage, -127, Presence.Mode.available);
         connection.sendPacket(presence);
     }
 
     public void logout() {
+        logger.info("Disconnecting from " + connection.getHost());
         connection.disconnect(new Presence(Presence.Type.unavailable));
     }
 
     public void printClientStatistics() {
         // print a collection of statistics about the connection and virtual machine
-        System.out.println("Anonymous: " + connection.isAnonymous());
-        System.out.println("Authenticated: " + connection.isAuthenticated());
-        System.out.println("Connected: " + connection.isConnected());
-        System.out.println("Secure: " + connection.isSecureConnection());
-        System.out.println("Compression: " + connection.isUsingCompression());
-        System.out.println("Transport Layer Security: " + connection.isUsingTLS());
-        System.out.println("Script Engine Name: " + engine.getFactory().getEngineName());
-        System.out.println("Script Engine Version: " + engine.getFactory().getEngineVersion());
-        System.out.println("Script Engine Language: " + engine.getFactory().getLanguageName());
-        System.out.println("Script Engine Language Version: " + engine.getFactory().getLanguageVersion());
-        System.out.println();
+        logger.info("Anonymous: " + connection.isAnonymous());
+        logger.info("Authenticated: " + connection.isAuthenticated());
+        logger.info("Connected: " + connection.isConnected());
+        logger.info("Secure: " + connection.isSecureConnection());
+        logger.info("Compression: " + connection.isUsingCompression());
+        logger.info("Transport Layer Security: " + connection.isUsingTLS());
+        logger.info("Script Engine Name: " + engine.getFactory().getEngineName());
+        logger.info("Script Engine Version: " + engine.getFactory().getEngineVersion());
+        logger.info("Script Engine Language: " + engine.getFactory().getLanguageName());
+        logger.info("Script Engine Language Version: " + engine.getFactory().getLanguageVersion());
     }
 }

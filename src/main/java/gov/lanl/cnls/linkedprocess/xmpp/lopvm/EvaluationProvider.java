@@ -1,13 +1,8 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.provider.IQProvider;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Namespace;
-import org.jdom.output.XMLOutputter;
-import org.jdom.input.SAXBuilder;
+import org.xmlpull.v1.XmlPullParser;
 
 import java.io.StringReader;
 
@@ -20,11 +15,14 @@ import java.io.StringReader;
  */
 public class EvaluationProvider implements IQProvider {
 
-    public IQ parseIQ(org.xmlpull.v1.XmlPullParser parser) throws Exception {
+
+    public IQ parseIQ(XmlPullParser parser) throws Exception {
         Evaluation eval = new Evaluation();
-        parser.next();
-        eval.setCode(parser.getText());
-        parser.next();
+        int v = parser.next();
+        if(v == XmlPullParser.TEXT) {
+            eval.setCode(parser.getText());
+            parser.next();
+        }
         return eval;
     }
 }
