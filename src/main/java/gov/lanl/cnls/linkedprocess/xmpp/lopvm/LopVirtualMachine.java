@@ -1,15 +1,14 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
-import gov.lanl.cnls.linkedprocess.xmpp.lopvm.EvaluationPacketListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.IQTypeFilter;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.apache.log4j.Logger;
@@ -50,7 +49,7 @@ public class LopVirtualMachine {
 
     public LopVirtualMachine() throws Exception {
 
-       logger.info("Starting " + SCRIPT_ENGINE_NAME + " LoP virtual machine");
+        logger.info("Starting " + SCRIPT_ENGINE_NAME + " LoP virtual machine");
 
         ScriptEngineManager manager = new ScriptEngineManager();
         this.engine = manager.getEngineByName(SCRIPT_ENGINE_NAME);
@@ -93,7 +92,7 @@ public class LopVirtualMachine {
     public void logon(String server, int port, String username, String password) throws XMPPException {
 
         // if connection is still active, disconnect it.
-        if(null != connection && connection.isConnected()) {
+        if (null != connection && connection.isConnected()) {
             this.logout();
         }
 
@@ -102,7 +101,7 @@ public class LopVirtualMachine {
         //connConfig.setSASLAuthenticationEnabled(true);
         this.connection = new XMPPConnection(connConfig);
         this.connection.connect();
-        
+
         logger.info("Connected to " + connection.getHost());
         connection.login(username, password, RESOURCE_PREFIX);
         logger.info("Logged in as " + connection.getUser());
