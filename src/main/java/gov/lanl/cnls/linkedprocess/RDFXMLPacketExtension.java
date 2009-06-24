@@ -1,13 +1,14 @@
 package gov.lanl.cnls.linkedprocess;
 
 import org.jivesoftware.smack.packet.PacketExtension;
+import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.RepositoryException;
+import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.Rio;
-import org.openrdf.rio.RDFFormat;
 
 import java.io.ByteArrayOutputStream;
 
@@ -37,7 +38,7 @@ class RDFXMLPacketExtension implements PacketExtension {
     }
 
     public String getNamespace() {
-        return "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+        return RDF.NAMESPACE;
     }
 
     public String toXML() {
