@@ -4,9 +4,9 @@ import gov.lanl.cnls.linkedprocess.xmpp.lopvm.EvaluationPacketListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
-import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 
@@ -29,7 +29,6 @@ public class LopVirtualMachine {
     private static String username = "linked.process.1@gmail.com";
     private static String password = "linked12";
     private static String server = "talk1.l.google.com";
-
     private static int port = 5222;
 
     public static String SCRIPT_ENGINE_NAME = "JavaScript";
@@ -41,6 +40,9 @@ public class LopVirtualMachine {
     protected XMPPConnection connection;
 
     public static void main(String[] args) throws Exception {
+        /*ProviderManager pm = ProviderManager.getInstance();
+        pm.addExtensionProvider("query", LOP_NAMESPACE, Time.class);
+        ProviderManager.setInstance(pm);*/
         new LopVirtualMachine();
     }
 
@@ -51,6 +53,11 @@ public class LopVirtualMachine {
         ScriptEngineManager manager = new ScriptEngineManager();
         this.engine = manager.getEngineByName(SCRIPT_ENGINE_NAME);
 
+
+        ProviderManager pm = ProviderManager.getInstance();
+        pm.addIQProvider(Evaluation.EVALUATION_TAGNAME, LOP_NAMESPACE, new EvaluationProvider());
+        //ProviderManager.setInstance(pm);
+
         try {
             this.logon(server, port, username, password);
             this.initiateFeatures();
@@ -58,12 +65,12 @@ public class LopVirtualMachine {
             this.printClientStatistics();
             System.out.println();
         } catch (XMPPException e) {
-            System.out.println(e);
+            System.out.println("error: " + e);
             System.exit(1);
         }
 
-        PacketFilter messageFilter = new PacketTypeFilter(Message.class);
-        connection.addPacketListener(new EvaluationPacketListener(engine, connection), messageFilter);
+        PacketFilter evalFilter = new PacketTypeFilter(Evaluation.class);
+        connection.addPacketListener(new EvaluationPacketListener(engine, connection), evalFilter);
         //connection.addPacketListener(new GenericPacketListener(), null);
 
         // process packets until a quit command is sent.
@@ -89,11 +96,18 @@ public class LopVirtualMachine {
     }
 
     public void logon(String server, int port, String username, String password) throws XMPPException {
-        // logging into an XMPP server requires a username and password
 
+        // if connection is still active, disconnect it.
+        if(null != connection && connection.isConnected()) {
+            this.logout();
+        }
+
+        // logging into an XMPP server requires a username and password
         ConnectionConfiguration connConfig = new ConnectionConfiguration(server, port);
+        //connConfig.setSASLAuthenticationEnabled(true);
         this.connection = new XMPPConnection(connConfig);
         this.connection.connect();
+        
         System.out.println("Connected to " + connection.getHost());
         connection.login(username, password, RESOURCE_PREFIX);
         System.out.println("Logged in as " + connection.getUser());
