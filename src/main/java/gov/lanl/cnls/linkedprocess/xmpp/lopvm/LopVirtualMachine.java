@@ -21,11 +21,9 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 
 /**
- * Created by IntelliJ IDEA.
  * User: marko
  * Date: Jun 23, 2009
  * Time: 11:01:06 AM
- * To change this template use File | Settings | File Templates.
  */
 public class LopVirtualMachine {
 
@@ -45,10 +43,10 @@ public class LopVirtualMachine {
     protected XMPPConnection connection;
 
     public static void main(String[] args) throws Exception {
-        new LopVirtualMachine();
+        new LopVirtualMachine(server, port, username, password);
     }
 
-    public LopVirtualMachine() throws Exception {
+    public LopVirtualMachine(String server, int port, String username, String password) throws Exception {
 
         logger.info("Starting " + SCRIPT_ENGINE_NAME + " LoP virtual machine");
 
@@ -99,7 +97,6 @@ public class LopVirtualMachine {
 
         // logging into an XMPP server requires a username and password
         ConnectionConfiguration connConfig = new ConnectionConfiguration(server, port);
-        //connConfig.setSASLAuthenticationEnabled(true);
         this.connection = new XMPPConnection(connConfig);
         this.connection.connect();
 
@@ -109,6 +106,10 @@ public class LopVirtualMachine {
         String statusMessage = engine.getFactory().getLanguageName() + "(" + engine.getFactory().getLanguageVersion() + "):" + engine.getFactory().getEngineName() + "(" + engine.getFactory().getEngineVersion() + ")";
         Presence presence = new Presence(Presence.Type.available, statusMessage, -127, Presence.Mode.available);
         connection.sendPacket(presence);
+    }
+
+    public void sendPresence(Presence presence) {
+        
     }
 
     public void logout() {

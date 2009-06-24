@@ -10,11 +10,9 @@ import org.jdom.output.XMLOutputter;
 import javax.script.ScriptEngine;
 
 /**
- * Created by IntelliJ IDEA.
  * User: marko
  * Date: Jun 23, 2009
  * Time: 2:32:50 PM
- * To change this template use File | Settings | File Templates.
  */
 public class EvaluatePacketListener implements PacketListener {
 
@@ -42,7 +40,7 @@ public class EvaluatePacketListener implements PacketListener {
             String returnValue = null;
             try {
 
-                String code = ((Evaluate) eval).getCode();
+                String code = ((Evaluate) eval).getExpression();
                 Object returnObject = engine.eval(code);
                 
                 if(null == returnObject)
@@ -60,7 +58,7 @@ public class EvaluatePacketListener implements PacketListener {
             Text returnText = new Text(returnValue);
             returnValue = out.outputString(returnText);
 
-            returnEval.setCode(returnValue);
+            returnEval.setExpression(returnValue);
             LopVirtualMachine.logger.debug("\nSent EvaluationPacketListener:");
             LopVirtualMachine.logger.debug(returnEval.toXML());
             connection.sendPacket(returnEval);
