@@ -28,7 +28,7 @@ public class EvaluatePacketListener implements PacketListener {
     public void processPacket(Packet eval) {
 
         try {
-            LopVirtualMachine.logger.debug("\nArrived EvaluationPacketListener:");
+            LopVirtualMachine.logger.debug("Arrived EvaluationPacketListener:");
             LopVirtualMachine.logger.debug(eval.toXML());
 
             Evaluate returnEval = new Evaluate();
@@ -59,7 +59,7 @@ public class EvaluatePacketListener implements PacketListener {
             returnValue = out.outputString(returnText);
 
             returnEval.setExpression(returnValue);
-            LopVirtualMachine.logger.debug("\nSent EvaluationPacketListener:");
+            LopVirtualMachine.logger.debug("Sent EvaluationPacketListener:");
             LopVirtualMachine.logger.debug(returnEval.toXML());
             connection.sendPacket(returnEval);
 
