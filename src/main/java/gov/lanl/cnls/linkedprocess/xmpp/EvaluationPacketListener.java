@@ -5,13 +5,9 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Message;
 import org.jdom.input.SAXBuilder;
-import org.jdom.Document;
 import org.jdom.Namespace;
-import org.jdom.Element;
-import org.jdom.output.XMLOutputter;
 
 import javax.script.ScriptEngine;
-import java.io.StringReader;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,7 +20,7 @@ public class EvaluationPacketListener implements PacketListener {
 
     private ScriptEngine engine;
     private XMPPConnection connection;
-    private Namespace LOP_NS = Namespace.getNamespace(LOPClient.LOP_NAMESPACE);
+    private Namespace LOP_NS = Namespace.getNamespace(LopVirtualMachine.LOP_NAMESPACE);
 
     public EvaluationPacketListener(ScriptEngine engine, XMPPConnection connection) {
         this.engine = engine;

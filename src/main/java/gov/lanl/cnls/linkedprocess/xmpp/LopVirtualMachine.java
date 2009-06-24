@@ -6,11 +6,8 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Bind;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import gov.lanl.cnls.linkedprocess.GenericPacketListener;
 
 
 import javax.script.ScriptEngine;
@@ -26,7 +23,7 @@ import java.util.Iterator;
  * Time: 11:01:06 AM
  * To change this template use File | Settings | File Templates.
  */
-public class LOPClient {
+public class LopVirtualMachine {
 
 
     private static String username = "linked.process.1@gmail.com";
@@ -42,10 +39,10 @@ public class LOPClient {
     protected XMPPConnection connection;
 
     public static void main(String[] args) throws Exception {
-        new LOPClient();
+        new LopVirtualMachine();
     }
 
-    public LOPClient() throws Exception {
+    public LopVirtualMachine() throws Exception {
 
         System.out.println("Starting client");
         ConnectionConfiguration connConfig = new ConnectionConfiguration(xmpp_server, xmpp_port);

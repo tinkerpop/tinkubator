@@ -1,7 +1,5 @@
 package gov.lanl.cnls.linkedprocess.xmpp;
 
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -28,11 +26,11 @@ public class EvaluationPacket implements PacketExtension {
     }
 
     public String getNamespace() {
-        return LOPClient.LOP_NAMESPACE;
+        return LopVirtualMachine.LOP_NAMESPACE;
     }
 
     public String toXML() {
-        Namespace lop = Namespace.getNamespace(LOPClient.LOP_NAMESPACE);
+        Namespace lop = Namespace.getNamespace(LopVirtualMachine.LOP_NAMESPACE);
         Element evalElement = new Element("eval", lop);
         Element codeElement = new Element("code", lop);
         codeElement.setText(code);
