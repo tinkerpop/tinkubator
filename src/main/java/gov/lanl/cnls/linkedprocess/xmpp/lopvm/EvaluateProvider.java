@@ -4,8 +4,6 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.xmlpull.v1.XmlPullParser;
 
-import java.io.StringReader;
-
 /**
  * Created by IntelliJ IDEA.
  * User: marko
@@ -13,11 +11,10 @@ import java.io.StringReader;
  * Time: 11:29:58 AM
  * To change this template use File | Settings | File Templates.
  */
-public class EvaluationProvider implements IQProvider {
-
+public class EvaluateProvider implements IQProvider {
 
     public IQ parseIQ(XmlPullParser parser) throws Exception {
-        Evaluation eval = new Evaluation();
+        Evaluate eval = new Evaluate();
         int v = parser.next();
         if(v == XmlPullParser.TEXT) {
             eval.setCode(parser.getText());

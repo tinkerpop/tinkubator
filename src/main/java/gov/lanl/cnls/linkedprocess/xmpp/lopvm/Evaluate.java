@@ -9,7 +9,7 @@ import org.jivesoftware.smack.packet.IQ;
  * Time: 12:12:20 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Evaluation extends IQ {
+public class Evaluate extends IQ {
 
     public static final String EVALUATION_TAGNAME = "evaluate";
     String code;

@@ -6,7 +6,6 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jdom.Text;
 import org.jdom.output.XMLOutputter;
-import org.jdom.input.SAXBuilder;
 
 import javax.script.ScriptEngine;
 
@@ -17,13 +16,13 @@ import javax.script.ScriptEngine;
  * Time: 2:32:50 PM
  * To change this template use File | Settings | File Templates.
  */
-public class EvaluationPacketListener implements PacketListener {
+public class EvaluatePacketListener implements PacketListener {
 
     private XMLOutputter out = new XMLOutputter();
     private ScriptEngine engine;
     private XMPPConnection connection;
 
-    public EvaluationPacketListener(ScriptEngine engine, XMPPConnection connection) {
+    public EvaluatePacketListener(ScriptEngine engine, XMPPConnection connection) {
         this.engine = engine;
         this.connection = connection;
     }
@@ -34,7 +33,7 @@ public class EvaluationPacketListener implements PacketListener {
             LopVirtualMachine.logger.debug("\nArrived EvaluationPacketListener:");
             LopVirtualMachine.logger.debug(eval.toXML());
 
-            Evaluation returnEval = new Evaluation();
+            Evaluate returnEval = new Evaluate();
             returnEval.setTo(eval.getFrom());
             if (eval.getPacketID() != null) {
                 returnEval.setPacketID(eval.getPacketID());
@@ -43,7 +42,7 @@ public class EvaluationPacketListener implements PacketListener {
             String returnValue = null;
             try {
 
-                String code = ((Evaluation) eval).getCode();
+                String code = ((Evaluate) eval).getCode();
                 Object returnObject = engine.eval(code);
                 
                 if(null == returnObject)
@@ -54,7 +53,6 @@ public class EvaluationPacketListener implements PacketListener {
                 returnEval.setType(IQ.Type.RESULT);
             } catch (Exception e) {
                 returnValue = e.toString();
-
                 returnEval.setType(IQ.Type.ERROR);
             }
 

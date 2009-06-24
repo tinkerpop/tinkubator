@@ -1,5 +1,6 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
+import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -8,7 +9,6 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.IQTypeFilter;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.apache.log4j.Logger;
@@ -36,7 +36,7 @@ public class LopVirtualMachine {
     private static int port = 5222;
 
     public static String SCRIPT_ENGINE_NAME = "JavaScript";
-    public static String RESOURCE_PREFIX = "js/";
+    public static String RESOURCE_PREFIX = "LoPVM/";
     public static String LOP_NAMESPACE = "http://linkedprocess.org/";
     public static String DISCO_INFO = "http://jabber.org/protocol/disco#info";
 
@@ -55,7 +55,7 @@ public class LopVirtualMachine {
         this.engine = manager.getEngineByName(SCRIPT_ENGINE_NAME);
 
         ProviderManager pm = ProviderManager.getInstance();
-        pm.addIQProvider(Evaluation.EVALUATION_TAGNAME, LOP_NAMESPACE, new EvaluationProvider());
+        pm.addIQProvider(Evaluate.EVALUATION_TAGNAME, LOP_NAMESPACE, new EvaluateProvider());
 
         try {
             this.logon(server, port, username, password);
@@ -66,8 +66,8 @@ public class LopVirtualMachine {
             System.exit(1);
         }
 
-        PacketFilter evalFilter = new AndFilter(new PacketTypeFilter(Evaluation.class), new IQTypeFilter(IQ.Type.GET));
-        connection.addPacketListener(new EvaluationPacketListener(engine, connection), evalFilter);
+        PacketFilter evalFilter = new AndFilter(new PacketTypeFilter(Evaluate.class), new IQTypeFilter(IQ.Type.GET));
+        connection.addPacketListener(new EvaluatePacketListener(engine, connection), evalFilter);
 
         // process packets until a quit command is sent.
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
