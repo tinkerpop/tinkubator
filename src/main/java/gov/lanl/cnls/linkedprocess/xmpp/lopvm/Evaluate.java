@@ -1,6 +1,7 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
 import org.jivesoftware.smack.packet.IQ;
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
 /**
  * User: marko
@@ -22,7 +23,7 @@ public class Evaluate extends IQ {
     }
 
     public String getChildElementXML() {
-        StringBuilder builder = new StringBuilder("\n  <" + EVALUATION_TAGNAME + " xmlns=\"" + LopVirtualMachine.LOP_NAMESPACE +"\">");
+        StringBuilder builder = new StringBuilder("\n  <" + EVALUATION_TAGNAME + " xmlns=\"" + LinkedProcess.LOP_NAMESPACE +"\">");
         if(expression != null) {
             builder.append(expression);
         }

@@ -14,13 +14,13 @@ import javax.script.ScriptEngine;
  * Date: Jun 23, 2009
  * Time: 2:32:50 PM
  */
-public class EvaluatePacketListener implements PacketListener {
+public class EvaluateListener implements PacketListener {
 
     private XMLOutputter out = new XMLOutputter();
     private ScriptEngine engine;
     private XMPPConnection connection;
 
-    public EvaluatePacketListener(ScriptEngine engine, XMPPConnection connection) {
+    public EvaluateListener(ScriptEngine engine, XMPPConnection connection) {
         this.engine = engine;
         this.connection = connection;
     }
@@ -28,8 +28,8 @@ public class EvaluatePacketListener implements PacketListener {
     public void processPacket(Packet eval) {
 
         try {
-            LopVirtualMachine.logger.debug("Arrived EvaluationPacketListener:");
-            LopVirtualMachine.logger.debug(eval.toXML());
+            XmppVirtualMachine.LOGGER.debug("Arrived EvaluationPacketListener:");
+            XmppVirtualMachine.LOGGER.debug(eval.toXML());
 
             Evaluate returnEval = new Evaluate();
             returnEval.setTo(eval.getFrom());
@@ -59,8 +59,8 @@ public class EvaluatePacketListener implements PacketListener {
             returnValue = out.outputString(returnText);
 
             returnEval.setExpression(returnValue);
-            LopVirtualMachine.logger.debug("Sent EvaluationPacketListener:");
-            LopVirtualMachine.logger.debug(returnEval.toXML());
+            XmppVirtualMachine.LOGGER.debug("Sent EvaluationPacketListener:");
+            XmppVirtualMachine.LOGGER.debug(returnEval.toXML());
             connection.sendPacket(returnEval);
 
         } catch (Exception e) {

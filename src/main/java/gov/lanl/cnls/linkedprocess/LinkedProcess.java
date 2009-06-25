@@ -12,6 +12,12 @@ import java.io.IOException;
  * Time: 2:44:21 PM
  */
 public class LinkedProcess {
+
+    public static final String LOP_NAMESPACE = "http://linkedprocess.org/";
+    public static final String DISCO_INFO_NAMESPACE = "http://jabber.org/protocol/disco#info";
+    public static final int LOWEST_PRIORITY = -128;
+    public static final int HIGHEST_PRIORITY = 127;
+
     public static final String
             MAX_CONCURRENT_WORKER_THREADS = "gov.lanl.cnls.linkedprocess.maxConcurrentWorkerThreads",
             MAX_VIRTUAL_MACHINES_PER_SCHEDULER = "gov.lanl.cnls.linkedprocess.maxVirtualMachinesPerScheduler",
