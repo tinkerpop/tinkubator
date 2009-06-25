@@ -8,6 +8,8 @@ import org.jdom.Text;
 import org.jdom.output.XMLOutputter;
 
 import javax.script.ScriptEngine;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 /**
  * User: marko
@@ -28,7 +30,7 @@ public class EvaluateListener implements PacketListener {
     public void processPacket(Packet eval) {
 
         try {
-            XmppVirtualMachine.LOGGER.debug("Arrived EvaluationPacketListener:");
+            XmppVirtualMachine.LOGGER.debug("Arrived EvaluateListener:");
             XmppVirtualMachine.LOGGER.debug(eval.toXML());
 
             Evaluate returnEval = new Evaluate();
@@ -38,6 +40,8 @@ public class EvaluateListener implements PacketListener {
             }
 
             String returnValue = null;
+
+
             try {
 
                 String code = ((Evaluate) eval).getExpression();
@@ -59,7 +63,7 @@ public class EvaluateListener implements PacketListener {
             returnValue = out.outputString(returnText);
 
             returnEval.setExpression(returnValue);
-            XmppVirtualMachine.LOGGER.debug("Sent EvaluationPacketListener:");
+            XmppVirtualMachine.LOGGER.debug("Sent EvaluateListener:");
             XmppVirtualMachine.LOGGER.debug(returnEval.toXML());
             connection.sendPacket(returnEval);
 

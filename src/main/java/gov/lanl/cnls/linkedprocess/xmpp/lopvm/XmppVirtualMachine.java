@@ -44,8 +44,11 @@ public class XmppVirtualMachine extends XmppClient {
         ScriptEngineManager manager = new ScriptEngineManager();
         this.engine = manager.getEngineByName(SCRIPT_ENGINE_NAME);
 
+        // Registering the types of IQ packets/stanzas the the Lop VM can respond to.
         ProviderManager pm = ProviderManager.getInstance();
-        pm.addIQProvider(Evaluate.EVALUATION_TAGNAME, LinkedProcess.LOP_NAMESPACE, new EvaluateProvider());
+        pm.addIQProvider(Evaluate.EVALUATION_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE, new EvaluateProvider());
+        pm.addIQProvider(Status.STATUS_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE, new StatusProvider());
+        pm.addIQProvider(Cancel.CANCEL_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE, new CancelProvider());
 
         try {
             this.logon(server, port, username, password);
@@ -57,13 +60,16 @@ public class XmppVirtualMachine extends XmppClient {
         }
 
         PacketFilter evalFilter = new AndFilter(new PacketTypeFilter(Evaluate.class), new IQTypeFilter(IQ.Type.GET));
+        PacketFilter statusFilter = new AndFilter(new PacketTypeFilter(Status.class), new IQTypeFilter(IQ.Type.GET));
+        PacketFilter cancelFilter = new AndFilter(new PacketTypeFilter(Cancel.class), new IQTypeFilter(IQ.Type.GET));
+
         connection.addPacketListener(new EvaluateListener(engine, connection), evalFilter);
+        connection.addPacketListener(new StatusListener(connection), statusFilter);
+        connection.addPacketListener(new CancelListener(connection), cancelFilter);
 
         // process packets until a quit command is sent.
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        while (!br.readLine().equals("quit")) {
-
-        }
+        while (!br.readLine().equals("quit")) {}
 
         this.logout();
     }

@@ -36,7 +36,8 @@ public class XmppFarm extends XmppClient {
         LOGGER.info("Starting LoP farm");
 
         ProviderManager pm = ProviderManager.getInstance();
-        pm.addIQProvider(Spawn.SPAWN_TAGNAME, LinkedProcess.LOP_NAMESPACE, new SpawnProvider());
+        pm.addIQProvider(Spawn.SPAWN_TAGNAME, LinkedProcess.LOP_FARM_NAMESPACE, new SpawnProvider());
+        pm.addIQProvider(Destroy.DESTROY_TAGNAME, LinkedProcess.LOP_FARM_NAMESPACE, new DestroyProvider());
 
         try {
             this.logon(server, port, username, password);
@@ -48,7 +49,9 @@ public class XmppFarm extends XmppClient {
         }
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(Spawn.class), new IQTypeFilter(IQ.Type.GET));
+        PacketFilter destroyFilter = new AndFilter(new PacketTypeFilter(Destroy.class), new IQTypeFilter(IQ.Type.GET));
         connection.addPacketListener(new SpawnListener(connection), spawnFilter);
+        connection.addPacketListener(new DestroyListener(connection), destroyFilter);
 
         // process packets until a quit command is sent.
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));

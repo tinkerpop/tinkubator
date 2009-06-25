@@ -14,6 +14,9 @@ import java.io.IOException;
 public class LinkedProcess {
 
     public static final String LOP_NAMESPACE = "http://linkedprocess.org/";
+    public static final String LOP_FARM_NAMESPACE = LOP_NAMESPACE + "protocol#LoPFarm";
+    public static final String LOP_VM_NAMESPACE = LOP_NAMESPACE + "protocol#LoPVM";
+
     public static final String DISCO_INFO_NAMESPACE = "http://jabber.org/protocol/disco#info";
     public static final int LOWEST_PRIORITY = -128;
     public static final int HIGHEST_PRIORITY = 127;
