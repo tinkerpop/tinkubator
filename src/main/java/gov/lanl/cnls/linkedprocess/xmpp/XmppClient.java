@@ -55,7 +55,7 @@ public abstract class XmppClient {
     }
 
      public void printClientStatistics() {
-        // print a collection of statistics about the connection and virtual machine
+        // print a collection of statistics about the connection
         LOGGER.info("Anonymous: " + connection.isAnonymous());
         LOGGER.info("Authenticated: " + connection.isAuthenticated());
         LOGGER.info("Connected: " + connection.isConnected());
