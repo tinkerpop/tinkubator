@@ -1,9 +1,10 @@
-package gov.lanl.cnls.linkedprocess;
+package gov.lanl.cnls.linkedprocess.xmpp.tools;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
+import gov.lanl.cnls.linkedprocess.xmpp.tools.GenericListener;
 
 public class SmackPlay {
     
@@ -58,7 +59,7 @@ public class SmackPlay {
         // Smack uses a listener framework to receive packets/stanzas and perform operations on packets.
         // A listener can have a filter to only handle certain types of packets (tags/attributes)
         //PacketFilter filter = new PacketTypeFilter(IQ.class);
-        connection.addPacketListener(new GenericPacketListener(), null);
+        connection.addPacketListener(new GenericListener(), null);
 
        
     }

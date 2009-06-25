@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess;
+package gov.lanl.cnls.linkedprocess.xmpp.tools;
 
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Packet;
@@ -14,7 +14,7 @@ import java.io.StringReader;
  * Time: 9:02:29 PM
  * Smack utilizes listeners that respond when packets with certain properties (tags/attributes) are received.
  */
-public class GenericPacketListener implements PacketListener {
+public class GenericListener implements PacketListener {
 
         public void processPacket(Packet packet) {
             // The JDOM package is used to turn the raw XML into a DOM object for ease of manipulation.
