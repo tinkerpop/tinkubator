@@ -5,10 +5,12 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Queue;
+import java.util.Set;
 
 /**
  * Author: josh
@@ -17,11 +19,13 @@ import java.util.Queue;
  */
 public class VMScheduler {
 
-    private final Queue<VMWorker> roundRobinQueue;
+    private final Queue<VMWorker> workerQueue;
+    private final Set<VMWorker> idleWorkerPool;
     private final Map<String, VMWorker> workersByJID;
     private final ScriptEngineManager manager = new ScriptEngineManager();
     private final VMSequencer[] sequencers;
     private final int maxWorkers;
+    private final Thread schedulerThread;
 
     public enum FarmStatus {
         ACTIVE
@@ -39,7 +43,8 @@ public class VMScheduler {
      * Creates a new virtual machine scheduler.
      */
     public VMScheduler() {
-        roundRobinQueue = new LinkedList<VMWorker>();
+        workerQueue = new LinkedList<VMWorker>();
+        idleWorkerPool = new HashSet<VMWorker>();
         workersByJID = new HashMap<String, VMWorker>();
 
         Properties props = LinkedProcess.getProperties();
@@ -50,12 +55,18 @@ public class VMScheduler {
         long timeSlice = new Long(props.getProperty(
                 LinkedProcess.ROUND_ROBIN_TIME_SLICE));
 
+        // A single source for workers.
+        VMWorkerSource source = createWorkerSource();
+
         int n = new Integer(props.getProperty(
                 LinkedProcess.MAX_CONCURRENT_WORKER_THREADS));
         sequencers = new VMSequencer[n];
         for (int i = 0; i < n; i++) {
-            sequencers[i] = new VMSequencer(timeSlice);
+            sequencers[i] = new VMSequencer(source, timeSlice);
         }
+
+        schedulerThread = new Thread(new SchedulerRunnable());
+        schedulerThread.start();
     }
 
     /**
@@ -68,19 +79,13 @@ public class VMScheduler {
      */
     public synchronized void addJob(final String machineJID,
                                     final Job job) throws ServiceRefusedException {
-        VMWorker w = workersByJID.get(machineJID);
-        if (null == w) {
-            throw new ServiceRefusedException("no such machine: '" + machineJID + "'");
-        }
+        VMWorker w = getWorkerByJID(machineJID);
 
-        for (VMSequencer t : sequencers) {
-            if (t.isIdle()) {
-                t.startJob(w, job);
-                return;
-            }
-        }
+        // FIXME: this call may block for as long as one timeslice.
+        //        This wait could probably be eliminated.
+        w.addJob(job);
 
-        //...
+        enqueueWorker(w);
     }
 
     /**
@@ -92,12 +97,10 @@ public class VMScheduler {
      */
     public synchronized void removeJob(final String machineJID,
                                        final String jobID) throws ServiceRefusedException {
-        VMWorker w = workersByJID.get(machineJID);
+        VMWorker w = getWorkerByJID(machineJID);
 
-        if (null == w) {
-            throw new ServiceRefusedException("no such machine: '" + machineJID + "'");
-        }
-
+        // FIXME: this call may block for as long as one timeslice.
+        //        This wait could probably be eliminated.
         w.cancelJob(jobID);
     }
 
@@ -132,9 +135,10 @@ public class VMScheduler {
             throw new ServiceRefusedException("unsupported script type: " + scriptType);
         }
 
-        VMWorker m = new VMWorker(engine, createResultHandler());
-        workersByJID.put(machineJID, m);
-        roundRobinQueue.offer(m);
+        VMWorker w = new VMWorker(engine, createResultHandler());
+
+        workersByJID.put(machineJID, w);
+        idleWorkerPool.add(w);
     }
 
     /**
@@ -194,6 +198,14 @@ public class VMScheduler {
         };
     }
 
+    private VMWorkerSource createWorkerSource() {
+        return new VMWorkerSource() {
+            public VMWorker getWorker() {
+                return null;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+        };
+    }
+
     private synchronized void assignNextJob() {
 
     }
@@ -206,6 +218,25 @@ public class VMScheduler {
 
     }
 
+    private void enqueueWorker(final VMWorker w) {
+        // If the worker is in the idle pool, add it to the queue instead.
+        // Otherwise, don't move it.
+        if (idleWorkerPool.contains(w)) {
+            idleWorkerPool.remove(w);
+            workerQueue.offer(w);
+        }
+    }
+
+    private VMWorker getWorkerByJID(final String machineJID) throws ServiceRefusedException {
+        VMWorker w = workersByJID.get(machineJID);
+
+        if (null == w) {
+            throw new ServiceRefusedException("no such machine: '" + machineJID + "'");
+        }
+
+        return w;
+    }
+
     ////////////////////////////////////////////////////////////////////////////
 
     public interface VMResultHandler {
@@ -216,9 +247,9 @@ public class VMScheduler {
         VMWorker getWorker();
     }
 
-    /*   private class VMWorkerRegistry {
-        public VMWorker getWorker(final String machineJID) {
-
+    private class SchedulerRunnable implements Runnable {
+        public void run() {
+            //To change body of implemented methods use File | Settings | File Templates.
         }
-    }*/
+    }
 }
