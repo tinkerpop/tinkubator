@@ -1,5 +1,6 @@
 package gov.lanl.cnls.linkedprocess;
 
+import org.jivesoftware.smack.XMPPConnection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +31,9 @@ public class XmppVirtualMachineTest extends TestCase {
     }
     @Test
     public void testLogin() throws Exception {
-        assertTrue(true);
+        XMPPConnection connection = xmppVirtualMachine.getConnection();
+		assertTrue(connection.isConnected());
+		
     }
     @After
     public void tearDown() {

@@ -67,8 +67,10 @@ public abstract class XmppClient {
                     e.printStackTrace();
                 }
                 LOGGER.info("Shutting down");
+                //we should log out here but then the calling method would not block
+                //logout();
             }
-        });
+        }, "Shutdown hook");
         shutdownHook.start();
     }
 
@@ -99,6 +101,7 @@ public abstract class XmppClient {
     public void shutDown() {
         LOGGER.info("Requesting shutdown");
         shutdownRequested = true;
+        //this is in order to wait until we are logged out
         logout();
     }
 
