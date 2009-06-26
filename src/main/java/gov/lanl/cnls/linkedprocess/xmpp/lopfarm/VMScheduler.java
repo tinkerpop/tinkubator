@@ -105,11 +105,11 @@ public class VMScheduler {
      * Creates a new virtual machine.
      *
      * @param machineJID the intended JID of the virtual machine
-     * @param type       the type of virtual machine to create
+     * @param scriptType the type of virtual machine to create
      * @throws ServiceRefusedException if, for any reason, the machine cannot be created
      */
     public synchronized void addMachine(final String machineJID,
-                                           final String type) throws ServiceRefusedException {
+                                        final String scriptType) throws ServiceRefusedException {
         if (workersByJID.size() == maxWorkers) {
             throw new ServiceRefusedException("too many active virtual machines");
         }
@@ -118,16 +118,19 @@ public class VMScheduler {
             throw new IllegalArgumentException("null or empty machine ID");
         }
 
-        // TODO: check whether the type is one of the allowed types
-        if (null == type || 0 == type.length()) {
-            throw new IllegalArgumentException("null or empty virtual machine type");
+        // TODO: check whether the scriptType is one of the allowed types
+        if (null == scriptType || 0 == scriptType.length()) {
+            throw new IllegalArgumentException("null or empty virtual machine scriptType");
         }
 
         if (null != workersByJID.get(machineJID)) {
             throw new ServiceRefusedException("machine with ID '" + machineJID + "' already exists");
         }
 
-        ScriptEngine engine = manager.getEngineByName(type);
+        ScriptEngine engine = manager.getEngineByName(scriptType);
+        if (null == engine) {
+            throw new ServiceRefusedException("unsupported script type: " + scriptType);
+        }
 
         VMWorker m = new VMWorker(engine, createResultHandler());
         workersByJID.put(machineJID, m);
@@ -177,6 +180,10 @@ public class VMScheduler {
         return null;
     }
 
+    public void shutDown() {
+
+    }
+
     ////////////////////////////////////////////////////////////////////////////
 
     private VMResultHandler createResultHandler() {
@@ -204,4 +211,14 @@ public class VMScheduler {
     public interface VMResultHandler {
         void handleResult(JobResult result);
     }
+
+    public interface VMWorkerSource {
+        VMWorker getWorker();
+    }
+
+    /*   private class VMWorkerRegistry {
+        public VMWorker getWorker(final String machineJID) {
+
+        }
+    }*/
 }

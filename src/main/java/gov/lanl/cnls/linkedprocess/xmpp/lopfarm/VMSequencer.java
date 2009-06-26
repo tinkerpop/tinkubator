@@ -1,38 +1,75 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
 
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import org.apache.log4j.Logger;
+
 /**
  * Author: josh
-* Date: Jun 25, 2009
-* Time: 4:00:44 PM
-*/
+ * Date: Jun 25, 2009
+ * Time: 4:00:44 PM
+ */
 class VMSequencer {
-    private boolean idle;
-    private VMScheduler virtualMachineScheduler;
+    private static final Logger LOGGER
+            = LinkedProcess.getLogger(VMSequencer.class);
+
+    private enum State {
+        ACTIVE, TERMINATED
+    }
+
+    private State state;
     private final long timeSlice;
+    private final Thread sequencerThread;
+    private final VMScheduler.VMWorkerSource workerSource;
 
-    public VMSequencer(final long timeSlice) {
+    /**
+     * Creates a new sequencer for VM jobs.
+     *
+     * @param workerSource a source for workers ready to execute jobs.  When
+     *                     this sequencer receives a null from this source, it terminates.
+     * @param timeSlice    the time slice in which to execute jobs
+     */
+    public VMSequencer(final VMScheduler.VMWorkerSource workerSource,
+                       final long timeSlice) {
+        this.workerSource = workerSource;
         this.timeSlice = timeSlice;
-        idle = true;
+
+        sequencerThread = new Thread(new SequencerRunnable());
+        sequencerThread.start();
+
+        state = State.ACTIVE;
     }
 
-    public boolean isIdle() {
-        return idle;
-    }
+    ////////////////////////////////////////////////////////////////////////////
 
-    public void startJob(final VMWorker w,
-                         final Job job) {
-        if (!isIdle()) {
-            throw new IllegalStateException("can only start new jobs while idle");
+    private void executeForTimeSlice() {
+        // Note: thread may block while waiting for a worker to become available.
+        VMWorker w = workerSource.getWorker();
+
+        // This sequencer is terminated by the receipt of a null worker.
+        if (null == w) {
+            state = State.TERMINATED;
+            return;
         }
 
-        w.addJob(job);
+        if (!w.canWork()) {
+            throw new IllegalStateException("worker has no jobs");
+        }
+
         w.work(timeSlice);
     }
 
     private class SequencerRunnable implements Runnable {
 
         public void run() {
-            //To change body of implemented methods use File | Settings | File Templates.
+            try {
+                // Break out when the sequencer is terminated.
+                while (State.ACTIVE == state) {
+                    executeForTimeSlice();
+                }
+            } catch (Exception e) {
+                // TODO: stack trace
+                LOGGER.error("sequencer runnable died with error: " + e.toString());
+            }
         }
     }
 }

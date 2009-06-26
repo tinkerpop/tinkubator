@@ -315,7 +315,11 @@ public class VMWorker {
                         workerWaitMonitor.wait();
                     }
                 } catch (InterruptedException e) {
-                    // Continue to a new iteration.
+                    // Ignore and continue.  The point was to break out of the
+                    // body of the loop.
+                } catch (Exception e) {
+                    // TODO: stack trace
+                    LOGGER.error("worker runnable died with error: " + e.toString());
                 }
             }
         }
