@@ -6,10 +6,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Queue;
 import java.util.Set;
 
 /**
@@ -19,13 +17,13 @@ import java.util.Set;
  */
 public class VMScheduler {
 
-    private final Queue<VMWorker> workerQueue;
+    private final PollBlockingQueue<VMWorker> workerQueue;
     private final Set<VMWorker> idleWorkerPool;
     private final Map<String, VMWorker> workersByJID;
     private final ScriptEngineManager manager = new ScriptEngineManager();
     private final VMSequencer[] sequencers;
     private final int maxWorkers;
-    private final Thread schedulerThread;
+    private final VMResultHandler resultHandler;
     private FarmStatus state;
 
     public enum FarmStatus {
@@ -44,10 +42,9 @@ public class VMScheduler {
      * Creates a new virtual machine scheduler.
      */
     public VMScheduler(final VMResultHandler resultHandler) {
+        this.resultHandler = resultHandler;
 
-        // TODO: do something with resultHandler
-
-        workerQueue = new LinkedList<VMWorker>();
+        workerQueue = new PollBlockingQueue<VMWorker>();
         idleWorkerPool = new HashSet<VMWorker>();
         workersByJID = new HashMap<String, VMWorker>();
 
@@ -70,9 +67,6 @@ public class VMScheduler {
         for (int i = 0; i < n; i++) {
             sequencers[i] = new VMSequencer(source, timeSlice);
         }
-
-        schedulerThread = new Thread(new SchedulerRunnable());
-        schedulerThread.start();
     }
 
     /**
@@ -141,7 +135,7 @@ public class VMScheduler {
             throw new ServiceRefusedException("unsupported script type: " + scriptType);
         }
 
-        VMWorker w = new VMWorker(engine, createResultHandler());
+        VMWorker w = new VMWorker(engine, resultHandler);
 
         workersByJID.put(machineJID, w);
         if (maxWorkers == workersByJID.size()) {
@@ -211,20 +205,19 @@ public class VMScheduler {
 
     ////////////////////////////////////////////////////////////////////////////
 
+    /*
     private VMResultHandler createResultHandler() {
         return new VMResultHandler() {
             public void handleResult(final JobResult result) {
                 //To change body of implemented methods use File | Settings | File Templates.
             }
         };
-    }
+    }      */
 
     private VMWorkerSource createWorkerSource() {
         return new VMWorkerSource() {
             public synchronized VMWorker getWorker() {
-                synchronized (workerQueue) {
-      return null;              
-                }
+                return workerQueue.poll();
             }
         };
     }
@@ -256,11 +249,5 @@ public class VMScheduler {
 
     public interface VMWorkerSource {
         VMWorker getWorker();
-    }
-
-    private class SchedulerRunnable implements Runnable {
-        public void run() {
-            //To change body of implemented methods use File | Settings | File Templates.
-        }
     }
 }
