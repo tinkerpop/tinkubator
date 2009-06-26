@@ -2,6 +2,7 @@ package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
+import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
 
 
 import javax.script.ScriptEngine;
@@ -25,21 +26,16 @@ import org.jivesoftware.smack.provider.ProviderManager;
 public class XmppVirtualMachine extends XmppClient {
 
     public static Logger LOGGER = LinkedProcess.getLogger(XmppVirtualMachine.class);
-    public static String SCRIPT_ENGINE_NAME = "JavaScript";
     public static String RESOURCE_PREFIX = "LoPVM/";
 
     public static enum VirtualMachinePresence { AVAILABLE, TOO_MANY_JOBS }
+    protected XmppFarm farm;
 
-    protected ScriptEngine engine;
-    protected VirtualMachinePresence currentPresence;
+    public XmppVirtualMachine(final String server, final int port, final String username, final String password, XmppFarm farm) {
 
-    public XmppVirtualMachine(final String server, final int port, final String username, final String password) throws Exception {
+        this.farm = farm;
 
-        LOGGER.info("Starting " + SCRIPT_ENGINE_NAME + " LoP virtual machine");
-
-        ScriptEngineManager manager = new ScriptEngineManager();
-        this.engine = manager.getEngineByName(SCRIPT_ENGINE_NAME);
-
+        LOGGER.info("Starting LoP virtual machine");
         // Registering the types of IQ packets/stanzas the the Lop VM can respond to.
         ProviderManager pm = ProviderManager.getInstance();
         pm.addIQProvider(Evaluate.EVALUATION_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE, new EvaluateProvider());
@@ -73,16 +69,13 @@ public class XmppVirtualMachine extends XmppClient {
         connection.sendPacket(this.createVMPresence(VirtualMachinePresence.AVAILABLE));
     }
 
-    public void printClientStatistics() {
-        super.printClientStatistics();
-        LOGGER.info("Script Engine Name: " + engine.getFactory().getEngineName());
-        LOGGER.info("Script Engine Version: " + engine.getFactory().getEngineVersion());
-        LOGGER.info("Script Engine Language: " + engine.getFactory().getLanguageName());
-        LOGGER.info("Script Engine Language Version: " + engine.getFactory().getLanguageVersion());
+    public XmppFarm getFarm() {
+        return this.farm;
     }
 
     public final Presence createVMPresence(final VirtualMachinePresence type) {
-        String statusMessage = engine.getFactory().getLanguageName() + "(" + engine.getFactory().getLanguageVersion() + "):" + engine.getFactory().getEngineName() + "(" + engine.getFactory().getEngineVersion() + ")";
+        String statusMessage = "temp util engine enacted.";
+        //String statusMessage = engine.getFactory().getLanguageName() + "(" + engine.getFactory().getLanguageVersion() + "):" + engine.getFactory().getEngineName() + "(" + engine.getFactory().getEngineVersion() + ")";
         if(type == VirtualMachinePresence.AVAILABLE) {
             return new Presence(Presence.Type.available, statusMessage, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.available);
         } else  {

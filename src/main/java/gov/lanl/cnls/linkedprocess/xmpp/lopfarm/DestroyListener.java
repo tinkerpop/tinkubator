@@ -24,16 +24,18 @@ public class DestroyListener implements PacketListener {
             XmppFarm.LOGGER.debug("Arrived DestroyListener:");
             XmppFarm.LOGGER.debug(destroy.toXML());
 
-            String vmJid = ((Destroy)destroy).getVmJid();
-            farm.destroyVirtualMachine(vmJid);
-
             Destroy returnDestroy = new Destroy();
             returnDestroy.setTo(destroy.getFrom());
-            if (destroy.getPacketID() != null) {
-                returnDestroy.setPacketID(destroy.getPacketID());
+            returnDestroy.setPacketID(destroy.getPacketID());
+            
+            String vmJid = ((Destroy)destroy).getVmJid();
+            try {
+                farm.destroyVirtualMachine(vmJid);
+                returnDestroy.setVmJid(vmJid);
+                returnDestroy.setType(IQ.Type.RESULT);
+            } catch(ServiceRefusedException e) {
+                returnDestroy.setType(IQ.Type.ERROR);
             }
-            returnDestroy.setVmJid(vmJid);
-            returnDestroy.setType(IQ.Type.RESULT);
 
             XmppFarm.LOGGER.debug("Sent DestroyListener:");
             XmppFarm.LOGGER.debug(returnDestroy.toXML());

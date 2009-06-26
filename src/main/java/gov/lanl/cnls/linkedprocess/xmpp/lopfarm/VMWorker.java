@@ -207,7 +207,7 @@ public class VMWorker {
     public synchronized void cancelJob(final String jobID) throws ServiceRefusedException {
         switch (state) {
             case ACTIVE_SUSPENDED:
-                if (latestJob.getIQID().equals(jobID)) {
+                if (latestJob.getIqId().equals(jobID)) {
                     // Cause the worker thread to cease execution of the current
                     // job and wait.
                     state = State.IDLE_WAITING;
@@ -228,7 +228,7 @@ public class VMWorker {
         // Look for the job in the queue and remove it if present.
         // FIXME: inefficient
         for (Job j : jobQueue.asCollection()) {
-            if (j.getIQID().equals(jobID)) {
+            if (j.getIqId().equals(jobID)) {
                 jobQueue.remove(j);
                 return;
             }
@@ -240,7 +240,7 @@ public class VMWorker {
     public synchronized boolean jobExists(final String jobID) {
         switch (state) {
             case ACTIVE_SUSPENDED:
-                return jobID.equals(latestJob.getIQID())
+                return jobID.equals(latestJob.getIqId())
                         || jobQueueContains(jobID);
             case IDLE_WAITING:
                 return jobQueueContains(jobID);
@@ -281,7 +281,7 @@ public class VMWorker {
 
     private boolean jobQueueContains(final String jobID) {
         for (Job j : jobQueue.asCollection()) {
-            if (j.getIQID().equals(jobID)) {
+            if (j.getIqId().equals(jobID)) {
                 return true;
             }
         }

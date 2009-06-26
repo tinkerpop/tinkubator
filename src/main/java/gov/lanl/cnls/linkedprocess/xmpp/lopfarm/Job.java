@@ -6,24 +6,31 @@ package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
  * Time: 6:34:20 PM
  */
 public class Job {
-    private final String iqID;
-    private final String clientJID;
+    private final String iqId;
+    private final String vmJid;
+    private final String appJid;
     private final String expression;
 
-    public Job(final String clientJID,
-               final String iqID,
+    public Job(final String vmJid,
+               final String appJid,
+               final String iqId,
                final String expression) {
-        this.clientJID = clientJID;
-        this.iqID = iqID;
+        this.vmJid = vmJid;
+        this.appJid = appJid;
+        this.iqId = iqId;
         this.expression = expression;
     }
 
-    public String getClientJID() {
-        return clientJID;
+    public String getAppJid() {
+        return appJid;
     }
     
-    public String getIQID() {
-        return iqID;
+    public String getIqId() {
+        return iqId;
+    }
+
+    public String getVmJid() {
+        return vmJid;
     }
 
     public String getExpression() {

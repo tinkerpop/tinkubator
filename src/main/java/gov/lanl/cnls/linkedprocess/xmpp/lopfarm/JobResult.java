@@ -1,6 +1,7 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
 
 import org.jivesoftware.smack.packet.IQ;
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
 
 /**
  * Author: josh
@@ -41,8 +42,20 @@ public class JobResult {
         this.type = ResultType.CANCELLED;
     }
 
-    public IQ toIQ() {
-        //...
-        return null;
+    public Job getJob() {
+        return this.job;
+    }
+
+    public Evaluate generateReturnEvalulate() {
+        Evaluate returnEval = new Evaluate();
+        returnEval.setTo(job.getAppJid());
+        returnEval.setPacketID(job.getIqId());
+        if(this.type == ResultType.NORMAL_RESULT) {
+            returnEval.setType(IQ.Type.RESULT);
+        } else {
+            returnEval.setType(IQ.Type.ERROR);
+        }
+        returnEval.setExpression(expression);
+        return returnEval; 
     }
 }

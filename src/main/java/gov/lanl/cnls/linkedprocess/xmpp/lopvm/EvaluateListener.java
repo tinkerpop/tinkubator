@@ -11,6 +11,9 @@ import javax.script.ScriptEngine;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.Job;
+import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.ServiceRefusedException;
+
 /**
  * User: marko
  * Date: Jun 23, 2009
@@ -18,9 +21,7 @@ import java.io.InputStreamReader;
  */
 public class EvaluateListener implements PacketListener {
 
-    private XMLOutputter out = new XMLOutputter();
     private XmppVirtualMachine vm;
-
 
     public EvaluateListener(XmppVirtualMachine vm) {
         this.vm = vm;
@@ -32,39 +33,23 @@ public class EvaluateListener implements PacketListener {
             XmppVirtualMachine.LOGGER.debug("Arrived EvaluateListener:");
             XmppVirtualMachine.LOGGER.debug(eval.toXML());
 
-            Evaluate returnEval = new Evaluate();
-            returnEval.setTo(eval.getFrom());
-            if (eval.getPacketID() != null) {
-                returnEval.setPacketID(eval.getPacketID());
+            try {
+                String expression = ((Evaluate) eval).getExpression();
+                String iqId = eval.getPacketID();
+                String appJid = eval.getFrom();
+
+                Job job = new Job(appJid, iqId, expression, vm.getFullJid());
+                vm.getFarm().getScheduler().addJob(vm.getFullJid(), job);
+
+            } catch(ServiceRefusedException e) {
+                Evaluate returnEvaluate = new Evaluate();
+                returnEvaluate.setTo(eval.getFrom());
+                returnEvaluate.setPacketID(eval.getPacketID());
+                returnEvaluate.setExpression(e.getMessage());
+                returnEvaluate.setType(IQ.Type.ERROR);
+                vm.getConnection().sendPacket(returnEvaluate);
             }
 
-            String returnValue = null;
-
-            /*
-            try {
-
-                String code = ((Evaluate) eval).getExpression();
-                Object returnObject = engine.eval(code);
-                
-                if(null == returnObject)
-                    returnValue = "";
-                else
-                    returnValue = returnObject.toString();
-                
-                returnEval.setType(IQ.Type.RESULT);
-            } catch (Exception e) {
-                returnValue = e.toString();
-                returnEval.setType(IQ.Type.ERROR);
-            } */
-
-            // this makes sure the XML characters are set appropriately as to not create faulty XML.
-            Text returnText = new Text(returnValue);
-            returnValue = out.outputString(returnText);
-
-            returnEval.setExpression(returnValue);
-            XmppVirtualMachine.LOGGER.debug("Sent EvaluateListener:");
-            XmppVirtualMachine.LOGGER.debug(returnEval.toXML());
-            vm.getConnection().sendPacket(returnEval);
 
         } catch (Exception e) {
             e.printStackTrace();
