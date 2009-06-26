@@ -21,7 +21,8 @@ public class XmppVirtualMachineTest extends TestCase {
 	private XmppVirtualMachine xmppVirtualMachine;
 
     public static void main(String[] args) throws Exception {
-        new XmppVirtualMachine(server, port, username, password);  
+        XmppVirtualMachine vm = new XmppVirtualMachine(server, port, username, password);
+        new Thread(vm).start();
     }
     
     @Before

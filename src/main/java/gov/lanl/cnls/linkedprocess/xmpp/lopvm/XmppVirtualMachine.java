@@ -3,9 +3,6 @@ package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -35,8 +32,6 @@ public class XmppVirtualMachine extends XmppClient {
 
     protected ScriptEngine engine;
     protected VirtualMachinePresence currentPresence;
-	private static boolean shutdownRequested = false;
-	private boolean shutdown = false;
 
     public XmppVirtualMachine(final String server, final int port, final String username, final String password) throws Exception {
 
@@ -67,31 +62,6 @@ public class XmppVirtualMachine extends XmppClient {
         connection.addPacketListener(new EvaluateListener(engine, connection), evalFilter);
         connection.addPacketListener(new StatusListener(connection), statusFilter);
         connection.addPacketListener(new CancelListener(connection), cancelFilter);
-
-        Thread shutdownHook = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				// process packets until a quit command is sent.
-				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-				// TODO Auto-generated method stub
-		        try {
-					while (!shutdownRequested) {
-						Thread.sleep(10);
-					}//!br.readLine().equals("quit") || 
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		        LOGGER.info("shutting down.");
-		        logout();
-		        shutdown=true;
-				
-			}
-        });
-        shutdownHook.start();
-        	
-
     }
 
     public void logon(String server, int port, String username, String password) throws XMPPException {
@@ -103,7 +73,6 @@ public class XmppVirtualMachine extends XmppClient {
     public void sendPresence(Presence presence) {
         this.connection.sendPacket(presence);
     }
-
 
     public void printClientStatistics() {
         super.printClientStatistics();
@@ -122,17 +91,4 @@ public class XmppVirtualMachine extends XmppClient {
         }
     }
 
-	public void shutDown() {
-		LOGGER.info("requesting shutdown");
-		shutdownRequested = true;
-		while(!shutdown ) {
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		};
-		
-	}
 }

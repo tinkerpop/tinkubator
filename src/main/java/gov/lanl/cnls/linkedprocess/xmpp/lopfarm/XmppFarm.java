@@ -50,16 +50,10 @@ public class XmppFarm extends XmppClient {
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(Spawn.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter destroyFilter = new AndFilter(new PacketTypeFilter(Destroy.class), new IQTypeFilter(IQ.Type.GET));
+        PacketFilter subscribeFilter = new AndFilter(new PacketTypeFilter(Presence.class), new PresenceTypeFilter());
         connection.addPacketListener(new SpawnListener(connection), spawnFilter);
         connection.addPacketListener(new DestroyListener(connection), destroyFilter);
-
-        // process packets until a quit command is sent.
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        while (!br.readLine().equals("quit")) {
-
-        }
-
-        this.logout();
+        //connection.addPacketListener(new PresenceListener(connection), subscribeFilter); // TODO: auto-subscribe to all requests
     }
 
     public void logon(String server, int port, String username, String password) throws XMPPException {

@@ -16,16 +16,15 @@ public class LinkedProcess {
     public static final String LOP_NAMESPACE = "http://linkedprocess.org/";
     public static final String LOP_FARM_NAMESPACE = LOP_NAMESPACE + "protocol#LoPFarm";
     public static final String LOP_VM_NAMESPACE = LOP_NAMESPACE + "protocol#LoPVM";
-
     public static final String DISCO_INFO_NAMESPACE = "http://jabber.org/protocol/disco#info";
+
     public static final int LOWEST_PRIORITY = -128;
     public static final int HIGHEST_PRIORITY = 127;
 
-    public static final String
-            MAX_CONCURRENT_WORKER_THREADS = "gov.lanl.cnls.linkedprocess.maxConcurrentWorkerThreads",
-            MAX_VIRTUAL_MACHINES_PER_SCHEDULER = "gov.lanl.cnls.linkedprocess.maxVirtualMachinesPerScheduler",
-            MESSAGE_QUEUE_CAPACITY = "gov.lanl.cnls.linkedprocess.messageQueueCapacity",
-            ROUND_ROBIN_TIME_SLICE = "gov.lanl.cnls.linkedprocess.roundRobinTimeSlice";
+    public static final String MAX_CONCURRENT_WORKER_THREADS = "gov.lanl.cnls.linkedprocess.maxConcurrentWorkerThreads";
+    public static final String MAX_VIRTUAL_MACHINES_PER_SCHEDULER = "gov.lanl.cnls.linkedprocess.maxVirtualMachinesPerScheduler";
+    public static final String MESSAGE_QUEUE_CAPACITY = "gov.lanl.cnls.linkedprocess.messageQueueCapacity";
+    public static final String ROUND_ROBIN_TIME_SLICE = "gov.lanl.cnls.linkedprocess.roundRobinTimeSlice";
 
     private static final Properties PROPERTIES = new Properties();
     private static final Logger LOGGER;

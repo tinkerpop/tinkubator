@@ -9,13 +9,16 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.apache.log4j.Logger;
 
 import java.util.Iterator;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
 
 /**
  * User: marko
  * Date: Jun 25, 2009
  * Time: 11:31:34 AM
  */
-public abstract class XmppClient {
+public abstract class XmppClient implements Runnable {
 
     public static Logger LOGGER = LinkedProcess.getLogger(XmppClient.class);
     protected XMPPConnection connection;
@@ -63,6 +66,20 @@ public abstract class XmppClient {
         LOGGER.info("Secure: " + connection.isSecureConnection());
         LOGGER.info("Compression: " + connection.isUsingCompression());
         LOGGER.info("Transport Layer Security: " + connection.isUsingTLS());
+    }
+
+    public String getFullJid() {
+        return this.connection.getUser();
+    }
+
+    public void run() {
+        // process packets until a quit command is sent.
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            while (!br.readLine().equals("quit")) {}
+        } catch(IOException e) {}
+
+        this.logout();
     }
 
 }
