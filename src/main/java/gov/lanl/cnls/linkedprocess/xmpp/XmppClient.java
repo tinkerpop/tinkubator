@@ -7,7 +7,6 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
-
 import java.util.Iterator;
 
 /**
@@ -48,7 +47,7 @@ public abstract class XmppClient {
         LOGGER.info("Connected to " + connection.getHost());
         connection.login(username, password, resource);
         LOGGER.info("Logged in as " + connection.getUser());
-
+  
         Thread shutdownHook = new Thread(new Runnable() {
             public void run() {
                 try {
@@ -58,12 +57,10 @@ public abstract class XmppClient {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                LOGGER.info("Shutting down.");
+                LOGGER.info("Shutting down");
             }
         });
         shutdownHook.start();
-
-
     }
 
     public void logout() {
@@ -87,7 +84,7 @@ public abstract class XmppClient {
     }
 
     public void shutDown() {
-        LOGGER.info("requesting shutdown");
+        LOGGER.info("Requesting shutdown");
         shutdownRequested = true;
         logout();
     }

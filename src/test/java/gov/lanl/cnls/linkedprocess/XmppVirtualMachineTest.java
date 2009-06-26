@@ -20,9 +20,9 @@ public class XmppVirtualMachineTest extends TestCase {
     private static int port = 5222;
 	private XmppVirtualMachine xmppVirtualMachine;
 
-    /*public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         XmppVirtualMachine vm = new XmppVirtualMachine(server, port, username, password);
-    }*/
+    }
     
     @Before
     public void setUp() throws Exception {

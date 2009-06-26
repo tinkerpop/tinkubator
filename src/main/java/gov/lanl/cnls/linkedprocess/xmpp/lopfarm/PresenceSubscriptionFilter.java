@@ -5,29 +5,29 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Presence;
 
 /**
  * User: marko
  * Date: Jun 25, 2009
  * Time: 6:47:07 PM
  */
-public class PresenceTypeFilter implements PacketFilter {
-
-    private static final SAXBuilder builder = new SAXBuilder();
+public class PresenceSubscriptionFilter implements PacketFilter {
 
     public boolean accept(Packet packet) {
         try {
-            Document doc = builder.build(packet.toXML());
-            Element root = doc.getRootElement();
-            if (root.getName().equalsIgnoreCase("presence")) {
+            if(!packet.toXML().trim().startsWith("<presence")) {
                 return false;
             }
-            if (root.getAttribute("type").getValue().equalsIgnoreCase("subscibe")) {
+            Presence presence = (Presence)packet;
+            Presence.Type type = presence.getType();
+            if(type == Presence.Type.subscribe || type == Presence.Type.unsubscribe)
                 return true;
-            }
-            return false;
+            else
+                return false;
 
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
