@@ -23,10 +23,21 @@ public class VMScheduler {
     private final VMSequencer[] sequencers;
     private final int maxWorkers;
 
-    public enum FarmStatus { ACTIVE }  // TODO
-    public enum VMStatus { ACTIVE, DOES_NOT_EXIST }
-    public enum JobStatus { RUNNING, DOES_NOT_EXIST }
+    public enum FarmStatus {
+        ACTIVE
+    }  // TODO
 
+    public enum VMStatus {
+        ACTIVE, DOES_NOT_EXIST
+    }
+
+    public enum JobStatus {
+        ACTIVE, DOES_NOT_EXIST
+    }
+
+    /**
+     * Creates a new virtual machine scheduler.
+     */
     public VMScheduler() {
         roundRobinQueue = new LinkedList<VMWorker>();
         machinesByID = new HashMap<String, VMWorker>();
@@ -47,6 +58,14 @@ public class VMScheduler {
         }
     }
 
+    /**
+     * Adds a job to the queue of the given machine.
+     *
+     * @param machineJID the JID of the virtual machine to execute the job
+     * @param job        the job to execute
+     * @throws ServiceRefusedException if, for any reason, the job cannot be
+     *                                 accepted
+     */
     public synchronized void addJob(final String machineJID,
                                     final Job job) throws ServiceRefusedException {
         VMWorker w = machinesByID.get(machineJID);
@@ -64,11 +83,25 @@ public class VMScheduler {
         //...
     }
 
+    /**
+     * Removes or cancels a job.
+     *
+     * @param machineJID the machine who was to have received the job
+     * @param jobID      the ID of the specific job to be removed
+     */
     public synchronized void removeJob(final String machineJID,
-                                       final Job job) {
+                                       final String jobID) {
 
     }
 
+    /**
+     * Creates a new virtual machine.
+     *
+     * @param machineJID the intended JID of the virtual machine
+     * @param type       the type of virtual machine to create
+     * @return whether the virtual machine was successfully created
+     * @throws ServiceRefusedException if, for any reason, the machine cannot be created
+     */
     public synchronized boolean addMachine(final String machineJID,
                                            final String type) throws ServiceRefusedException {
         if (machinesByID.size() == maxWorkers) {
@@ -95,6 +128,14 @@ public class VMScheduler {
         return roundRobinQueue.offer(m);
     }
 
+    /**
+     * Destroys an already-created virtual machine.
+     *
+     * @param machineJID the JID of the virtual machine to destroy
+     * @return whether the virtual machine was successfully destroyed
+     * @throws ServiceRefusedException if, for any reason, the virtual machine
+     *                                 cannot be destroyed
+     */
     public synchronized boolean removeMachine(final String machineJID) throws ServiceRefusedException {
         if (null == machinesByID.get(machineJID)) {
             throw new ServiceRefusedException("no such machine: '" + machineJID + "'");
@@ -105,16 +146,27 @@ public class VMScheduler {
         return true;
     }
 
+    /**
+     * @return the status of this scheduler
+     */
     public FarmStatus getFarmPresence() {
         //...
         return null;
     }
 
+    /**
+     * @param machineJID the JID of the virtual machine of interest
+     * @return the status of the given virtual machine
+     */
     public VMStatus getVMPresence(final String machineJID) {
         //...
         return null;
     }
 
+    /**
+     * @param iqID the ID of the job of interest
+     * @return the status of the given job
+     */
     public JobStatus getJobStatus(final String iqID) {
         //...
         return null;

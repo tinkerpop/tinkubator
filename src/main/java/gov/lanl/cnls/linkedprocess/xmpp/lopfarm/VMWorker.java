@@ -7,6 +7,15 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
 /**
+ * An object with an internal thread which is capable of executing scripts
+ * (via ScriptEngine) within that thread, pausing them if they take longer
+ * to execute than a given time slice, then resuming execution at a later
+ * time.
+ * Note: relies on the deprecated methods Thread.suspend and Thread.resume.
+ * Deadlocks are avoided by preventing the internal thread from obtaining a
+ * lock on any object apart from two special monitors, neither of which can
+ * be locked at the time the thread is suspended.
+ *
  * Author: josh
  * Date: Jun 24, 2009
  * Time: 2:15:41 PM
@@ -36,6 +45,11 @@ public class VMWorker {
             timeoutMonitor = "",
             workerWaitMonitor = "";
 
+    /**
+     * Creates a new virtual machine worker.
+     * @param scriptEngine the ScriptEngine with which to evaluate expressions
+     * @param resultHandler a handler for job results
+     */
     public VMWorker(final ScriptEngine scriptEngine,
                     final VMScheduler.VMResultHandler resultHandler) {
         this.scriptEngine = scriptEngine;
@@ -51,12 +65,20 @@ public class VMWorker {
         state = State.IDLE_NOJOBS;
     }
 
+    /**
+     * @return whether the worker currently has work to do (either a suspended
+     * job in progress, or pending jobs in the queue)
+     */
     public synchronized boolean canWork() {
         return (State.IDLE_READYTOWORK == state
                 || State.BUSY_SUSPENDED == state);
     }
 
-    // Note: adding a job does not necessarily cause the worker to become active.
+    /**
+     * Adds a job to the queue.
+     * Note: this alone does not cause the worker to become active.
+     * @param job the job to add
+     */
     public synchronized void addJob(final Job job) {
         switch (state) {
             case IDLE_NOJOBS:
@@ -74,6 +96,13 @@ public class VMWorker {
         }
     }
 
+    /**
+     * Work on the current job for at most a given window of time.  If the job
+     * is finished during this time, its result will be handled.  Otherwise, the
+     * job will be suspended, to be resumed on a subsequent call to work().
+     * Note: This method should only be called when the value of canWork() is true.
+     * @param timeout the length of the time window
+     */
     public synchronized void work(final long timeout) {
         switch (state) {
             case IDLE_READYTOWORK:
@@ -110,6 +139,8 @@ public class VMWorker {
                 resultHandler.handleResult(latestResult);
                 // Advance to the wait()
                 workerThread.resume();
+
+                // Load the next job, if there is one.
                 if (0 == jobQueue.size()) {
                     state = State.IDLE_NOJOBS;
                 } else {
@@ -126,10 +157,34 @@ public class VMWorker {
      * Terminates execution of the current job and prevents further jobs.
      * This method may be called at any time, in any thread.
      */
-    public void cancel() {
+    public synchronized void cancel() {
+        switch (state) {
+            case BUSY_SUSPENDED:
+                workerThread.interrupt();
+                // Put the current job in the queue to be cancelled.
+                jobQueue.offer(currentJob);
+                break;
+            case IDLE_NOJOBS:
+                // Nothing to do.
+                break;
+            case IDLE_READYTOWORK:
+                // Put the current job in the queue to be cancelled.
+                jobQueue.offer(currentJob);
+                break;
+            case TERMINATED:
+                // Been there, done that.
+                return;
+            default:
+                throw new IllegalStateException("cannot cancel from state: " + state);
+        }
+
         state = State.TERMINATED;
-        workerThread.interrupt();
-        timeoutMonitor.notify();
+
+        // Cancel any jobs in the queue.
+        for (Job j : jobQueue.asCollection()) {
+            JobResult cancelledJob = new JobResult(j);
+            resultHandler.handleResult(cancelledJob);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -174,7 +229,7 @@ public class VMWorker {
                     state = State.BUSY_ACTIVE;
 
                     evaluate(currentJob);
-                    // At this point, two states are possible: IDLE_RESULTISREADY and IDLE_ERRORISREADY
+                    // At this point, the only possible state is IDLE_RESULTISREADY
 
                     synchronized (timeoutMonitor) {
                         // Notify the parent thread that a result is available.

@@ -3,6 +3,7 @@ package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import org.apache.log4j.Logger;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -45,5 +46,9 @@ public class LoPQueue<T> {
 
     public synchronized int size() {
         return queue.size();
+    }
+
+    public Collection<T> asCollection() {
+        return queue;
     }
 }
