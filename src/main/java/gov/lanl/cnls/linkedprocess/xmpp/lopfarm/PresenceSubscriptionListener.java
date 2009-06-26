@@ -14,12 +14,10 @@ import org.jivesoftware.smack.packet.Presence;
  */
 public class PresenceSubscriptionListener implements PacketListener {
 
-    XMPPConnection connection;
-    Roster roster;
+    XmppFarm farm;
 
-    public PresenceSubscriptionListener(XMPPConnection connection, Roster roster) {
-        this.connection = connection;
-        this.roster = roster;
+    public PresenceSubscriptionListener(XmppFarm farm) {
+        this.farm = farm;
     }
 
     public void processPacket(Packet packet) {
@@ -31,9 +29,9 @@ public class PresenceSubscriptionListener implements PacketListener {
             Presence subscribe = new Presence(Presence.Type.subscribe);
             subscribed.setFrom(packet.getTo());
             subscribe.setFrom(packet.getTo());
-            connection.sendPacket(subscribed);
-            connection.sendPacket(subscribe);
-            connection.sendPacket(XmppFarm.createFarmPresence(XmppFarm.FarmPresence.AVAILABLE));
+            farm.getConnection().sendPacket(subscribed);
+            farm.getConnection().sendPacket(subscribe);
+            farm.getConnection().sendPacket(farm.createFarmPresence(XmppFarm.FarmPresence.AVAILABLE));
             return;
 
         } else if(type == Presence.Type.unsubscribe) {
@@ -42,16 +40,16 @@ public class PresenceSubscriptionListener implements PacketListener {
             Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
             unsubscribed.setFrom(packet.getTo());
             unsubscribe.setFrom(packet.getTo());
-            connection.sendPacket(unsubscribed);
-            connection.sendPacket(unsubscribe);
-            connection.sendPacket(XmppFarm.createFarmPresence(XmppFarm.FarmPresence.UNAVAILABLE));
+            farm.getConnection().sendPacket(unsubscribed);
+            farm.getConnection().sendPacket(unsubscribe);
+            farm.getConnection().sendPacket(farm.createFarmPresence(XmppFarm.FarmPresence.UNAVAILABLE));
             try {
-            roster.removeEntry(roster.getEntry(packet.getFrom()));
+            farm.getRoster().removeEntry(farm.getRoster().getEntry(packet.getFrom()));
             } catch(XMPPException e) {
                 e.printStackTrace();
             }
             return;
         }
-        XmppFarm.LOGGER.info("This shouldn't have happened.");
+        XmppFarm.LOGGER.info("This shouldn't have happened.");  // TODO: make this an exception or something -- however, this has yet to happen. Perhaps just remove.
     }
 }

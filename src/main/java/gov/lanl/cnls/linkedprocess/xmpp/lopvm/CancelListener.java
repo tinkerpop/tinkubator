@@ -11,10 +11,10 @@ import org.jivesoftware.smack.packet.IQ;
  * Time: 1:21:45 PM
  */
 public class CancelListener implements PacketListener {
-     private XMPPConnection connection;
+     private XmppVirtualMachine vm;
 
-    public CancelListener(XMPPConnection connection) {
-        this.connection = connection;
+    public CancelListener(XmppVirtualMachine vm) {
+       this.vm = vm;
     }
 
     public void processPacket(Packet cancel) {
@@ -32,7 +32,7 @@ public class CancelListener implements PacketListener {
 
             XmppVirtualMachine.LOGGER.debug("Sent CancelListener:");
             XmppVirtualMachine.LOGGER.debug(returnCancel.toXML());
-            connection.sendPacket(returnCancel);
+            vm.getConnection().sendPacket(returnCancel);
 
         } catch (Exception e) {
             e.printStackTrace();

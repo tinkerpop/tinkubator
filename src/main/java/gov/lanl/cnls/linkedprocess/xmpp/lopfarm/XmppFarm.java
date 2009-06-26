@@ -12,6 +12,10 @@ import org.jivesoftware.smack.filter.IQTypeFilter;
 import org.jivesoftware.smack.provider.ProviderManager;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
+
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * User: marko
@@ -25,8 +29,10 @@ public class XmppFarm extends XmppClient {
     public static final String STATUS_MESSAGE = "LoP Farm v0.1";
     public static enum FarmPresence { AVAILABLE, UNAVAILABLE, TOO_MANY_JOBS }
 
+    protected Map<String, XmppVirtualMachine> machines;
     protected FarmPresence currentPresence;
     protected Roster roster;
+    protected VMScheduler scheduler;
 
     public XmppFarm(final String server, final int port, final String username, final String password) throws Exception {
 
@@ -47,13 +53,16 @@ public class XmppFarm extends XmppClient {
 
         this.roster = connection.getRoster();
         this.roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
+        this.scheduler = new VMScheduler();
+        this.machines = new HashMap<String, XmppVirtualMachine>();
+        
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(Spawn.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter destroyFilter = new AndFilter(new PacketTypeFilter(Destroy.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter subscribeFilter = new AndFilter(new PacketTypeFilter(Presence.class), new PresenceSubscriptionFilter());
-        connection.addPacketListener(new SpawnListener(connection), spawnFilter);
-        connection.addPacketListener(new DestroyListener(connection), destroyFilter);
-        connection.addPacketListener(new PresenceSubscriptionListener(connection, roster), subscribeFilter);    
+        connection.addPacketListener(new SpawnListener(this), spawnFilter);
+        connection.addPacketListener(new DestroyListener(this), destroyFilter);
+        connection.addPacketListener(new PresenceSubscriptionListener(this), subscribeFilter);    
     }
 
     public void logon(String server, int port, String username, String password) throws XMPPException {
@@ -62,17 +71,8 @@ public class XmppFarm extends XmppClient {
         connection.sendPacket(this.createFarmPresence(FarmPresence.AVAILABLE));
     }
 
-    public void sendPresence(Presence presence) {
-        if(presence.getType() == Presence.Type.available) {
-            this.currentPresence = FarmPresence.AVAILABLE;
-        } else {
-            this.currentPresence = FarmPresence.TOO_MANY_JOBS;
-        }
-
-        this.connection.sendPacket(presence);
-    }
-
-    public static Presence createFarmPresence(final FarmPresence type) {
+  
+    public Presence createFarmPresence(final FarmPresence type) {
 
         if(type == FarmPresence.AVAILABLE) {
             return new Presence(Presence.Type.available, STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
@@ -83,11 +83,27 @@ public class XmppFarm extends XmppClient {
         }
     }
 
-    public void spawnVirtualMachine() {
-
+    public Roster getRoster() {
+        return this.roster;
     }
 
-    public void destroyVirtualMachine() {
-        
+    public String spawnVirtualMachine() {
+        try {
+            XmppVirtualMachine vm = new XmppVirtualMachine(this.getServer(), this.getPort(), this.getUsername(), this.getPassword());
+            this.scheduler.addMachine(vm.getFullJid(), "JavaScript");
+            this.machines.put(vm.getFullJid(), vm);
+            return vm.getFullJid();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void destroyVirtualMachine(String vmJid) {
+        System.out.println(this.machines);
+        System.out.println(vmJid);
+        XmppVirtualMachine vm = this.machines.get(vmJid);
+        vm.shutDown();
+        this.machines.remove(vmJid);
     }
 }

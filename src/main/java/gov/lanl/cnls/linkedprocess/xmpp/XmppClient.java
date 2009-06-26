@@ -20,6 +20,10 @@ public abstract class XmppClient {
     protected XMPPConnection connection;
     protected boolean shutdownRequested = false;
 
+    private String username;
+    private String password;
+    private String server;
+    private int port;
 
     protected void initiateFeatures() {
         ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(connection);
@@ -33,6 +37,11 @@ public abstract class XmppClient {
     }
 
     protected void logon(String server, int port, String username, String password, String resource) throws XMPPException {
+
+        this.server = server;
+        this.port = port;
+        this.username = username;
+        this.password = password;
 
         // if connection is still active, disconnect it.
         if (null != connection && connection.isConnected()) {
@@ -83,14 +92,29 @@ public abstract class XmppClient {
         return this.connection.getUser();
     }
 
+    public XMPPConnection getConnection() {
+        return this.connection;
+    }
+
     public void shutDown() {
         LOGGER.info("Requesting shutdown");
         shutdownRequested = true;
         logout();
     }
 
-    public void sendPresence(Presence presence) {
-        this.connection.sendPacket(presence);
+    public String getUsername() {
+        return this.username;
     }
 
+    public String getPassword() {
+        return this.password;
+    }
+
+    public int getPort() {
+        return this.port;
+    }
+
+    public String getServer() {
+        return this.server;
+    }
 }

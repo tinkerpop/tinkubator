@@ -19,12 +19,11 @@ import java.io.InputStreamReader;
 public class EvaluateListener implements PacketListener {
 
     private XMLOutputter out = new XMLOutputter();
-    private ScriptEngine engine;
-    private XMPPConnection connection;
+    private XmppVirtualMachine vm;
 
-    public EvaluateListener(ScriptEngine engine, XMPPConnection connection) {
-        this.engine = engine;
-        this.connection = connection;
+
+    public EvaluateListener(XmppVirtualMachine vm) {
+        this.vm = vm;
     }
 
     public void processPacket(Packet eval) {
@@ -41,7 +40,7 @@ public class EvaluateListener implements PacketListener {
 
             String returnValue = null;
 
-
+            /*
             try {
 
                 String code = ((Evaluate) eval).getExpression();
@@ -56,7 +55,7 @@ public class EvaluateListener implements PacketListener {
             } catch (Exception e) {
                 returnValue = e.toString();
                 returnEval.setType(IQ.Type.ERROR);
-            }
+            } */
 
             // this makes sure the XML characters are set appropriately as to not create faulty XML.
             Text returnText = new Text(returnValue);
@@ -65,7 +64,7 @@ public class EvaluateListener implements PacketListener {
             returnEval.setExpression(returnValue);
             XmppVirtualMachine.LOGGER.debug("Sent EvaluateListener:");
             XmppVirtualMachine.LOGGER.debug(returnEval.toXML());
-            connection.sendPacket(returnEval);
+            vm.getConnection().sendPacket(returnEval);
 
         } catch (Exception e) {
             e.printStackTrace();

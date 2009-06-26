@@ -11,11 +11,20 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
 public class Spawn extends IQ {
 
     public static final String SPAWN_TAGNAME = "spawn";
+    public String vmJid;
+
+    public void setVmJid(String vmJid) {
+        this.vmJid = vmJid;
+    }
+
+    public String getVmJid() {
+        return this.vmJid;
+    }
 
     public String getChildElementXML() {
-        StringBuilder builder = new StringBuilder("\n  <" + SPAWN_TAGNAME + " xmlns=\"" + LinkedProcess.LOP_FARM_NAMESPACE +"\">");
-
-        builder.append("</"+ SPAWN_TAGNAME +">\n");
-        return builder.toString();
+        if(null != vmJid)
+            return "<" + SPAWN_TAGNAME + " xmlns=\"" + LinkedProcess.LOP_FARM_NAMESPACE +"\" jid=\"" + this.vmJid + "\" />";
+        else
+            return "<" + SPAWN_TAGNAME + " xmlns=\"" + LinkedProcess.LOP_FARM_NAMESPACE +"\" />";
     }
 }

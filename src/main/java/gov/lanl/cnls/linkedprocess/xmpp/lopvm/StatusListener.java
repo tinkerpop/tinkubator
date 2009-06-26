@@ -11,10 +11,10 @@ import org.jivesoftware.smack.packet.IQ;
  * Time: 12:54:11 PM
  */
 public class StatusListener implements PacketListener {
-     private XMPPConnection connection;
+     private XmppVirtualMachine vm;
 
-    public StatusListener(XMPPConnection connection) {
-        this.connection = connection;
+    public StatusListener(XmppVirtualMachine vm) {
+        this.vm = vm;
     }
 
     public void processPacket(Packet status) {
@@ -32,7 +32,7 @@ public class StatusListener implements PacketListener {
 
             XmppVirtualMachine.LOGGER.debug("Sent StatusListener:");
             XmppVirtualMachine.LOGGER.debug(returnStatus.toXML());
-            connection.sendPacket(returnStatus);
+            vm.getConnection().sendPacket(returnStatus);
 
         } catch (Exception e) {
             e.printStackTrace();

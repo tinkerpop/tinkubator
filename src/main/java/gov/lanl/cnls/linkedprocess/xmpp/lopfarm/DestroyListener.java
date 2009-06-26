@@ -12,10 +12,10 @@ import org.jivesoftware.smack.packet.IQ;
  */
 public class DestroyListener implements PacketListener {
 
-    private XMPPConnection connection;
+    private XmppFarm farm;
 
-    public DestroyListener(XMPPConnection connection) {
-        this.connection = connection;
+    public DestroyListener(XmppFarm farm) {
+        this.farm = farm;
     }
 
     public void processPacket(Packet destroy) {
@@ -24,16 +24,20 @@ public class DestroyListener implements PacketListener {
             XmppFarm.LOGGER.debug("Arrived DestroyListener:");
             XmppFarm.LOGGER.debug(destroy.toXML());
 
+            String vmJid = ((Destroy)destroy).getVmJid();
+            farm.destroyVirtualMachine(vmJid);
+
             Destroy returnDestroy = new Destroy();
             returnDestroy.setTo(destroy.getFrom());
             if (destroy.getPacketID() != null) {
                 returnDestroy.setPacketID(destroy.getPacketID());
             }
+            returnDestroy.setVmJid(vmJid);
             returnDestroy.setType(IQ.Type.RESULT);
 
             XmppFarm.LOGGER.debug("Sent DestroyListener:");
             XmppFarm.LOGGER.debug(returnDestroy.toXML());
-            connection.sendPacket(returnDestroy);
+            farm.getConnection().sendPacket(returnDestroy);
 
         } catch (Exception e) {
             e.printStackTrace();

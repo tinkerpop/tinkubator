@@ -14,7 +14,7 @@ public class CancelProvider implements IQProvider {
 
     public IQ parseIQ(XmlPullParser parser) throws Exception {
         Cancel cancel = new Cancel();
-        cancel.setJobId(parser.getAttributeValue(LinkedProcess.LOP_NAMESPACE, "id"));
+        cancel.setJobId(parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, "id"));
         return cancel;
     }
 }

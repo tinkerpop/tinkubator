@@ -12,28 +12,31 @@ import org.jivesoftware.smack.packet.IQ;
  */
 public class SpawnListener implements PacketListener {
     
-    private XMPPConnection connection;
+    private XmppFarm farm;
 
-    public SpawnListener(XMPPConnection connection) {
-        this.connection = connection;
+    public SpawnListener(XmppFarm farm) {
+        this.farm = farm;
     }
 
     public void processPacket(Packet spawn) {
 
         try {
-            XmppFarm.LOGGER.debug("Arrived SpawnListener:");
-            XmppFarm.LOGGER.debug(spawn.toXML());
+            XmppFarm.LOGGER.info("Arrived SpawnListener:");
+            XmppFarm.LOGGER.info(spawn.toXML());
+
+            String vmJid = farm.spawnVirtualMachine();
 
             Spawn returnSpawn = new Spawn();
             returnSpawn.setTo(spawn.getFrom());
             if (spawn.getPacketID() != null) {
                 returnSpawn.setPacketID(spawn.getPacketID());
             }
+            returnSpawn.setVmJid(vmJid);
             returnSpawn.setType(IQ.Type.RESULT);
 
-            XmppFarm.LOGGER.debug("Sent SpawnListener:");
-            XmppFarm.LOGGER.debug(returnSpawn.toXML());
-            connection.sendPacket(returnSpawn);
+            XmppFarm.LOGGER.info("Sent SpawnListener:");
+            XmppFarm.LOGGER.info(returnSpawn.toXML());
+            farm.getConnection().sendPacket(returnSpawn);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -60,9 +60,9 @@ public class XmppVirtualMachine extends XmppClient {
         PacketFilter statusFilter = new AndFilter(new PacketTypeFilter(Status.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter cancelFilter = new AndFilter(new PacketTypeFilter(Cancel.class), new IQTypeFilter(IQ.Type.GET));
 
-        connection.addPacketListener(new EvaluateListener(engine, connection), evalFilter);
-        connection.addPacketListener(new StatusListener(connection), statusFilter);
-        connection.addPacketListener(new CancelListener(connection), cancelFilter);
+        connection.addPacketListener(new EvaluateListener(this), evalFilter);
+        connection.addPacketListener(new StatusListener(this), statusFilter);
+        connection.addPacketListener(new CancelListener(this), cancelFilter);
 
 
     }
