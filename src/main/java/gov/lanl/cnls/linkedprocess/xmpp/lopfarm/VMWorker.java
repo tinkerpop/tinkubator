@@ -169,7 +169,7 @@ public class VMWorker {
      * remainder of the window, but it will not complete normally unless it
      * does so within that window.  Nor will additional jobs be processed.
      */
-    public synchronized void cancel() {
+    public synchronized void terminate() {
         switch (state) {
             case ACTIVE_SUSPENDED:
                 // Cause the worker thread to die.
@@ -237,6 +237,18 @@ public class VMWorker {
         throw new ServiceRefusedException("job not found: " + jobID);
     }
 
+    public synchronized boolean jobExists(final String jobID) {
+        switch (state) {
+            case ACTIVE_SUSPENDED:
+                return jobID.equals(latestJob.getIQID())
+                        || jobQueueContains(jobID);
+            case IDLE_WAITING:
+                return jobQueueContains(jobID);
+            default:
+                throw new IllegalStateException("can't check job status in state: " + state);
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -266,6 +278,16 @@ public class VMWorker {
     }
 
     ////////////////////////////////////////////////////////////////////////////
+
+    private boolean jobQueueContains(final String jobID) {
+        for (Job j : jobQueue.asCollection()) {
+            if (j.getIQID().equals(jobID)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     private void evaluate(final Job request) {
         try {

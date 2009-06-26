@@ -26,10 +26,11 @@ public class VMScheduler {
     private final VMSequencer[] sequencers;
     private final int maxWorkers;
     private final Thread schedulerThread;
+    private FarmStatus state;
 
     public enum FarmStatus {
-        ACTIVE
-    }  // TODO
+        ACTIVE, ACTIVE_FULL
+    }
 
     public enum VMStatus {
         ACTIVE, DOES_NOT_EXIST
@@ -46,6 +47,8 @@ public class VMScheduler {
         workerQueue = new LinkedList<VMWorker>();
         idleWorkerPool = new HashSet<VMWorker>();
         workersByJID = new HashMap<String, VMWorker>();
+
+        state = FarmStatus.ACTIVE;
 
         Properties props = LinkedProcess.getProperties();
 
@@ -113,7 +116,7 @@ public class VMScheduler {
      */
     public synchronized void addMachine(final String machineJID,
                                         final String scriptType) throws ServiceRefusedException {
-        if (workersByJID.size() == maxWorkers) {
+        if (FarmStatus.ACTIVE_FULL == state) {
             throw new ServiceRefusedException("too many active virtual machines");
         }
 
@@ -138,6 +141,10 @@ public class VMScheduler {
         VMWorker w = new VMWorker(engine, createResultHandler());
 
         workersByJID.put(machineJID, w);
+        if (maxWorkers == workersByJID.size()) {
+            state = FarmStatus.ACTIVE_FULL;
+        }
+
         idleWorkerPool.add(w);
     }
 
@@ -149,42 +156,53 @@ public class VMScheduler {
      *                                 cannot be destroyed
      */
     public synchronized void removeMachine(final String machineJID) throws ServiceRefusedException {
-        VMWorker w = workersByJID.get(machineJID);
+        VMWorker w = getWorkerByJID(machineJID);
 
-        if (null == w) {
-            throw new ServiceRefusedException("no such machine: '" + machineJID + "'");
+        workersByJID.remove(machineJID);
+        synchronized (workerQueue) {
+            workerQueue.remove(w);
         }
 
-        w.cancel();
+        idleWorkerPool.remove(w);
+
+        w.terminate();
+
+        if (maxWorkers > workersByJID.size()) {
+            state = FarmStatus.ACTIVE;
+        }
     }
 
     /**
      * @return the status of this scheduler
      */
-    public FarmStatus getFarmPresence() {
-        //...
-        return null;
+    public synchronized FarmStatus getFarmPresence() {
+        return state;
     }
 
     /**
      * @param machineJID the JID of the virtual machine of interest
      * @return the status of the given virtual machine
      */
-    public VMStatus getVMPresence(final String machineJID) {
-        //...
-        return null;
+    public synchronized VMStatus getVMPresence(final String machineJID) {
+        VMWorker w = workersByJID.get(machineJID);
+        return (null == w)
+                ? VMStatus.DOES_NOT_EXIST
+                : VMStatus.ACTIVE;
     }
 
     /**
      * @param iqID the ID of the job of interest
      * @return the status of the given job
      */
-    public JobStatus getJobStatus(final String iqID) {
-        //...
-        return null;
+    public synchronized JobStatus getJobStatus(final String machineJID,
+                                               final String iqID) {
+        VMWorker w = workersByJID.get(machineJID);
+        return w.jobExists(iqID)
+                ? JobStatus.ACTIVE
+                : JobStatus.DOES_NOT_EXIST;
     }
 
-    public void shutDown() {
+    public synchronized void shutDown() {
 
     }
 
