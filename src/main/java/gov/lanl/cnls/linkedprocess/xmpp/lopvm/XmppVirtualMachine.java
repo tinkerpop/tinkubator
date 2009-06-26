@@ -2,9 +2,15 @@ package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.IQTypeFilter;
@@ -13,13 +19,6 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Iterator;
 
 /**
  * User: marko
@@ -36,6 +35,8 @@ public class XmppVirtualMachine extends XmppClient {
 
     protected ScriptEngine engine;
     protected VirtualMachinePresence currentPresence;
+	private static boolean shutdownRequested = false;
+	private boolean shutdown = false;
 
     public XmppVirtualMachine(final String server, final int port, final String username, final String password) throws Exception {
 
@@ -67,11 +68,30 @@ public class XmppVirtualMachine extends XmppClient {
         connection.addPacketListener(new StatusListener(connection), statusFilter);
         connection.addPacketListener(new CancelListener(connection), cancelFilter);
 
-        // process packets until a quit command is sent.
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        while (!br.readLine().equals("quit")) {}
+        Thread shutdownHook = new Thread(new Runnable() {
 
-        this.logout();
+			@Override
+			public void run() {
+				// process packets until a quit command is sent.
+				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				// TODO Auto-generated method stub
+		        try {
+					while (!shutdownRequested) {
+						Thread.sleep(10);
+					}//!br.readLine().equals("quit") || 
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        LOGGER.info("shutting down.");
+		        logout();
+		        shutdown=true;
+				
+			}
+        });
+        shutdownHook.start();
+        	
+
     }
 
     public void logon(String server, int port, String username, String password) throws XMPPException {
@@ -101,4 +121,18 @@ public class XmppVirtualMachine extends XmppClient {
             return new Presence(Presence.Type.unavailable, statusMessage, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.dnd);
         }
     }
+
+	public void shutDown() {
+		LOGGER.info("requesting shutdown");
+		shutdownRequested = true;
+		while(!shutdown ) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		};
+		
+	}
 }
