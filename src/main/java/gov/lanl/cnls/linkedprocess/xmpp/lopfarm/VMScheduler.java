@@ -43,7 +43,10 @@ public class VMScheduler {
     /**
      * Creates a new virtual machine scheduler.
      */
-    public VMScheduler() {
+    public VMScheduler(final VMResultHandler resultHandler) {
+
+        // TODO: do something with resultHandler
+
         workerQueue = new LinkedList<VMWorker>();
         idleWorkerPool = new HashSet<VMWorker>();
         workersByJID = new HashMap<String, VMWorker>();
@@ -218,22 +221,12 @@ public class VMScheduler {
 
     private VMWorkerSource createWorkerSource() {
         return new VMWorkerSource() {
-            public VMWorker getWorker() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+            public synchronized VMWorker getWorker() {
+                synchronized (workerQueue) {
+      return null;              
+                }
             }
         };
-    }
-
-    private synchronized void assignNextJob() {
-
-    }
-
-    private void handleJobReceived() {
-
-    }
-
-    private void handleJobFinished() {
-
     }
 
     private void enqueueWorker(final VMWorker w) {
