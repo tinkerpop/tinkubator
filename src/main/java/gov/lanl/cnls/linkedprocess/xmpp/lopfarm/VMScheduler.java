@@ -21,7 +21,6 @@ public class VMScheduler {
     private final Set<VMWorker> idleWorkerPool;
     private final Map<String, VMWorker> workersByJID;
     private final ScriptEngineManager manager = new ScriptEngineManager();
-    private final VMSequencer[] sequencers;
     private final int maxWorkers;
     private final VMResultHandler resultHandler;
     private FarmStatus state;
@@ -40,6 +39,7 @@ public class VMScheduler {
 
     /**
      * Creates a new virtual machine scheduler.
+     * @param resultHandler a handler for results produced by the scheduler
      */
     public VMScheduler(final VMResultHandler resultHandler) {
         this.resultHandler = resultHandler;
@@ -63,7 +63,7 @@ public class VMScheduler {
 
         int n = new Integer(props.getProperty(
                 LinkedProcess.MAX_CONCURRENT_WORKER_THREADS));
-        sequencers = new VMSequencer[n];
+        VMSequencer[] sequencers = new VMSequencer[n];
         for (int i = 0; i < n; i++) {
             sequencers[i] = new VMSequencer(source, timeSlice);
         }
@@ -188,6 +188,7 @@ public class VMScheduler {
     }
 
     /**
+     * @param machineJID the JID of the machine to execute the job
      * @param iqID the ID of the job of interest
      * @return the status of the given job
      */
@@ -200,7 +201,12 @@ public class VMScheduler {
     }
 
     public synchronized void shutDown() {
+        workerQueue.clear();
+        workerQueue.stopBlocking();
 
+        for (VMWorker w : workersByJID.values()) {
+            w.terminate();
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
