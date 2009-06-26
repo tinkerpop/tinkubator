@@ -23,7 +23,7 @@ public class Evaluate extends IQ {
     }
 
     public String getChildElementXML() {
-        StringBuilder builder = new StringBuilder("\n  <" + EVALUATION_TAGNAME + " xmlns=\"" + LinkedProcess.LOP_NAMESPACE +"\">");
+        StringBuilder builder = new StringBuilder("\n  <" + EVALUATION_TAGNAME + " xmlns=\"" + LinkedProcess.LOP_VM_NAMESPACE +"\">");
         if(expression != null) {
             builder.append(expression);
         }

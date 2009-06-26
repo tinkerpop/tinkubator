@@ -30,8 +30,8 @@ public class EvaluateListener implements PacketListener {
     public void processPacket(Packet eval) {
 
         try {
-            XmppVirtualMachine.LOGGER.debug("Arrived EvaluateListener:");
-            XmppVirtualMachine.LOGGER.debug(eval.toXML());
+            XmppVirtualMachine.LOGGER.info("Arrived EvaluateListener:");
+            XmppVirtualMachine.LOGGER.info(eval.toXML());
 
             try {
                 String expression = ((Evaluate) eval).getExpression();

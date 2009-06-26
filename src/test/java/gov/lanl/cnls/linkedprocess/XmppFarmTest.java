@@ -3,6 +3,7 @@ package gov.lanl.cnls.linkedprocess;
 import junit.framework.TestCase;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
+import gov.lanl.cnls.linkedprocess.xmpp.tools.SmackPlay;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.After;
@@ -34,6 +35,11 @@ public class XmppFarmTest extends TestCase {
     	assertTrue(xmppFarm.getConnection().isAuthenticated());
     	xmppFarm.spawnVirtualMachine();
     }
+
+    public void testSpawn() throws Exception {
+ 
+    }
+
     @After
     public void tearDown() {
     	xmppFarm.shutDown();
