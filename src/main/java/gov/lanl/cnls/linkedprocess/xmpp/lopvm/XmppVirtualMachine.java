@@ -54,6 +54,7 @@ public class XmppVirtualMachine extends XmppClient {
             LOGGER.error("error: " + e);
             System.exit(1);
         }
+        
 
         PacketFilter evalFilter = new AndFilter(new PacketTypeFilter(Evaluate.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter statusFilter = new AndFilter(new PacketTypeFilter(Status.class), new IQTypeFilter(IQ.Type.GET));
@@ -62,16 +63,14 @@ public class XmppVirtualMachine extends XmppClient {
         connection.addPacketListener(new EvaluateListener(engine, connection), evalFilter);
         connection.addPacketListener(new StatusListener(connection), statusFilter);
         connection.addPacketListener(new CancelListener(connection), cancelFilter);
+
+
     }
 
-    public void logon(String server, int port, String username, String password) throws XMPPException {
+    protected void logon(String server, int port, String username, String password) throws XMPPException {
 
         super.logon(server, port, username, password, RESOURCE_PREFIX);
         connection.sendPacket(this.createVMPresence(VirtualMachinePresence.AVAILABLE));
-    }
-
-    public void sendPresence(Presence presence) {
-        this.connection.sendPacket(presence);
     }
 
     public void printClientStatistics() {
