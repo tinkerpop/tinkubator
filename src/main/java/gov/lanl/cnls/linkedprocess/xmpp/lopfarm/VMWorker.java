@@ -15,18 +15,17 @@ import javax.script.ScriptException;
  * Deadlocks are avoided by preventing the internal thread from obtaining a
  * lock on any object apart from two special monitors, neither of which can
  * be locked at the time the thread is suspended.
- *
+ * <p/>
  * Author: josh
  * Date: Jun 24, 2009
  * Time: 2:15:41 PM
  */
 public class VMWorker {
     private enum State {
-        BUSY_ACTIVE,
-        BUSY_SUSPENDED,
-        IDLE_NOJOBS,
-        IDLE_READYTOWORK,
-        IDLE_RESULTISREADY,
+        ACTIVE_INPROGRESS,
+        ACTIVE_SUSPENDED,
+        IDLE_WAITING,
+        IDLE_FINISHED,
         TERMINATED
     }
 
@@ -38,7 +37,7 @@ public class VMWorker {
     private final Thread workerThread;
     private State state;
 
-    private Job currentJob;
+    private Job latestJob;
     private JobResult latestResult;
 
     private final Object
@@ -47,7 +46,8 @@ public class VMWorker {
 
     /**
      * Creates a new virtual machine worker.
-     * @param scriptEngine the ScriptEngine with which to evaluate expressions
+     *
+     * @param scriptEngine  the ScriptEngine with which to evaluate expressions
      * @param resultHandler a handler for job results
      */
     public VMWorker(final ScriptEngine scriptEngine,
@@ -62,55 +62,65 @@ public class VMWorker {
         workerThread = new Thread(new WorkerRunnable());
         workerThread.start();
 
-        state = State.IDLE_NOJOBS;
+        state = State.IDLE_WAITING;
     }
 
     /**
      * @return whether the worker currently has work to do (either a suspended
-     * job in progress, or pending jobs in the queue)
+     *         job in progress, or pending jobs in the queue)
      */
     public synchronized boolean canWork() {
-        return (State.IDLE_READYTOWORK == state
-                || State.BUSY_SUSPENDED == state);
+        switch (state) {
+            case ACTIVE_SUSPENDED:
+                // Still working on the last job.
+                return true;
+            case IDLE_WAITING:
+                // Are there any pending jobs?
+                return 0 != jobQueue.size();
+            default:
+                throw new IllegalArgumentException("can't check for new work in state: " + state);
+        }
     }
 
     /**
      * Adds a job to the queue.
      * Note: this alone does not cause the worker to become active.
+     *
      * @param job the job to add
      */
     public synchronized void addJob(final Job job) {
         switch (state) {
-            case IDLE_NOJOBS:
-                currentJob = job;
-                state = State.IDLE_READYTOWORK;
-                break;
-            case IDLE_READYTOWORK:
-                jobQueue.offer(job);
-                break;
-            case BUSY_SUSPENDED:
+            case ACTIVE_SUSPENDED:
+            case IDLE_WAITING:
                 jobQueue.offer(job);
                 break;
             default:
-                throw new IllegalStateException("jobs cannot be added in state: " + state);
+                throw new IllegalStateException("can't add jobs in state: " + state);
         }
     }
 
     /**
-     * Work on the current job for at most a given window of time.  If the job
+     * Works on the current job for at most a given window of time.  If the job
      * is finished during this time, its result will be handled.  Otherwise, the
      * job will be suspended, to be resumed on a subsequent call to work().
      * Note: This method should only be called when the value of canWork() is true.
+     *
      * @param timeout the length of the time window
      */
     public synchronized void work(final long timeout) {
         switch (state) {
-            case IDLE_READYTOWORK:
-                synchronized (timeoutMonitor) {
-                    timeoutMonitor.notify();
+            case ACTIVE_SUSPENDED:
+                state = State.ACTIVE_INPROGRESS;
+                resumeWorkerThread();
+                break;
+            case IDLE_WAITING:
+                if (0 == jobQueue.size()) {
+                    throw new IllegalStateException("no jobs available. Call canWork() to avoid this condition.");
                 }
-            case BUSY_SUSPENDED:
-                workerThread.resume();
+                latestJob = jobQueue.poll();
+
+                state = State.ACTIVE_INPROGRESS;
+                notifyWorkerThread();
                 break;
             default:
                 throw new IllegalStateException("can't begin new work in state: " + state);
@@ -119,57 +129,60 @@ public class VMWorker {
         // Break out when the time slice has expired or the monitor has been notified.
         try {
             synchronized (timeoutMonitor) {
-                timeoutMonitor.wait(timeout);
+                // Check whether the job has already completed since it was
+                // started or resumed above.  There is still a very slight
+                // chance of a race condition in which which the thread finishes
+                // and is then forced to wait.  The only consequence of this
+                // would be a wasted execution window.
+                if (State.ACTIVE_INPROGRESS == state) {
+                    timeoutMonitor.wait(timeout);
+                }
             }
         } catch (InterruptedException e) {
             LOGGER.error("interrupted unexpectedly");
             System.exit(1);
         }
 
-        // Suspend the thread regardless of what state we're in.
-        workerThread.suspend();
+        // Suspend the thread immediately, regardless of what state we're in.
+        suspendWorkerThread();
 
         switch (state) {
-            case TERMINATED:
-                return;
-            case BUSY_ACTIVE:
-                state = State.BUSY_SUSPENDED;
-                return;
-            case IDLE_RESULTISREADY:
+            case ACTIVE_INPROGRESS:
+                state = State.ACTIVE_SUSPENDED;
+                break;
+            case IDLE_FINISHED:
                 resultHandler.handleResult(latestResult);
-                // Advance to the wait()
-                workerThread.resume();
 
-                // Load the next job, if there is one.
-                if (0 == jobQueue.size()) {
-                    state = State.IDLE_NOJOBS;
-                } else {
-                    currentJob = jobQueue.poll();
-                    state = State.IDLE_READYTOWORK;
-                }
+                // Advance to the wait()
+                state = State.IDLE_WAITING;
+                resumeWorkerThread();
                 break;
             default:
-                throw new IllegalStateException("state should not occur after work window: " + state);
+                throw new IllegalStateException("state should not occur at the end of a work window: " + state);
         }
     }
 
     /**
      * Terminates execution of the current job and prevents further jobs.
-     * This method may be called at any time, in any thread.
+     * This method may be called at any time, in any thread.  If it is called
+     * while a job is being executed, the job will continue executing for the
+     * remainder of the window, but it will not complete normally unless it
+     * does so within that window.  Nor will additional jobs be processed.
      */
     public synchronized void cancel() {
         switch (state) {
-            case BUSY_SUSPENDED:
-                workerThread.interrupt();
-                // Put the current job in the queue to be cancelled.
-                jobQueue.offer(currentJob);
+            case ACTIVE_SUSPENDED:
+                // Cause the worker thread to die.
+                state = State.TERMINATED;
+                interruptWorkerThread();
+
+                // Put the current job back in the queue to be cancelled along
+                // with the others.
+                jobQueue.offer(latestJob);
                 break;
-            case IDLE_NOJOBS:
-                // Nothing to do.
-                break;
-            case IDLE_READYTOWORK:
-                // Put the current job in the queue to be cancelled.
-                jobQueue.offer(currentJob);
+            case IDLE_WAITING:
+                state = State.TERMINATED;
+                notifyWorkerThread();
                 break;
             case TERMINATED:
                 // Been there, done that.
@@ -178,13 +191,78 @@ public class VMWorker {
                 throw new IllegalStateException("cannot cancel from state: " + state);
         }
 
-        state = State.TERMINATED;
-
-        // Cancel any jobs in the queue.
+        // Cancel all jobs in the queue.
         for (Job j : jobQueue.asCollection()) {
             JobResult cancelledJob = new JobResult(j);
             resultHandler.handleResult(cancelledJob);
         }
+    }
+
+    /**
+     * Cancels a specific job.
+     *
+     * @param jobID the ID of the job to be cancelled
+     * @throws ServiceRefusedException if the job can't be found
+     */
+    public synchronized void cancelJob(final String jobID) throws ServiceRefusedException {
+        switch (state) {
+            case ACTIVE_SUSPENDED:
+                if (latestJob.getIQID().equals(jobID)) {
+                    // Cause the worker thread to cease execution of the current
+                    // job and wait.
+                    state = State.IDLE_WAITING;
+                    interruptWorkerThread();
+
+                    // Put the current job in the queue to be discovered and
+                    // cancelled.
+                    jobQueue.offer(latestJob);
+                }
+                break;
+            case IDLE_WAITING:
+                // Nothing to do.
+                break;
+            default:
+                throw new IllegalStateException("can't cancel jobs in state: " + state);
+        }
+
+        // Look for the job in the queue and remove it if present.
+        // FIXME: inefficient
+        for (Job j : jobQueue.asCollection()) {
+            if (j.getIQID().equals(jobID)) {
+                jobQueue.remove(j);
+                return;
+            }
+        }
+
+        throw new ServiceRefusedException("job not found: " + jobID);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Causes the worker runnable to stop waiting.
+     */
+    private void notifyWorkerThread() {
+        synchronized (workerWaitMonitor) {
+            workerWaitMonitor.notify();
+        }
+    }
+
+    /**
+     * Causes the worker runnable to abandon execution of a script.
+     */
+    private void interruptWorkerThread() {
+        workerThread.interrupt();
+    }
+
+    @SuppressWarnings({"deprecation"})
+    private void suspendWorkerThread() {
+        workerThread.suspend();
+    }
+
+    @SuppressWarnings({"deprecation"})
+    private void resumeWorkerThread() {
+        workerThread.resume();
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -210,13 +288,11 @@ public class VMWorker {
     private void yieldError(final Job job,
                             final ScriptException exception) {
         latestResult = new JobResult(job, exception);
-        state = State.IDLE_RESULTISREADY;
     }
 
     private void yieldResult(final Job job,
-                             final String resultExpression) {
-        latestResult = new JobResult(job, resultExpression);
-        state = State.IDLE_RESULTISREADY;
+                             final String expression) {
+        latestResult = new JobResult(job, expression);
     }
 
     private class WorkerRunnable implements Runnable {
@@ -224,26 +300,22 @@ public class VMWorker {
         public void run() {
             // Break out when the worker is terminated.
             while (State.TERMINATED != state) {
-                // Two states are possible here: IDLE_READYTOWORK and (on the first iteration only) IDLE_NOJOBS
-                if (State.IDLE_READYTOWORK == state) {
-                    state = State.BUSY_ACTIVE;
-
-                    evaluate(currentJob);
-                    // At this point, the only possible state is IDLE_RESULTISREADY
-
-                    synchronized (timeoutMonitor) {
-                        // Notify the parent thread that a result is available.
-                        timeoutMonitor.notify();
-                    }
-                }
-
                 try {
+                    if (State.ACTIVE_INPROGRESS == state) {
+                        evaluate(latestJob);
+                        state = State.IDLE_FINISHED;
+
+                        synchronized (timeoutMonitor) {
+                            // Notify the parent thread that a result is available.
+                            timeoutMonitor.notify();
+                        }
+                    }
+
                     synchronized (workerWaitMonitor) {
                         workerWaitMonitor.wait();
                     }
                 } catch (InterruptedException e) {
-                    LOGGER.warn("worker thread has been interrupted unexpectedly");
-                    return;
+                    // Continue to a new iteration.
                 }
             }
         }

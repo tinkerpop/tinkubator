@@ -48,6 +48,10 @@ public class LoPQueue<T> {
         return queue.size();
     }
 
+    public boolean remove(T t) {
+        return queue.remove(t);
+    }
+
     public Collection<T> asCollection() {
         return queue;
     }

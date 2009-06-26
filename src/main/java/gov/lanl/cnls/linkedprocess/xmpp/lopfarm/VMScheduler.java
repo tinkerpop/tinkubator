@@ -18,7 +18,7 @@ import java.util.Queue;
 public class VMScheduler {
 
     private final Queue<VMWorker> roundRobinQueue;
-    private final Map<String, VMWorker> machinesByID;
+    private final Map<String, VMWorker> workersByJID;
     private final ScriptEngineManager manager = new ScriptEngineManager();
     private final VMSequencer[] sequencers;
     private final int maxWorkers;
@@ -40,7 +40,7 @@ public class VMScheduler {
      */
     public VMScheduler() {
         roundRobinQueue = new LinkedList<VMWorker>();
-        machinesByID = new HashMap<String, VMWorker>();
+        workersByJID = new HashMap<String, VMWorker>();
 
         Properties props = LinkedProcess.getProperties();
 
@@ -68,7 +68,7 @@ public class VMScheduler {
      */
     public synchronized void addJob(final String machineJID,
                                     final Job job) throws ServiceRefusedException {
-        VMWorker w = machinesByID.get(machineJID);
+        VMWorker w = workersByJID.get(machineJID);
         if (null == w) {
             throw new ServiceRefusedException("no such machine: '" + machineJID + "'");
         }
@@ -88,10 +88,17 @@ public class VMScheduler {
      *
      * @param machineJID the machine who was to have received the job
      * @param jobID      the ID of the specific job to be removed
+     * @throws ServiceRefusedException if the job is not found
      */
     public synchronized void removeJob(final String machineJID,
-                                       final String jobID) {
+                                       final String jobID) throws ServiceRefusedException {
+        VMWorker w = workersByJID.get(machineJID);
 
+        if (null == w) {
+            throw new ServiceRefusedException("no such machine: '" + machineJID + "'");
+        }
+
+        w.cancelJob(jobID);
     }
 
     /**
@@ -99,12 +106,11 @@ public class VMScheduler {
      *
      * @param machineJID the intended JID of the virtual machine
      * @param type       the type of virtual machine to create
-     * @return whether the virtual machine was successfully created
      * @throws ServiceRefusedException if, for any reason, the machine cannot be created
      */
-    public synchronized boolean addMachine(final String machineJID,
+    public synchronized void addMachine(final String machineJID,
                                            final String type) throws ServiceRefusedException {
-        if (machinesByID.size() == maxWorkers) {
+        if (workersByJID.size() == maxWorkers) {
             throw new ServiceRefusedException("too many active virtual machines");
         }
 
@@ -117,33 +123,32 @@ public class VMScheduler {
             throw new IllegalArgumentException("null or empty virtual machine type");
         }
 
-        if (null != machinesByID.get(machineJID)) {
+        if (null != workersByJID.get(machineJID)) {
             throw new ServiceRefusedException("machine with ID '" + machineJID + "' already exists");
         }
 
         ScriptEngine engine = manager.getEngineByName(type);
 
         VMWorker m = new VMWorker(engine, createResultHandler());
-        machinesByID.put(machineJID, m);
-        return roundRobinQueue.offer(m);
+        workersByJID.put(machineJID, m);
+        roundRobinQueue.offer(m);
     }
 
     /**
      * Destroys an already-created virtual machine.
      *
      * @param machineJID the JID of the virtual machine to destroy
-     * @return whether the virtual machine was successfully destroyed
      * @throws ServiceRefusedException if, for any reason, the virtual machine
      *                                 cannot be destroyed
      */
-    public synchronized boolean removeMachine(final String machineJID) throws ServiceRefusedException {
-        if (null == machinesByID.get(machineJID)) {
+    public synchronized void removeMachine(final String machineJID) throws ServiceRefusedException {
+        VMWorker w = workersByJID.get(machineJID);
+
+        if (null == w) {
             throw new ServiceRefusedException("no such machine: '" + machineJID + "'");
         }
 
-        //...
-
-        return true;
+        w.cancel();
     }
 
     /**
@@ -195,12 +200,6 @@ public class VMScheduler {
     }
 
     ////////////////////////////////////////////////////////////////////////////
-
-    public class ServiceRefusedException extends Exception {
-        public ServiceRefusedException(final String msg) {
-            super(msg);
-        }
-    }
 
     public interface VMResultHandler {
         void handleResult(JobResult result);
