@@ -31,7 +31,8 @@ public class XmppFarmTest extends TestCase {
     }
     @Test
     public void testLogin() throws Exception {
-        assertTrue(true);
+    	assertTrue(xmppFarm.getConnection().isAuthenticated());
+    	xmppFarm.spawnVirtualMachine();
     }
     @After
     public void tearDown() {
