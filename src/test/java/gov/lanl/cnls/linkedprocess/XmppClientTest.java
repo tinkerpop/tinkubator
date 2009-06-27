@@ -1,5 +1,7 @@
 package gov.lanl.cnls.linkedprocess;
 
+import org.junit.Test;
+
 import junit.framework.TestCase;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.tools.XmppTestClient;
@@ -16,6 +18,7 @@ public class XmppClientTest extends TestCase {
     private static String server = "talk1.l.google.com";
     private static int port = 5222;
 
+    @Test
     public void testJidConversion() {
         assertEquals(XmppClient.generateBareJid("linked.process.1@gmail.com/test/12345"), username);
     }
