@@ -5,13 +5,17 @@ import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.Spawn;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
 import gov.lanl.cnls.linkedprocess.xmpp.tools.XmppTestClient;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.jivesoftware.smack.XMPPConnection;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * User: marko Date: Jun 25, 2009 Time: 12:10:47 PM
  */
+@RunWith(JUnit4.class)
 public class XmppFarmTest {
 
 	private static String username1 = "linked.process.4@gmail.com";
@@ -29,13 +33,16 @@ public class XmppFarmTest {
 		new XmppFarm(server, port, username1, password1);
 	}
 
-	@BeforeClass
-	public static void setup() throws Exception {
+	private XMPPConnection mockConnection;
+
+
+	@Before
+	public void setup() throws Exception {
+
 		xmppFarm = new XmppFarm(server, port, username1, password1);
 		Thread.sleep(1000);
 		client = new XmppTestClient(server, port, username2, password2);
 		Thread.sleep(1000);
-
 	}
 
 	@Test
@@ -62,11 +69,11 @@ public class XmppFarmTest {
 		spawn.setTo(xmppFarm.getFullJid());
 		spawn.setPacketID("abcd");
 		client.getConnection().sendPacket(spawn);
-		
+
 	}
 
-	@AfterClass
-	public static void teardown() {
+	@After
+	public void teardown() {
 		xmppFarm.shutDown();
 		client.shutDown();
 	}

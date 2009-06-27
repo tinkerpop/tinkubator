@@ -73,7 +73,7 @@ public class XmppFarm extends XmppClient {
     }
 
     public void logon(String server, int port, String username, String password) throws XMPPException {
-
+    	System.out.println("before");
         super.logon(server, port, username, password, RESOURCE_PREFIX);
         connection.sendPacket(this.createFarmPresence(FarmPresence.AVAILABLE));
     }
