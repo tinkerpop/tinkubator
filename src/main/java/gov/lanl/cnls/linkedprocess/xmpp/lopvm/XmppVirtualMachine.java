@@ -45,7 +45,7 @@ public class XmppVirtualMachine extends XmppClient {
         try {
             this.logon(server, port, username, password);
             this.initiateFeatures();
-            this.printClientStatistics();
+            //this.printClientStatistics();
         } catch (XMPPException e) {
             LOGGER.error("error: " + e);
             System.exit(1);

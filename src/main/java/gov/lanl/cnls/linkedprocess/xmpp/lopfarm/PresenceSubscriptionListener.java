@@ -21,6 +21,7 @@ public class PresenceSubscriptionListener implements PacketListener {
     }
 
     public void processPacket(Packet packet) {
+        //System.out.println("here" + packet.toXML());
         Presence presence = ((Presence)packet);
         Presence.Type type = presence.getType();
         if(type == Presence.Type.subscribe) {

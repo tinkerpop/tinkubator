@@ -17,8 +17,8 @@ import org.junit.After;
  */
 public class XmppFarmTest extends TestCase {
 
-    private static String username1 = "linked.process.1@gmail.com";
-    private static String password1 = "linked12";
+    private static String username1 = "linked.process.4@gmail.com";
+    private static String password1 = "linked45";
     private static String username2 = "linked.process.2@gmail.com";
     private static String password2 = "linked23";
 
@@ -35,7 +35,10 @@ public class XmppFarmTest extends TestCase {
 
     public void setUp() throws Exception {
     	xmppFarm = new XmppFarm(server, port, username1, password1);
+        Thread.sleep(1000);
         xmppTest = new XmppTestClient(server, port, username2, password2);
+        Thread.sleep(1000);
+
     }
 
     public void testLogin() throws Exception {
@@ -45,16 +48,16 @@ public class XmppFarmTest extends TestCase {
         assertTrue(xmppTest.getConnection().isAuthenticated());     
     }
 
-    public void testSubscribe() throws Exception {
-        /*xmppTest.subscribe(xmppFarm.getFullJid());
-        Thread.sleep(5000);
+    /*public void testSubscribe() throws Exception {
+        xmppTest.subscribe(xmppFarm.getFullJid());
+        Thread.sleep(10000);
         assertTrue(xmppFarm.getRoster().contains(username2));
         assertTrue(xmppTest.getRoster().contains(username1));
         xmppTest.unsubscribe(xmppFarm.getBareJid());
         Thread.sleep(5000);
         assertFalse(xmppTest.getRoster().contains(username1));
-        assertFalse(xmppFarm.getRoster().contains(username2));*/
-    }
+        assertFalse(xmppFarm.getRoster().contains(username2));
+    }*/
 
     public void testSpawn() throws Exception {
         Spawn spawn = new Spawn();

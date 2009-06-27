@@ -19,7 +19,7 @@ public abstract class XmppClient {
 
     public static Logger LOGGER = LinkedProcess.getLogger(XmppClient.class);
     protected XMPPConnection connection;
-    protected Roster roster;
+    //protected Roster roster;
     protected boolean shutdownRequested = false;
 
     private String username;
@@ -75,7 +75,7 @@ public abstract class XmppClient {
         }, "Shutdown hook");
         shutdownHook.start();
 
-        this.roster = this.connection.getRoster();
+        //this.roster = this.connection.getRoster();
     }
 
     public void logout() {
@@ -111,7 +111,7 @@ public abstract class XmppClient {
         return this.connection;
     }
 
-    public void subscribe(String clientJid) {
+    /*public void subscribe(String clientJid) {
         Presence subscribe = new Presence(Presence.Type.subscribe);
         subscribe.setTo(generateBareJid(clientJid));
         this.connection.sendPacket(subscribe);
@@ -129,7 +129,7 @@ public abstract class XmppClient {
             } catch(XMPPException e) {
                 e.printStackTrace();
         }
-    }
+    }*/
 
     public void shutDown() {
         LOGGER.info("Requesting shutdown");
@@ -154,7 +154,7 @@ public abstract class XmppClient {
         return this.server;
     }
 
-    public Roster getRoster() {
+    /*public Roster getRoster() {
         return this.roster;
-    }
+    }*/
 }
