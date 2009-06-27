@@ -34,7 +34,6 @@ public class XmppFarm extends XmppClient {
 
     protected Map<String, XmppVirtualMachine> machines;
     protected FarmPresence currentPresence;
-    protected Roster roster;
     protected VMScheduler scheduler;
 
     public XmppFarm(final String server, final int port, final String username, final String password) {
@@ -48,17 +47,15 @@ public class XmppFarm extends XmppClient {
         try {
             this.logon(server, port, username, password);
             this.initiateFeatures();
-            this.printClientStatistics();
+            //this.printClientStatistics();
         } catch (XMPPException e) {
             LOGGER.error("error: " + e);
             System.exit(1);
         }
 
-        this.roster = connection.getRoster();
-        this.roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
+        
         this.scheduler = new VMScheduler(new VMJobResultHandler(this));
         this.machines = new HashMap<String, XmppVirtualMachine>();
-
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(Spawn.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter destroyFilter = new AndFilter(new PacketTypeFilter(Destroy.class), new IQTypeFilter(IQ.Type.GET));
@@ -84,10 +81,6 @@ public class XmppFarm extends XmppClient {
         } else {
             return new Presence(Presence.Type.unavailable);
         }
-    }
-
-    public Roster getRoster() {
-        return this.roster;
     }
 
     public VMScheduler getScheduler() {

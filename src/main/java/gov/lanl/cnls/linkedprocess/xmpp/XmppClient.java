@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import java.util.Iterator;
@@ -18,6 +19,7 @@ public abstract class XmppClient {
 
     public static Logger LOGGER = LinkedProcess.getLogger(XmppClient.class);
     protected XMPPConnection connection;
+    protected Roster roster;
     protected boolean shutdownRequested = false;
 
     private String username;
@@ -72,6 +74,8 @@ public abstract class XmppClient {
             }
         }, "Shutdown hook");
         shutdownHook.start();
+
+        this.roster = this.connection.getRoster();
     }
 
     public void logout() {
@@ -94,8 +98,37 @@ public abstract class XmppClient {
         return this.connection.getUser();
     }
 
+    public String getBareJid() {
+        String fullJid = this.getFullJid();
+        return XmppClient.generateBareJid(fullJid);
+    }
+
+    public static String generateBareJid(String fullJid) {
+         return fullJid.substring(0,fullJid.indexOf("/"));
+    }
+
     public XMPPConnection getConnection() {
         return this.connection;
+    }
+
+    public void subscribe(String clientJid) {
+        Presence subscribe = new Presence(Presence.Type.subscribe);
+        subscribe.setTo(generateBareJid(clientJid));
+        this.connection.sendPacket(subscribe);
+        Presence available = new Presence(Presence.Type.available);
+        available.setTo(clientJid);
+        this.getConnection().sendPacket(available);
+    }
+
+    public void unsubscribe(String clientJid) {
+        Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
+        unsubscribe.setTo(clientJid);
+        this.connection.sendPacket(unsubscribe);
+        try {
+            this.getRoster().removeEntry(this.getRoster().getEntry(clientJid));
+            } catch(XMPPException e) {
+                e.printStackTrace();
+        }
     }
 
     public void shutDown() {
@@ -119,5 +152,9 @@ public abstract class XmppClient {
 
     public String getServer() {
         return this.server;
+    }
+
+    public Roster getRoster() {
+        return this.roster;
     }
 }
