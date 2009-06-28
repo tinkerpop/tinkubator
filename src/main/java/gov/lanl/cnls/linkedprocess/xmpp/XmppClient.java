@@ -3,8 +3,8 @@ package gov.lanl.cnls.linkedprocess.xmpp;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
 import java.util.Iterator;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -18,7 +18,7 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
  */
 public abstract class XmppClient {
 
-    public static Logger LOGGER = LinkedProcess.getLogger(XmppClient.class);
+    public static Logger LOGGER = Logger.getLogger(XmppClient.class.getName());
     protected XMPPConnection connection;
     //protected Roster roster;
     protected boolean shutdownRequested = false;

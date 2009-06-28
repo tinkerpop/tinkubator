@@ -3,7 +3,6 @@ package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
-import org.apache.log4j.Logger;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
@@ -16,6 +15,7 @@ import org.jivesoftware.smack.provider.ProviderManager;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * User: marko
@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public class XmppFarm extends XmppClient {
 
-    public static Logger LOGGER = LinkedProcess.getLogger(XmppFarm.class);
+    public static Logger LOGGER = Logger.getLogger(XmppFarm.class.getName());
     public static final String RESOURCE_PREFIX = "LoPFarm/";
     public static final String STATUS_MESSAGE = "LoP Farm v0.1";
 
@@ -50,7 +50,7 @@ public class XmppFarm extends XmppClient {
             this.initiateFeatures();
             //this.printClientStatistics();
         } catch (XMPPException e) {
-            LOGGER.error("error: " + e);
+            LOGGER.severe("error: " + e);
             System.exit(1);
         }
         
@@ -73,8 +73,7 @@ public class XmppFarm extends XmppClient {
     }
 
     public void logon(String server, int port, String username, String password) throws XMPPException {
-    	System.out.println("before");
-        super.logon(server, port, username, password, RESOURCE_PREFIX);
+    	super.logon(server, port, username, password, RESOURCE_PREFIX);
         connection.sendPacket(this.createFarmPresence(FarmPresence.AVAILABLE));
     }
 

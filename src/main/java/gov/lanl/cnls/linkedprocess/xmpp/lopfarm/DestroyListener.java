@@ -21,8 +21,8 @@ public class DestroyListener implements PacketListener {
     public void processPacket(Packet destroy) {
 
         try {
-            XmppFarm.LOGGER.debug("Arrived DestroyListener:");
-            XmppFarm.LOGGER.debug(destroy.toXML());
+            XmppFarm.LOGGER.fine("Arrived DestroyListener:");
+            XmppFarm.LOGGER.fine(destroy.toXML());
 
             Destroy returnDestroy = new Destroy();
             returnDestroy.setTo(destroy.getFrom());
@@ -37,8 +37,8 @@ public class DestroyListener implements PacketListener {
                 returnDestroy.setType(IQ.Type.ERROR);
             }
 
-            XmppFarm.LOGGER.debug("Sent DestroyListener:");
-            XmppFarm.LOGGER.debug(returnDestroy.toXML());
+            XmppFarm.LOGGER.fine("Sent DestroyListener:");
+            XmppFarm.LOGGER.fine(returnDestroy.toXML());
             farm.getConnection().sendPacket(returnDestroy);
 
         } catch (Exception e) {

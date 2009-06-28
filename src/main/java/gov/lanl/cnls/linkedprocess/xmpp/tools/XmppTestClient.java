@@ -22,7 +22,7 @@ public class XmppTestClient extends XmppClient {
             this.initiateFeatures();
             //this.printClientStatistics();
         } catch (XMPPException e) {
-            LOGGER.error("error: " + e);
+            LOGGER.severe("error: " + e);
             System.exit(1);
         }
 
