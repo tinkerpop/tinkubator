@@ -1,6 +1,7 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
 import org.jivesoftware.smack.packet.IQ;
+import org.jdom.Element;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
 /**
@@ -10,7 +11,7 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
  */
 public class Evaluate extends IQ {
 
-    public static final String EVALUATION_TAGNAME = "evaluate";
+    public static final String EVALUATE_TAGNAME = "evaluate";
     String expression;
 
 
@@ -23,11 +24,11 @@ public class Evaluate extends IQ {
     }
 
     public String getChildElementXML() {
-        StringBuilder builder = new StringBuilder("\n  <" + EVALUATION_TAGNAME + " xmlns=\"" + LinkedProcess.LOP_VM_NAMESPACE +"\">");
-        if(expression != null) {
-            builder.append(expression);
+
+        Element evaluateElement = new Element(EVALUATE_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE);
+        if(this.expression != null) {
+            evaluateElement.setText(this.expression);
         }
-        builder.append("</"+ EVALUATION_TAGNAME +">\n");
-        return builder.toString();
+        return LinkedProcess.xmlOut.outputString(evaluateElement);
     }
 }

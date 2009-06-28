@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import junit.framework.TestCase;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
-import gov.lanl.cnls.linkedprocess.xmpp.tools.XmppTestClient;
 
 /**
  * User: marko

@@ -2,6 +2,7 @@ package gov.lanl.cnls.linkedprocess;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.jdom.output.XMLOutputter;
 
 import java.util.Properties;
 import java.io.IOException;
@@ -30,6 +31,7 @@ public class LinkedProcess {
     private static final Properties PROPERTIES = new Properties();
     private static final Logger LOGGER;
     private static final String LOP_PROPERTIES = "lop.properties";
+    public static final XMLOutputter xmlOut = new XMLOutputter();
     
     static {
         PropertyConfigurator.configure(

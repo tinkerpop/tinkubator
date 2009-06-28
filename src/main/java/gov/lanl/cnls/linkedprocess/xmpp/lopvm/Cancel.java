@@ -1,6 +1,7 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
 import org.jivesoftware.smack.packet.IQ;
+import org.jdom.Element;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
 /**
@@ -11,6 +12,7 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
 public class Cancel extends IQ {
 
     public static final String CANCEL_TAGNAME = "cancel";
+    public static final String JOB_ID_ATTRIBUTE = "job_id";
 
     private String jobId;
 
@@ -23,6 +25,11 @@ public class Cancel extends IQ {
     }
 
     public String getChildElementXML() {
-        return("\n  <" + CANCEL_TAGNAME + " xmlns=\"" + LinkedProcess.LOP_NAMESPACE +"\" id=\"" + jobId + "\" />");
+
+        Element cancelElement = new Element(CANCEL_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE);
+        if(this.jobId != null) {
+            cancelElement.setAttribute(JOB_ID_ATTRIBUTE, this.jobId);
+        }
+        return LinkedProcess.xmlOut.outputString(cancelElement);
     }
 }

@@ -5,9 +5,6 @@ import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
 
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-
 import org.apache.log4j.Logger;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
@@ -38,7 +35,7 @@ public class XmppVirtualMachine extends XmppClient {
         LOGGER.info("Starting LoP virtual machine");
         // Registering the types of IQ packets/stanzas the the Lop VM can respond to.
         ProviderManager pm = ProviderManager.getInstance();
-        pm.addIQProvider(Evaluate.EVALUATION_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE, new EvaluateProvider());
+        pm.addIQProvider(Evaluate.EVALUATE_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE, new EvaluateProvider());
         pm.addIQProvider(Status.STATUS_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE, new StatusProvider());
         pm.addIQProvider(Cancel.CANCEL_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE, new CancelProvider());
 

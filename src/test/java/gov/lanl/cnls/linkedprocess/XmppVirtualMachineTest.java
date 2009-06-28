@@ -7,6 +7,8 @@ import org.junit.Test;
 
 import junit.framework.TestCase;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Cancel;
 
 /**
  * User: marko
@@ -34,5 +36,24 @@ public class XmppVirtualMachineTest extends TestCase {
     @After
     public void tearDown() {
     	xmppVirtualMachine.shutDown();
+    }
+
+     public void testEvaluateTag() {
+        Evaluate eval = new Evaluate();
+        eval.setExpression("for(int i=0; i<10; i++) { i; };");
+        String evalString = eval.getChildElementXML();
+        System.out.println(evalString);
+        assertTrue(evalString.contains("xmlns=\"" + LinkedProcess.LOP_VM_NAMESPACE));
+        // note that XML characters must be handled correctly
+        assertTrue(evalString.contains("for(int i=0; i&lt;10; i++) { i; };"));
+    }
+
+    public void testCancelTag() {
+        Cancel cancel = new Cancel();
+        cancel.setJobId("wxyz");
+        String cancelString = cancel.getChildElementXML();
+        System.out.println(cancelString);
+        assertTrue(cancelString.contains("xmlns=\"" + LinkedProcess.LOP_VM_NAMESPACE));
+        assertTrue(cancelString.contains("job_id=\"wxyz\""));
     }
 }

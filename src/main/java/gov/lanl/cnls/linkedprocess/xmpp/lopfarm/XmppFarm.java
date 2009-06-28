@@ -35,7 +35,6 @@ public class XmppFarm extends XmppClient {
     protected Map<String, XmppVirtualMachine> machines;
     protected FarmPresence currentPresence;
     protected VMScheduler scheduler;
-    protected Roster roster;
 
     public XmppFarm(final String server, final int port, final String username, final String password) {
 
@@ -66,10 +65,6 @@ public class XmppFarm extends XmppClient {
         connection.addPacketListener(new SpawnListener(this), spawnFilter);
         connection.addPacketListener(new DestroyListener(this), destroyFilter);
         connection.addPacketListener(new PresenceSubscriptionListener(this), subscribeFilter);
-    }
-
-    public Roster getRoster() {
-        return this.roster;
     }
 
     public void logon(String server, int port, String username, String password) throws XMPPException {

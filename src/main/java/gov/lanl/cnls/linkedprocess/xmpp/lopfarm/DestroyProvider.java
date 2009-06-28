@@ -13,9 +13,12 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
 public class DestroyProvider implements IQProvider {
 
     public IQ parseIQ(XmlPullParser parser) throws Exception {
+
         Destroy destroy = new Destroy();
-        String jid = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, "jid");
-        destroy.setVmJid(jid);
+        String vmJid = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, Destroy.VM_JID_ATTRIBUTE);
+        if(null != vmJid) {
+            destroy.setVmJid(vmJid);
+        }
         parser.next();
         return destroy;
     }

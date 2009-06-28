@@ -1,6 +1,7 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
 
 import org.jivesoftware.smack.packet.IQ;
+import org.jdom.Element;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
 /**
@@ -11,6 +12,7 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
 public class Destroy extends IQ {
 
     public static final String DESTROY_TAGNAME = "destroy";
+    public static final String VM_JID_ATTRIBUTE = "vm_jid";
     public String vmJid;
 
     public void setVmJid(String vmJid) {
@@ -23,9 +25,12 @@ public class Destroy extends IQ {
 
 
     public String getChildElementXML() {
-        StringBuilder builder = new StringBuilder("\n  <" + DESTROY_TAGNAME + " xmlns=\"" + LinkedProcess.LOP_FARM_NAMESPACE +"\" jid=\"" + vmJid + "\" >");
 
-        builder.append("</"+ DESTROY_TAGNAME +">\n");
-        return builder.toString();
+        Element destroyElement = new Element(DESTROY_TAGNAME, LinkedProcess.LOP_FARM_NAMESPACE);
+        if(this.vmJid != null) {
+            destroyElement.setAttribute(VM_JID_ATTRIBUTE, this.vmJid);
+        }
+
+        return LinkedProcess.xmlOut.outputString(destroyElement);
     }
 }

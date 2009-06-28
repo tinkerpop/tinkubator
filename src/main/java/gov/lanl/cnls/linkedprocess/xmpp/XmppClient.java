@@ -3,11 +3,12 @@ package gov.lanl.cnls.linkedprocess.xmpp;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
 import java.util.Iterator;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 
@@ -18,9 +19,9 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
  */
 public abstract class XmppClient {
 
-    public static Logger LOGGER = Logger.getLogger(XmppClient.class.getName());
+    public static Logger LOGGER = LinkedProcess.getLogger(XmppClient.class);
     protected XMPPConnection connection;
-    //protected Roster roster;
+    protected Roster roster;
     protected boolean shutdownRequested = false;
 
     private String username;
@@ -112,7 +113,7 @@ public abstract class XmppClient {
         return this.connection;
     }
 
-    /*public void subscribe(String clientJid) {
+    public void subscribe(String clientJid) {
         Presence subscribe = new Presence(Presence.Type.subscribe);
         subscribe.setTo(generateBareJid(clientJid));
         this.connection.sendPacket(subscribe);
@@ -130,7 +131,7 @@ public abstract class XmppClient {
             } catch(XMPPException e) {
                 e.printStackTrace();
         }
-    }*/
+    }
 
     public void shutDown() {
         LOGGER.info("Requesting shutdown");
@@ -155,7 +156,7 @@ public abstract class XmppClient {
         return this.server;
     }
 
-    /*public Roster getRoster() {
+    public Roster getRoster() {
         return this.roster;
-    }*/
+    }
 }

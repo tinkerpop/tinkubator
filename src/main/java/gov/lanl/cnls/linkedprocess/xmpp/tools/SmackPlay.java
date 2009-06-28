@@ -59,7 +59,7 @@ public class SmackPlay {
         // Smack uses a listener framework to receive packets/stanzas and perform operations on packets.
         // A listener can have a filter to only handle certain types of packets (tags/attributes)
         //PacketFilter filter = new PacketTypeFilter(IQ.class);
-        connection.addPacketListener(new GenericListener(), null);
+        //connection.addPacketListener(new GenericListener(), null);
 
        
     }
