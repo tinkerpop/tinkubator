@@ -12,11 +12,7 @@ import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 
-/**
- * User: marko
- * Date: Jun 25, 2009
- * Time: 11:31:34 AM
- */
+
 public abstract class XmppClient {
 
     public static Logger LOGGER = LinkedProcess.getLogger(XmppClient.class);

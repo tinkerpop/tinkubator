@@ -1,9 +1,8 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
 
 import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Packet;
 
 /**
  * User: marko
