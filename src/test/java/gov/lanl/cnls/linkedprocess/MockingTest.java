@@ -77,7 +77,7 @@ public class MockingTest {
 		// just connection info, not important right now
 		expect(mockConnection.getHost()).andReturn("mock.linkedprocess.org")
 				.anyTimes();
-		mockFarmId = "mockUser";
+		mockFarmId = "mockFarmUser";
 		expect(mockConnection.getUser()).andReturn(mockFarmId).anyTimes();
 		expect(mockConnection.isAnonymous()).andReturn(false).anyTimes();
 		expect(mockConnection.isConnected()).andReturn(true).anyTimes();
@@ -107,7 +107,7 @@ public class MockingTest {
 		Packet spawnPacket = createMock(Packet.class);
 		String spawnXML = "<not real XML>";
 		expect(spawnPacket.toXML()).andReturn(spawnXML).anyTimes();
-		mockClient = "mockClient";
+		mockClient = "mockClientUser";
 		expect(spawnPacket.getFrom()).andReturn(mockClient).anyTimes();
 		String spawnPacketId = "123";
 		expect(spawnPacket.getPacketID()).andReturn(spawnPacketId).anyTimes();
