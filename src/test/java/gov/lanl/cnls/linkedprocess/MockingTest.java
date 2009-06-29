@@ -161,7 +161,7 @@ public class MockingTest {
 		Packet spawnPacket2 = createMock(Packet.class);
 		String spawnXML = "<not real XML>";
 		expect(spawnPacket2.toXML()).andReturn(spawnXML).anyTimes();
-		mockClient = "mockClientUser";
+		mockClient = "mockClientUser2";
 		expect(spawnPacket2.getFrom()).andReturn(mockClient).anyTimes();
 		String spawnPacket2Id = "345";
 		expect(spawnPacket2.getPacketID()).andReturn(spawnPacket2Id).anyTimes();
@@ -177,11 +177,13 @@ public class MockingTest {
 		spawnListener.processPacket(spawnPacket);
 		// let's send one more spawn packet and fire up one more VM!
 		spawnListener.processPacket(spawnPacket2);
-		// now, a new packet should have been sent back from the VM
+		// now, a some new packets should have been sent back from the new VM
 		assertEquals(5, sentPackets.size());
 		// sent packet should refer to the same pID
 		IQ result = (IQ) sentPackets.get(4);
 		assertEquals(result.getPacketID(), spawnPacket2Id);
+		
+		//should we get an error? we are just trying to start one more machine
 		assertEquals(IQ.Type.RESULT, result.getType());
 		// check the whole xml string
 		assertEquals("<iq id=\"" + spawnPacket2Id + "\" to=\"" + mockClient
@@ -189,10 +191,7 @@ public class MockingTest {
 				+ LinkedProcess.LOP_FARM_NAMESPACE + "\" "
 				+ Spawn.VM_JID_ATTRIBUTE + "=\"" + mockFarmId + "\" /></iq>",
 				result.toXML());
-
-		// now we should have 3 more PacketListeners for the VM
-		assertTrue(packetListeners.size() == 6);
-
+		
 		//shut down
 		xmppFarm.shutDown();
 		verifyAll();
