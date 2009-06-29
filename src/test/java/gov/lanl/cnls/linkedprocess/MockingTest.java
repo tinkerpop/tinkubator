@@ -24,6 +24,7 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.junit.Test;
@@ -35,7 +36,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( { XmppFarm.class, XmppClient.class,
 		ServiceDiscoveryManager.class })
-//ignore fishy stuff
+// ignore fishy stuff
 @PowerMockIgnore( { "javax.script", "org.apache.log4j" })
 public class MockingTest {
 
@@ -56,9 +57,10 @@ public class MockingTest {
 		Iterator<String> features = new LinkedList<String>().iterator();
 		expect(mdm.getFeatures()).andReturn(features).anyTimes();
 		mdm.addFeature(isA(String.class));
-		//2 for Farm, 2 for VM
+		// 2 for Farm, 2 for VM
 		expectLastCall().times(4);
-		//a bit more explicit matchers to help PowerMock choose the right constructor
+		// a bit more explicit matchers to help PowerMock choose the right
+		// constructor
 		expectNew(XMPPConnection.class,
 				new Class<?>[] { ConnectionConfiguration.class },
 				isA(ConnectionConfiguration.class)).andReturn(mockConnection)
@@ -67,16 +69,17 @@ public class MockingTest {
 		mockConnection.connect();
 		// one time for the XMPPFarm, one time for the spawned VM
 		expectLastCall().times(2);
-		//just connection info, not important right now
+		// just connection info, not important right now
 		expect(mockConnection.getHost()).andReturn("mock.linkedprocess.org")
 				.anyTimes();
-		expect(mockConnection.getUser()).andReturn("mockUser").anyTimes();
+		String mockFarmId = "mockUser";
+		expect(mockConnection.getUser()).andReturn(mockFarmId).anyTimes();
 		expect(mockConnection.isAnonymous()).andReturn(false).anyTimes();
 		expect(mockConnection.isConnected()).andReturn(true).anyTimes();
 		expect(mockConnection.isSecureConnection()).andReturn(false).anyTimes();
 		expect(mockConnection.isUsingCompression()).andReturn(false).anyTimes();
 		expect(mockConnection.isUsingTLS()).andReturn(false).anyTimes();
-		//save the listeners for later use
+		// save the listeners for later use
 		List<PacketListener> packetListeners = new LinkedList<PacketListener>();
 		mockConnection.addPacketListener(MultiCaptureMatcher
 				.multiCapture(packetListeners), isA(PacketFilter.class));
@@ -84,7 +87,7 @@ public class MockingTest {
 		Roster mockRoster = createMock(Roster.class);
 		mockRoster.setSubscriptionMode(Roster.SubscriptionMode.manual);
 		expect(mockConnection.getRoster()).andReturn(mockRoster).anyTimes();
-		//save all sent packets for later verification
+		// save all sent packets for later verification
 		List<Packet> sentPackets = new ArrayList<Packet>();
 		mockConnection
 				.sendPacket(MultiCaptureMatcher.multiCapture(sentPackets));
@@ -92,10 +95,12 @@ public class MockingTest {
 		mockConnection.login(isA(String.class), isA(String.class),
 				isA(String.class));
 		expectLastCall().times(2);
-		//create a spawn packet for later injection
+		// create a spawn packet for later injection
 		Packet spawnPacket = createMock(Packet.class);
-		expect(spawnPacket.toXML()).andReturn("<not real XML>").anyTimes();
-		expect(spawnPacket.getFrom()).andReturn("mock").anyTimes();
+		String spawnXML = "<not real XML>";
+		expect(spawnPacket.toXML()).andReturn(spawnXML).anyTimes();
+		String mockClient = "mockClient";
+		expect(spawnPacket.getFrom()).andReturn(mockClient).anyTimes();
 		String spawnPacketId = "123";
 		expect(spawnPacket.getPacketID()).andReturn(spawnPacketId).anyTimes();
 		replayAll();
@@ -106,14 +111,21 @@ public class MockingTest {
 		// now we should have 3 PacketListeners to the XMPP connection
 		assertTrue(packetListeners.size() == 3);
 		PacketListener spawnListener = packetListeners.get(0);
-		//first registered listener should be our SpawnListener
+		// first registered listener should be our SpawnListener
 		assertTrue(spawnListener instanceof SpawnListener);
 		// let's send a spawn packet!
 		spawnListener.processPacket(spawnPacket);
 		// now, a new packet should have been sent back from the VM
 		assertEquals(3, sentPackets.size());
-		//sent packet should refer to the same pID
-		assertEquals(sentPackets.get(2).getPacketID(), spawnPacketId);
+		// sent packet should refer to the same pID
+		IQ result = (IQ) sentPackets.get(2);
+		assertEquals(result.getPacketID(), spawnPacketId);
+		assertEquals(result.getType(), IQ.Type.RESULT);
+		// check the whole xml string
+		assertEquals(
+				"<spawn xmlns=\"http://linkedprocess.org/protocol#LoPFarm\" vm_jid=\""
+						+ mockFarmId + "\" />", result.getChildElementXML());
+
 		// now we should have 3 more PacketListeners for the VM
 		assertTrue(packetListeners.size() == 6);
 		verifyAll();
