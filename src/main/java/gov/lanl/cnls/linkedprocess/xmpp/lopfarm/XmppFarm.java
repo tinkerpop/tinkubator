@@ -1,6 +1,8 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import gov.lanl.cnls.linkedprocess.os.ServiceRefusedException;
+import gov.lanl.cnls.linkedprocess.os.VMScheduler;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
 import org.jivesoftware.smack.Roster;

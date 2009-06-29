@@ -1,18 +1,11 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
 import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
-import org.jdom.Text;
-import org.jdom.output.XMLOutputter;
 
-import javax.script.ScriptEngine;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
-import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.Job;
-import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.ServiceRefusedException;
+import gov.lanl.cnls.linkedprocess.os.Job;
+import gov.lanl.cnls.linkedprocess.os.ServiceRefusedException;
 
 /**
  * User: marko

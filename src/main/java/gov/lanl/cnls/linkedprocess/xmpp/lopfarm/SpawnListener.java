@@ -1,5 +1,6 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
 
+import gov.lanl.cnls.linkedprocess.os.ServiceRefusedException;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;

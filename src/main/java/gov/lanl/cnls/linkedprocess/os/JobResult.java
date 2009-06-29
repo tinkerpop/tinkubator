@@ -1,7 +1,7 @@
-package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
+package gov.lanl.cnls.linkedprocess.os;
 
-import org.jivesoftware.smack.packet.IQ;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
+import org.jivesoftware.smack.packet.IQ;
 
 /**
  * Author: josh

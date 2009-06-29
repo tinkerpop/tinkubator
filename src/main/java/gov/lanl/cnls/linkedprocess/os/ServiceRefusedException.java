@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
+package gov.lanl.cnls.linkedprocess.os;
 
 /**
  * Author: josh

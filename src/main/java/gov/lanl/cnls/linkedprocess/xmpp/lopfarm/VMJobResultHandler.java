@@ -1,7 +1,8 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
 
-import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
+import gov.lanl.cnls.linkedprocess.os.JobResult;
+import gov.lanl.cnls.linkedprocess.os.VMScheduler;
 
 /**
  * User: marko

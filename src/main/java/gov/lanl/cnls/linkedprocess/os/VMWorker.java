@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
+package gov.lanl.cnls.linkedprocess.os;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import org.apache.log4j.Logger;

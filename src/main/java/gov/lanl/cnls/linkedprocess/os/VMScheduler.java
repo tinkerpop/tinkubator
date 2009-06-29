@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
+package gov.lanl.cnls.linkedprocess.os;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
@@ -26,7 +26,7 @@ public class VMScheduler {
     private FarmStatus state;
 
     public enum FarmStatus {
-        ACTIVE, ACTIVE_FULL
+        ACTIVE, ACTIVE_FULL, TERMINATED
     }
 
     public enum VMStatus {
@@ -200,6 +200,9 @@ public class VMScheduler {
                 : JobStatus.DOES_NOT_EXIST;
     }
 
+    /**
+     * Shuts down all active virtual machines and cancels all jobs.
+     */
     public synchronized void shutDown() {
         workerQueue.clear();
         workerQueue.stopBlocking();
@@ -207,6 +210,8 @@ public class VMScheduler {
         for (VMWorker w : workersByJID.values()) {
             w.terminate();
         }
+
+        state = FarmStatus.TERMINATED;
     }
 
     ////////////////////////////////////////////////////////////////////////////
