@@ -1,21 +1,21 @@
 package gov.lanl.cnls.linkedprocess;
 
+import static org.junit.Assert.assertTrue;
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Cancel;
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
+
 import org.jivesoftware.smack.XMPPConnection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.TestCase;
-import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
-import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
-import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Cancel;
 
 /**
  * User: marko
  * Date: Jun 25, 2009
  * Time: 11:03:25 AM
  */
-public class XmppVirtualMachineTest extends TestCase {
+public class XmppVirtualMachineTest {
 
     private static String username = "linked.process.3";
     private static String gtalk_username = "linked.process.3@gmail.com";
