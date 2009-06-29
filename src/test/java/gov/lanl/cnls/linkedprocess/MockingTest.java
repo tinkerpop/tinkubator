@@ -27,6 +27,7 @@ import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -45,10 +46,12 @@ public class MockingTest {
 
 	private static String server = "talk1.l.google.com";
 	private static int port = 5222;
+	private List<Packet> sentPackets;
+	private List<PacketListener> packetListeners;
+	private String mockFarmId;
 
-	@Test
-	public void testMockingXMPP() throws Exception {
-
+	@Before
+	public void setup() throws Exception {
 		ServiceDiscoveryManager mdm = createMock(ServiceDiscoveryManager.class);
 		XMPPConnection mockConnection = createMock(XMPPConnection.class);
 		mockStatic(ServiceDiscoveryManager.class);
@@ -72,29 +75,32 @@ public class MockingTest {
 		// just connection info, not important right now
 		expect(mockConnection.getHost()).andReturn("mock.linkedprocess.org")
 				.anyTimes();
-		String mockFarmId = "mockUser";
+		mockFarmId = "mockUser";
 		expect(mockConnection.getUser()).andReturn(mockFarmId).anyTimes();
 		expect(mockConnection.isAnonymous()).andReturn(false).anyTimes();
 		expect(mockConnection.isConnected()).andReturn(true).anyTimes();
 		expect(mockConnection.isSecureConnection()).andReturn(false).anyTimes();
 		expect(mockConnection.isUsingCompression()).andReturn(false).anyTimes();
 		expect(mockConnection.isUsingTLS()).andReturn(false).anyTimes();
-		// save the listeners for later use
-		List<PacketListener> packetListeners = new LinkedList<PacketListener>();
+		packetListeners = new LinkedList<PacketListener>();
 		mockConnection.addPacketListener(MultiCaptureMatcher
 				.multiCapture(packetListeners), isA(PacketFilter.class));
 		expectLastCall().times(6);
 		Roster mockRoster = createMock(Roster.class);
 		mockRoster.setSubscriptionMode(Roster.SubscriptionMode.manual);
 		expect(mockConnection.getRoster()).andReturn(mockRoster).anyTimes();
-		// save all sent packets for later verification
-		List<Packet> sentPackets = new ArrayList<Packet>();
+		sentPackets = new ArrayList<Packet>();
 		mockConnection
 				.sendPacket(MultiCaptureMatcher.multiCapture(sentPackets));
 		expectLastCall().anyTimes();
 		mockConnection.login(isA(String.class), isA(String.class),
 				isA(String.class));
 		expectLastCall().times(2);
+	}
+
+	@Test
+	public void testMockingXMPP() throws Exception {
+		
 		// create a spawn packet for later injection
 		Packet spawnPacket = createMock(Packet.class);
 		String spawnXML = "<not real XML>";
@@ -103,18 +109,25 @@ public class MockingTest {
 		expect(spawnPacket.getFrom()).andReturn(mockClient).anyTimes();
 		String spawnPacketId = "123";
 		expect(spawnPacket.getPacketID()).andReturn(spawnPacketId).anyTimes();
+
+		//activate all mock objects
 		replayAll();
 
+		// start testing
 		XmppFarm xmppFarm = new XmppFarm(server, port, username1, password1);
+		
+		
 		// one presence packet should have been sent
 		assertTrue(sentPackets.size() == 1);
 		// now we should have 3 PacketListeners to the XMPP connection
 		assertTrue(packetListeners.size() == 3);
-		PacketListener spawnListener = packetListeners.get(0);
 		// first registered listener should be our SpawnListener
+		PacketListener spawnListener = packetListeners.get(0);
 		assertTrue(spawnListener instanceof SpawnListener);
+
 		// let's send a spawn packet!
 		spawnListener.processPacket(spawnPacket);
+		
 		// now, a new packet should have been sent back from the VM
 		assertEquals(3, sentPackets.size());
 		// sent packet should refer to the same pID
