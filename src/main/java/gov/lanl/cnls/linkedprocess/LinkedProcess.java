@@ -23,16 +23,17 @@ public class LinkedProcess {
     public static final int LOWEST_PRIORITY = -128;
     public static final int HIGHEST_PRIORITY = 127;
 
-    public static final String MAX_CONCURRENT_WORKER_THREADS = "gov.lanl.cnls.linkedprocess.maxConcurrentWorkerThreads";
-    public static final String MAX_VIRTUAL_MACHINES_PER_SCHEDULER = "gov.lanl.cnls.linkedprocess.maxVirtualMachinesPerScheduler";
-    public static final String MESSAGE_QUEUE_CAPACITY = "gov.lanl.cnls.linkedprocess.messageQueueCapacity";
-    public static final String ROUND_ROBIN_TIME_SLICE = "gov.lanl.cnls.linkedprocess.roundRobinTimeSlice";
+    public static final String
+            MAX_CONCURRENT_WORKER_THREADS = "gov.lanl.cnls.linkedprocess.maxConcurrentWorkerThreads",
+            MAX_VIRTUAL_MACHINES_PER_SCHEDULER = "gov.lanl.cnls.linkedprocess.maxVirtualMachinesPerScheduler",
+            MESSAGE_QUEUE_CAPACITY = "gov.lanl.cnls.linkedprocess.messageQueueCapacity",
+            ROUND_ROBIN_TIME_SLICE = "gov.lanl.cnls.linkedprocess.roundRobinTimeSlice";
 
     private static final Properties PROPERTIES = new Properties();
     private static final Logger LOGGER;
     private static final String LOP_PROPERTIES = "lop.properties";
     public static final XMLOutputter xmlOut = new XMLOutputter();
-    
+
     static {
         PropertyConfigurator.configure(
                 LinkedProcess.class.getResource(LOP_PROPERTIES));

@@ -6,34 +6,43 @@ package gov.lanl.cnls.linkedprocess.os;
  * Time: 6:34:20 PM
  */
 public class Job {
-    private final String iqId;
-    private final String vmJid;
-    private final String appJid;
+    private final String iqID;
+    private final String vmJID;
+    private final String appJID;
     private final String expression;
 
-    public Job(final String vmJid,
-               final String appJid,
-               final String iqId,
+    public Job(final String vmJID,
+               final String appJID,
+               final String iqID,
                final String expression) {
-        this.vmJid = vmJid;
-        this.appJid = appJid;
-        this.iqId = iqId;
+        this.vmJID = vmJID;
+        this.appJID = appJID;
+        this.iqID = iqID;
         this.expression = expression;
     }
 
-    public String getAppJid() {
-        return appJid;
+    public String getAppJID() {
+        return appJID;
     }
     
-    public String getIqId() {
-        return iqId;
+    public String getIQID() {
+        return iqID;
     }
 
-    public String getVmJid() {
-        return vmJid;
+    public String getVMJID() {
+        return vmJID;
     }
 
     public String getExpression() {
         return expression;
+    }
+
+    public String toString() {
+        return "Job("
+                + "iqID:'" + iqID + "'"
+                + ", vmJID:'" + vmJID + "'"
+                + ", appJID:'" + appJID + "'"
+                + ", expresison:'" + expression + "')";
+
     }
 }

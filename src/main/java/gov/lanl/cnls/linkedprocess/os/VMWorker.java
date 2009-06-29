@@ -21,7 +21,7 @@ import javax.script.ScriptException;
  * Time: 2:15:41 PM
  */
 public class VMWorker {
-    private enum State {
+    private enum Status {
         ACTIVE_INPROGRESS,
         ACTIVE_SUSPENDED,
         IDLE_WAITING,
@@ -35,7 +35,7 @@ public class VMWorker {
     private final VMScheduler.VMResultHandler resultHandler;
     private final ScriptEngine scriptEngine;
     private final Thread workerThread;
-    private State state;
+    private Status status;
 
     private Job latestJob;
     private JobResult latestResult;
@@ -52,6 +52,9 @@ public class VMWorker {
      */
     public VMWorker(final ScriptEngine scriptEngine,
                     final VMScheduler.VMResultHandler resultHandler) {
+        LOGGER.info("instantiating VMWorker using engine type '"
+                + scriptEngine.getFactory().getEngineName() + "'");
+
         this.scriptEngine = scriptEngine;
         this.resultHandler = resultHandler;
 
@@ -62,7 +65,7 @@ public class VMWorker {
         workerThread = new Thread(new WorkerRunnable());
         workerThread.start();
 
-        state = State.IDLE_WAITING;
+        status = Status.IDLE_WAITING;
     }
 
     /**
@@ -70,7 +73,7 @@ public class VMWorker {
      *         job in progress, or pending jobs in the queue)
      */
     public synchronized boolean canWork() {
-        switch (state) {
+        switch (status) {
             case ACTIVE_SUSPENDED:
                 // Still working on the last job.
                 return true;
@@ -78,7 +81,7 @@ public class VMWorker {
                 // Are there any pending jobs?
                 return 0 != jobQueue.size();
             default:
-                throw new IllegalArgumentException("can't check for new work in state: " + state);
+                throw new IllegalArgumentException("can't check for new work in status: " + status);
         }
     }
 
@@ -89,13 +92,15 @@ public class VMWorker {
      * @param job the job to add
      */
     public synchronized void addJob(final Job job) {
-        switch (state) {
+        LOGGER.info("adding job: " + job);
+
+        switch (status) {
             case ACTIVE_SUSPENDED:
             case IDLE_WAITING:
                 jobQueue.offer(job);
                 break;
             default:
-                throw new IllegalStateException("can't add jobs in state: " + state);
+                throw new IllegalStateException("can't add jobs in status: " + status);
         }
     }
 
@@ -108,9 +113,11 @@ public class VMWorker {
      * @param timeout the length of the time window
      */
     public synchronized void work(final long timeout) {
-        switch (state) {
+        LOGGER.debug("working");
+
+        switch (status) {
             case ACTIVE_SUSPENDED:
-                state = State.ACTIVE_INPROGRESS;
+                status = Status.ACTIVE_INPROGRESS;
                 resumeWorkerThread();
                 break;
             case IDLE_WAITING:
@@ -119,11 +126,11 @@ public class VMWorker {
                 }
                 latestJob = jobQueue.poll();
 
-                state = State.ACTIVE_INPROGRESS;
+                status = Status.ACTIVE_INPROGRESS;
                 notifyWorkerThread();
                 break;
             default:
-                throw new IllegalStateException("can't begin new work in state: " + state);
+                throw new IllegalStateException("can't begin new work in status: " + status);
         }
 
         // Break out when the time slice has expired or the monitor has been notified.
@@ -134,7 +141,7 @@ public class VMWorker {
                 // chance of a race condition in which which the thread finishes
                 // and is then forced to wait.  The only consequence of this
                 // would be a wasted execution window.
-                if (State.ACTIVE_INPROGRESS == state) {
+                if (Status.ACTIVE_INPROGRESS == status) {
                     timeoutMonitor.wait(timeout);
                 }
             }
@@ -143,22 +150,22 @@ public class VMWorker {
             System.exit(1);
         }
 
-        // Suspend the thread immediately, regardless of what state we're in.
+        // Suspend the thread immediately, regardless of what status we're in.
         suspendWorkerThread();
 
-        switch (state) {
+        switch (status) {
             case ACTIVE_INPROGRESS:
-                state = State.ACTIVE_SUSPENDED;
+                status = Status.ACTIVE_SUSPENDED;
                 break;
             case IDLE_FINISHED:
                 resultHandler.handleResult(latestResult);
 
                 // Advance to the wait()
-                state = State.IDLE_WAITING;
+                status = Status.IDLE_WAITING;
                 resumeWorkerThread();
                 break;
             default:
-                throw new IllegalStateException("state should not occur at the end of a work window: " + state);
+                throw new IllegalStateException("status should not occur at the end of a work window: " + status);
         }
     }
 
@@ -170,10 +177,12 @@ public class VMWorker {
      * does so within that window.  Nor will additional jobs be processed.
      */
     public synchronized void terminate() {
-        switch (state) {
+        LOGGER.info("terminating worker");
+
+        switch (status) {
             case ACTIVE_SUSPENDED:
                 // Cause the worker thread to die.
-                state = State.TERMINATED;
+                status = Status.TERMINATED;
                 interruptWorkerThread();
 
                 // Put the current job back in the queue to be cancelled along
@@ -181,14 +190,14 @@ public class VMWorker {
                 jobQueue.offer(latestJob);
                 break;
             case IDLE_WAITING:
-                state = State.TERMINATED;
+                status = Status.TERMINATED;
                 notifyWorkerThread();
                 break;
             case TERMINATED:
                 // Been there, done that.
                 return;
             default:
-                throw new IllegalStateException("cannot cancel from state: " + state);
+                throw new IllegalStateException("cannot cancel from status: " + status);
         }
 
         // Cancel all jobs in the queue.
@@ -205,12 +214,14 @@ public class VMWorker {
      * @throws ServiceRefusedException if the job can't be found
      */
     public synchronized void cancelJob(final String jobID) throws ServiceRefusedException {
-        switch (state) {
+        LOGGER.info("cancelling job " + jobID);
+
+        switch (status) {
             case ACTIVE_SUSPENDED:
-                if (latestJob.getIqId().equals(jobID)) {
+                if (latestJob.getIQID().equals(jobID)) {
                     // Cause the worker thread to cease execution of the current
                     // job and wait.
-                    state = State.IDLE_WAITING;
+                    status = Status.IDLE_WAITING;
                     interruptWorkerThread();
 
                     // Put the current job in the queue to be discovered and
@@ -222,13 +233,13 @@ public class VMWorker {
                 // Nothing to do.
                 break;
             default:
-                throw new IllegalStateException("can't cancel jobs in state: " + state);
+                throw new IllegalStateException("can't cancel jobs in status: " + status);
         }
 
         // Look for the job in the queue and remove it if present.
         // FIXME: inefficient
         for (Job j : jobQueue.asCollection()) {
-            if (j.getIqId().equals(jobID)) {
+            if (j.getIQID().equals(jobID)) {
                 jobQueue.remove(j);
                 return;
             }
@@ -238,14 +249,14 @@ public class VMWorker {
     }
 
     public synchronized boolean jobExists(final String jobID) {
-        switch (state) {
+        switch (status) {
             case ACTIVE_SUSPENDED:
-                return jobID.equals(latestJob.getIqId())
+                return jobID.equals(latestJob.getIQID())
                         || jobQueueContains(jobID);
             case IDLE_WAITING:
                 return jobQueueContains(jobID);
             default:
-                throw new IllegalStateException("can't check job status in state: " + state);
+                throw new IllegalStateException("can't check job status in status: " + status);
         }
     }
 
@@ -281,7 +292,7 @@ public class VMWorker {
 
     private boolean jobQueueContains(final String jobID) {
         for (Job j : jobQueue.asCollection()) {
-            if (j.getIqId().equals(jobID)) {
+            if (j.getIQID().equals(jobID)) {
                 return true;
             }
         }
@@ -321,11 +332,11 @@ public class VMWorker {
 
         public void run() {
             // Break out when the worker is terminated.
-            while (State.TERMINATED != state) {
+            while (Status.TERMINATED != status) {
                 try {
-                    if (State.ACTIVE_INPROGRESS == state) {
+                    if (Status.ACTIVE_INPROGRESS == status) {
                         evaluate(latestJob);
-                        state = State.IDLE_FINISHED;
+                        status = Status.IDLE_FINISHED;
 
                         synchronized (timeoutMonitor) {
                             // Notify the parent thread that a result is available.

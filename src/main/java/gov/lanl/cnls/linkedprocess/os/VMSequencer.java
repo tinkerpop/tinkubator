@@ -12,11 +12,11 @@ class VMSequencer {
     private static final Logger LOGGER
             = LinkedProcess.getLogger(VMSequencer.class);
 
-    private enum State {
+    private enum Status {
         ACTIVE, TERMINATED
     }
 
-    private State state;
+    private Status status;
     private final long timeSlice;
     private final Thread sequencerThread;
     private final VMScheduler.VMWorkerSource workerSource;
@@ -30,13 +30,15 @@ class VMSequencer {
      */
     public VMSequencer(final VMScheduler.VMWorkerSource workerSource,
                        final long timeSlice) {
+        LOGGER.info("instantiating VMSequencer");
+        
         this.workerSource = workerSource;
         this.timeSlice = timeSlice;
 
         sequencerThread = new Thread(new SequencerRunnable());
         sequencerThread.start();
 
-        state = State.ACTIVE;
+        status = Status.ACTIVE;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -47,7 +49,7 @@ class VMSequencer {
 
         // This sequencer is terminated by the receipt of a null worker.
         if (null == w) {
-            state = State.TERMINATED;
+            status = Status.TERMINATED;
             return;
         }
 
@@ -63,12 +65,13 @@ class VMSequencer {
         public void run() {
             try {
                 // Break out when the sequencer is terminated.
-                while (State.ACTIVE == state) {
+                while (Status.ACTIVE == status) {
                     executeForTimeSlice();
                 }
             } catch (Exception e) {
-                // TODO: stack trace
+                // TODO: stack trace in log message
                 LOGGER.error("sequencer runnable died with error: " + e.toString());
+                e.printStackTrace();
             }
         }
     }

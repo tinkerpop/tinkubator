@@ -11,7 +11,7 @@ import org.jivesoftware.smack.packet.Packet;
  * Time: 11:23:49 AM
  */
 public class SpawnListener implements PacketListener {
-    
+
     private XmppFarm farm;
 
     public SpawnListener(XmppFarm farm) {
@@ -27,16 +27,15 @@ public class SpawnListener implements PacketListener {
             Spawn returnSpawn = new Spawn();
             returnSpawn.setTo(spawn.getFrom());
             returnSpawn.setPacketID(spawn.getPacketID());
-            String vmJid = null;
+            String vmJid;
 
             try {
-                 vmJid = farm.spawnVirtualMachine();
-                 returnSpawn.setVmJid(vmJid);
-                 returnSpawn.setType(IQ.Type.RESULT);
-            } catch(ServiceRefusedException e) {
-                returnSpawn.setType(IQ.Type.ERROR);   
+                vmJid = farm.spawnVirtualMachine();
+                returnSpawn.setVmJid(vmJid);
+                returnSpawn.setType(IQ.Type.RESULT);
+            } catch (ServiceRefusedException e) {
+                returnSpawn.setType(IQ.Type.ERROR);
             }
-
 
             XmppFarm.LOGGER.info("Sent SpawnListener:");
             XmppFarm.LOGGER.info(returnSpawn.toXML());
@@ -45,7 +44,6 @@ public class SpawnListener implements PacketListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }
 

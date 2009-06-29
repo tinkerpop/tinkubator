@@ -1,8 +1,6 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
 
 import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
@@ -32,7 +30,7 @@ public class PresenceSubscriptionListener implements PacketListener {
             subscribe.setFrom(packet.getTo());
             farm.getConnection().sendPacket(subscribed);
             farm.getConnection().sendPacket(subscribe);
-            Presence available = farm.createFarmPresence(XmppFarm.FarmPresence.AVAILABLE);
+            Presence available = farm.createFarmPresence(XmppFarm.FarmStatus.AVAILABLE);
             available.setTo(packet.getFrom());
             farm.getConnection().sendPacket(available);
             return;
@@ -45,7 +43,7 @@ public class PresenceSubscriptionListener implements PacketListener {
             unsubscribe.setFrom(packet.getTo());
             farm.getConnection().sendPacket(unsubscribed);
             farm.getConnection().sendPacket(unsubscribe);
-            Presence unavailable = farm.createFarmPresence(XmppFarm.FarmPresence.UNAVAILABLE);
+            Presence unavailable = farm.createFarmPresence(XmppFarm.FarmStatus.UNAVAILABLE);
             unavailable.setTo(packet.getFrom());
             farm.getConnection().sendPacket(unavailable);
             try {

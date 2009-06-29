@@ -29,7 +29,9 @@ public class PollBlockingQueue<T> {
         if (blocking && 0 == queue.size()) {
             synchronized (pollBlockingMonitor) {
                 try {
-                    queue.wait();
+                    synchronized (queue) {
+                        queue.wait();
+                    }
                 } catch (InterruptedException e) {
                     LOGGER.error("thread interrupted unexpectedly in queue");
                     System.exit(1);

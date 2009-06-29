@@ -1,6 +1,7 @@
 package gov.lanl.cnls.linkedprocess.os;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import org.apache.log4j.Logger;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -16,6 +17,8 @@ import java.util.Set;
  * Time: 2:15:27 PM
  */
 public class VMScheduler {
+    private static final Logger LOGGER
+            = LinkedProcess.getLogger(VMScheduler.class);
 
     private final PollBlockingQueue<VMWorker> workerQueue;
     private final Set<VMWorker> idleWorkerPool;
@@ -23,18 +26,19 @@ public class VMScheduler {
     private final ScriptEngineManager manager = new ScriptEngineManager();
     private final int maxWorkers;
     private final VMResultHandler resultHandler;
-    private FarmStatus state;
+    private SchedulerStatus status;
 
-    public enum FarmStatus {
+    public enum SchedulerStatus {
         ACTIVE, ACTIVE_FULL, TERMINATED
     }
 
     public enum VMStatus {
-        ACTIVE, DOES_NOT_EXIST
+        IN_PROGRESS, DOES_NOT_EXIST
     }
 
+    // TODO: how about a "queued" status for jobs?
     public enum JobStatus {
-        ACTIVE, DOES_NOT_EXIST
+        IN_PROGRESS, DOES_NOT_EXIST
     }
 
     /**
@@ -42,13 +46,15 @@ public class VMScheduler {
      * @param resultHandler a handler for results produced by the scheduler
      */
     public VMScheduler(final VMResultHandler resultHandler) {
+        LOGGER.info("instantiating VMScheduler");
+        
         this.resultHandler = resultHandler;
 
         workerQueue = new PollBlockingQueue<VMWorker>();
         idleWorkerPool = new HashSet<VMWorker>();
         workersByJID = new HashMap<String, VMWorker>();
 
-        state = FarmStatus.ACTIVE;
+        status = SchedulerStatus.ACTIVE;
 
         Properties props = LinkedProcess.getProperties();
 
@@ -113,7 +119,9 @@ public class VMScheduler {
      */
     public synchronized void addMachine(final String machineJID,
                                         final String scriptType) throws ServiceRefusedException {
-        if (FarmStatus.ACTIVE_FULL == state) {
+        LOGGER.info("attempting to add machine of type " + scriptType + " with JID '" + machineJID + "'");
+
+        if (SchedulerStatus.ACTIVE_FULL == status) {
             throw new ServiceRefusedException("too many active virtual machines");
         }
 
@@ -139,7 +147,7 @@ public class VMScheduler {
 
         workersByJID.put(machineJID, w);
         if (maxWorkers == workersByJID.size()) {
-            state = FarmStatus.ACTIVE_FULL;
+            status = SchedulerStatus.ACTIVE_FULL;
         }
 
         idleWorkerPool.add(w);
@@ -165,15 +173,15 @@ public class VMScheduler {
         w.terminate();
 
         if (maxWorkers > workersByJID.size()) {
-            state = FarmStatus.ACTIVE;
+            status = SchedulerStatus.ACTIVE;
         }
     }
 
     /**
      * @return the status of this scheduler
      */
-    public synchronized FarmStatus getFarmPresence() {
-        return state;
+    public synchronized SchedulerStatus getFarmPresence() {
+        return status;
     }
 
     /**
@@ -184,7 +192,7 @@ public class VMScheduler {
         VMWorker w = workersByJID.get(machineJID);
         return (null == w)
                 ? VMStatus.DOES_NOT_EXIST
-                : VMStatus.ACTIVE;
+                : VMStatus.IN_PROGRESS;
     }
 
     /**
@@ -196,7 +204,7 @@ public class VMScheduler {
                                                final String iqID) {
         VMWorker w = workersByJID.get(machineJID);
         return w.jobExists(iqID)
-                ? JobStatus.ACTIVE
+                ? JobStatus.IN_PROGRESS
                 : JobStatus.DOES_NOT_EXIST;
     }
 
@@ -211,7 +219,7 @@ public class VMScheduler {
             w.terminate();
         }
 
-        state = FarmStatus.TERMINATED;
+        status = SchedulerStatus.TERMINATED;
     }
 
     ////////////////////////////////////////////////////////////////////////////

@@ -25,7 +25,10 @@ public class XmppVirtualMachine extends XmppClient {
     public static Logger LOGGER = LinkedProcess.getLogger(XmppVirtualMachine.class);
     public static String RESOURCE_PREFIX = "LoPVM/";
 
-    public static enum VirtualMachinePresence { AVAILABLE, TOO_MANY_JOBS }
+    public static enum VirtualMachinePresence {
+        AVAILABLE, TOO_MANY_JOBS
+    }
+
     protected XmppFarm farm;
 
     public XmppVirtualMachine(final String server, final int port, final String username, final String password, XmppFarm farm) {
@@ -47,7 +50,6 @@ public class XmppVirtualMachine extends XmppClient {
             LOGGER.error("error: " + e);
             System.exit(1);
         }
-        
 
         PacketFilter evalFilter = new AndFilter(new PacketTypeFilter(Evaluate.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter statusFilter = new AndFilter(new PacketTypeFilter(Status.class), new IQTypeFilter(IQ.Type.GET));
@@ -56,8 +58,6 @@ public class XmppVirtualMachine extends XmppClient {
         connection.addPacketListener(new EvaluateListener(this), evalFilter);
         connection.addPacketListener(new StatusListener(this), statusFilter);
         connection.addPacketListener(new CancelListener(this), cancelFilter);
-
-
     }
 
     protected void logon(String server, int port, String username, String password) throws XMPPException {
@@ -73,9 +73,9 @@ public class XmppVirtualMachine extends XmppClient {
     public final Presence createVMPresence(final VirtualMachinePresence type) {
         String statusMessage = "temp util engine enacted.";
         //String statusMessage = engine.getFactory().getLanguageName() + "(" + engine.getFactory().getLanguageVersion() + "):" + engine.getFactory().getEngineName() + "(" + engine.getFactory().getEngineVersion() + ")";
-        if(type == VirtualMachinePresence.AVAILABLE) {
+        if (type == VirtualMachinePresence.AVAILABLE) {
             return new Presence(Presence.Type.available, statusMessage, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.available);
-        } else  {
+        } else {
             return new Presence(Presence.Type.unavailable, statusMessage, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.dnd);
         }
     }

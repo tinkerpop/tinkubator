@@ -1,10 +1,10 @@
 package gov.lanl.cnls.linkedprocess;
 
-import static org.junit.Assert.assertTrue;
+import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Cancel;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
-
+import junit.framework.TestCase;
 import org.jivesoftware.smack.XMPPConnection;
 import org.junit.After;
 import org.junit.Before;
@@ -15,40 +15,45 @@ import org.junit.Test;
  * Date: Jun 25, 2009
  * Time: 11:03:25 AM
  */
-public class XmppVirtualMachineTest {
+public class XmppVirtualMachineTest extends TestCase {
 
-    private static String username = "linked.process.3";
-    private static String gtalk_username = "linked.process.3@gmail.com";
-    private static String password = "linked34";
-    private static String ops4j_server = "srv03.codedragons.com";
-    private static String gtalk_server = "talk1.l.google.com";
-    private static int port = 5222;
-	private XmppVirtualMachine xmppVirtualMachine;
+    public static final String USERNAME = "linked.process.3";
+    public static final String GTALK_USERNAME = "linked.process.3@gmail.com";
+    public static final String PASSWORD = "linked34";
+    public static final String OPS4J_SERVER = "srv03.codedragons.com";
+    public static final String GTALK_SERVER = "talk1.l.google.com";
+    public static final int PORT = 5222;
+
+    private XmppVirtualMachine xmppVirtualMachine;
 
     @Before
     public void setUp() throws Exception {
     }
-    @Test
-    public void testLoginOPS4J() throws Exception {
-    	xmppVirtualMachine = new XmppVirtualMachine(ops4j_server, port, username, password, null);
-        XMPPConnection connection = xmppVirtualMachine.getConnection();
-		assertTrue(connection.isConnected());
-		xmppVirtualMachine.shutDown();
-		
-    }
-    @Test
-    public void testLoginGTalk() throws Exception {
-    	xmppVirtualMachine = new XmppVirtualMachine(gtalk_server, port, gtalk_username, password, null);
-        XMPPConnection connection = xmppVirtualMachine.getConnection();
-		assertTrue(connection.isConnected());
-		xmppVirtualMachine.shutDown();
-		
-    }
+
     @After
     public void tearDown() {
     }
+//*
+    @Test
+    public void testLoginOPS4J() throws Exception {
+        xmppVirtualMachine = new XmppVirtualMachine(OPS4J_SERVER, PORT, USERNAME, PASSWORD, null);
+        XMPPConnection connection = xmppVirtualMachine.getConnection();
+        assertTrue(connection.isConnected());
+        xmppVirtualMachine.shutDown();
 
-     public void testEvaluateTag() {
+    }
+
+    @Test
+    public void testLoginGTalk() throws Exception {
+        xmppVirtualMachine = new XmppVirtualMachine(GTALK_SERVER, PORT, GTALK_USERNAME, PASSWORD, null);
+        XMPPConnection connection = xmppVirtualMachine.getConnection();
+        assertTrue(connection.isConnected());
+        xmppVirtualMachine.shutDown();
+
+    }
+
+    @Test
+    public void testEvaluateTag() {
         Evaluate eval = new Evaluate();
         eval.setExpression("for(int i=0; i<10; i++) { i; };");
         String evalString = eval.getChildElementXML();
@@ -58,6 +63,7 @@ public class XmppVirtualMachineTest {
         assertTrue(evalString.contains("for(int i=0; i&lt;10; i++) { i; };"));
     }
 
+    @Test
     public void testCancelTag() {
         Cancel cancel = new Cancel();
         cancel.setJobId("wxyz");
@@ -65,5 +71,13 @@ public class XmppVirtualMachineTest {
         System.out.println(cancelString);
         assertTrue(cancelString.contains("xmlns=\"" + LinkedProcess.LOP_VM_NAMESPACE));
         assertTrue(cancelString.contains("job_id=\"wxyz\""));
+    }
+//*/
+
+    @Test
+    public void testSpawnVirtualMachine() throws Exception {
+        XmppFarm farm = new XmppFarm(OPS4J_SERVER, PORT, USERNAME, PASSWORD);
+        String vmJID = farm.spawnVirtualMachine();
+        farm.shutDown();
     }
 }
