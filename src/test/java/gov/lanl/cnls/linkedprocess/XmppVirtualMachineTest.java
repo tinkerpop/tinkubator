@@ -17,25 +17,35 @@ import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Cancel;
  */
 public class XmppVirtualMachineTest extends TestCase {
 
-    private static String username = "linked.process.3@gmail.com";
+    private static String username = "linked.process.3";
+    private static String gtalk_username = "linked.process.3@gmail.com";
     private static String password = "linked34";
-    private static String server = "talk1.l.google.com";
+    private static String ops4j_server = "srv03.codedragons.com";
+    private static String gtalk_server = "talk1.l.google.com";
     private static int port = 5222;
 	private XmppVirtualMachine xmppVirtualMachine;
 
     @Before
     public void setUp() throws Exception {
-    	xmppVirtualMachine = new XmppVirtualMachine(server, port, username, password, null);
     }
     @Test
-    public void testLogin() throws Exception {
+    public void testLoginOPS4J() throws Exception {
+    	xmppVirtualMachine = new XmppVirtualMachine(ops4j_server, port, username, password, null);
         XMPPConnection connection = xmppVirtualMachine.getConnection();
 		assertTrue(connection.isConnected());
+		xmppVirtualMachine.shutDown();
+		
+    }
+    @Test
+    public void testLoginGTalk() throws Exception {
+    	xmppVirtualMachine = new XmppVirtualMachine(gtalk_server, port, gtalk_username, password, null);
+        XMPPConnection connection = xmppVirtualMachine.getConnection();
+		assertTrue(connection.isConnected());
+		xmppVirtualMachine.shutDown();
 		
     }
     @After
     public void tearDown() {
-    	xmppVirtualMachine.shutDown();
     }
 
      public void testEvaluateTag() {
