@@ -11,6 +11,7 @@ import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
+import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.Spawn;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.SpawnListener;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
 
@@ -49,6 +50,7 @@ public class MockingTest {
 	private List<Packet> sentPackets;
 	private List<PacketListener> packetListeners;
 	private String mockFarmId;
+	private String mockClient;
 
 	@Before
 	public void setup() throws Exception {
@@ -100,23 +102,22 @@ public class MockingTest {
 
 	@Test
 	public void testMockingXMPP() throws Exception {
-		
+
 		// create a spawn packet for later injection
 		Packet spawnPacket = createMock(Packet.class);
 		String spawnXML = "<not real XML>";
 		expect(spawnPacket.toXML()).andReturn(spawnXML).anyTimes();
-		String mockClient = "mockClient";
+		mockClient = "mockClient";
 		expect(spawnPacket.getFrom()).andReturn(mockClient).anyTimes();
 		String spawnPacketId = "123";
 		expect(spawnPacket.getPacketID()).andReturn(spawnPacketId).anyTimes();
 
-		//activate all mock objects
+		// activate all mock objects
 		replayAll();
 
 		// start testing
 		XmppFarm xmppFarm = new XmppFarm(server, port, username1, password1);
-		
-		
+
 		// one presence packet should have been sent
 		assertTrue(sentPackets.size() == 1);
 		// now we should have 3 PacketListeners to the XMPP connection
@@ -127,7 +128,7 @@ public class MockingTest {
 
 		// let's send a spawn packet!
 		spawnListener.processPacket(spawnPacket);
-		
+
 		// now, a new packet should have been sent back from the VM
 		assertEquals(3, sentPackets.size());
 		// sent packet should refer to the same pID
@@ -135,9 +136,11 @@ public class MockingTest {
 		assertEquals(result.getPacketID(), spawnPacketId);
 		assertEquals(result.getType(), IQ.Type.RESULT);
 		// check the whole xml string
-		assertEquals(
-				"<spawn xmlns=\"http://linkedprocess.org/protocol#LoPFarm\" vm_jid=\""
-						+ mockFarmId + "\" />", result.getChildElementXML());
+		assertEquals("<iq id=\"" + spawnPacketId + "\" to=\"" + mockClient
+				+ "\" type=\"result\"><" + Spawn.SPAWN_TAGNAME + " xmlns=\""
+				+ LinkedProcess.LOP_FARM_NAMESPACE + "\" "
+				+ Spawn.VM_JID_ATTRIBUTE + "=\"" + mockFarmId + "\" /></iq>",
+				result.toXML());
 
 		// now we should have 3 more PacketListeners for the VM
 		assertTrue(packetListeners.size() == 6);
