@@ -31,7 +31,7 @@ public class VMSchedulerTest extends TestCase {
 
     public void testCreateAndShutDownScheduler() {
         scheduler = new VMScheduler(resultHandler);
-        assertEquals(LinkedProcess.SchedulerStatus.ACTIVE, scheduler.getSchedulerStatus());
+        assertEquals(LinkedProcess.FarmStatus.ACTIVE, scheduler.getSchedulerStatus());
         scheduler.shutDown();
     }
 
@@ -50,14 +50,14 @@ public class VMSchedulerTest extends TestCase {
         assertEquals(LinkedProcess.VMStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm1));
         scheduler.spawnVirtualMachine(vm2, vmType);
         assertEquals(LinkedProcess.VMStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm2));
-        assertEquals(LinkedProcess.SchedulerStatus.ACTIVE, scheduler.getSchedulerStatus());
+        assertEquals(LinkedProcess.FarmStatus.ACTIVE, scheduler.getSchedulerStatus());
         scheduler.shutDown();
     }
 
     public void testSchedulerStatusAfterShutdown() {
         scheduler = new VMScheduler(resultHandler);
         scheduler.shutDown();
-        assertEquals(LinkedProcess.SchedulerStatus.TERMINATED, scheduler.getSchedulerStatus());
+        assertEquals(LinkedProcess.FarmStatus.TERMINATED, scheduler.getSchedulerStatus());
     }
 
     public void testVMStatusAfterTermination() throws ServiceRefusedException {

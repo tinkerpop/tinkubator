@@ -29,7 +29,7 @@ public class VMScheduler {
     private final int maxWorkers;
     private final VMResultHandler resultHandler;
     private final int numberOfSequencers;
-    private LinkedProcess.SchedulerStatus status;
+    private LinkedProcess.FarmStatus status;
 
 
     private long jobsReceived = 0;
@@ -49,7 +49,7 @@ public class VMScheduler {
         idleWorkerPool = new HashSet<VMWorker>();
         workersByJID = new HashMap<String, VMWorker>();
 
-        status = LinkedProcess.SchedulerStatus.ACTIVE;
+        status = LinkedProcess.FarmStatus.ACTIVE;
 
         Properties props = LinkedProcess.getProperties();
 
@@ -80,7 +80,7 @@ public class VMScheduler {
      */
     public synchronized void scheduleJob(final String machineJID,
                                          final Job job) throws ServiceRefusedException {
-        if (LinkedProcess.SchedulerStatus.TERMINATED == status) {
+        if (LinkedProcess.FarmStatus.TERMINATED == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
@@ -105,7 +105,7 @@ public class VMScheduler {
      */
     public synchronized void abortJob(final String machineJID,
                                       final String jobID) throws ServiceRefusedException {
-        if (LinkedProcess.SchedulerStatus.TERMINATED == status) {
+        if (LinkedProcess.FarmStatus.TERMINATED == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
@@ -125,13 +125,13 @@ public class VMScheduler {
      */
     public synchronized void spawnVirtualMachine(final String machineJID,
                                                  final String scriptType) throws ServiceRefusedException {
-        if (LinkedProcess.SchedulerStatus.TERMINATED == status) {
+        if (LinkedProcess.FarmStatus.TERMINATED == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
         LOGGER.info("attempting to add machine of type " + scriptType + " with JID '" + machineJID + "'");
 
-        if (LinkedProcess.SchedulerStatus.ACTIVE_FULL == status) {
+        if (LinkedProcess.FarmStatus.ACTIVE_FULL == status) {
             throw new ServiceRefusedException("too many active virtual machines");
         }
 
@@ -157,7 +157,7 @@ public class VMScheduler {
 
         workersByJID.put(machineJID, w);
         if (maxWorkers == workersByJID.size()) {
-            status = LinkedProcess.SchedulerStatus.ACTIVE_FULL;
+            status = LinkedProcess.FarmStatus.ACTIVE_FULL;
         }
 
         LOGGER.debug("adding worker to idle pool: " + w);
@@ -172,7 +172,7 @@ public class VMScheduler {
      *                                 cannot be destroyed
      */
     public synchronized void terminateVirtualMachine(final String machineJID) throws ServiceRefusedException {
-        if (LinkedProcess.SchedulerStatus.TERMINATED == status) {
+        if (LinkedProcess.FarmStatus.TERMINATED == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
@@ -187,14 +187,14 @@ public class VMScheduler {
         w.terminate();
 
         if (maxWorkers > workersByJID.size()) {
-            status = LinkedProcess.SchedulerStatus.ACTIVE;
+            status = LinkedProcess.FarmStatus.ACTIVE;
         }
     }
 
     /**
      * @return the status of this scheduler
      */
-    public synchronized LinkedProcess.SchedulerStatus getSchedulerStatus() {
+    public synchronized LinkedProcess.FarmStatus getSchedulerStatus() {
         return status;
     }
 
@@ -249,7 +249,7 @@ public class VMScheduler {
 
         workersByJID.clear();
 
-        status = LinkedProcess.SchedulerStatus.TERMINATED;
+        status = LinkedProcess.FarmStatus.TERMINATED;
     }
 
     /**

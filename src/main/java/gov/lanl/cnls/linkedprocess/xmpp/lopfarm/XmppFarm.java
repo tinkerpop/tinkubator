@@ -30,7 +30,7 @@ public class XmppFarm extends XmppClient {
     public static final String RESOURCE_PREFIX = "LoPFarm";
     public static final String STATUS_MESSAGE = "LoP Farm v0.1";
 
-    // FIXME: reuse VMScheduler.SchedulerStatus.  In particular, "too many jobs" will not happen.  "Too many VMs" will happen.
+    // FIXME: reuse VMScheduler.FarmStatus.  In particular, "too many jobs" will not happen.  "Too many VMs" will happen.
     public static enum FarmStatus {
         AVAILABLE, UNAVAILABLE, TOO_MANY_JOBS
     }

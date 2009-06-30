@@ -28,12 +28,12 @@ public class LinkedProcess {
         }
     }
 
-    public enum SchedulerStatus {
+    public enum FarmStatus {
         ACTIVE("active"), ACTIVE_FULL("full"), TERMINATED("terminated");
 
         private final String name;
 
-        private SchedulerStatus(final String name) {
+        private FarmStatus(final String name) {
             this.name = name;
         }
 
