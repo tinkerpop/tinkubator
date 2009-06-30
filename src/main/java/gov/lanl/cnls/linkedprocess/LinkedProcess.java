@@ -13,6 +13,50 @@ import java.io.IOException;
  * Time: 2:44:21 PM
  */
 public class LinkedProcess {
+    // TODO: how about a "queued" status for jobs?
+    public enum JobStatus {
+        IN_PROGRESS("in_progress"), DOES_NOT_EXIST("does_not_exist");
+
+        private final String name;
+
+        private JobStatus(final String name) {
+            this.name = name;
+        }
+
+        public String toString() {
+            return name;
+        }
+    }
+
+    public enum SchedulerStatus {
+        ACTIVE("active"), ACTIVE_FULL("full"), TERMINATED("terminated");
+
+        private final String name;
+
+        private SchedulerStatus(final String name) {
+            this.name = name;
+        }
+
+        public String toString() {
+            return name;
+        }
+
+    }
+
+    public enum VMStatus {
+        ACTIVE("active"), DOES_NOT_EXIST("not_found");
+
+        private final String name;
+
+        private VMStatus(final String name) {
+            this.name = name;
+        }
+
+        public String toString() {
+            return name;
+        }
+
+    }
 
     public static final String LOP_NAMESPACE = "http://linkedprocess.org/";
     public static final String LOP_FARM_NAMESPACE = LOP_NAMESPACE + "protocol#LoPFarm";
@@ -23,18 +67,18 @@ public class LinkedProcess {
 
     ///////////////////////////////////////////////////////
     // LoP Farm XMPP tag and attribute names
-      // tag names
+    // tag names
     public static final String SPAWN_VM_TAG = "spawn_vm";
     public static final String TERMINATE_VM_TAG = "terminate_vm";
-      // attribute names
+    // attribute names
     public static final String VM_SPECIES_ATTRIBUTE = "vm_species";
     public static final String VM_JID_ATTRIBUTE = "vm_jid";
     // Lop VM XMPP tag and attribute names
-      // tag names
+    // tag names
     public static final String EVALUATE_TAG = "evaluate";
     public static final String JOB_STATUS_TAG = "job_status";
     public static final String ABORT_JOB_TAG = "abort_job";
-      // attribute names
+    // attribute names
     public static final String JOB_ID_ATTRIBUTE = "job_id";
     public static final String ERROR_ATTRIBUTE = "error";
     ///////////////////////////////////////////////////////

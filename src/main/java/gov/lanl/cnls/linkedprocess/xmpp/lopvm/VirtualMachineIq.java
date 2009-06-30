@@ -1,7 +1,7 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
 import org.jivesoftware.smack.packet.IQ;
-import gov.lanl.cnls.linkedprocess.os.VMScheduler;
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
 /**
  * User: marko
@@ -11,9 +11,9 @@ import gov.lanl.cnls.linkedprocess.os.VMScheduler;
 public abstract class VirtualMachineIq extends IQ {
 
     protected String jobId;
-    protected VMScheduler.JobStatus value;
+    protected LinkedProcess.JobStatus value;
 
-    public void setValue(VMScheduler.JobStatus status) {
+    public void setValue(LinkedProcess.JobStatus status) {
         this.value = status;
     }
 

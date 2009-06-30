@@ -2,7 +2,6 @@ package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import gov.lanl.cnls.linkedprocess.os.ServiceRefusedException;
-import gov.lanl.cnls.linkedprocess.os.VMScheduler;
 import gov.lanl.cnls.linkedprocess.os.Job;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
@@ -87,7 +86,7 @@ public class XmppVirtualMachine extends XmppClient {
         this.farm.getScheduler().abortJob(this.getFullJid(), jobId);
     }
 
-    public VMScheduler.JobStatus getJobStatus(String jobId) {
+    public LinkedProcess.JobStatus getJobStatus(String jobId) {
         return this.farm.getScheduler().getJobStatus(this.getFullJid(), jobId);
     }
 
