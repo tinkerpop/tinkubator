@@ -12,6 +12,15 @@ public abstract class VirtualMachineIq extends IQ {
 
     protected String jobId;
     protected LinkedProcess.JobStatus value;
+    protected LinkedProcess.Errortype vmError;
+
+    public void setVmError(LinkedProcess.Errortype vmError) {
+        this.vmError = vmError;
+    }
+
+    public LinkedProcess.Errortype getVmError() {
+        return this.vmError;
+    }
 
     public void setValue(LinkedProcess.JobStatus status) {
         this.value = status;

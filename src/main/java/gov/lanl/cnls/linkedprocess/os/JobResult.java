@@ -1,6 +1,7 @@
 package gov.lanl.cnls.linkedprocess.os;
 
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import org.jivesoftware.smack.packet.IQ;
 
 /**
@@ -70,11 +71,12 @@ public class JobResult {
                 // TODO: add more information to indicate that the job was
                 // cancelled; there was not necessarily an error in execution.
                 returnEval.setType(IQ.Type.ERROR);
-                returnEval.setExpression(JobResult.CANCELED_MESSAGE);
+                returnEval.setVmError(LinkedProcess.Errortype.JOB_ABORTED);
                 break;
             case ERROR:
                 // TODO: add more information about the error, drawn from this.exception
                 returnEval.setType(IQ.Type.ERROR);
+                returnEval.setVmError(LinkedProcess.Errortype.EVALUATION_ERROR);
                 String msg = exception.getMessage();
                 if (null != msg) {
                     returnEval.setExpression(msg);

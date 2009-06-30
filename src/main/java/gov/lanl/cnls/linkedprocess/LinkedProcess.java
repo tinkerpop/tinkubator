@@ -59,8 +59,8 @@ public class LinkedProcess {
     }
 
     public enum Errortype {
-        EXECUTION_ERROR("execution_error"),
-        CANCELLED("cancelled"),
+        EVALUATION_ERROR("evaluation_error"),
+        JOB_ABORTED("job_aborted"),
         JOB_NOT_FOUND("job_not_found");
 
         private final String name;
@@ -97,6 +97,7 @@ public class LinkedProcess {
     // attribute names
     public static final String JOB_ID_ATTRIBUTE = "job_id";
     public static final String ERROR_ATTRIBUTE = "error";
+    public static final String VALUE_ATTRIBUTE = "value";
     ///////////////////////////////////////////////////////
 
     public static final int LOWEST_PRIORITY = -128;

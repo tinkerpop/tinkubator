@@ -1,6 +1,5 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
-import org.jivesoftware.smack.packet.IQ;
 import org.jdom.Element;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
@@ -9,7 +8,7 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
  * Date: Jun 24, 2009
  * Time: 12:12:20 PM
  */
-public class Evaluate extends IQ {
+public class Evaluate extends VirtualMachineIq {
 
     String expression;
 
@@ -25,9 +24,16 @@ public class Evaluate extends IQ {
     public String getChildElementXML() {
 
         Element evaluateElement = new Element(LinkedProcess.EVALUATE_TAG, LinkedProcess.LOP_VM_NAMESPACE);
+
+        if(this.vmError != null) {
+            evaluateElement.setAttribute(LinkedProcess.ERROR_ATTRIBUTE, this.vmError.toString());
+        }
+
         if(this.expression != null) {
             evaluateElement.setText(this.expression);
         }
+
+
         return LinkedProcess.xmlOut.outputString(evaluateElement);
     }
 }

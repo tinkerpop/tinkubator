@@ -18,7 +18,7 @@ public class JobStatus extends VirtualMachineIq {
             jobStatusElement.setAttribute(LinkedProcess.JOB_ID_ATTRIBUTE, this.jobId);
         }
         if(this.value != null) {
-            jobStatusElement.setAttribute("value", this.value.toString());
+            jobStatusElement.setAttribute(LinkedProcess.VALUE_ATTRIBUTE, this.value.toString());
         }
         return LinkedProcess.xmlOut.outputString(jobStatusElement);
     }

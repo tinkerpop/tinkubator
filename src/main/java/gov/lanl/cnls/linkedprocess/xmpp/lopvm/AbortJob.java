@@ -10,20 +10,14 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
  */
 public class AbortJob extends VirtualMachineIq {
 
-    protected LinkedProcess.Errortype abortError;
-
-    public void setAbortError() {
-        this.abortError = LinkedProcess.Errortype.JOB_NOT_FOUND;
-    }
-
     public String getChildElementXML() {
 
         Element abandonJobElement = new Element(LinkedProcess.ABORT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE);
         if(this.jobId != null) {
             abandonJobElement.setAttribute(LinkedProcess.JOB_ID_ATTRIBUTE, this.jobId);
         }
-        if(this.abortError != null) {
-            abandonJobElement.setAttribute(LinkedProcess.ERROR_ATTRIBUTE, this.abortError.toString());
+        if(this.vmError != null) {
+            abandonJobElement.setAttribute(LinkedProcess.ERROR_ATTRIBUTE, this.vmError.toString());
         }
         return LinkedProcess.xmlOut.outputString(abandonJobElement);
     }
