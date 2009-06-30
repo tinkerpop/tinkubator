@@ -18,6 +18,7 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
@@ -140,9 +141,10 @@ public class MockingTest {
 		// now, a new packet should have been sent back from the VM
 		assertEquals(3, sentPackets.size());
 		// sent packet should refer to the same pID
-		IQ result = (IQ) sentPackets.get(2);
+		Spawn result = (Spawn) sentPackets.get(2);
 		assertEquals(result.getPacketID(), spawnPacketId);
 		assertEquals(result.getType(), IQ.Type.RESULT);
+		assertFalse("The returned VM ID should not be the Farms id, right?", result.getVmJid().equals(mockFarmId) );
 		// check the whole xml string
 		assertEquals("<iq id=\"" + spawnPacketId + "\" to=\"" + mockClient
 				+ "\" type=\"result\"><" + Spawn.SPAWN_TAGNAME + " xmlns=\""
@@ -194,7 +196,7 @@ public class MockingTest {
 		IQ result = (IQ) sentPackets.get(4);
 		assertEquals(result.getPacketID(), spawnPacket2Id);
 
-		// we should get an error back
+		// we should get an error back, or should we?
 		assertEquals(IQ.Type.ERROR, result.getType());
 		// check the whole xml string
 		assertEquals("<iq id=\"" + spawnPacket2Id + "\" to=\"" + mockClient
@@ -227,7 +229,7 @@ public class MockingTest {
 		PacketListener evalListener = packetListeners.get(3);
 		evalListener.processPacket(eval);
 		// now, a some new packets should have been sent back from the new VM
-		assertEquals(4, sentPackets.size());
+		assertEquals("We should have gotten a packet back!", 4, sentPackets.size());
 		// sent packet should refer to the same pID
 		IQ result = (IQ) sentPackets.get(3);
 		assertEquals(result.getPacketID(), eval.getPacketID());
