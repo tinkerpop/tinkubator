@@ -1,7 +1,7 @@
 package gov.lanl.cnls.linkedprocess;
 
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
-import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Cancel;
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.AbandonJob;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
 import junit.framework.TestCase;
@@ -65,25 +65,25 @@ public class XmppVirtualMachineTest extends TestCase {
 
     @Test
     public void testCancelTag() {
-        Cancel cancel = new Cancel();
-        cancel.setJobId("wxyz");
-        String cancelString = cancel.getChildElementXML();
+        AbandonJob abandonJob = new AbandonJob();
+        abandonJob.setJobId("wxyz");
+        String cancelString = abandonJob.getChildElementXML();
         System.out.println(cancelString);
         assertTrue(cancelString.contains("xmlns=\"" + LinkedProcess.LOP_VM_NAMESPACE));
         assertTrue(cancelString.contains("job_id=\"wxyz\""));
     }
 
-        @Test
+    @Test
     public void testSpawnVirtualMachine() throws Exception {
         XmppFarm farm = new XmppFarm(OPS4J_SERVER, PORT, USERNAME, PASSWORD);
-        String vmJID = farm.spawnVirtualMachine();
+        String vmJID = farm.spawnVirtualMachine("JavaScript");
         farm.shutDown();
     }
 
     @Test
     public void testExecuteScript() throws Exception {
         XmppFarm farm = new XmppFarm(OPS4J_SERVER, PORT, USERNAME, PASSWORD);
-        String vmJID = farm.spawnVirtualMachine();
+        String vmJID = farm.spawnVirtualMachine("JavaScript");
         XmppVirtualMachine vm = farm.getVirtualMachine(vmJID);
 
 

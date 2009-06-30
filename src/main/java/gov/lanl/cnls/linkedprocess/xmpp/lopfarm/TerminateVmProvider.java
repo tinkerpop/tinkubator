@@ -10,16 +10,16 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
  * Date: Jun 25, 2009
  * Time: 2:26:06 PM
  */
-public class DestroyProvider implements IQProvider {
+public class TerminateVmProvider implements IQProvider {
 
     public IQ parseIQ(XmlPullParser parser) throws Exception {
 
-        Destroy destroy = new Destroy();
-        String vmJid = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, Destroy.VM_JID_ATTRIBUTE);
+        TerminateVm terminateVm = new TerminateVm();
+        String vmJid = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, TerminateVm.VM_JID_ATTRIBUTE);
         if(null != vmJid) {
-            destroy.setVmJid(vmJid);
+            terminateVm.setVmJid(vmJid);
         }
         parser.next();
-        return destroy;
+        return terminateVm;
     }
 }

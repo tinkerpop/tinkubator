@@ -45,7 +45,11 @@ public class VMScheduler {
 
     // TODO: how about a "queued" status for jobs?
     public enum JobStatus {
-        IN_PROGRESS, DOES_NOT_EXIST
+        IN_PROGRESS, DOES_NOT_EXIST;
+
+        public String toString() {
+            return "";
+        }
     }
 
     /**

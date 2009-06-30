@@ -1,9 +1,9 @@
 package gov.lanl.cnls.linkedprocess;
 
 import static org.junit.Assert.assertTrue;
-import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.Spawn;
+import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.SpawnVm;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
-import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.Destroy;
+import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.TerminateVm;
 import gov.lanl.cnls.linkedprocess.xmpp.tools.XmppTestClient;
 
 import org.jivesoftware.smack.XMPPConnection;
@@ -20,30 +20,32 @@ import junit.framework.TestCase;
 @RunWith(JUnit4.class)
 public class XmppFarmTest extends TestCase {
 
-	private static String username1 = "linked.process.1@gmail.com";
+	private static String username1 = "linked.process.1@xmpp.linkedprocess.org";
 	private static String password1 = "linked12";
-	private static String username2 = "linked.process.2@gmail.com";
+	private static String username2 = "linked.process.2@xmpp.linkedprocess.org";
 	private static String password2 = "linked23";
 
-	private static String server = "talk1.l.google.com";
-	private static int port = 5222;
+	private static String server1 = "xmpp.linkedprocess.org";
+    private static String server2 = "talk1.l.google.com";
+
+    private static int port = 5222;
 
 	private static XmppFarm xmppFarm;
 	private static XmppTestClient xmppApp;
 
 	public static void main(String[] args) throws Exception {
-		new XmppFarm(server, port, username1, password1);
-	}
+		new XmppFarm(server1, port, username1, password1);
+    }
 
-	private XMPPConnection mockConnection;
+    private XMPPConnection mockConnection;
 
 
 	@Before
 	public void setup() throws Exception {
 
-		xmppFarm = new XmppFarm(server, port, username1, password1);
+		xmppFarm = new XmppFarm(server1, port, username1, password1);
 		Thread.sleep(1000);
-		xmppApp = new XmppTestClient(server, port, username2, password2);
+		xmppApp = new XmppTestClient(server1, port, username2, password2);
 		Thread.sleep(1000);
 	}
 
@@ -58,9 +60,9 @@ public class XmppFarmTest extends TestCase {
     //@Test
 	/*public void testSubscribe() throws Exception
       {
-          xmppFarm = new XmppFarm(server, port, username1, password1);
+          xmppFarm = new XmppFarm(server1, port, username1, password1);
 		Thread.sleep(1000);
-		xmppApp = new XmppTestClient(server, port, username2, password2);
+		xmppApp = new XmppTestClient(server1, port, username2, password2);
 		Thread.sleep(1000);
 
           xmppApp.subscribe(xmppFarm.getFullJid());
@@ -76,19 +78,19 @@ public class XmppFarmTest extends TestCase {
 
 	@Test
 	public void testSpawning() throws Exception {
-		Spawn spawn = new Spawn();
-		spawn.setTo(xmppFarm.getFullJid());
-		spawn.setPacketID("abcd");
-		xmppApp.getConnection().sendPacket(spawn);
+		SpawnVm spawnVm = new SpawnVm();
+		spawnVm.setTo(xmppFarm.getFullJid());
+		spawnVm.setPacketID("abcd");
+		xmppApp.getConnection().sendPacket(spawnVm);
 
 	}
 
 
     public void testSpawnTag() throws Exception {
-        Spawn spawn = new Spawn();
-        spawn.setVmJid("lp1@gmail.com");
-        spawn.setVmSpecies("lop:vm:javascript");
-        String spawnString = spawn.getChildElementXML();
+        SpawnVm spawnVm = new SpawnVm();
+        spawnVm.setVmJid("lp1@gmail.com");
+        spawnVm.setVmSpecies("lop:vm:javascript");
+        String spawnString = spawnVm.getChildElementXML();
         System.out.println(spawnString);
         assertTrue(spawnString.contains("xmlns=\"" + LinkedProcess.LOP_FARM_NAMESPACE));
         assertTrue(spawnString.contains("vm_jid=\"lp1@gmail.com\""));
@@ -96,9 +98,9 @@ public class XmppFarmTest extends TestCase {
     }
 
     public void testDestroyTag() throws Exception {
-        Destroy destroy = new Destroy();
-        destroy.setVmJid("lp1@gmail.com");
-        String destroyString = destroy.getChildElementXML();
+        TerminateVm terminateVm = new TerminateVm();
+        terminateVm.setVmJid("lp1@gmail.com");
+        String destroyString = terminateVm.getChildElementXML();
         System.out.println(destroyString);
         assertTrue(destroyString.contains("xmlns=\"" + LinkedProcess.LOP_FARM_NAMESPACE));
         assertTrue(destroyString.contains("vm_jid=\"lp1@gmail.com\""));

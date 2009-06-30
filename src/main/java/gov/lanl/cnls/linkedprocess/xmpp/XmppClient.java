@@ -3,6 +3,7 @@ package gov.lanl.cnls.linkedprocess.xmpp;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
 import java.util.Iterator;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -54,7 +55,7 @@ public abstract class XmppClient {
         this.connection.connect();
 
         LOGGER.info("Connected to " + connection.getHost());
-        connection.login(username, password, resource);
+        connection.login(username, password, resource + LinkedProcess.FORWARD_SLASH + XmppClient.generatedRandomID());
         LOGGER.info("Logged in as " + connection.getUser());
   
         Thread shutdownHook = new Thread(new Runnable() {
@@ -109,7 +110,7 @@ public abstract class XmppClient {
         return this.connection;
     }
 
-    public void subscribe(String clientJid) {
+    /*public void subscribe(String clientJid) {
         Presence subscribe = new Presence(Presence.Type.subscribe);
         subscribe.setTo(generateBareJid(clientJid));
         this.connection.sendPacket(subscribe);
@@ -127,7 +128,7 @@ public abstract class XmppClient {
             } catch(XMPPException e) {
                 e.printStackTrace();
         }
-    }
+    }*/
 
     public void shutDown() {
         LOGGER.info("Requesting shutdown");
@@ -154,5 +155,20 @@ public abstract class XmppClient {
 
     public Roster getRoster() {
         return this.roster;
+    }
+
+    public static String generatedRandomID() {
+        // e.g. from gtalk 6D56433B
+        Random random = new Random();
+        StringBuilder b = new StringBuilder();
+        for(int i=0; i<8; i++) {
+            int x = random.nextInt(36);
+            if(x < 10)
+                b.append(x);
+            else
+                b.append(((char)(x+55)));
+
+        }
+        return b.toString();
     }
 }

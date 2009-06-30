@@ -5,6 +5,9 @@ import org.junit.Test;
 import junit.framework.TestCase;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 
+import java.util.Set;
+import java.util.HashSet;
+
 /**
  * User: marko
  * Date: Jun 26, 2009
@@ -17,8 +20,19 @@ public class XmppClientTest extends TestCase {
     private static String server = "talk1.l.google.com";
     private static int port = 5222;
 
-    @Test
     public void testJidConversion() {
         assertEquals(XmppClient.generateBareJid("linked.process.1@gmail.com/test/12345"), username);
+        assertEquals(XmppClient.generateBareJid("lop1@xmpp.linkedprocess.org/test/" + XmppClient.generatedRandomID()), "lop1@xmpp.linkedprocess.org");
+
+    }
+
+    public void testRandomIDGenerator() {
+        // 1,000,000 random IDs are generated without conflict.
+        Set<String> uniques = new HashSet<String>();
+        for(int i=0; i<1000000; i++) {
+            //System.out.println(XmppClient.generatedRandomID());
+            uniques.add(XmppClient.generatedRandomID());
+        }
+        assertEquals(uniques.size(), 1000000);
     }
 }

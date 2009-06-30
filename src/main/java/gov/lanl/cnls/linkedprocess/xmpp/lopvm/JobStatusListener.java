@@ -1,6 +1,5 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
-import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
@@ -10,10 +9,10 @@ import org.jivesoftware.smack.packet.IQ;
  * Date: Jun 25, 2009
  * Time: 12:54:11 PM
  */
-public class StatusListener implements PacketListener {
+public class JobStatusListener implements PacketListener {
      private XmppVirtualMachine vm;
 
-    public StatusListener(XmppVirtualMachine vm) {
+    public JobStatusListener(XmppVirtualMachine vm) {
         this.vm = vm;
     }
 
@@ -23,16 +22,16 @@ public class StatusListener implements PacketListener {
             XmppVirtualMachine.LOGGER.debug("Arrived StatusListener:");
             XmppVirtualMachine.LOGGER.debug(status.toXML());
 
-            Status returnStatus = new Status();
-            returnStatus.setTo(status.getFrom());
-            if (status.getPacketID() != null) {
-                returnStatus.setPacketID(status.getPacketID());
-            }
-            returnStatus.setType(IQ.Type.RESULT);
+            JobStatus returnJobStatus = new JobStatus();
+            returnJobStatus.setTo(status.getFrom());
+            returnJobStatus.setPacketID(status.getPacketID());
+
+            returnJobStatus.setType(IQ.Type.RESULT);
+            returnJobStatus.setValue(this.vm.getJobStatus(((JobStatus)status).getJobId()));
 
             XmppVirtualMachine.LOGGER.debug("Sent StatusListener:");
-            XmppVirtualMachine.LOGGER.debug(returnStatus.toXML());
-            vm.getConnection().sendPacket(returnStatus);
+            XmppVirtualMachine.LOGGER.debug(returnJobStatus.toXML());
+            vm.getConnection().sendPacket(returnJobStatus);
 
         } catch (Exception e) {
             e.printStackTrace();

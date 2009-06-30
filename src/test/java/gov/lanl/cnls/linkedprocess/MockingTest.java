@@ -1,8 +1,8 @@
 package gov.lanl.cnls.linkedprocess;
 
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
-import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.Spawn;
-import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.SpawnListener;
+import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.SpawnVm;
+import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.SpawnVmListener;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
 import static org.easymock.EasyMock.expect;
@@ -133,7 +133,7 @@ public class MockingTest {
 		assertTrue(packetListeners.size() == 3);
 		// first registered listener should be our SpawnListener
 		PacketListener spawnListener = packetListeners.get(0);
-		assertTrue(spawnListener instanceof SpawnListener);
+		assertTrue(spawnListener instanceof SpawnVmListener);
 
 		// let's send a spawn packet!
 		spawnListener.processPacket(spawnPacket);
@@ -141,15 +141,15 @@ public class MockingTest {
 		// now, a new packet should have been sent back from the VM
 		assertEquals(3, sentPackets.size());
 		// sent packet should refer to the same pID
-		Spawn result = (Spawn) sentPackets.get(2);
+		SpawnVm result = (SpawnVm) sentPackets.get(2);
 		assertEquals(result.getPacketID(), spawnPacketId);
 		assertEquals(result.getType(), IQ.Type.RESULT);
 		assertFalse("The returned VM ID should not be the Farms id, right?", result.getVmJid().equals(mockFarmId) );
 		// check the whole xml string
 		assertEquals("<iq id=\"" + spawnPacketId + "\" to=\"" + mockClient
-				+ "\" type=\"result\"><" + Spawn.SPAWN_TAGNAME + " xmlns=\""
+				+ "\" type=\"result\"><" + SpawnVm.SPAWN_VM_TAGNAME + " xmlns=\""
 				+ LinkedProcess.LOP_FARM_NAMESPACE + "\" "
-				+ Spawn.VM_JID_ATTRIBUTE + "=\"" + mockFarmId + "\" /></iq>",
+				+ SpawnVm.VM_JID_ATTRIBUTE + "=\"" + mockFarmId + "\" /></iq>",
 				result.toXML());
 		// now we should have 3 more PacketListeners for the VM
 		assertTrue(packetListeners.size() == 6);
@@ -200,7 +200,7 @@ public class MockingTest {
 		assertEquals(IQ.Type.ERROR, result.getType());
 		// check the whole xml string
 		assertEquals("<iq id=\"" + spawnPacket2Id + "\" to=\"" + mockClient
-				+ "\" type=\"error\"><" + Spawn.SPAWN_TAGNAME + " xmlns=\""
+				+ "\" type=\"error\"><" + SpawnVm.SPAWN_VM_TAGNAME + " xmlns=\""
 				+ LinkedProcess.LOP_FARM_NAMESPACE + "\" " + "/></iq>", result
 				.toXML());
 

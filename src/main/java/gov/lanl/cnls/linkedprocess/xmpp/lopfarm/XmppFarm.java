@@ -14,10 +14,10 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
+import org.apache.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * User: marko
@@ -26,8 +26,8 @@ import java.util.logging.Logger;
  */
 public class XmppFarm extends XmppClient {
 
-    public static Logger LOGGER = Logger.getLogger(XmppFarm.class.getName());
-    public static final String RESOURCE_PREFIX = "LoPFarm/";
+    public static Logger LOGGER = LinkedProcess.getLogger(XmppFarm.class);
+    public static final String RESOURCE_PREFIX = "LoPFarm";
     public static final String STATUS_MESSAGE = "LoP Farm v0.1";
 
     // FIXME: reuse VMScheduler.SchedulerStatus.  In particular, "too many jobs" will not happen.  "Too many VMs" will happen.
@@ -44,15 +44,15 @@ public class XmppFarm extends XmppClient {
         LOGGER.info("Starting LoP farm");
 
         ProviderManager pm = ProviderManager.getInstance();
-        pm.addIQProvider(Spawn.SPAWN_TAGNAME, LinkedProcess.LOP_FARM_NAMESPACE, new SpawnProvider());
-        pm.addIQProvider(Destroy.DESTROY_TAGNAME, LinkedProcess.LOP_FARM_NAMESPACE, new DestroyProvider());
+        pm.addIQProvider(SpawnVm.SPAWN_VM_TAGNAME, LinkedProcess.LOP_FARM_NAMESPACE, new SpawnVmProvider());
+        pm.addIQProvider(TerminateVm.TERMINATE_VM_TAGNAME, LinkedProcess.LOP_FARM_NAMESPACE, new TerminateVmProvider());
 
         try {
             this.logon(server, port, username, password);
             this.initiateFeatures();
             //this.printClientStatistics();
         } catch (XMPPException e) {
-            LOGGER.severe("error: " + e);
+            LOGGER.error("error: " + e);
             System.exit(1);
         }
 
@@ -61,11 +61,11 @@ public class XmppFarm extends XmppClient {
         this.scheduler = new VMScheduler(new VMJobResultHandler(this));
         this.machines = new HashMap<String, XmppVirtualMachine>();
 
-        PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(Spawn.class), new IQTypeFilter(IQ.Type.GET));
-        PacketFilter destroyFilter = new AndFilter(new PacketTypeFilter(Destroy.class), new IQTypeFilter(IQ.Type.GET));
+        PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new IQTypeFilter(IQ.Type.GET));
+        PacketFilter destroyFilter = new AndFilter(new PacketTypeFilter(TerminateVm.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter subscribeFilter = new AndFilter(new PacketTypeFilter(Presence.class), new PresenceSubscriptionFilter());
-        connection.addPacketListener(new SpawnListener(this), spawnFilter);
-        connection.addPacketListener(new DestroyListener(this), destroyFilter);
+        connection.addPacketListener(new SpawnVmListener(this), spawnFilter);
+        connection.addPacketListener(new TerminateVmListener(this), destroyFilter);
         connection.addPacketListener(new PresenceSubscriptionListener(this), subscribeFilter);
     }
 
@@ -91,11 +91,11 @@ public class XmppFarm extends XmppClient {
         return this.scheduler;
     }
 
-    public String spawnVirtualMachine() throws ServiceRefusedException {
+    public String spawnVirtualMachine(String vmSpecies) throws ServiceRefusedException {
         XmppVirtualMachine vm = new XmppVirtualMachine(this.getServer(), this.getPort(), this.getUsername(), this.getPassword(), this);
         String fullJid = vm.getFullJid();
 		try {
-            this.scheduler.addMachine(fullJid, "JavaScript");
+            this.scheduler.addMachine(fullJid, vmSpecies);
         } catch (ServiceRefusedException e) {
             vm.shutDown();
             throw new ServiceRefusedException(e.getMessage());
@@ -115,5 +115,17 @@ public class XmppFarm extends XmppClient {
 
     public XmppVirtualMachine getVirtualMachine(String vmJid) {
         return this.machines.get(vmJid);
+    }
+
+    public void shutDown() {
+        this.connection.sendPacket(this.createFarmPresence(FarmStatus.UNAVAILABLE));
+        this.scheduler.shutDown();
+        try {
+         this.scheduler.waitUntilFinished();
+        } catch(InterruptedException e) {
+            LOGGER.error(e.getMessage());
+        }
+        super.shutDown();
+
     }
 }

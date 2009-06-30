@@ -10,11 +10,11 @@ import org.jivesoftware.smack.packet.Packet;
  * Date: Jun 25, 2009
  * Time: 11:23:49 AM
  */
-public class SpawnListener implements PacketListener {
+public class SpawnVmListener implements PacketListener {
 
     private XmppFarm farm;
 
-    public SpawnListener(XmppFarm farm) {
+    public SpawnVmListener(XmppFarm farm) {
         this.farm = farm;
     }
 
@@ -24,22 +24,23 @@ public class SpawnListener implements PacketListener {
             XmppFarm.LOGGER.info("Arrived SpawnListener:");
             XmppFarm.LOGGER.info(spawn.toXML());
 
-            Spawn returnSpawn = new Spawn();
-            returnSpawn.setTo(spawn.getFrom());
-            returnSpawn.setPacketID(spawn.getPacketID());
+            SpawnVm returnSpawnVm = new SpawnVm();
+            returnSpawnVm.setTo(spawn.getFrom());
+            returnSpawnVm.setPacketID(spawn.getPacketID());
             String vmJid;
 
             try {
-                vmJid = farm.spawnVirtualMachine();
-                returnSpawn.setVmJid(vmJid);
-                returnSpawn.setType(IQ.Type.RESULT);
+                vmJid = farm.spawnVirtualMachine(((SpawnVm)spawn).getVmSpecies());
+                returnSpawnVm.setVmJid(vmJid);
+                returnSpawnVm.setType(IQ.Type.RESULT);
             } catch (ServiceRefusedException e) {
-                returnSpawn.setType(IQ.Type.ERROR);
+                returnSpawnVm.setErrorMessage(e.getMessage());
+                returnSpawnVm.setType(IQ.Type.ERROR);
             }
 
             XmppFarm.LOGGER.info("Sent SpawnListener:");
-            XmppFarm.LOGGER.info(returnSpawn.toXML());
-            farm.getConnection().sendPacket(returnSpawn);
+            XmppFarm.LOGGER.info(returnSpawnVm.toXML());
+            farm.getConnection().sendPacket(returnSpawnVm);
 
         } catch (Exception e) {
             e.printStackTrace();

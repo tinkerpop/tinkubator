@@ -9,24 +9,13 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
  * Date: Jun 25, 2009
  * Time: 2:25:52 PM
  */
-public class Destroy extends IQ {
+public class TerminateVm extends FarmIq {
 
-    public static final String DESTROY_TAGNAME = "destroy";
-    public static final String VM_JID_ATTRIBUTE = "vm_jid";
-    public String vmJid;
-
-    public void setVmJid(String vmJid) {
-        this.vmJid = vmJid;
-    }
-
-    public String getVmJid() {
-        return this.vmJid;
-    }
-
+    public static final String TERMINATE_VM_TAGNAME = "terminate_vm";
 
     public String getChildElementXML() {
 
-        Element destroyElement = new Element(DESTROY_TAGNAME, LinkedProcess.LOP_FARM_NAMESPACE);
+        Element destroyElement = new Element(TERMINATE_VM_TAGNAME, LinkedProcess.LOP_FARM_NAMESPACE);
         if(this.vmJid != null) {
             destroyElement.setAttribute(VM_JID_ATTRIBUTE, this.vmJid);
         }

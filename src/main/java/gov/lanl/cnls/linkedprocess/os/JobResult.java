@@ -10,6 +10,8 @@ import org.jivesoftware.smack.packet.IQ;
  */
 public class JobResult {
 
+    private static final String CANCELED_MESSAGE = "Job canceled."; 
+
     public enum ResultType {
         NORMAL_RESULT, ERROR, CANCELLED
     }
@@ -68,6 +70,7 @@ public class JobResult {
                 // TODO: add more information to indicate that the job was
                 // cancelled; there was not necessarily an error in execution.
                 returnEval.setType(IQ.Type.ERROR);
+                returnEval.setExpression(JobResult.CANCELED_MESSAGE);
                 break;
             case ERROR:
                 // TODO: add more information about the error, drawn from this.exception

@@ -10,19 +10,19 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
  * Date: Jun 25, 2009
  * Time: 11:23:28 AM
  */
-public class SpawnProvider implements IQProvider {
+public class SpawnVmProvider implements IQProvider {
 
     public IQ parseIQ(XmlPullParser parser) throws Exception {
-        Spawn spawn = new Spawn();
-        String vmJid = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, Spawn.VM_JID_ATTRIBUTE);
+        SpawnVm spawnVm = new SpawnVm();
+        String vmJid = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, SpawnVm.VM_JID_ATTRIBUTE);
         if(null != vmJid) {
-            spawn.setVmJid(vmJid);
+            spawnVm.setVmJid(vmJid);
         }
-        String vmSpecies = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, Spawn.VM_SPECIES_ATTRIBUTE);
+        String vmSpecies = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, SpawnVm.VM_SPECIES_ATTRIBUTE);
         if(null != vmSpecies) {
-            spawn.setVmSpecies(vmSpecies);
+            spawnVm.setVmSpecies(vmSpecies);
         }
         parser.next();
-        return spawn;
+        return spawnVm;
     }
 }

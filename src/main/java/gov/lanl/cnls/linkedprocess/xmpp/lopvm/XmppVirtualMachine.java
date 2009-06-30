@@ -1,6 +1,9 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import gov.lanl.cnls.linkedprocess.os.ServiceRefusedException;
+import gov.lanl.cnls.linkedprocess.os.VMScheduler;
+import gov.lanl.cnls.linkedprocess.os.Job;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
 
@@ -23,7 +26,7 @@ import org.jivesoftware.smack.provider.ProviderManager;
 public class XmppVirtualMachine extends XmppClient {
 
     public static Logger LOGGER = LinkedProcess.getLogger(XmppVirtualMachine.class);
-    public static String RESOURCE_PREFIX = "LoPVM/";
+    public static String RESOURCE_PREFIX = "LoPVM";
 
     public static enum VirtualMachinePresence {
         AVAILABLE, TOO_MANY_JOBS
@@ -39,8 +42,8 @@ public class XmppVirtualMachine extends XmppClient {
         // Registering the types of IQ packets/stanzas the the Lop VM can respond to.
         ProviderManager pm = ProviderManager.getInstance();
         pm.addIQProvider(Evaluate.EVALUATE_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE, new EvaluateProvider());
-        pm.addIQProvider(Status.STATUS_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE, new StatusProvider());
-        pm.addIQProvider(Cancel.CANCEL_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE, new CancelProvider());
+        pm.addIQProvider(JobStatus.JOB_STATUS_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE, new JobStatusProvider());
+        pm.addIQProvider(AbandonJob.ABANDON_JOB_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE, new AbandonJobProvider());
 
         try {
             this.logon(server, port, username, password);
@@ -52,12 +55,12 @@ public class XmppVirtualMachine extends XmppClient {
         }
 
         PacketFilter evalFilter = new AndFilter(new PacketTypeFilter(Evaluate.class), new IQTypeFilter(IQ.Type.GET));
-        PacketFilter statusFilter = new AndFilter(new PacketTypeFilter(Status.class), new IQTypeFilter(IQ.Type.GET));
-        PacketFilter cancelFilter = new AndFilter(new PacketTypeFilter(Cancel.class), new IQTypeFilter(IQ.Type.GET));
+        PacketFilter statusFilter = new AndFilter(new PacketTypeFilter(JobStatus.class), new IQTypeFilter(IQ.Type.GET));
+        PacketFilter cancelFilter = new AndFilter(new PacketTypeFilter(AbandonJob.class), new IQTypeFilter(IQ.Type.GET));
 
         connection.addPacketListener(new EvaluateListener(this), evalFilter);
-        connection.addPacketListener(new StatusListener(this), statusFilter);
-        connection.addPacketListener(new CancelListener(this), cancelFilter);
+        connection.addPacketListener(new JobStatusListener(this), statusFilter);
+        connection.addPacketListener(new AbandonJobListener(this), cancelFilter);
     }
 
     protected void logon(String server, int port, String username, String password) throws XMPPException {
@@ -78,6 +81,19 @@ public class XmppVirtualMachine extends XmppClient {
         } else {
             return new Presence(Presence.Type.unavailable, statusMessage, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.dnd);
         }
+    }
+
+    public void abandonJob(String jobId) throws ServiceRefusedException {
+      // todo:   
+    }
+
+    public VMScheduler.JobStatus getJobStatus(String jobId) {
+        return this.farm.getScheduler().getJobStatus(this.getFullJid(), jobId);
+    }
+
+    public void addJob(Job job) throws ServiceRefusedException {
+        this.farm.getScheduler().addJob(this.getFullJid(), job);
+
     }
 
 }

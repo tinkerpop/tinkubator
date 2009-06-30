@@ -10,11 +10,11 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
  * Date: Jun 25, 2009
  * Time: 12:54:19 PM
  */
-public class StatusProvider implements IQProvider {
+public class JobStatusProvider implements IQProvider {
 
     public IQ parseIQ(XmlPullParser parser) throws Exception {
-        Status status = new Status();
-        status.setJobId(parser.getAttributeValue(LinkedProcess.LOP_VM_NAMESPACE, "id"));
-        return status;
+        JobStatus jobStatus = new JobStatus();
+        jobStatus.setJobId(parser.getAttributeValue(LinkedProcess.LOP_VM_NAMESPACE, "id"));
+        return jobStatus;
     }
 }

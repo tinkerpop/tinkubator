@@ -9,7 +9,7 @@ import gov.lanl.cnls.linkedprocess.xmpp.tools.GenericListener;
 public class SmackPlay {
     
     // this is a development and testing account. please don't use for any other purposes.
-    private static String username = "linked.process.2@gmail.com";
+    private static String username = "linked.process.2@xmpp.linkedprocess.org";
     private static String password = "linked23";
     private static String resource = "lop/";
         
