@@ -58,6 +58,22 @@ public class LinkedProcess {
 
     }
 
+    public enum Errortype {
+        EXECUTION_ERROR("execution_error"),
+        CANCELLED("cancelled"),
+        JOB_NOT_FOUND("job_not_found");
+
+        private final String name;
+
+        private Errortype(final String name) {
+            this.name = name;
+        }
+
+        public String toString() {
+            return name;
+        }
+    }
+
     public static final String LOP_NAMESPACE = "http://linkedprocess.org/";
     public static final String LOP_FARM_NAMESPACE = LOP_NAMESPACE + "protocol#LoPFarm";
     public static final String LOP_VM_NAMESPACE = LOP_NAMESPACE + "protocol#LoPVM";
