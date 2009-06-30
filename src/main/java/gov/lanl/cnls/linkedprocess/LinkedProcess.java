@@ -54,13 +54,16 @@ public class LinkedProcess {
         public String toString() {
             return name;
         }
-
     }
 
     public enum Errortype {
         EVALUATION_ERROR("evaluation_error"),
+        INTERNAL_ERROR("internal_error"), // VMAlreadyExistsException, VMWorkerNotFoundException
         JOB_ABORTED("job_aborted"),
-        JOB_NOT_FOUND("job_not_found");
+        JOB_NOT_FOUND("job_not_found"), // JobNotFoundException
+        SPECIES_NOT_SUPPORTED("species_not_supported"), // UnsupportedScriptEngineException
+        FARM_IS_BUSY("farm_is_busy"), // VMSchedulerIsFullException
+        VM_IS_BUSY("vm_is_busy"); // VMWorkerIsFullException
 
         private final String name;
 

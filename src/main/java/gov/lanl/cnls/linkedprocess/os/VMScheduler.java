@@ -111,6 +111,8 @@ public class VMScheduler {
      *
      * @param machineJID the machine who was to have received the job
      * @param jobID      the ID of the specific job to be removed
+     * @throws gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException if no job with the specified ID exists
+     * @throws gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException if no VM worker with the specified JID exists
      */
     public synchronized void abortJob(final String machineJID,
                                       final String jobID) throws VMWorkerNotFoundException, JobNotFoundException {
@@ -130,8 +132,9 @@ public class VMScheduler {
      *
      * @param machineJID the intended JID of the virtual machine
      * @param scriptType the type of virtual machine to create
-     * @throws gov.lanl.cnls.linkedprocess.os.errors.SchedulerException
-     *          if, for any reason, the machine cannot be created
+     * @throws gov.lanl.cnls.linkedprocess.os.errors.UnsupportedScriptEngineException if the given script engine is not supported
+     * @throws gov.lanl.cnls.linkedprocess.os.errors.VMAlreadyExistsException if a VM with the given JID already exists in this scheduler
+     * @throws gov.lanl.cnls.linkedprocess.os.errors.VMSchedulerIsFullException if the scheduler cannot create additional virtual machines
      */
     public synchronized void spawnVirtualMachine(final String machineJID,
                                                  final String scriptType) throws VMAlreadyExistsException, UnsupportedScriptEngineException, VMSchedulerIsFullException {
@@ -178,6 +181,7 @@ public class VMScheduler {
      * Destroys an already-created virtual machine.
      *
      * @param machineJID the JID of the virtual machine to destroy
+     * @throws gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException if a VM worker with the JID does not exist
      */
     public synchronized void terminateVirtualMachine(final String machineJID) throws VMWorkerNotFoundException {
         if (LinkedProcess.FarmStatus.TERMINATED == status) {
@@ -221,6 +225,7 @@ public class VMScheduler {
      * @param machineJID the JID of the machine to execute the job
      * @param iqID       the ID of the job of interest
      * @return the status of the given job
+     * @throws gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException if no VM worker with the given JID exists
      */
     public synchronized LinkedProcess.JobStatus getJobStatus(final String machineJID,
                                                              final String iqID) throws VMWorkerNotFoundException {
@@ -277,7 +282,7 @@ public class VMScheduler {
         // whose virtual machine has been terminated produce a result which is
         // counted.
         while (jobsCompleted < jobsReceived) {
-            Thread.currentThread().sleep(100);
+            Thread.sleep(100);
         }
     }
 
