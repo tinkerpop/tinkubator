@@ -128,4 +128,9 @@ public class XmppFarm extends XmppClient {
         super.shutDown();
 
     }
+
+    protected void initiateFeatures() {
+        super.initiateFeatures();
+        discoManager.addFeature(LinkedProcess.LOP_FARM_NAMESPACE);
+    }
 }

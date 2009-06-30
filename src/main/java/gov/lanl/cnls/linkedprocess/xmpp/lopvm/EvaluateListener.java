@@ -32,7 +32,7 @@ public class EvaluateListener implements PacketListener {
                 String appJid = evaluate.getFrom();
 
                 Job job = new Job(appJid, iqId, expression, vm.getFullJid());
-                vm.addJob(job);
+                vm.scheduleJob(job);
 
             } catch(ServiceRefusedException e) {
                 Evaluate returnEvaluate = new Evaluate();

@@ -20,6 +20,7 @@ public abstract class XmppClient {
     protected XMPPConnection connection;
     protected Roster roster;
     protected boolean shutdownRequested = false;
+    protected ServiceDiscoveryManager discoManager;
 
     private String username;
     private String password;
@@ -27,13 +28,12 @@ public abstract class XmppClient {
     private int port;
 
     protected void initiateFeatures() {
-        ServiceDiscoveryManager discoManager = ServiceDiscoveryManager.getInstanceFor(connection);
+        discoManager = ServiceDiscoveryManager.getInstanceFor(connection);
         Iterator<String> features = discoManager.getFeatures();
         while (features.hasNext()) {
             String feature = features.next();
             discoManager.removeFeature(feature);
         }
-        discoManager.addFeature(LinkedProcess.LOP_NAMESPACE);
         discoManager.addFeature(LinkedProcess.DISCO_INFO_NAMESPACE);
     }
 

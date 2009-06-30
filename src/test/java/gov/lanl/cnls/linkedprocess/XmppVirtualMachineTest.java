@@ -1,7 +1,7 @@
 package gov.lanl.cnls.linkedprocess;
 
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
-import gov.lanl.cnls.linkedprocess.xmpp.lopvm.AbandonJob;
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.AbortJob;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
 import junit.framework.TestCase;
@@ -65,9 +65,9 @@ public class XmppVirtualMachineTest extends TestCase {
 
     @Test
     public void testCancelTag() {
-        AbandonJob abandonJob = new AbandonJob();
-        abandonJob.setJobId("wxyz");
-        String cancelString = abandonJob.getChildElementXML();
+        AbortJob abortJob = new AbortJob();
+        abortJob.setJobId("wxyz");
+        String cancelString = abortJob.getChildElementXML();
         System.out.println(cancelString);
         assertTrue(cancelString.contains("xmlns=\"" + LinkedProcess.LOP_VM_NAMESPACE));
         assertTrue(cancelString.contains("job_id=\"wxyz\""));

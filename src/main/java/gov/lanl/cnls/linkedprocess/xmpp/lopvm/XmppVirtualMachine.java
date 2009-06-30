@@ -43,7 +43,7 @@ public class XmppVirtualMachine extends XmppClient {
         ProviderManager pm = ProviderManager.getInstance();
         pm.addIQProvider(LinkedProcess.EVALUATE_TAG, LinkedProcess.LOP_VM_NAMESPACE, new EvaluateProvider());
         pm.addIQProvider(LinkedProcess.JOB_STATUS_TAG, LinkedProcess.LOP_VM_NAMESPACE, new JobStatusProvider());
-        pm.addIQProvider(LinkedProcess.ABANDON_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE, new AbandonJobProvider());
+        pm.addIQProvider(LinkedProcess.ABORT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE, new AbortJobProvider());
 
         try {
             this.logon(server, port, username, password);
@@ -56,11 +56,11 @@ public class XmppVirtualMachine extends XmppClient {
 
         PacketFilter evalFilter = new AndFilter(new PacketTypeFilter(Evaluate.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter statusFilter = new AndFilter(new PacketTypeFilter(JobStatus.class), new IQTypeFilter(IQ.Type.GET));
-        PacketFilter abandonFilter = new AndFilter(new PacketTypeFilter(AbandonJob.class), new IQTypeFilter(IQ.Type.GET));
+        PacketFilter abandonFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new IQTypeFilter(IQ.Type.GET));
 
         connection.addPacketListener(new EvaluateListener(this), evalFilter);
         connection.addPacketListener(new JobStatusListener(this), statusFilter);
-        connection.addPacketListener(new AbandonJobListener(this), abandonFilter);
+        connection.addPacketListener(new AbortJobListener(this), abandonFilter);
     }
 
     protected void logon(String server, int port, String username, String password) throws XMPPException {
@@ -83,7 +83,7 @@ public class XmppVirtualMachine extends XmppClient {
         }
     }
 
-    public void abandonJob(String jobId) throws ServiceRefusedException {
+    public void abortJob(String jobId) throws ServiceRefusedException {
         this.farm.getScheduler().abortJob(this.getFullJid(), jobId);
     }
 
@@ -91,9 +91,14 @@ public class XmppVirtualMachine extends XmppClient {
         return this.farm.getScheduler().getJobStatus(this.getFullJid(), jobId);
     }
 
-    public void addJob(Job job) throws ServiceRefusedException {
+    public void scheduleJob(Job job) throws ServiceRefusedException {
         this.farm.getScheduler().scheduleJob(this.getFullJid(), job);
 
+    }
+
+    protected void initiateFeatures() {
+        super.initiateFeatures();
+        discoManager.addFeature(LinkedProcess.LOP_VM_NAMESPACE);
     }
 
 }

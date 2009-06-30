@@ -10,11 +10,11 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
  * Date: Jun 25, 2009
  * Time: 1:21:38 PM
  */
-public class AbandonJobProvider implements IQProvider {
+public class AbortJobProvider implements IQProvider {
 
     public IQ parseIQ(XmlPullParser parser) throws Exception {
-        AbandonJob abandonJob = new AbandonJob();
-        abandonJob.setJobId(parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.JOB_ID_ATTRIBUTE));
-        return abandonJob;
+        AbortJob abortJob = new AbortJob();
+        abortJob.setJobId(parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.JOB_ID_ATTRIBUTE));
+        return abortJob;
     }
 }
