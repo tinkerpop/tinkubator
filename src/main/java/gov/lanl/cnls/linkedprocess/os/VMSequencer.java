@@ -19,7 +19,7 @@ class VMSequencer {
     private Status status;
     private final long timeSlice;
     private final Thread sequencerThread;
-    private final VMScheduler.VMWorkerSource workerSource;
+    private final VMScheduler.VMSequencerHelper sequencerHelper;
 
     private static long threadID = 0;
 
@@ -30,15 +30,15 @@ class VMSequencer {
     /**
      * Creates a new sequencer for VM jobs.
      *
-     * @param workerSource a source for workers ready to execute jobs.  When
+     * @param sequencerHelper a source for workers ready to execute jobs.  When
      *                     this sequencer receives a null from this source, it terminates.
      * @param timeSlice    the time slice in which to execute jobs
      */
-    public VMSequencer(final VMScheduler.VMWorkerSource workerSource,
+    public VMSequencer(final VMScheduler.VMSequencerHelper sequencerHelper,
                        final long timeSlice) {
         LOGGER.info("instantiating VMSequencer");
 
-        this.workerSource = workerSource;
+        this.sequencerHelper = sequencerHelper;
         this.timeSlice = timeSlice;
 
         sequencerThread = new Thread(new SequencerRunnable(), nextThreadName());
@@ -52,7 +52,7 @@ class VMSequencer {
     private void executeForTimeSlice() {
         LOGGER.debug("getting worker...");
         // Note: thread may block while waiting for a worker to become available.
-        VMWorker w = workerSource.getWorker();
+        VMWorker w = sequencerHelper.getWorker();
         LOGGER.debug("...got worker: " + w);
 
         // This sequencer is terminated by the receipt of a null worker.
@@ -68,7 +68,7 @@ class VMSequencer {
 
         boolean idle = w.work(timeSlice);
         LOGGER.debug("idle: " + idle);
-        workerSource.putBackWorker(w, idle);
+        sequencerHelper.putBackWorker(w, idle);
     }
 
     private class SequencerRunnable implements Runnable {

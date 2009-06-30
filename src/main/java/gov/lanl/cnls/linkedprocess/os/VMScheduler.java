@@ -77,7 +77,7 @@ public class VMScheduler {
                 LinkedProcess.ROUND_ROBIN_TIME_SLICE));
 
         // A single source for workers.
-        VMWorkerSource source = createWorkerSource();
+        VMSequencerHelper source = createSequencerHelper();
 
         numberOfSequencers = new Integer(props.getProperty(
                 LinkedProcess.MAX_CONCURRENT_WORKER_THREADS));
@@ -95,8 +95,12 @@ public class VMScheduler {
      * @throws ServiceRefusedException if, for any reason, the job cannot be
      *                                 accepted
      */
-    public synchronized void addJob(final String machineJID,
-                                    final Job job) throws ServiceRefusedException {
+    public synchronized void scheduleJob(final String machineJID,
+                                         final Job job) throws ServiceRefusedException {
+        if (SchedulerStatus.TERMINATED == status) {
+            throw new IllegalStateException("scheduler has been terminated");
+        }
+
         jobsReceived++;
 
         VMWorker w = getWorkerByJID(machineJID);
@@ -116,8 +120,12 @@ public class VMScheduler {
      * @param jobID      the ID of the specific job to be removed
      * @throws ServiceRefusedException if the job is not found
      */
-    public synchronized void removeJob(final String machineJID,
-                                       final String jobID) throws ServiceRefusedException {
+    public synchronized void abandonJob(final String machineJID,
+                                        final String jobID) throws ServiceRefusedException {
+        if (SchedulerStatus.TERMINATED == status) {
+            throw new IllegalStateException("scheduler has been terminated");
+        }
+
         VMWorker w = getWorkerByJID(machineJID);
 
         // FIXME: this call may block for as long as one timeslice.
@@ -132,8 +140,12 @@ public class VMScheduler {
      * @param scriptType the type of virtual machine to create
      * @throws ServiceRefusedException if, for any reason, the machine cannot be created
      */
-    public synchronized void addMachine(final String machineJID,
-                                        final String scriptType) throws ServiceRefusedException {
+    public synchronized void spawnVirtualMachine(final String machineJID,
+                                                 final String scriptType) throws ServiceRefusedException {
+        if (SchedulerStatus.TERMINATED == status) {
+            throw new IllegalStateException("scheduler has been terminated");
+        }
+
         LOGGER.info("attempting to add machine of type " + scriptType + " with JID '" + machineJID + "'");
 
         if (SchedulerStatus.ACTIVE_FULL == status) {
@@ -176,7 +188,11 @@ public class VMScheduler {
      * @throws ServiceRefusedException if, for any reason, the virtual machine
      *                                 cannot be destroyed
      */
-    public synchronized void removeMachine(final String machineJID) throws ServiceRefusedException {
+    public synchronized void terminateVirtualMachine(final String machineJID) throws ServiceRefusedException {
+        if (SchedulerStatus.TERMINATED == status) {
+            throw new IllegalStateException("scheduler has been terminated");
+        }
+
         LOGGER.debug("removing VM with JID '" + machineJID + "'");
         VMWorker w = getWorkerByJID(machineJID);
 
@@ -203,7 +219,7 @@ public class VMScheduler {
      * @param machineJID the JID of the virtual machine of interest
      * @return the status of the given virtual machine
      */
-    public synchronized VMStatus getVMStatus(final String machineJID) {
+    public synchronized VMStatus getVirtualMachineStatus(final String machineJID) {
         VMWorker w = workersByJID.get(machineJID);
         return (null == w)
                 ? VMStatus.DOES_NOT_EXIST
@@ -218,7 +234,9 @@ public class VMScheduler {
     public synchronized JobStatus getJobStatus(final String machineJID,
                                                final String iqID) {
         VMWorker w = workersByJID.get(machineJID);
-        return w.jobExists(iqID)
+
+        // TODO: distinguish between non-existent VM and non-existent job.
+        return (null != w && w.jobExists(iqID))
                 ? JobStatus.IN_PROGRESS
                 : JobStatus.DOES_NOT_EXIST;
     }
@@ -237,7 +255,7 @@ public class VMScheduler {
                 // used, due to the specification of BlockingQueue.
                 workerQueue.put(VMWorker.SCHEDULER_TERMINATED_SENTINEL);
             } catch (InterruptedException e) {
-                LOGGER.error("thread interrupted unexpectedly in queue");
+                LOGGER.error("thread interrupted while shutting down scheduler");
                 System.exit(1);
             }
         }
@@ -278,8 +296,8 @@ public class VMScheduler {
         };
     }      */
 
-    private VMWorkerSource createWorkerSource() {
-        return new VMWorkerSource() {
+    private VMSequencerHelper createSequencerHelper() {
+        return new VMSequencerHelper() {
             public synchronized VMWorker getWorker() {
                 try {
                     return workerQueue.take();
@@ -338,7 +356,7 @@ public class VMScheduler {
         void handleResult(JobResult result);
     }
 
-    public interface VMWorkerSource {
+    public interface VMSequencerHelper {
         VMWorker getWorker();
 
         void putBackWorker(VMWorker w, boolean idle);

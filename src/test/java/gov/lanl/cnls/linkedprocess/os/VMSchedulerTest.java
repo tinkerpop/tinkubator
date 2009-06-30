@@ -12,9 +12,10 @@ import java.util.Random;
  * Time: 3:21:06 PM
  */
 public class VMSchedulerTest extends TestCase {
+    private static final int MAX_RANDOM_INT = 100000;
+
     private final VMScheduler.VMResultHandler resultHandler = createResultHandler();
     private final Map<String, JobResult> resultsByID = new HashMap<String, JobResult>();
-    private final Object waitMonitor = "";
     private VMScheduler scheduler;
     private Random random = new Random();
     private String vmType = "JavaScript";
@@ -35,7 +36,7 @@ public class VMSchedulerTest extends TestCase {
     public void testCreateVM() throws ServiceRefusedException {
         scheduler = new VMScheduler(resultHandler);
         String vm1 = randomJID();
-        scheduler.addMachine(vm1, vmType);
+        scheduler.spawnVirtualMachine(vm1, vmType);
         scheduler.shutDown();
     }
 
@@ -43,10 +44,10 @@ public class VMSchedulerTest extends TestCase {
         scheduler = new VMScheduler(resultHandler);
         String vm1 = randomJID();
         String vm2 = randomJID();
-        scheduler.addMachine(vm1, vmType);
-        assertEquals(VMScheduler.VMStatus.ACTIVE, scheduler.getVMStatus(vm1));
-        scheduler.addMachine(vm2, vmType);
-        assertEquals(VMScheduler.VMStatus.ACTIVE, scheduler.getVMStatus(vm2));
+        scheduler.spawnVirtualMachine(vm1, vmType);
+        assertEquals(VMScheduler.VMStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm1));
+        scheduler.spawnVirtualMachine(vm2, vmType);
+        assertEquals(VMScheduler.VMStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm2));
         assertEquals(VMScheduler.SchedulerStatus.ACTIVE, scheduler.getSchedulerStatus());
         scheduler.shutDown();
     }
@@ -60,28 +61,28 @@ public class VMSchedulerTest extends TestCase {
     public void testVMStatusAfterTermination() throws ServiceRefusedException {
         scheduler = new VMScheduler(resultHandler);
         String vm1 = randomJID();
-        scheduler.addMachine(vm1, vmType);
-        assertEquals(VMScheduler.VMStatus.ACTIVE, scheduler.getVMStatus(vm1));
-        scheduler.removeMachine(vm1);
-        assertEquals(VMScheduler.VMStatus.DOES_NOT_EXIST, scheduler.getVMStatus(vm1));
+        scheduler.spawnVirtualMachine(vm1, vmType);
+        assertEquals(VMScheduler.VMStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm1));
+        scheduler.terminateVirtualMachine(vm1);
+        assertEquals(VMScheduler.VMStatus.DOES_NOT_EXIST, scheduler.getVirtualMachineStatus(vm1));
         scheduler.shutDown();
     }
 
     public void testVMStatusAfterSchedulerShutDown() throws ServiceRefusedException {
         scheduler = new VMScheduler(resultHandler);
         String vm1 = randomJID();
-        scheduler.addMachine(vm1, vmType);
-        assertEquals(VMScheduler.VMStatus.ACTIVE, scheduler.getVMStatus(vm1));
+        scheduler.spawnVirtualMachine(vm1, vmType);
+        assertEquals(VMScheduler.VMStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm1));
         scheduler.shutDown();
-        assertEquals(VMScheduler.VMStatus.DOES_NOT_EXIST, scheduler.getVMStatus(vm1));
+        assertEquals(VMScheduler.VMStatus.DOES_NOT_EXIST, scheduler.getVirtualMachineStatus(vm1));
     }
 
     public void testAddJob() throws Exception {
         scheduler = new VMScheduler(resultHandler);
         String vm1 = randomJID();
-        scheduler.addMachine(vm1, vmType);
+        scheduler.spawnVirtualMachine(vm1, vmType);
         Job job = randomJob(vm1, "1 + 1;");
-        scheduler.addJob(vm1, job);
+        scheduler.scheduleJob(vm1, job);
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
         JobResult result = resultsByID.get(job.getJobID());
@@ -96,15 +97,13 @@ public class VMSchedulerTest extends TestCase {
     public void testLongRunningJob() throws Exception {
         scheduler = new VMScheduler(resultHandler);
         String vm1 = randomJID();
-        scheduler.addMachine(vm1, vmType);
+        scheduler.spawnVirtualMachine(vm1, vmType);
         Job job = randomJob(vm1, "var p=1; for (i=0; i<100000; i++) {p *= 7; p /= 7;} p;");
-        scheduler.addJob(vm1, job);
+        scheduler.scheduleJob(vm1, job);
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
         JobResult result = resultsByID.get(job.getJobID());
         assertEquals(JobResult.ResultType.NORMAL_RESULT, result.getType());
-        // Note: not "2", but "2.0", as the resulting Object is a Double (for
-        // some reason).  This is not particularly important for the test.
         assertEquals("1.0", result.getExpression());
         assertNull(result.getException());
         scheduler.shutDown();
@@ -115,11 +114,11 @@ public class VMSchedulerTest extends TestCase {
 
         scheduler = new VMScheduler(resultHandler);
         String vm1 = randomJID();
-        scheduler.addMachine(vm1, vmType);
+        scheduler.spawnVirtualMachine(vm1, vmType);
         Job job1 = randomJob(vm1, "0 + 1;");
         Job job2 = randomJob(vm1, "0 + 2;");
-        scheduler.addJob(vm1, job1);
-        scheduler.addJob(vm1, job2);
+        scheduler.scheduleJob(vm1, job1);
+        scheduler.scheduleJob(vm1, job2);
         scheduler.waitUntilFinished();
         assertEquals(2, resultsByID.size());
         result = resultsByID.get(job1.getJobID());
@@ -143,13 +142,13 @@ public class VMSchedulerTest extends TestCase {
     }
 
     private String randomJID() {
-        return "a" + random.nextInt(100000) + "@example.com";
+        return "a" + random.nextInt(MAX_RANDOM_INT) + "@example.com";
     }
 
     private Job randomJob(final String vmJID,
                           final String expression) {
         String appJID = "?";
-        String iqID = "job" + random.nextInt(100000);
+        String iqID = "job" + random.nextInt(MAX_RANDOM_INT);
         return new Job(vmJID, appJID, iqID, expression);
     }
 }
