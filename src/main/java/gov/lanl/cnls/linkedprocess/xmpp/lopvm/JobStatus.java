@@ -11,16 +11,6 @@ import gov.lanl.cnls.linkedprocess.os.VMScheduler;
  */
 public class JobStatus extends VirtualMachineIq {
 
-    private VMScheduler.JobStatus value;
-
-    public void setValue(VMScheduler.JobStatus status) {
-        this.value = status;
-    }
-
-    public String getValue() {
-        return this.value.toString();
-    }
-
     public String getChildElementXML() {
 
         Element jobStatusElement = new Element(LinkedProcess.JOB_STATUS_TAG, LinkedProcess.LOP_VM_NAMESPACE);

@@ -36,6 +36,7 @@ public class LinkedProcess {
     public static final String ABORT_JOB_TAG = "abort_job";
       // attribute names
     public static final String JOB_ID_ATTRIBUTE = "job_id";
+    public static final String ERROR_ATTRIBUTE = "error";
     ///////////////////////////////////////////////////////
 
     public static final int LOWEST_PRIORITY = -128;

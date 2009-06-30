@@ -31,7 +31,7 @@ public class AbortJobListener implements PacketListener {
             this.vm.abortJob(((AbortJob)abortJob).getJobId());
             returnAbortJob.setType(IQ.Type.RESULT);
         } catch (ServiceRefusedException e) { 
-            returnAbortJob.setErrorMessage(e.getMessage());
+            returnAbortJob.setAbortError();
             returnAbortJob.setType(IQ.Type.ERROR);
         }
 
