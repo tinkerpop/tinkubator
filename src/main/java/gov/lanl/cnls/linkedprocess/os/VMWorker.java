@@ -1,11 +1,11 @@
 package gov.lanl.cnls.linkedprocess.os;
 
-import java.util.logging.Logger;
-
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
+import java.util.logging.Logger;
 
 /**
  * An object with an internal thread which is capable of executing scripts
@@ -103,15 +103,16 @@ public class VMWorker {
      * Note: this alone does not cause the worker to become active.
      *
      * @param job the job to add
+     * @return whether the job has been added to the worker's queue (if not,
+     *         then the queue is full)
      */
-    public synchronized void addJob(final Job job) {
+    public synchronized boolean addJob(final Job job) {
         LOGGER.info("adding job: " + job);
 
         switch (status) {
             case ACTIVE_SUSPENDED:
             case IDLE_WAITING:
-                jobQueue.offer(job);
-                break;
+                return jobQueue.offer(job);
             default:
                 throw new IllegalStateException("can't add jobs in status: " + status);
         }
@@ -227,9 +228,10 @@ public class VMWorker {
      * Cancels a specific job.
      *
      * @param jobID the ID of the job to be cancelled
-     * @throws ServiceRefusedException if the job can't be found
+     * @throws gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException
+     *          if no such job exsts
      */
-    public synchronized void cancelJob(final String jobID) throws ServiceRefusedException {
+    public synchronized void cancelJob(final String jobID) throws JobNotFoundException {
         LOGGER.info("cancelling job " + jobID);
 
         switch (status) {
@@ -261,7 +263,7 @@ public class VMWorker {
             }
         }
 
-        throw new ServiceRefusedException("job not found: " + jobID);
+        throw new JobNotFoundException(jobID);
     }
 
     public synchronized boolean jobExists(final String jobID) {

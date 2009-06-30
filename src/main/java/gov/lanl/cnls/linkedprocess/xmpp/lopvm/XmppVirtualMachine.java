@@ -1,14 +1,12 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
-import java.util.logging.Logger;
-
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import gov.lanl.cnls.linkedprocess.os.ServiceRefusedException;
 import gov.lanl.cnls.linkedprocess.os.Job;
+import gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException;
+import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerIsFullException;
+import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
-
-
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.IQTypeFilter;
@@ -17,6 +15,8 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
+
+import java.util.logging.Logger;
 
 /**
  * User: marko
@@ -83,17 +83,16 @@ public class XmppVirtualMachine extends XmppClient {
         }
     }
 
-    public void abortJob(String jobId) throws ServiceRefusedException {
+    public void abortJob(String jobId) throws VMWorkerNotFoundException, JobNotFoundException {
         this.farm.getScheduler().abortJob(this.getFullJid(), jobId);
     }
 
-    public LinkedProcess.JobStatus getJobStatus(String jobId) {
+    public LinkedProcess.JobStatus getJobStatus(String jobId) throws VMWorkerNotFoundException {
         return this.farm.getScheduler().getJobStatus(this.getFullJid(), jobId);
     }
 
-    public void scheduleJob(Job job) throws ServiceRefusedException {
+    public void scheduleJob(Job job) throws VMWorkerNotFoundException, VMWorkerIsFullException {
         this.farm.getScheduler().scheduleJob(this.getFullJid(), job);
-
     }
 
     protected void initiateFeatures() {

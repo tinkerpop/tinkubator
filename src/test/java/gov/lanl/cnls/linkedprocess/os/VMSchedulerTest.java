@@ -1,12 +1,11 @@
 package gov.lanl.cnls.linkedprocess.os;
 
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import junit.framework.TestCase;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
 /**
  * Author: josh
@@ -29,20 +28,20 @@ public class VMSchedulerTest extends TestCase {
     public void tearDown() {
     }
 
-    public void testCreateAndShutDownScheduler() {
+    public void testCreateAndShutDownScheduler() throws Exception {
         scheduler = new VMScheduler(resultHandler);
         assertEquals(LinkedProcess.FarmStatus.ACTIVE, scheduler.getSchedulerStatus());
         scheduler.shutDown();
     }
 
-    public void testCreateVM() throws ServiceRefusedException {
+    public void testCreateVM() throws Exception {
         scheduler = new VMScheduler(resultHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);
         scheduler.shutDown();
     }
 
-    public void testAddMultipleVMs() throws ServiceRefusedException {
+    public void testAddMultipleVMs() throws Exception {
         scheduler = new VMScheduler(resultHandler);
         String vm1 = randomJID();
         String vm2 = randomJID();
@@ -60,7 +59,7 @@ public class VMSchedulerTest extends TestCase {
         assertEquals(LinkedProcess.FarmStatus.TERMINATED, scheduler.getSchedulerStatus());
     }
 
-    public void testVMStatusAfterTermination() throws ServiceRefusedException {
+    public void testVMStatusAfterTermination() throws Exception {
         scheduler = new VMScheduler(resultHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);
@@ -70,7 +69,7 @@ public class VMSchedulerTest extends TestCase {
         scheduler.shutDown();
     }
 
-    public void testVMStatusAfterSchedulerShutDown() throws ServiceRefusedException {
+    public void testVMStatusAfterSchedulerShutDown() throws Exception {
         scheduler = new VMScheduler(resultHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);
@@ -104,8 +103,6 @@ public class VMSchedulerTest extends TestCase {
     }
 
     public void testAddMultipleJobs() throws Exception {
-        JobResult result;
-
         scheduler = new VMScheduler(resultHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);
@@ -115,15 +112,12 @@ public class VMSchedulerTest extends TestCase {
         scheduler.scheduleJob(vm1, job2);
         scheduler.waitUntilFinished();
         assertEquals(2, resultsByID.size());
-        result = resultsByID.get(job1.getJobID());
         assertNormalResult(job1);
         assertNormalResult(job2);
         scheduler.shutDown();
     }
 
-    public void testAddMultipleLongRunningJobs() throws Exception {
-        JobResult result;
-
+    public void testAddConcurrentLongRunningJobs() throws Exception {
         scheduler = new VMScheduler(resultHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);

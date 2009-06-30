@@ -81,6 +81,7 @@ public class LinkedProcess {
     public static final String FORWARD_SLASH = "/";
 
     ///////////////////////////////////////////////////////
+
     // LoP Farm XMPP tag and attribute names
     // tag names
     public static final String SPAWN_VM_TAG = "spawn_vm";
@@ -97,6 +98,7 @@ public class LinkedProcess {
     public static final String JOB_ID_ATTRIBUTE = "job_id";
     public static final String ERROR_ATTRIBUTE = "error";
     public static final String VALUE_ATTRIBUTE = "value";
+    
     ///////////////////////////////////////////////////////
 
     public static final int LOWEST_PRIORITY = -128;

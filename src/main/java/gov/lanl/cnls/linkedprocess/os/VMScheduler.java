@@ -1,6 +1,12 @@
 package gov.lanl.cnls.linkedprocess.os;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import gov.lanl.cnls.linkedprocess.os.errors.UnsupportedScriptEngineException;
+import gov.lanl.cnls.linkedprocess.os.errors.VMAlreadyExistsException;
+import gov.lanl.cnls.linkedprocess.os.errors.VMSchedulerIsFullException;
+import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerIsFullException;
+import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
+import gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -75,11 +81,13 @@ public class VMScheduler {
      *
      * @param machineJID the JID of the virtual machine to execute the job
      * @param job        the job to execute
-     * @throws ServiceRefusedException if, for any reason, the job cannot be
-     *                                 accepted
+     * @throws gov.lanl.cnls.linkedprocess.os.errors.VMWorkerIsFullException
+     *          if the VM in question has a full queue
+     * @throws gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException
+     *          if no such VM exists
      */
     public synchronized void scheduleJob(final String machineJID,
-                                         final Job job) throws ServiceRefusedException {
+                                         final Job job) throws VMWorkerIsFullException, VMWorkerNotFoundException {
         if (LinkedProcess.FarmStatus.TERMINATED == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
@@ -90,7 +98,9 @@ public class VMScheduler {
 
         // FIXME: this call may block for as long as one timeslice.
         //        This wait could probably be eliminated.
-        w.addJob(job);
+        if (!w.addJob(job)) {
+            throw new VMWorkerIsFullException(machineJID);
+        }
 
         LOGGER.fine("enqueueing worker: " + w);
         enqueueWorker(w);
@@ -101,10 +111,9 @@ public class VMScheduler {
      *
      * @param machineJID the machine who was to have received the job
      * @param jobID      the ID of the specific job to be removed
-     * @throws ServiceRefusedException if the job is not found
      */
     public synchronized void abortJob(final String machineJID,
-                                      final String jobID) throws ServiceRefusedException {
+                                      final String jobID) throws VMWorkerNotFoundException, JobNotFoundException {
         if (LinkedProcess.FarmStatus.TERMINATED == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
@@ -121,10 +130,11 @@ public class VMScheduler {
      *
      * @param machineJID the intended JID of the virtual machine
      * @param scriptType the type of virtual machine to create
-     * @throws ServiceRefusedException if, for any reason, the machine cannot be created
+     * @throws gov.lanl.cnls.linkedprocess.os.errors.SchedulerException
+     *          if, for any reason, the machine cannot be created
      */
     public synchronized void spawnVirtualMachine(final String machineJID,
-                                                 final String scriptType) throws ServiceRefusedException {
+                                                 final String scriptType) throws VMAlreadyExistsException, UnsupportedScriptEngineException, VMSchedulerIsFullException {
         if (LinkedProcess.FarmStatus.TERMINATED == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
@@ -132,7 +142,7 @@ public class VMScheduler {
         LOGGER.info("attempting to add machine of type " + scriptType + " with JID '" + machineJID + "'");
 
         if (LinkedProcess.FarmStatus.ACTIVE_FULL == status) {
-            throw new ServiceRefusedException("too many active virtual machines");
+            throw new VMSchedulerIsFullException();
         }
 
         if (null == machineJID || 0 == machineJID.length()) {
@@ -145,12 +155,12 @@ public class VMScheduler {
         }
 
         if (null != workersByJID.get(machineJID)) {
-            throw new ServiceRefusedException("machine with ID '" + machineJID + "' already exists");
+            throw new VMAlreadyExistsException(machineJID);
         }
 
         ScriptEngine engine = manager.getEngineByName(scriptType);
         if (null == engine) {
-            throw new ServiceRefusedException("unsupported script type: " + scriptType);
+            throw new UnsupportedScriptEngineException(scriptType);
         }
 
         VMWorker w = new VMWorker(engine, resultHandler);
@@ -168,10 +178,8 @@ public class VMScheduler {
      * Destroys an already-created virtual machine.
      *
      * @param machineJID the JID of the virtual machine to destroy
-     * @throws ServiceRefusedException if, for any reason, the virtual machine
-     *                                 cannot be destroyed
      */
-    public synchronized void terminateVirtualMachine(final String machineJID) throws ServiceRefusedException {
+    public synchronized void terminateVirtualMachine(final String machineJID) throws VMWorkerNotFoundException {
         if (LinkedProcess.FarmStatus.TERMINATED == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
@@ -215,11 +223,14 @@ public class VMScheduler {
      * @return the status of the given job
      */
     public synchronized LinkedProcess.JobStatus getJobStatus(final String machineJID,
-                                               final String iqID) {
+                                                             final String iqID) throws VMWorkerNotFoundException {
         VMWorker w = workersByJID.get(machineJID);
 
-        // TODO: distinguish between non-existent VM and non-existent job.
-        return (null != w && w.jobExists(iqID))
+        if (null == w) {
+            throw new VMWorkerNotFoundException(machineJID);
+        }
+
+        return (w.jobExists(iqID))
                 ? LinkedProcess.JobStatus.IN_PROGRESS
                 : LinkedProcess.JobStatus.DOES_NOT_EXIST;
     }
@@ -257,6 +268,7 @@ public class VMScheduler {
      * is a convenience method (for unit tests) which should be used with
      * caution.  Because the method is synchronized, you could wait indefinitely
      * on a job which never finishes, with no chance of terminating the job.
+     *
      * @throws InterruptedException if the Thread is interrupted while waiting
      */
     public synchronized void waitUntilFinished() throws InterruptedException {
@@ -324,11 +336,11 @@ public class VMScheduler {
         LOGGER.severe("...done (workerQueue.size() = " + workerQueue.size() + ")");
     }
 
-    private VMWorker getWorkerByJID(final String machineJID) throws ServiceRefusedException {
+    private VMWorker getWorkerByJID(final String machineJID) throws VMWorkerNotFoundException {
         VMWorker w = workersByJID.get(machineJID);
 
         if (null == w) {
-            throw new ServiceRefusedException("no such machine: '" + machineJID + "'");
+            throw new VMWorkerNotFoundException(machineJID);
         }
 
         return w;

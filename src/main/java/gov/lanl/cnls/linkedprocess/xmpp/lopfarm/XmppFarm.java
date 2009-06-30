@@ -1,8 +1,11 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import gov.lanl.cnls.linkedprocess.os.ServiceRefusedException;
 import gov.lanl.cnls.linkedprocess.os.VMScheduler;
+import gov.lanl.cnls.linkedprocess.os.errors.UnsupportedScriptEngineException;
+import gov.lanl.cnls.linkedprocess.os.errors.VMAlreadyExistsException;
+import gov.lanl.cnls.linkedprocess.os.errors.VMSchedulerIsFullException;
+import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
 import org.jivesoftware.smack.Roster;
@@ -103,20 +106,23 @@ public class XmppFarm extends XmppClient {
         return this.scheduler;
     }
 
-    public String spawnVirtualMachine(String vmSpecies) throws ServiceRefusedException {
+    public String spawnVirtualMachine(String vmSpecies) throws VMAlreadyExistsException, VMSchedulerIsFullException, UnsupportedScriptEngineException {
         XmppVirtualMachine vm = new XmppVirtualMachine(this.getServer(), this.getPort(), this.getUsername(), this.getPassword(), this);
         String fullJid = vm.getFullJid();
-		try {
+        boolean exceptionThrown = true;
+        try {
             this.scheduler.spawnVirtualMachine(fullJid, vmSpecies);
-        } catch (ServiceRefusedException e) {
-            vm.shutDown();
-            throw new ServiceRefusedException(e.getMessage());
+            exceptionThrown = false;
+        } finally {
+            if (exceptionThrown) {
+                vm.shutDown();
+            }
         }
         this.machines.put(fullJid, vm);
         return fullJid;
     }
 
-    public void destroyVirtualMachine(String vmJid) throws ServiceRefusedException {
+    public void destroyVirtualMachine(String vmJid) throws VMWorkerNotFoundException {
         XmppVirtualMachine vm = this.machines.get(vmJid);
         if (null != vm) {
             vm.shutDown();
@@ -133,8 +139,8 @@ public class XmppFarm extends XmppClient {
         this.connection.sendPacket(this.createFarmPresence(FarmStatus.UNAVAILABLE));
         this.scheduler.shutDown();
         try {
-         this.scheduler.waitUntilFinished();
-        } catch(InterruptedException e) {
+            this.scheduler.waitUntilFinished();
+        } catch (InterruptedException e) {
             LOGGER.severe(e.getMessage());
         }
         super.shutDown();
