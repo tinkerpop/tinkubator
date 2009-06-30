@@ -4,6 +4,7 @@ import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.Spawn;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.SpawnListener;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
@@ -167,7 +168,6 @@ public class MockingTest {
 		Packet spawnPacket2 = createMock(Packet.class);
 		String spawnXML = "<not real XML>";
 		expect(spawnPacket2.toXML()).andReturn(spawnXML).anyTimes();
-		mockClient = "mockClientUser2";
 		expect(spawnPacket2.getFrom()).andReturn(mockClient).anyTimes();
 		String spawnPacket2Id = "345";
 		expect(spawnPacket2.getPacketID()).andReturn(spawnPacket2Id).anyTimes();
@@ -200,6 +200,43 @@ public class MockingTest {
 		assertEquals("<iq id=\"" + spawnPacket2Id + "\" to=\"" + mockClient
 				+ "\" type=\"error\"><" + Spawn.SPAWN_TAGNAME + " xmlns=\""
 				+ LinkedProcess.LOP_FARM_NAMESPACE + "\" " + "/></iq>", result
+				.toXML());
+
+	}
+	
+	@Test
+	public void spawningAVMAndThenSendingAnEvaluatePacket()
+			throws Exception {
+		Evaluate eval = new Evaluate();
+        eval.setExpression("for(int i=0; i<10; i++) { i; };");
+        eval.setPacketID("345");
+        eval.setFrom(mockClient);
+
+		// activate all mock objects
+		replayAll();
+
+		// start testing
+		xmppFarm = new XmppFarm(server, port, username1, password1);
+
+		PacketListener spawnListener = packetListeners.get(0);
+
+		// let's send a spawn packet!
+		spawnListener.processPacket(spawnPacket);
+		// let's send one more spawn packet and fire up one more VM!
+
+		PacketListener evalListener = packetListeners.get(3);
+		evalListener.processPacket(eval);
+		// now, a some new packets should have been sent back from the new VM
+		assertEquals(4, sentPackets.size());
+		// sent packet should refer to the same pID
+		IQ result = (IQ) sentPackets.get(3);
+		assertEquals(result.getPacketID(), eval.getPacketID());
+
+		// we should get an error back
+		assertEquals(IQ.Type.RESULT, result.getType());
+		// check the whole xml string
+		assertEquals("<iq id=\"" + eval.getPacketID() + "\" to=\"" + mockClient
+				+ "\" type=\"result\"><evaluate>47.0</evaluate></iq>", result
 				.toXML());
 
 	}
