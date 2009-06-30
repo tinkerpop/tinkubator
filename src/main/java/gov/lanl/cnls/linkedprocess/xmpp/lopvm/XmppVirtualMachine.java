@@ -84,7 +84,7 @@ public class XmppVirtualMachine extends XmppClient {
     }
 
     public void abandonJob(String jobId) throws ServiceRefusedException {
-        this.farm.getScheduler().abandonJob(this.getFullJid(), jobId);
+        this.farm.getScheduler().abortJob(this.getFullJid(), jobId);
     }
 
     public VMScheduler.JobStatus getJobStatus(String jobId) {

@@ -120,8 +120,8 @@ public class VMScheduler {
      * @param jobID      the ID of the specific job to be removed
      * @throws ServiceRefusedException if the job is not found
      */
-    public synchronized void abandonJob(final String machineJID,
-                                        final String jobID) throws ServiceRefusedException {
+    public synchronized void abortJob(final String machineJID,
+                                      final String jobID) throws ServiceRefusedException {
         if (SchedulerStatus.TERMINATED == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }

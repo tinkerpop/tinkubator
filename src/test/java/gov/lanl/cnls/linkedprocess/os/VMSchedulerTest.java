@@ -81,16 +81,11 @@ public class VMSchedulerTest extends TestCase {
         scheduler = new VMScheduler(resultHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);
-        Job job = randomJob(vm1, "1 + 1;");
+        Job job = randomShortRunningJob(vm1);
         scheduler.scheduleJob(vm1, job);
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
-        JobResult result = resultsByID.get(job.getJobID());
-        assertEquals(JobResult.ResultType.NORMAL_RESULT, result.getType());
-        // Note: not "2", but "2.0", as the resulting Object is a Double (for
-        // some reason).  This is not particularly important for the test.
-        assertEquals("2.0", result.getExpression());
-        assertNull(result.getException());
+        assertNormalResult(job);
         scheduler.shutDown();
     }
 
@@ -98,14 +93,11 @@ public class VMSchedulerTest extends TestCase {
         scheduler = new VMScheduler(resultHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);
-        Job job = randomJob(vm1, "var p=1; for (i=0; i<100000; i++) {p *= 7; p /= 7;} p;");
+        Job job = randomLongRunningJob(vm1);
         scheduler.scheduleJob(vm1, job);
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
-        JobResult result = resultsByID.get(job.getJobID());
-        assertEquals(JobResult.ResultType.NORMAL_RESULT, result.getType());
-        assertEquals("1.0", result.getExpression());
-        assertNull(result.getException());
+        assertNormalResult(job);
         scheduler.shutDown();
     }
 
@@ -115,22 +107,76 @@ public class VMSchedulerTest extends TestCase {
         scheduler = new VMScheduler(resultHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);
-        Job job1 = randomJob(vm1, "0 + 1;");
-        Job job2 = randomJob(vm1, "0 + 2;");
+        Job job1 = randomShortRunningJob(vm1);
+        Job job2 = randomShortRunningJob(vm1);
         scheduler.scheduleJob(vm1, job1);
         scheduler.scheduleJob(vm1, job2);
         scheduler.waitUntilFinished();
         assertEquals(2, resultsByID.size());
         result = resultsByID.get(job1.getJobID());
-        assertEquals(JobResult.ResultType.NORMAL_RESULT, result.getType());
-        assertEquals("1.0", result.getExpression());
-        assertNull(result.getException());
-        result = resultsByID.get(job2.getJobID());
-        assertEquals(JobResult.ResultType.NORMAL_RESULT, result.getType());
-        assertEquals("2.0", result.getExpression());
-        assertNull(result.getException());
+        assertNormalResult(job1);
+        assertNormalResult(job2);
         scheduler.shutDown();
     }
+
+    public void testAddMultipleLongRunningJobs() throws Exception {
+        JobResult result;
+
+        scheduler = new VMScheduler(resultHandler);
+        String vm1 = randomJID();
+        scheduler.spawnVirtualMachine(vm1, vmType);
+        Job job1 = randomLongRunningJob(vm1);
+        Job job2 = randomLongRunningJob(vm1);
+        scheduler.scheduleJob(vm1, job1);
+        scheduler.scheduleJob(vm1, job2);
+        scheduler.waitUntilFinished();
+        assertEquals(2, resultsByID.size());
+        assertNormalResult(job1);
+        assertNormalResult(job2);
+        scheduler.shutDown();
+    }
+
+    public void testInvalidExpression() throws Exception {
+        scheduler = new VMScheduler(resultHandler);
+        String vm1 = randomJID();
+        scheduler.spawnVirtualMachine(vm1, vmType);
+        Job job = randomInvalidJob(vm1);
+        scheduler.scheduleJob(vm1, job);
+        scheduler.waitUntilFinished();
+        assertEquals(1, resultsByID.size());
+        JobResult result = resultsByID.get(job.getJobID());
+        assertEquals(JobResult.ResultType.ERROR, result.getType());
+        assertNotNull(result.getException());
+        assertEquals(null, result.getExpression());
+        scheduler.shutDown();
+    }
+
+    public void testValidButExceptionGeneratingExpression() throws Exception {
+        scheduler = new VMScheduler(resultHandler);
+        String vm1 = randomJID();
+        scheduler.spawnVirtualMachine(vm1, vmType);
+        Job job = randomValidButExceptionGeneratingJob(vm1);
+        scheduler.scheduleJob(vm1, job);
+        scheduler.waitUntilFinished();
+        assertEquals(1, resultsByID.size());
+        assertErrorResult(job);
+        scheduler.shutDown();
+    }
+
+    public void testAbortLongRunningJob() throws Exception {
+        scheduler = new VMScheduler(resultHandler);
+        String vm1 = randomJID();
+        scheduler.spawnVirtualMachine(vm1, vmType);
+        Job job = randomLongRunningJob(vm1);
+        scheduler.scheduleJob(vm1, job);
+        scheduler.abortJob(vm1, job.getJobID());
+        scheduler.waitUntilFinished();
+        assertEquals(1, resultsByID.size());
+        assertNormalResult(job);
+        scheduler.shutDown();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
 
     private VMScheduler.VMResultHandler createResultHandler() {
         return new VMScheduler.VMResultHandler() {
@@ -139,6 +185,29 @@ public class VMSchedulerTest extends TestCase {
                 resultsByID.put(result.getJob().getJobID(), result);
             }
         };
+    }
+
+    private void assertNormalResult(final Job job) {
+        JobResult result = resultsByID.get(job.getJobID());
+        assertEquals(JobResult.ResultType.NORMAL_RESULT, result.getType());
+        // Note: not "1", but "1.0", as the resulting Object is a Double (for
+        // some reason).  This is not particularly important for the test.
+        assertEquals("1.0", result.getExpression());
+        assertNull(result.getException());
+    }
+
+    private void assertErrorResult(final Job job) {
+        JobResult result = resultsByID.get(job.getJobID());
+        assertEquals(JobResult.ResultType.ERROR, result.getType());
+        assertNotNull(result.getException());
+        assertEquals(null, result.getExpression());
+    }
+
+    private void assertCancelledResult(final Job job) {
+        JobResult result = resultsByID.get(job.getJobID());
+        assertEquals(JobResult.ResultType.CANCELLED, result.getType());
+        assertNotNull(result.getException());
+        assertEquals(null, result.getExpression());
     }
 
     private String randomJID() {
@@ -150,5 +219,21 @@ public class VMSchedulerTest extends TestCase {
         String appJID = "?";
         String iqID = "job" + random.nextInt(MAX_RANDOM_INT);
         return new Job(vmJID, appJID, iqID, expression);
+    }
+
+    private Job randomShortRunningJob(final String vmJID) {
+        return randomJob(vmJID, "1 + 0;");
+    }
+
+    private Job randomLongRunningJob(final String vmJID) {
+        return randomJob(vmJID, "var p=1; for (i=0; i<100000; i++) {p *= 7; p /= 7;} p;");
+    }
+
+    private Job randomInvalidJob(final String vmJID) {
+        return randomJob(vmJID, "0...0;");
+    }
+
+    private Job randomValidButExceptionGeneratingJob(final String vmJID) {
+        return randomJob(vmJID, "idontexist[2] = 0;");
     }
 }
