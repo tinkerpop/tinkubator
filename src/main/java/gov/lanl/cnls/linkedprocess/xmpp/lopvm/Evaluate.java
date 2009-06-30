@@ -11,7 +11,6 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
  */
 public class Evaluate extends IQ {
 
-    public static final String EVALUATE_TAGNAME = "evaluate";
     String expression;
 
 
@@ -25,7 +24,7 @@ public class Evaluate extends IQ {
 
     public String getChildElementXML() {
 
-        Element evaluateElement = new Element(EVALUATE_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE);
+        Element evaluateElement = new Element(LinkedProcess.EVALUATE_TAG, LinkedProcess.LOP_VM_NAMESPACE);
         if(this.expression != null) {
             evaluateElement.setText(this.expression);
         }

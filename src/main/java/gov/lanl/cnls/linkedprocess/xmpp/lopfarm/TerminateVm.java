@@ -1,6 +1,5 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
 
-import org.jivesoftware.smack.packet.IQ;
 import org.jdom.Element;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
@@ -11,15 +10,13 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
  */
 public class TerminateVm extends FarmIq {
 
-    public static final String TERMINATE_VM_TAGNAME = "terminate_vm";
-
     public String getChildElementXML() {
 
-        Element destroyElement = new Element(TERMINATE_VM_TAGNAME, LinkedProcess.LOP_FARM_NAMESPACE);
+        Element terminateVmElement = new Element(LinkedProcess.TERMINATE_VM_TAG, LinkedProcess.LOP_FARM_NAMESPACE);
         if(this.vmJid != null) {
-            destroyElement.setAttribute(VM_JID_ATTRIBUTE, this.vmJid);
+            terminateVmElement.setAttribute(LinkedProcess.VM_JID_ATTRIBUTE, this.vmJid);
         }
 
-        return LinkedProcess.xmlOut.outputString(destroyElement);
+        return LinkedProcess.xmlOut.outputString(terminateVmElement);
     }
 }

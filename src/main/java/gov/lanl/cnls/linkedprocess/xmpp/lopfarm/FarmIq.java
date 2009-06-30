@@ -9,8 +9,6 @@ import org.jivesoftware.smack.packet.IQ;
  */
 public abstract class FarmIq extends IQ {
 
-
-    public static final String VM_JID_ATTRIBUTE = "vm_jid";
     protected String vmJid;
 
     public void setVmJid(String vmJid) {

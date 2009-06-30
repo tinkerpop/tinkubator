@@ -14,7 +14,7 @@ public class AbandonJobProvider implements IQProvider {
 
     public IQ parseIQ(XmlPullParser parser) throws Exception {
         AbandonJob abandonJob = new AbandonJob();
-        abandonJob.setJobId(parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, "id"));
+        abandonJob.setJobId(parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.JOB_ID_ATTRIBUTE));
         return abandonJob;
     }
 }

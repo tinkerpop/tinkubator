@@ -1,6 +1,5 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
 
-import org.jivesoftware.smack.packet.IQ;
 import org.jdom.Element;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
@@ -10,9 +9,6 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
  * Time: 11:23:20 AM
  */
 public class SpawnVm extends FarmIq {
-
-    public static final String SPAWN_VM_TAGNAME = "spawn_vm";
-    public static final String VM_SPECIES_ATTRIBUTE = "vm_species";
 
     private String vmSpecies;
     private String errorMessage;
@@ -35,16 +31,16 @@ public class SpawnVm extends FarmIq {
 
     public String getChildElementXML() {
 
-        Element spawnElement = new Element(SPAWN_VM_TAGNAME, LinkedProcess.LOP_FARM_NAMESPACE);
+        Element spawnVmElement = new Element(LinkedProcess.SPAWN_VM_TAG, LinkedProcess.LOP_FARM_NAMESPACE);
         if(this.vmJid != null) {
-            spawnElement.setAttribute(VM_JID_ATTRIBUTE, this.vmJid);
+            spawnVmElement.setAttribute(LinkedProcess.VM_JID_ATTRIBUTE, this.vmJid);
         }
         if(this.vmSpecies != null) {
-            spawnElement.setAttribute(VM_SPECIES_ATTRIBUTE, this.vmSpecies);
+            spawnVmElement.setAttribute(LinkedProcess.VM_SPECIES_ATTRIBUTE, this.vmSpecies);
         }
         if(this.errorMessage != null) {
-            spawnElement.setText(errorMessage);
+            spawnVmElement.setText(errorMessage);
         }
-        return LinkedProcess.xmlOut.outputString(spawnElement);
+        return LinkedProcess.xmlOut.outputString(spawnVmElement);
     }
 }

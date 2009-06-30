@@ -41,9 +41,9 @@ public class XmppVirtualMachine extends XmppClient {
         LOGGER.info("Starting LoP virtual machine");
         // Registering the types of IQ packets/stanzas the the Lop VM can respond to.
         ProviderManager pm = ProviderManager.getInstance();
-        pm.addIQProvider(Evaluate.EVALUATE_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE, new EvaluateProvider());
-        pm.addIQProvider(JobStatus.JOB_STATUS_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE, new JobStatusProvider());
-        pm.addIQProvider(AbandonJob.ABANDON_JOB_TAGNAME, LinkedProcess.LOP_VM_NAMESPACE, new AbandonJobProvider());
+        pm.addIQProvider(LinkedProcess.EVALUATE_TAG, LinkedProcess.LOP_VM_NAMESPACE, new EvaluateProvider());
+        pm.addIQProvider(LinkedProcess.JOB_STATUS_TAG, LinkedProcess.LOP_VM_NAMESPACE, new JobStatusProvider());
+        pm.addIQProvider(LinkedProcess.ABANDON_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE, new AbandonJobProvider());
 
         try {
             this.logon(server, port, username, password);

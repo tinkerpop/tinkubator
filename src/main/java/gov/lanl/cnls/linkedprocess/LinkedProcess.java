@@ -21,6 +21,23 @@ public class LinkedProcess {
     public static final String DISCO_INFO_NAMESPACE = "http://jabber.org/protocol/disco#info";
     public static final String FORWARD_SLASH = "/";
 
+    ///////////////////////////////////////////////////////
+    // LoP Farm XMPP tag and attribute names
+      // tag names
+    public static final String SPAWN_VM_TAG = "spawn_vm";
+    public static final String TERMINATE_VM_TAG = "terminate_vm";
+      // attribute names
+    public static final String VM_SPECIES_ATTRIBUTE = "vm_species";
+    public static final String VM_JID_ATTRIBUTE = "vm_jid";
+    // Lop VM XMPP tag and attribute names
+      // tag names
+    public static final String EVALUATE_TAG = "evaluate";
+    public static final String JOB_STATUS_TAG = "job_status";
+    public static final String ABANDON_JOB_TAG = "abandon_job"; 
+      // attribute names
+    public static final String JOB_ID_ATTRIBUTE = "job_id";
+    ///////////////////////////////////////////////////////
+
     public static final int LOWEST_PRIORITY = -128;
     public static final int HIGHEST_PRIORITY = 127;
 

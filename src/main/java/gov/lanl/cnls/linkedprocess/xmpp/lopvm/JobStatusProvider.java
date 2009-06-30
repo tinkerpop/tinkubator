@@ -14,7 +14,7 @@ public class JobStatusProvider implements IQProvider {
 
     public IQ parseIQ(XmlPullParser parser) throws Exception {
         JobStatus jobStatus = new JobStatus();
-        jobStatus.setJobId(parser.getAttributeValue(LinkedProcess.LOP_VM_NAMESPACE, "id"));
+        jobStatus.setJobId(parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.JOB_ID_ATTRIBUTE));
         return jobStatus;
     }
 }

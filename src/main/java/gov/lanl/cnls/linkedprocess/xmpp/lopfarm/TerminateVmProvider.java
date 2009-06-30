@@ -15,7 +15,7 @@ public class TerminateVmProvider implements IQProvider {
     public IQ parseIQ(XmlPullParser parser) throws Exception {
 
         TerminateVm terminateVm = new TerminateVm();
-        String vmJid = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, TerminateVm.VM_JID_ATTRIBUTE);
+        String vmJid = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VM_JID_ATTRIBUTE);
         if(null != vmJid) {
             terminateVm.setVmJid(vmJid);
         }

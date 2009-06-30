@@ -44,8 +44,8 @@ public class XmppFarm extends XmppClient {
         LOGGER.info("Starting LoP farm");
 
         ProviderManager pm = ProviderManager.getInstance();
-        pm.addIQProvider(SpawnVm.SPAWN_VM_TAGNAME, LinkedProcess.LOP_FARM_NAMESPACE, new SpawnVmProvider());
-        pm.addIQProvider(TerminateVm.TERMINATE_VM_TAGNAME, LinkedProcess.LOP_FARM_NAMESPACE, new TerminateVmProvider());
+        pm.addIQProvider(LinkedProcess.SPAWN_VM_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new SpawnVmProvider());
+        pm.addIQProvider(LinkedProcess.TERMINATE_VM_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new TerminateVmProvider());
 
         try {
             this.logon(server, port, username, password);

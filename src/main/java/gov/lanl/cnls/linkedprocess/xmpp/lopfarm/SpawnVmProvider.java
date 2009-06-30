@@ -14,11 +14,11 @@ public class SpawnVmProvider implements IQProvider {
 
     public IQ parseIQ(XmlPullParser parser) throws Exception {
         SpawnVm spawnVm = new SpawnVm();
-        String vmJid = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, SpawnVm.VM_JID_ATTRIBUTE);
+        String vmJid = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VM_JID_ATTRIBUTE);
         if(null != vmJid) {
             spawnVm.setVmJid(vmJid);
         }
-        String vmSpecies = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, SpawnVm.VM_SPECIES_ATTRIBUTE);
+        String vmSpecies = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VM_SPECIES_ATTRIBUTE);
         if(null != vmSpecies) {
             spawnVm.setVmSpecies(vmSpecies);
         }

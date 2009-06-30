@@ -147,9 +147,9 @@ public class MockingTest {
 		assertFalse("The returned VM ID should not be the Farms id, right?", result.getVmJid().equals(mockFarmId) );
 		// check the whole xml string
 		assertEquals("<iq id=\"" + spawnPacketId + "\" to=\"" + mockClient
-				+ "\" type=\"result\"><" + SpawnVm.SPAWN_VM_TAGNAME + " xmlns=\""
+				+ "\" type=\"result\"><" + LinkedProcess.SPAWN_VM_TAG + " xmlns=\""
 				+ LinkedProcess.LOP_FARM_NAMESPACE + "\" "
-				+ SpawnVm.VM_JID_ATTRIBUTE + "=\"" + mockFarmId + "\" /></iq>",
+				+ LinkedProcess.VM_JID_ATTRIBUTE + "=\"" + mockFarmId + "\" /></iq>",
 				result.toXML());
 		// now we should have 3 more PacketListeners for the VM
 		assertTrue(packetListeners.size() == 6);
@@ -200,7 +200,7 @@ public class MockingTest {
 		assertEquals(IQ.Type.ERROR, result.getType());
 		// check the whole xml string
 		assertEquals("<iq id=\"" + spawnPacket2Id + "\" to=\"" + mockClient
-				+ "\" type=\"error\"><" + SpawnVm.SPAWN_VM_TAGNAME + " xmlns=\""
+				+ "\" type=\"error\"><" + LinkedProcess.SPAWN_VM_TAG + " xmlns=\""
 				+ LinkedProcess.LOP_FARM_NAMESPACE + "\" " + "/></iq>", result
 				.toXML());
 
