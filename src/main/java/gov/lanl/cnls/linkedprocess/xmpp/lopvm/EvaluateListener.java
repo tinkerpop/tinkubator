@@ -20,24 +20,24 @@ public class EvaluateListener implements PacketListener {
         this.vm = vm;
     }
 
-    public void processPacket(Packet eval) {
+    public void processPacket(Packet evaluate) {
 
         try {
             XmppVirtualMachine.LOGGER.info("Arrived EvaluateListener:");
-            XmppVirtualMachine.LOGGER.info(eval.toXML());
+            XmppVirtualMachine.LOGGER.info(evaluate.toXML());
 
             try {
-                String expression = ((Evaluate) eval).getExpression();
-                String iqId = eval.getPacketID();
-                String appJid = eval.getFrom();
+                String expression = ((Evaluate) evaluate).getExpression();
+                String iqId = evaluate.getPacketID();
+                String appJid = evaluate.getFrom();
 
                 Job job = new Job(appJid, iqId, expression, vm.getFullJid());
                 vm.addJob(job);
 
             } catch(ServiceRefusedException e) {
                 Evaluate returnEvaluate = new Evaluate();
-                returnEvaluate.setTo(eval.getFrom());
-                returnEvaluate.setPacketID(eval.getPacketID());
+                returnEvaluate.setTo(evaluate.getFrom());
+                returnEvaluate.setPacketID(evaluate.getPacketID());
                 returnEvaluate.setExpression(e.getMessage());
                 returnEvaluate.setType(IQ.Type.ERROR);
                 vm.getConnection().sendPacket(returnEvaluate);

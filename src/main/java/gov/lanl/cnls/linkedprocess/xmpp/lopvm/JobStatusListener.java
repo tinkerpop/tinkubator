@@ -16,18 +16,18 @@ public class JobStatusListener implements PacketListener {
         this.vm = vm;
     }
 
-    public void processPacket(Packet status) {
+    public void processPacket(Packet jobStatus) {
 
         try {
             XmppVirtualMachine.LOGGER.debug("Arrived StatusListener:");
-            XmppVirtualMachine.LOGGER.debug(status.toXML());
+            XmppVirtualMachine.LOGGER.debug(jobStatus.toXML());
 
             JobStatus returnJobStatus = new JobStatus();
-            returnJobStatus.setTo(status.getFrom());
-            returnJobStatus.setPacketID(status.getPacketID());
+            returnJobStatus.setTo(jobStatus.getFrom());
+            returnJobStatus.setPacketID(jobStatus.getPacketID());
 
             returnJobStatus.setType(IQ.Type.RESULT);
-            returnJobStatus.setValue(this.vm.getJobStatus(((JobStatus)status).getJobId()));
+            returnJobStatus.setValue(this.vm.getJobStatus(((JobStatus)jobStatus).getJobId()));
 
             XmppVirtualMachine.LOGGER.debug("Sent StatusListener:");
             XmppVirtualMachine.LOGGER.debug(returnJobStatus.toXML());

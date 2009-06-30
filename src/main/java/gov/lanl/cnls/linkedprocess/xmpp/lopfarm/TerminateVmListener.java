@@ -18,17 +18,17 @@ public class TerminateVmListener implements PacketListener {
         this.farm = farm;
     }
 
-    public void processPacket(Packet destroy) {
+    public void processPacket(Packet terminateVm) {
 
         try {
             XmppFarm.LOGGER.info("Arrived DestroyListener:");
-            XmppFarm.LOGGER.info(destroy.toXML());
+            XmppFarm.LOGGER.info(terminateVm.toXML());
 
             TerminateVm returnTerminateVm = new TerminateVm();
-            returnTerminateVm.setTo(destroy.getFrom());
-            returnTerminateVm.setPacketID(destroy.getPacketID());
+            returnTerminateVm.setTo(terminateVm.getFrom());
+            returnTerminateVm.setPacketID(terminateVm.getPacketID());
             
-            String vmJid = ((TerminateVm)destroy).getVmJid();
+            String vmJid = ((TerminateVm)terminateVm).getVmJid();
             try {
                 farm.destroyVirtualMachine(vmJid);
                 returnTerminateVm.setVmJid(vmJid);

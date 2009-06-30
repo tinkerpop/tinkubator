@@ -17,22 +17,22 @@ public class AbandonJobListener implements PacketListener {
         this.vm = vm;
     }
 
-    public void processPacket(Packet abandon) {
+    public void processPacket(Packet abandonJob) {
 
 
         XmppVirtualMachine.LOGGER.debug("Arrived CancelListener:");
-        XmppVirtualMachine.LOGGER.debug(abandon.toXML());
+        XmppVirtualMachine.LOGGER.debug(abandonJob.toXML());
 
         AbandonJob returnAbandonJob = new AbandonJob();
-        returnAbandonJob.setTo(abandon.getFrom());
-        returnAbandonJob.setPacketID(abandon.getPacketID());
+        returnAbandonJob.setTo(abandonJob.getFrom());
+        returnAbandonJob.setPacketID(abandonJob.getPacketID());
 
         try {
-            this.vm.getFarm().getScheduler().removeJob(vm.getFullJid(), ((AbandonJob) abandon).getJobId());
+            this.vm.abandonJob(((AbandonJob)abandonJob).getJobId());
             returnAbandonJob.setType(IQ.Type.RESULT);
         } catch (ServiceRefusedException e) {
             returnAbandonJob.setType(IQ.Type.ERROR);
-            ///TODO:make method returnAbandonJob.
+            ///TODO:make method returnAbandonJob Error
         }
 
 

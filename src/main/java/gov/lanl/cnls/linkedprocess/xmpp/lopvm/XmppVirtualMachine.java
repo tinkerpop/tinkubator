@@ -56,11 +56,11 @@ public class XmppVirtualMachine extends XmppClient {
 
         PacketFilter evalFilter = new AndFilter(new PacketTypeFilter(Evaluate.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter statusFilter = new AndFilter(new PacketTypeFilter(JobStatus.class), new IQTypeFilter(IQ.Type.GET));
-        PacketFilter cancelFilter = new AndFilter(new PacketTypeFilter(AbandonJob.class), new IQTypeFilter(IQ.Type.GET));
+        PacketFilter abandonFilter = new AndFilter(new PacketTypeFilter(AbandonJob.class), new IQTypeFilter(IQ.Type.GET));
 
         connection.addPacketListener(new EvaluateListener(this), evalFilter);
         connection.addPacketListener(new JobStatusListener(this), statusFilter);
-        connection.addPacketListener(new AbandonJobListener(this), cancelFilter);
+        connection.addPacketListener(new AbandonJobListener(this), abandonFilter);
     }
 
     protected void logon(String server, int port, String username, String password) throws XMPPException {
@@ -84,7 +84,7 @@ public class XmppVirtualMachine extends XmppClient {
     }
 
     public void abandonJob(String jobId) throws ServiceRefusedException {
-      // todo:   
+        this.farm.getScheduler().removeJob(this.getFullJid(), jobId);  
     }
 
     public VMScheduler.JobStatus getJobStatus(String jobId) {

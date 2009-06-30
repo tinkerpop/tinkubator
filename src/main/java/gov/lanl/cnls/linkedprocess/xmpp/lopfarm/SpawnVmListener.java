@@ -18,19 +18,19 @@ public class SpawnVmListener implements PacketListener {
         this.farm = farm;
     }
 
-    public void processPacket(Packet spawn) {
+    public void processPacket(Packet spawnVm) {
 
         try {
             XmppFarm.LOGGER.info("Arrived SpawnListener:");
-            XmppFarm.LOGGER.info(spawn.toXML());
+            XmppFarm.LOGGER.info(spawnVm.toXML());
 
             SpawnVm returnSpawnVm = new SpawnVm();
-            returnSpawnVm.setTo(spawn.getFrom());
-            returnSpawnVm.setPacketID(spawn.getPacketID());
+            returnSpawnVm.setTo(spawnVm.getFrom());
+            returnSpawnVm.setPacketID(spawnVm.getPacketID());
             String vmJid;
 
             try {
-                vmJid = farm.spawnVirtualMachine(((SpawnVm)spawn).getVmSpecies());
+                vmJid = farm.spawnVirtualMachine(((SpawnVm)spawnVm).getVmSpecies());
                 returnSpawnVm.setVmJid(vmJid);
                 returnSpawnVm.setType(IQ.Type.RESULT);
             } catch (ServiceRefusedException e) {
