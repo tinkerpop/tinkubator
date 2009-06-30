@@ -1,25 +1,12 @@
 package gov.lanl.cnls.linkedprocess;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.isA;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.expectNew;
-import static org.powermock.api.easymock.PowerMock.mockStatic;
-import static org.powermock.api.easymock.PowerMock.replayAll;
-import static org.powermock.api.easymock.PowerMock.verifyAll;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.Spawn;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.SpawnListener;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.isA;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
@@ -29,12 +16,24 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.expectNew;
+import static org.powermock.api.easymock.PowerMock.mockStatic;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( { XmppFarm.class, XmppClient.class,
@@ -147,8 +146,9 @@ public class MockingTest {
 				+ LinkedProcess.LOP_FARM_NAMESPACE + "\" "
 				+ Spawn.VM_JID_ATTRIBUTE + "=\"" + mockFarmId + "\" /></iq>",
 				result.toXML());
-
-		// now we should have 3 more PacketListeners for the VM
+        System.out.println("##############" + result.toXML());
+        
+        // now we should have 3 more PacketListeners for the VM
 		assertTrue(packetListeners.size() == 6);
 
 		//shut down
@@ -184,7 +184,8 @@ public class MockingTest {
 		assertEquals(result.getPacketID(), spawnPacket2Id);
 		
 		//should we get an error? we are just trying to start one more machine
-		assertEquals(IQ.Type.RESULT, result.getType());
+System.out.println("##############" + result.toXML());
+        assertEquals(IQ.Type.RESULT, result.getType());
 		// check the whole xml string
 		assertEquals("<iq id=\"" + spawnPacket2Id + "\" to=\"" + mockClient
 				+ "\" type=\"result\"><" + Spawn.SPAWN_TAGNAME + " xmlns=\""

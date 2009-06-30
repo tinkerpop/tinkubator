@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Author: josh
@@ -20,20 +22,25 @@ public class VMScheduler {
     private static final Logger LOGGER
             = LinkedProcess.getLogger(VMScheduler.class);
 
-    private final PollBlockingQueue<VMWorker> workerQueue;
+    private final BlockingQueue<VMWorker> workerQueue;
     private final Set<VMWorker> idleWorkerPool;
     private final Map<String, VMWorker> workersByJID;
     private final ScriptEngineManager manager = new ScriptEngineManager();
     private final int maxWorkers;
     private final VMResultHandler resultHandler;
+    private final int numberOfSequencers;
     private SchedulerStatus status;
+
+
+    private long jobsReceived = 0;
+    private long jobsCompleted = 0;
 
     public enum SchedulerStatus {
         ACTIVE, ACTIVE_FULL, TERMINATED
     }
 
     public enum VMStatus {
-        IN_PROGRESS, DOES_NOT_EXIST
+        ACTIVE, DOES_NOT_EXIST
     }
 
     // TODO: how about a "queued" status for jobs?
@@ -43,14 +50,15 @@ public class VMScheduler {
 
     /**
      * Creates a new virtual machine scheduler.
+     *
      * @param resultHandler a handler for results produced by the scheduler
      */
     public VMScheduler(final VMResultHandler resultHandler) {
         LOGGER.info("instantiating VMScheduler");
-        
-        this.resultHandler = resultHandler;
 
-        workerQueue = new PollBlockingQueue<VMWorker>();
+        this.resultHandler = new ResultCounter(resultHandler);
+
+        workerQueue = new LinkedBlockingQueue<VMWorker>();
         idleWorkerPool = new HashSet<VMWorker>();
         workersByJID = new HashMap<String, VMWorker>();
 
@@ -67,11 +75,11 @@ public class VMScheduler {
         // A single source for workers.
         VMWorkerSource source = createWorkerSource();
 
-        int n = new Integer(props.getProperty(
+        numberOfSequencers = new Integer(props.getProperty(
                 LinkedProcess.MAX_CONCURRENT_WORKER_THREADS));
-        VMSequencer[] sequencers = new VMSequencer[n];
-        for (int i = 0; i < n; i++) {
-            sequencers[i] = new VMSequencer(source, timeSlice);
+
+        for (int i = 0; i < numberOfSequencers; i++) {
+            new VMSequencer(source, timeSlice);
         }
     }
 
@@ -85,12 +93,15 @@ public class VMScheduler {
      */
     public synchronized void addJob(final String machineJID,
                                     final Job job) throws ServiceRefusedException {
+        jobsReceived++;
+
         VMWorker w = getWorkerByJID(machineJID);
 
         // FIXME: this call may block for as long as one timeslice.
         //        This wait could probably be eliminated.
         w.addJob(job);
 
+        LOGGER.debug("enqueueing worker: " + w);
         enqueueWorker(w);
     }
 
@@ -150,6 +161,7 @@ public class VMScheduler {
             status = SchedulerStatus.ACTIVE_FULL;
         }
 
+        LOGGER.debug("adding worker to idle pool: " + w);
         idleWorkerPool.add(w);
     }
 
@@ -161,12 +173,11 @@ public class VMScheduler {
      *                                 cannot be destroyed
      */
     public synchronized void removeMachine(final String machineJID) throws ServiceRefusedException {
+        LOGGER.debug("removing VM with JID '" + machineJID + "'");
         VMWorker w = getWorkerByJID(machineJID);
 
         workersByJID.remove(machineJID);
-        synchronized (workerQueue) {
-            workerQueue.remove(w);
-        }
+        workerQueue.remove(w);
 
         idleWorkerPool.remove(w);
 
@@ -180,7 +191,7 @@ public class VMScheduler {
     /**
      * @return the status of this scheduler
      */
-    public synchronized SchedulerStatus getFarmPresence() {
+    public synchronized SchedulerStatus getSchedulerStatus() {
         return status;
     }
 
@@ -188,16 +199,16 @@ public class VMScheduler {
      * @param machineJID the JID of the virtual machine of interest
      * @return the status of the given virtual machine
      */
-    public synchronized VMStatus getVMPresence(final String machineJID) {
+    public synchronized VMStatus getVMStatus(final String machineJID) {
         VMWorker w = workersByJID.get(machineJID);
         return (null == w)
                 ? VMStatus.DOES_NOT_EXIST
-                : VMStatus.IN_PROGRESS;
+                : VMStatus.ACTIVE;
     }
 
     /**
      * @param machineJID the JID of the machine to execute the job
-     * @param iqID the ID of the job of interest
+     * @param iqID       the ID of the job of interest
      * @return the status of the given job
      */
     public synchronized JobStatus getJobStatus(final String machineJID,
@@ -212,14 +223,44 @@ public class VMScheduler {
      * Shuts down all active virtual machines and cancels all jobs.
      */
     public synchronized void shutDown() {
+        LOGGER.info("shutting down VMScheduler");
+
         workerQueue.clear();
-        workerQueue.stopBlocking();
+        for (int i = 0; i < numberOfSequencers; i++) {
+            try {
+                // Add sentinel values to the queue, which will be retrieved by the
+                // sequencers and cause them to terminate.  A null value cannot be
+                // used, due to the specification of BlockingQueue.
+                workerQueue.put(VMWorker.SCHEDULER_TERMINATED_SENTINEL);
+            } catch (InterruptedException e) {
+                LOGGER.error("thread interrupted unexpectedly in queue");
+                System.exit(1);
+            }
+        }
 
         for (VMWorker w : workersByJID.values()) {
             w.terminate();
         }
 
+        workersByJID.clear();
+
         status = SchedulerStatus.TERMINATED;
+    }
+
+    /**
+     * Waits until all pending and currently executed jobs have finished.  This
+     * is a convenience method (for unit tests) which should be used with
+     * caution.  Because the method is synchronized, you could wait indefinitely
+     * on a job which never finishes, with no chance of terminating the job.
+     */
+    public synchronized void waitUntilFinished() throws InterruptedException {
+        // Busy wait until the number of jobs completed catches up with the
+        // number of jobs received.  Even failed jobs, cancelled jobs, and jobs
+        // whose virtual machine has been terminated produce a result which is
+        // counted.
+        while (jobsCompleted < jobsReceived) {
+            Thread.currentThread().sleep(100);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -236,18 +277,45 @@ public class VMScheduler {
     private VMWorkerSource createWorkerSource() {
         return new VMWorkerSource() {
             public synchronized VMWorker getWorker() {
-                return workerQueue.poll();
+                try {
+                    return workerQueue.take();
+                } catch (InterruptedException e) {
+                    LOGGER.error("thread interrupted unexpectedly in queue");
+                    System.exit(1);
+                    return null;
+                }
+            }
+
+            public void putBackWorker(final VMWorker w,
+                                      final boolean idle) {
+                if (idle) {
+                    putBackIdleWorker(w);
+                } else {
+                    enqueueWorker(w);
+                }
             }
         };
     }
 
+    private void putBackIdleWorker(final VMWorker w) {
+        // TODO: synchronization
+        idleWorkerPool.add(w);
+    }
+
     private void enqueueWorker(final VMWorker w) {
+        LOGGER.debug("enueueing worker: " + w);
         // If the worker is in the idle pool, add it to the queue instead.
         // Otherwise, don't move it.
         if (idleWorkerPool.contains(w)) {
             idleWorkerPool.remove(w);
-            workerQueue.offer(w);
         }
+        try {
+            workerQueue.put(w);
+        } catch (InterruptedException e) {
+            LOGGER.error("thread interrupted unexpectedly in queue");
+            System.exit(1);
+        }
+        LOGGER.debug("...done (workerQueue.size() = " + workerQueue.size() + ")");
     }
 
     private VMWorker getWorkerByJID(final String machineJID) throws ServiceRefusedException {
@@ -268,5 +336,24 @@ public class VMScheduler {
 
     public interface VMWorkerSource {
         VMWorker getWorker();
+
+        void putBackWorker(VMWorker w, boolean idle);
+    }
+
+    private class ResultCounter implements VMResultHandler {
+        private final VMResultHandler innerHandler;
+        private final Object monitor = "";
+
+        public ResultCounter(final VMResultHandler innerHandler) {
+            this.innerHandler = innerHandler;
+        }
+
+        public void handleResult(JobResult result) {
+            synchronized (monitor) {
+                jobsCompleted++;
+            }
+
+            innerHandler.handleResult(result);
+        }
     }
 }

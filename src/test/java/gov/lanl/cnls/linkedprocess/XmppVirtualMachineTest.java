@@ -33,7 +33,7 @@ public class XmppVirtualMachineTest extends TestCase {
     @After
     public void tearDown() {
     }
-//*
+
     @Test
     public void testLoginOPS4J() throws Exception {
         xmppVirtualMachine = new XmppVirtualMachine(OPS4J_SERVER, PORT, USERNAME, PASSWORD, null);
@@ -72,12 +72,21 @@ public class XmppVirtualMachineTest extends TestCase {
         assertTrue(cancelString.contains("xmlns=\"" + LinkedProcess.LOP_VM_NAMESPACE));
         assertTrue(cancelString.contains("job_id=\"wxyz\""));
     }
-//*/
 
-    @Test
+        @Test
     public void testSpawnVirtualMachine() throws Exception {
         XmppFarm farm = new XmppFarm(OPS4J_SERVER, PORT, USERNAME, PASSWORD);
         String vmJID = farm.spawnVirtualMachine();
+        farm.shutDown();
+    }
+
+    @Test
+    public void testExecuteScript() throws Exception {
+        XmppFarm farm = new XmppFarm(OPS4J_SERVER, PORT, USERNAME, PASSWORD);
+        String vmJID = farm.spawnVirtualMachine();
+        XmppVirtualMachine vm = farm.getVirtualMachine(vmJID);
+
+
         farm.shutDown();
     }
 }

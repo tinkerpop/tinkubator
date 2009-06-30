@@ -46,10 +46,22 @@ public class JobResult {
         return this.job;
     }
 
+    public ResultType getType() {
+        return type;
+    }
+
+    public String getExpression() {
+        return expression;
+    }
+
+    public Exception getException() {
+        return exception;
+    }
+    
     public Evaluate generateReturnEvalulate() {
         Evaluate returnEval = new Evaluate();
         returnEval.setTo(job.getAppJID());
-        returnEval.setPacketID(job.getIQID());
+        returnEval.setPacketID(job.getJobID());
 
         switch (type) {
             case CANCELLED:
@@ -58,15 +70,19 @@ public class JobResult {
                 returnEval.setType(IQ.Type.ERROR);
                 break;
             case ERROR:
-                // TODO: add information about the error, drawn from this.exception
+                // TODO: add more information about the error, drawn from this.exception
                 returnEval.setType(IQ.Type.ERROR);
+                String msg = exception.getMessage();
+                if (null != msg) {
+                    returnEval.setExpression(msg);
+                }
                 break;
             case NORMAL_RESULT:
                 returnEval.setType(IQ.Type.RESULT);
                 returnEval.setExpression(expression);
                 break;
         }
-        
+
         return returnEval;
     }
 }

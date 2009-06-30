@@ -21,6 +21,8 @@ import javax.script.ScriptException;
  * Time: 2:15:41 PM
  */
 public class VMWorker {
+    public static final VMWorker SCHEDULER_TERMINATED_SENTINEL = new VMWorker();
+
     private enum Status {
         ACTIVE_INPROGRESS,
         ACTIVE_SUSPENDED,
@@ -45,6 +47,16 @@ public class VMWorker {
             workerWaitMonitor = "";
 
     /**
+     * Dummy constructor to create a sentinel value in VMScheduler.
+     */
+    private VMWorker() {
+        jobQueue = null;
+        resultHandler = null;
+        scriptEngine = null;
+        workerThread = null;
+    }
+
+    /**
      * Creates a new virtual machine worker.
      *
      * @param scriptEngine  the ScriptEngine with which to evaluate expressions
@@ -62,7 +74,7 @@ public class VMWorker {
                 LinkedProcess.MESSAGE_QUEUE_CAPACITY));
         jobQueue = new LoPQueue<Job>(capacity);
 
-        workerThread = new Thread(new WorkerRunnable());
+        workerThread = new Thread(new WorkerRunnable(), "LOP VM worker thread");
         workerThread.start();
 
         status = Status.IDLE_WAITING;
@@ -111,9 +123,10 @@ public class VMWorker {
      * Note: This method should only be called when the value of canWork() is true.
      *
      * @param timeout the length of the time window
+     * @return whether the current job has been finished
      */
-    public synchronized void work(final long timeout) {
-        LOGGER.debug("working");
+    public synchronized boolean work(final long timeout) {
+        LOGGER.debug("working...");
 
         switch (status) {
             case ACTIVE_SUSPENDED:
@@ -153,17 +166,19 @@ public class VMWorker {
         // Suspend the thread immediately, regardless of what status we're in.
         suspendWorkerThread();
 
+        LOGGER.debug("...done working");
+
         switch (status) {
             case ACTIVE_INPROGRESS:
                 status = Status.ACTIVE_SUSPENDED;
-                break;
+                return false;
             case IDLE_FINISHED:
                 resultHandler.handleResult(latestResult);
 
                 // Advance to the wait()
                 status = Status.IDLE_WAITING;
                 resumeWorkerThread();
-                break;
+                return true;
             default:
                 throw new IllegalStateException("status should not occur at the end of a work window: " + status);
         }
@@ -177,7 +192,7 @@ public class VMWorker {
      * does so within that window.  Nor will additional jobs be processed.
      */
     public synchronized void terminate() {
-        LOGGER.info("terminating worker");
+        LOGGER.info("terminating VMWorker");
 
         switch (status) {
             case ACTIVE_SUSPENDED:
@@ -218,7 +233,7 @@ public class VMWorker {
 
         switch (status) {
             case ACTIVE_SUSPENDED:
-                if (latestJob.getIQID().equals(jobID)) {
+                if (latestJob.getJobID().equals(jobID)) {
                     // Cause the worker thread to cease execution of the current
                     // job and wait.
                     status = Status.IDLE_WAITING;
@@ -239,7 +254,7 @@ public class VMWorker {
         // Look for the job in the queue and remove it if present.
         // FIXME: inefficient
         for (Job j : jobQueue.asCollection()) {
-            if (j.getIQID().equals(jobID)) {
+            if (j.getJobID().equals(jobID)) {
                 jobQueue.remove(j);
                 return;
             }
@@ -251,7 +266,7 @@ public class VMWorker {
     public synchronized boolean jobExists(final String jobID) {
         switch (status) {
             case ACTIVE_SUSPENDED:
-                return jobID.equals(latestJob.getIQID())
+                return jobID.equals(latestJob.getJobID())
                         || jobQueueContains(jobID);
             case IDLE_WAITING:
                 return jobQueueContains(jobID);
@@ -292,7 +307,7 @@ public class VMWorker {
 
     private boolean jobQueueContains(final String jobID) {
         for (Job j : jobQueue.asCollection()) {
-            if (j.getIQID().equals(jobID)) {
+            if (j.getJobID().equals(jobID)) {
                 return true;
             }
         }
@@ -304,13 +319,11 @@ public class VMWorker {
         try {
             Object returnObject = scriptEngine.eval(request.getExpression());
 
-            if (null != returnObject && !(returnObject instanceof String)) {
-                LOGGER.error("object returned by ScriptEngine.eval is not of the expected type java.lang.String");
-                System.exit(1);
-            }
-
+            // Note: the return object is not necessarily a string.  It may,
+            // for instance, be a Double which needs to be converted to a
+            // String.
             String returnvalue = (null == returnObject)
-                    ? "" : (String) returnObject;
+                    ? "" : returnObject.toString();
 
             yieldResult(request, returnvalue);
         } catch (ScriptException e) {
