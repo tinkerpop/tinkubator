@@ -18,6 +18,8 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,6 +56,7 @@ public class MockingTest {
 	private Packet spawnPacket;
 	private String spawnPacketId;
 	private XMPPConnection mockConnection;
+	private XmppFarm xmppFarm;
 
 	@Before
 	public void setup() throws Exception {
@@ -80,7 +83,7 @@ public class MockingTest {
 		// just connection info, not important right now
 		expect(mockConnection.getHost()).andReturn("mock.linkedprocess.org")
 				.anyTimes();
-		mockFarmId = "mockFarmUser";
+		mockFarmId = "mockFarmJID";
 		expect(mockConnection.getUser()).andReturn(mockFarmId).anyTimes();
 		expect(mockConnection.isAnonymous()).andReturn(false).anyTimes();
 		expect(mockConnection.isConnected()).andReturn(true).anyTimes();
@@ -101,7 +104,7 @@ public class MockingTest {
 		mockConnection.login(isA(String.class), isA(String.class),
 				isA(String.class));
 		expectLastCall().anyTimes();
-		//shutdown
+		// shutdown
 		mockConnection.disconnect(isA(Presence.class));
 		mockConnection.disconnect();
 		spawnPacket = createMock(Packet.class);
@@ -115,13 +118,12 @@ public class MockingTest {
 	}
 
 	@Test
-	public void testSpawningOneVM() throws Exception {
+	public void spawningOneVMShouldReturnResultIQPacket() throws Exception {
 
 		// activate all mock objects
 		replayAll();
 
-		// start testing
-		XmppFarm xmppFarm = new XmppFarm(server, port, username1, password1);
+		xmppFarm = new XmppFarm(server, port, username1, password1);
 
 		// one presence packet should have been sent
 		assertTrue(sentPackets.size() == 1);
@@ -146,18 +148,22 @@ public class MockingTest {
 				+ LinkedProcess.LOP_FARM_NAMESPACE + "\" "
 				+ Spawn.VM_JID_ATTRIBUTE + "=\"" + mockFarmId + "\" /></iq>",
 				result.toXML());
-        System.out.println("##############" + result.toXML());
-        
-        // now we should have 3 more PacketListeners for the VM
+		// now we should have 3 more PacketListeners for the VM
 		assertTrue(packetListeners.size() == 6);
 
-		//shut down
+	}
+
+	@After
+	public void shutdown() {
+		// shut down
 		xmppFarm.shutDown();
 		verifyAll();
+
 	}
 
 	@Test
-	public void testSpawningTwoVMs() throws Exception {
+	public void spawningTwoVMInSameFarmShouldReturnErrorSpawnPacket()
+			throws Exception {
 		Packet spawnPacket2 = createMock(Packet.class);
 		String spawnXML = "<not real XML>";
 		expect(spawnPacket2.toXML()).andReturn(spawnXML).anyTimes();
@@ -165,11 +171,16 @@ public class MockingTest {
 		expect(spawnPacket2.getFrom()).andReturn(mockClient).anyTimes();
 		String spawnPacket2Id = "345";
 		expect(spawnPacket2.getPacketID()).andReturn(spawnPacket2Id).anyTimes();
+
+		// the second VM should disconnect
+		mockConnection.disconnect(isA(Presence.class));
+		mockConnection.disconnect();
+
 		// activate all mock objects
 		replayAll();
 
 		// start testing
-		XmppFarm xmppFarm = new XmppFarm(server, port, username1, password1);
+		xmppFarm = new XmppFarm(server, port, username1, password1);
 
 		PacketListener spawnListener = packetListeners.get(0);
 
@@ -182,19 +193,14 @@ public class MockingTest {
 		// sent packet should refer to the same pID
 		IQ result = (IQ) sentPackets.get(4);
 		assertEquals(result.getPacketID(), spawnPacket2Id);
-		
-		//should we get an error? we are just trying to start one more machine
-System.out.println("##############" + result.toXML());
-        assertEquals(IQ.Type.RESULT, result.getType());
+
+		// we should get an error back
+		assertEquals(IQ.Type.ERROR, result.getType());
 		// check the whole xml string
 		assertEquals("<iq id=\"" + spawnPacket2Id + "\" to=\"" + mockClient
-				+ "\" type=\"result\"><" + Spawn.SPAWN_TAGNAME + " xmlns=\""
-				+ LinkedProcess.LOP_FARM_NAMESPACE + "\" "
-				+ Spawn.VM_JID_ATTRIBUTE + "=\"" + mockFarmId + "\" /></iq>",
-				result.toXML());
-		
-		//shut down
-		xmppFarm.shutDown();
-		verifyAll();
+				+ "\" type=\"error\"><" + Spawn.SPAWN_TAGNAME + " xmlns=\""
+				+ LinkedProcess.LOP_FARM_NAMESPACE + "\" " + "/></iq>", result
+				.toXML());
+
 	}
 }

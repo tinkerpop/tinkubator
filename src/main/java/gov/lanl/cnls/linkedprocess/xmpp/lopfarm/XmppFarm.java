@@ -93,14 +93,15 @@ public class XmppFarm extends XmppClient {
 
     public String spawnVirtualMachine() throws ServiceRefusedException {
         XmppVirtualMachine vm = new XmppVirtualMachine(this.getServer(), this.getPort(), this.getUsername(), this.getPassword(), this);
-        try {
-            this.scheduler.addMachine(vm.getFullJid(), "JavaScript");
+        String fullJid = vm.getFullJid();
+		try {
+            this.scheduler.addMachine(fullJid, "JavaScript");
         } catch (ServiceRefusedException e) {
             vm.shutDown();
             throw new ServiceRefusedException(e.getMessage());
         }
-        this.machines.put(vm.getFullJid(), vm);
-        return vm.getFullJid();
+        this.machines.put(fullJid, vm);
+        return fullJid;
     }
 
     public void destroyVirtualMachine(String vmJid) throws ServiceRefusedException {
