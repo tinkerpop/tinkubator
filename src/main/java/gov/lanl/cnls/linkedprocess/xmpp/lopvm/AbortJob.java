@@ -22,7 +22,7 @@ public class AbortJob extends VirtualMachineIq {
         if(this.jobId != null) {
             abandonJobElement.setAttribute(LinkedProcess.JOB_ID_ATTRIBUTE, this.jobId);
         }
-        if(this.value != null) {
+        if(this.abortError != null) {
             abandonJobElement.setAttribute(LinkedProcess.ERROR_ATTRIBUTE, this.abortError);
         }
         return LinkedProcess.xmlOut.outputString(abandonJobElement);
