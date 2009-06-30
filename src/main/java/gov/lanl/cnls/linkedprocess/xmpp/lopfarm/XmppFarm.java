@@ -14,10 +14,13 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.apache.log4j.Logger;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
  * User: marko
@@ -40,7 +43,16 @@ public class XmppFarm extends XmppClient {
     protected FarmStatus currentStatus;
 
     public XmppFarm(final String server, final int port, final String username, final String password) {
-
+    	InputStream resourceAsStream = getClass().getResourceAsStream("/logging.properties");
+		try {
+			LogManager.getLogManager().readConfiguration(resourceAsStream);
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         LOGGER.info("Starting LoP farm");
 
         ProviderManager pm = ProviderManager.getInstance();
@@ -52,7 +64,7 @@ public class XmppFarm extends XmppClient {
             this.initiateFeatures();
             //this.printClientStatistics();
         } catch (XMPPException e) {
-            LOGGER.error("error: " + e);
+            LOGGER.severe("error: " + e);
             System.exit(1);
         }
 
@@ -123,7 +135,7 @@ public class XmppFarm extends XmppClient {
         try {
          this.scheduler.waitUntilFinished();
         } catch(InterruptedException e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.severe(e.getMessage());
         }
         super.shutDown();
 

@@ -20,6 +20,6 @@ public class VMJobResultHandler implements VMScheduler.VMResultHandler {
     public void handleResult(JobResult result) {
         XmppVirtualMachine vm = farm.getVirtualMachine(result.getJob().getVMJID());
         vm.getConnection().sendPacket(result.generateReturnEvalulate());
-        XmppVirtualMachine.LOGGER.info(result.generateReturnEvalulate());
+        XmppVirtualMachine.LOGGER.info(result.generateReturnEvalulate().toString());
     }
 }

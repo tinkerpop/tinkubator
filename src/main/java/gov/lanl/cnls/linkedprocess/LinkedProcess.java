@@ -1,10 +1,9 @@
 package gov.lanl.cnls.linkedprocess;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.jdom.output.XMLOutputter;
 
 import java.util.Properties;
+import java.util.logging.Logger;
 import java.io.IOException;
 
 /**
@@ -115,20 +114,18 @@ public class LinkedProcess {
     public static final XMLOutputter xmlOut = new XMLOutputter();
 
     static {
-        PropertyConfigurator.configure(
-                LinkedProcess.class.getResource(LOP_PROPERTIES));
-
+        
         LOGGER = getLogger(LinkedProcess.class);
         try {
             PROPERTIES.load(LinkedProcess.class.getResourceAsStream(LOP_PROPERTIES));
         } catch (IOException e) {
-            LOGGER.error("unable to load properties file " + LOP_PROPERTIES);
+            LOGGER.severe("unable to load properties file " + LOP_PROPERTIES);
             System.exit(1);
         }
     }
 
     public static Logger getLogger(final Class c) {
-        return Logger.getLogger(c);
+        return Logger.getLogger(c.getName());
     }
 
     public static Properties getProperties() {

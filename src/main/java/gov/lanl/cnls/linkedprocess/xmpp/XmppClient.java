@@ -4,8 +4,8 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
 import java.util.Iterator;
 import java.util.Random;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;

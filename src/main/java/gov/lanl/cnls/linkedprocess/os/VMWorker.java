@@ -1,7 +1,8 @@
 package gov.lanl.cnls.linkedprocess.os;
 
+import java.util.logging.Logger;
+
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import org.apache.log4j.Logger;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
@@ -126,7 +127,7 @@ public class VMWorker {
      * @return whether the current job has been finished
      */
     public synchronized boolean work(final long timeout) {
-        LOGGER.debug("working...");
+        LOGGER.fine("working...");
 
         switch (status) {
             case ACTIVE_SUSPENDED:
@@ -159,14 +160,14 @@ public class VMWorker {
                 }
             }
         } catch (InterruptedException e) {
-            LOGGER.error("interrupted unexpectedly");
+            LOGGER.fine("interrupted unexpectedly");
             System.exit(1);
         }
 
         // Suspend the thread immediately, regardless of what status we're in.
         suspendWorkerThread();
 
-        LOGGER.debug("...done working");
+        LOGGER.fine("...done working");
 
         switch (status) {
             case ACTIVE_INPROGRESS:
@@ -365,7 +366,7 @@ public class VMWorker {
                     // body of the loop.
                 } catch (Exception e) {
                     // TODO: stack trace
-                    LOGGER.error("worker runnable died with error: " + e.toString());
+                    LOGGER.severe("worker runnable died with error: " + e.toString());
                 }
             }
         }

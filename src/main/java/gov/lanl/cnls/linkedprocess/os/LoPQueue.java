@@ -1,11 +1,11 @@
 package gov.lanl.cnls.linkedprocess.os;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import org.apache.log4j.Logger;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.logging.Logger;
 
 /**
  * A thread-safe queue of limited capacity.  After it has reached a certain
@@ -31,7 +31,7 @@ public class LoPQueue<T> {
         if (queue.size() < capacity) {
             return queue.offer(t);
         } else {
-            LOGGER.warn("queue is full and has rejected an item");
+            LOGGER.warning("queue is full and has rejected an item");
             return false;
         }
     }

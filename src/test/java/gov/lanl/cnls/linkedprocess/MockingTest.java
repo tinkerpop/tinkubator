@@ -1,13 +1,29 @@
 package gov.lanl.cnls.linkedprocess;
 
+import static org.easymock.EasyMock.capture;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.isA;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.expectNew;
+import static org.powermock.api.easymock.PowerMock.mockStatic;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.SpawnVm;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.SpawnVmListener;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.isA;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.easymock.Capture;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
@@ -17,27 +33,13 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.expectNew;
-import static org.powermock.api.easymock.PowerMock.mockStatic;
-import static org.powermock.api.easymock.PowerMock.replayAll;
-import static org.powermock.api.easymock.PowerMock.verifyAll;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( { XmppFarm.class, XmppClient.class,
@@ -55,68 +57,82 @@ public class MockingTest {
 	private List<PacketListener> packetListeners;
 	private String mockFarmId;
 	private String mockClient;
-	private Packet spawnPacket;
-	private String spawnPacketId;
-	private XMPPConnection mockConnection;
+	private String spawnPacketId = "123";
+	private XMPPConnection mockFarmConn;
 	private XmppFarm xmppFarm;
+	private SpawnVm spawn;
+	private ServiceDiscoveryManager mdm;
+	private String mockVMID = "LopServer/VM1";
+	private XMPPConnection mockVM1Conn;
 
 	@Before
 	public void setup() throws Exception {
-		ServiceDiscoveryManager mdm = createMock(ServiceDiscoveryManager.class);
-		mockConnection = createMock(XMPPConnection.class);
-		mockStatic(ServiceDiscoveryManager.class);
-		expect(ServiceDiscoveryManager.getInstanceFor(mockConnection))
-				.andReturn(mdm).anyTimes();
+		mdm = createMock(ServiceDiscoveryManager.class);
+		mockFarmId = "LopServer/LoPFarm";
+		mockFarmConn = mockXMPPConnection(mockFarmId);
+		mockVM1Conn = mockXMPPConnection(mockVMID );
+		expect(ServiceDiscoveryManager.getInstanceFor(mockFarmConn))
+		.andReturn(mdm);
+		expect(ServiceDiscoveryManager.getInstanceFor(mockVM1Conn))
+		.andReturn(mdm);
+
 		Iterator<String> features = new LinkedList<String>().iterator();
 		expect(mdm.getFeatures()).andReturn(features).anyTimes();
 		mdm.addFeature(isA(String.class));
 		// 2 for Farm, 2 for each VM
 		expectLastCall().anyTimes();
 		// a bit more explicit matchers to help PowerMock choose the right
-		// constructor
+		// constructor for the farm
 		expectNew(XMPPConnection.class,
 				new Class<?>[] { ConnectionConfiguration.class },
-				isA(ConnectionConfiguration.class)).andReturn(mockConnection)
-				.anyTimes();
+				isA(ConnectionConfiguration.class)).andReturn(mockFarmConn);
+		//next time, return the VM connection
+		expectNew(XMPPConnection.class,
+				new Class<?>[] { ConnectionConfiguration.class },
+				isA(ConnectionConfiguration.class)).andReturn(mockVM1Conn);
 
-		mockConnection.connect();
-		// one time for the XMPPFarm, one time for each spawned VM
+
+		spawn = new SpawnVm();
+		spawn.setVmSpecies("javascript");
+		spawn.setPacketID(spawnPacketId);
+		spawn.setFrom(mockClient);
+        //spawn.setVmJid("lp1@gmail.com");
+	}
+
+	private XMPPConnection mockXMPPConnection(String username) throws Exception {
+		//XMPPConnection mocConnection = new MockXMPPConnection(new ConnectionConfiguration(server, port, "hej"));
+		XMPPConnection mocConnection = createMock(XMPPConnection.class);
+		mockStatic(ServiceDiscoveryManager.class);
+		mocConnection.connect();
 		expectLastCall().anyTimes();
-		// just connection info, not important right now
-		expect(mockConnection.getHost()).andReturn("mock.linkedprocess.org")
-				.anyTimes();
-		mockFarmId = "mockFarmJID";
-		expect(mockConnection.getUser()).andReturn(mockFarmId).anyTimes();
-		expect(mockConnection.isAnonymous()).andReturn(false).anyTimes();
-		expect(mockConnection.isConnected()).andReturn(true).anyTimes();
-		expect(mockConnection.isSecureConnection()).andReturn(false).anyTimes();
-		expect(mockConnection.isUsingCompression()).andReturn(false).anyTimes();
-		expect(mockConnection.isUsingTLS()).andReturn(false).anyTimes();
+		Capture<String> resourceCapture = new Capture<String>();
+		mocConnection.login(isA(String.class), isA(String.class),
+				capture(resourceCapture) );
+		expectLastCall().anyTimes();
+		expect(mocConnection.getHost()).andReturn("mock.linkedprocess.org")
+		.anyTimes();
+		expect(mocConnection.getUser()).andReturn(username+LinkedProcess.FORWARD_SLASH + (resourceCapture.hasCaptured()?resourceCapture.getValue():"nothingyet")).anyTimes();
+		expect(mocConnection.isAnonymous()).andReturn(false).anyTimes();
+		expect(mocConnection.isConnected()).andReturn(true).anyTimes();
+		expect(mocConnection.isSecureConnection()).andReturn(false).anyTimes();
+		expect(mocConnection.isUsingCompression()).andReturn(false).anyTimes();
+		expect(mocConnection.isUsingTLS()).andReturn(false).anyTimes();
 		packetListeners = new LinkedList<PacketListener>();
-		mockConnection.addPacketListener(MultiCaptureMatcher
+		mocConnection.addPacketListener(MultiCaptureMatcher
 				.multiCapture(packetListeners), isA(PacketFilter.class));
 		expectLastCall().anyTimes();
 		Roster mockRoster = createMock(Roster.class);
 		mockRoster.setSubscriptionMode(Roster.SubscriptionMode.manual);
-		expect(mockConnection.getRoster()).andReturn(mockRoster).anyTimes();
+		expect(mocConnection.getRoster()).andReturn(mockRoster).anyTimes();
 		sentPackets = new ArrayList<Packet>();
-		mockConnection
-				.sendPacket(MultiCaptureMatcher.multiCapture(sentPackets));
-		expectLastCall().anyTimes();
-		mockConnection.login(isA(String.class), isA(String.class),
-				isA(String.class));
+		mocConnection
+		.sendPacket(MultiCaptureMatcher.multiCapture(sentPackets));
 		expectLastCall().anyTimes();
 		// shutdown
-		mockConnection.disconnect(isA(Presence.class));
-		mockConnection.disconnect();
-		spawnPacket = createMock(Packet.class);
-		String spawnXML = "<not real XML>";
-		expect(spawnPacket.toXML()).andReturn(spawnXML).anyTimes();
-		mockClient = "mockClientUser";
-		expect(spawnPacket.getFrom()).andReturn(mockClient).anyTimes();
-		spawnPacketId = "123";
-		expect(spawnPacket.getPacketID()).andReturn(spawnPacketId).anyTimes();
-
+		mocConnection.disconnect(isA(Presence.class));
+		mocConnection.disconnect();
+		return mocConnection;
+		
 	}
 
 	@Test
@@ -136,7 +152,7 @@ public class MockingTest {
 		assertTrue(spawnListener instanceof SpawnVmListener);
 
 		// let's send a spawn packet!
-		spawnListener.processPacket(spawnPacket);
+		spawnListener.processPacket(spawn);
 
 		// now, a new packet should have been sent back from the VM
 		assertEquals(3, sentPackets.size());
@@ -144,13 +160,14 @@ public class MockingTest {
 		SpawnVm result = (SpawnVm) sentPackets.get(2);
 		assertEquals(result.getPacketID(), spawnPacketId);
 		assertEquals(result.getType(), IQ.Type.RESULT);
-		assertFalse("The returned VM ID should not be the Farms id, right?", result.getVmJid().equals(mockFarmId) );
+		assertFalse("The returned VM ID should not be the Farms id, right?",
+				result.getVmJid().equals(mockFarmId));
 		// check the whole xml string
 		assertEquals("<iq id=\"" + spawnPacketId + "\" to=\"" + mockClient
-				+ "\" type=\"result\"><" + LinkedProcess.SPAWN_VM_TAG + " xmlns=\""
-				+ LinkedProcess.LOP_FARM_NAMESPACE + "\" "
-				+ LinkedProcess.VM_JID_ATTRIBUTE + "=\"" + mockFarmId + "\" /></iq>",
-				result.toXML());
+				+ "\" type=\"result\"><" + LinkedProcess.SPAWN_VM_TAG
+				+ " xmlns=\"" + LinkedProcess.LOP_FARM_NAMESPACE + "\" "
+				+ LinkedProcess.VM_JID_ATTRIBUTE + "=\"" + mockFarmId
+				+ "\" /></iq>", result.toXML());
 		// now we should have 3 more PacketListeners for the VM
 		assertTrue(packetListeners.size() == 6);
 
@@ -175,8 +192,8 @@ public class MockingTest {
 		expect(spawnPacket2.getPacketID()).andReturn(spawnPacket2Id).anyTimes();
 
 		// the second VM should disconnect
-		mockConnection.disconnect(isA(Presence.class));
-		mockConnection.disconnect();
+		// mockConnection.disconnect(isA(Presence.class));
+		// mockConnection.disconnect();
 
 		// activate all mock objects
 		replayAll();
@@ -187,7 +204,7 @@ public class MockingTest {
 		PacketListener spawnListener = packetListeners.get(0);
 
 		// let's send a spawn packet!
-		spawnListener.processPacket(spawnPacket);
+		spawnListener.processPacket(spawn);
 		// let's send one more spawn packet and fire up one more VM!
 		spawnListener.processPacket(spawnPacket2);
 		// now, a some new packets should have been sent back from the new VM
@@ -200,19 +217,18 @@ public class MockingTest {
 		assertEquals(IQ.Type.ERROR, result.getType());
 		// check the whole xml string
 		assertEquals("<iq id=\"" + spawnPacket2Id + "\" to=\"" + mockClient
-				+ "\" type=\"error\"><" + LinkedProcess.SPAWN_VM_TAG + " xmlns=\""
-				+ LinkedProcess.LOP_FARM_NAMESPACE + "\" " + "/></iq>", result
-				.toXML());
+				+ "\" type=\"error\"><" + LinkedProcess.SPAWN_VM_TAG
+				+ " xmlns=\"" + LinkedProcess.LOP_FARM_NAMESPACE + "\" "
+				+ "/></iq>", result.toXML());
 
 	}
-	
+
 	@Test
-	public void spawningAVMAndThenSendingAnEvaluatePacket()
-			throws Exception {
+	public void spawningAVMAndThenSendingAnEvaluatePacket() throws Exception {
 		Evaluate eval = new Evaluate();
-        eval.setExpression("for(int i=0; i<10; i++) { i; };");
-        eval.setPacketID("345");
-        eval.setFrom(mockClient);
+		eval.setExpression("for(int i=0; i<10; i++) { i; };");
+		eval.setPacketID("345");
+		eval.setFrom(mockClient);
 
 		// activate all mock objects
 		replayAll();
@@ -223,13 +239,14 @@ public class MockingTest {
 		PacketListener spawnListener = packetListeners.get(0);
 
 		// let's send a spawn packet!
-		spawnListener.processPacket(spawnPacket);
+		spawnListener.processPacket(spawn);
 		// let's send one more spawn packet and fire up one more VM!
 
 		PacketListener evalListener = packetListeners.get(3);
 		evalListener.processPacket(eval);
 		// now, a some new packets should have been sent back from the new VM
-		assertEquals("We should have gotten a packet back!", 4, sentPackets.size());
+		assertEquals("We should have gotten a packet back!", 4, sentPackets
+				.size());
 		// sent packet should refer to the same pID
 		IQ result = (IQ) sentPackets.get(3);
 		assertEquals(result.getPacketID(), eval.getPacketID());

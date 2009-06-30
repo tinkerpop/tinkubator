@@ -1,7 +1,6 @@
 package gov.lanl.cnls.linkedprocess.os;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import org.apache.log4j.Logger;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -12,6 +11,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 
 /**
  * Author: josh
@@ -92,7 +92,7 @@ public class VMScheduler {
         //        This wait could probably be eliminated.
         w.addJob(job);
 
-        LOGGER.debug("enqueueing worker: " + w);
+        LOGGER.fine("enqueueing worker: " + w);
         enqueueWorker(w);
     }
 
@@ -160,7 +160,7 @@ public class VMScheduler {
             status = LinkedProcess.FarmStatus.ACTIVE_FULL;
         }
 
-        LOGGER.debug("adding worker to idle pool: " + w);
+        LOGGER.fine("adding worker to idle pool: " + w);
         idleWorkerPool.add(w);
     }
 
@@ -176,7 +176,7 @@ public class VMScheduler {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
-        LOGGER.debug("removing VM with JID '" + machineJID + "'");
+        LOGGER.fine("removing VM with JID '" + machineJID + "'");
         VMWorker w = getWorkerByJID(machineJID);
 
         workersByJID.remove(machineJID);
@@ -238,7 +238,7 @@ public class VMScheduler {
                 // used, due to the specification of BlockingQueue.
                 workerQueue.put(VMWorker.SCHEDULER_TERMINATED_SENTINEL);
             } catch (InterruptedException e) {
-                LOGGER.error("thread interrupted while shutting down scheduler");
+                LOGGER.fine("thread interrupted while shutting down scheduler");
                 System.exit(1);
             }
         }
@@ -286,7 +286,7 @@ public class VMScheduler {
                 try {
                     return workerQueue.take();
                 } catch (InterruptedException e) {
-                    LOGGER.error("thread interrupted unexpectedly in queue");
+                    LOGGER.severe("thread interrupted unexpectedly in queue");
                     System.exit(1);
                     return null;
                 }
@@ -309,7 +309,7 @@ public class VMScheduler {
     }
 
     private void enqueueWorker(final VMWorker w) {
-        LOGGER.debug("enueueing worker: " + w);
+        LOGGER.severe("enueueing worker: " + w);
         // If the worker is in the idle pool, add it to the queue instead.
         // Otherwise, don't move it.
         if (idleWorkerPool.contains(w)) {
@@ -318,10 +318,10 @@ public class VMScheduler {
         try {
             workerQueue.put(w);
         } catch (InterruptedException e) {
-            LOGGER.error("thread interrupted unexpectedly in queue");
+            LOGGER.severe("thread interrupted unexpectedly in queue");
             System.exit(1);
         }
-        LOGGER.debug("...done (workerQueue.size() = " + workerQueue.size() + ")");
+        LOGGER.severe("...done (workerQueue.size() = " + workerQueue.size() + ")");
     }
 
     private VMWorker getWorkerByJID(final String machineJID) throws ServiceRefusedException {

@@ -1,5 +1,7 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
+import java.util.logging.Logger;
+
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import gov.lanl.cnls.linkedprocess.os.ServiceRefusedException;
 import gov.lanl.cnls.linkedprocess.os.Job;
@@ -7,7 +9,6 @@ import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
 
 
-import org.apache.log4j.Logger;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.IQTypeFilter;
@@ -49,7 +50,7 @@ public class XmppVirtualMachine extends XmppClient {
             this.initiateFeatures();
             //this.printClientStatistics();
         } catch (XMPPException e) {
-            LOGGER.error("error: " + e);
+            LOGGER.severe("error: " + e);
             System.exit(1);
         }
 

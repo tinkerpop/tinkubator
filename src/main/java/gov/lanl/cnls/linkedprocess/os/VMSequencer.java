@@ -1,7 +1,8 @@
 package gov.lanl.cnls.linkedprocess.os;
 
+import java.util.logging.Logger;
+
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import org.apache.log4j.Logger;
 
 /**
  * Author: josh
@@ -50,10 +51,10 @@ class VMSequencer {
     ////////////////////////////////////////////////////////////////////////////
 
     private void executeForTimeSlice() {
-        LOGGER.debug("getting worker...");
+        LOGGER.fine("getting worker...");
         // Note: thread may block while waiting for a worker to become available.
         VMWorker w = sequencerHelper.getWorker();
-        LOGGER.debug("...got worker: " + w);
+        LOGGER.fine("...got worker: " + w);
 
         // This sequencer is terminated by the receipt of a null worker.
         if (VMWorker.SCHEDULER_TERMINATED_SENTINEL == w) {
@@ -67,17 +68,17 @@ class VMSequencer {
         }
 
         boolean idle = w.work(timeSlice);
-        LOGGER.debug("idle: " + idle);
+        LOGGER.fine("idle: " + idle);
         sequencerHelper.putBackWorker(w, idle);
     }
 
     private class SequencerRunnable implements Runnable {
         public SequencerRunnable() {
-            LOGGER.debug("instantiating SequencerRunnable");
+            LOGGER.fine("instantiating SequencerRunnable");
         }
 
         public void run() {
-            LOGGER.debug("running SequencerRunnable");
+            LOGGER.fine("running SequencerRunnable");
 
             try {
                 // Break out when the sequencer is terminated.
@@ -87,7 +88,7 @@ class VMSequencer {
                 LOGGER.info("SequencerRunnable is terminating");
             } catch (Exception e) {
                 // TODO: stack trace in log message
-                LOGGER.error("sequencer runnable died with error: " + e.toString());
+                LOGGER.severe("sequencer runnable died with error: " + e.toString());
                 e.printStackTrace();
             }
         }

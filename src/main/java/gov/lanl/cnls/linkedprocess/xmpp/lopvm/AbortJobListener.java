@@ -21,8 +21,8 @@ public class AbortJobListener implements PacketListener {
     public void processPacket(Packet abortJob) {
 
 
-        XmppVirtualMachine.LOGGER.debug("Arrived CancelListener:");
-        XmppVirtualMachine.LOGGER.debug(abortJob.toXML());
+        XmppVirtualMachine.LOGGER.fine("Arrived CancelListener:");
+        XmppVirtualMachine.LOGGER.fine(abortJob.toXML());
 
         AbortJob returnAbortJob = new AbortJob();
         returnAbortJob.setTo(abortJob.getFrom());
@@ -38,8 +38,8 @@ public class AbortJobListener implements PacketListener {
 
 
 
-        XmppVirtualMachine.LOGGER.debug("Sent CancelListener:");
-        XmppVirtualMachine.LOGGER.debug(returnAbortJob.toXML());
+        XmppVirtualMachine.LOGGER.fine("Sent CancelListener:");
+        XmppVirtualMachine.LOGGER.fine(returnAbortJob.toXML());
         vm.getConnection().sendPacket(returnAbortJob);
 
 
