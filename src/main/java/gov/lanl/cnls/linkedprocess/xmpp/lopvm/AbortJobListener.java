@@ -28,16 +28,25 @@ public class AbortJobListener implements PacketListener {
         AbortJob returnAbortJob = new AbortJob();
         returnAbortJob.setTo(abortJob.getFrom());
         returnAbortJob.setPacketID(abortJob.getPacketID());
+        String jobId = ((AbortJob) abortJob).getJobId();
 
-        try {
-            this.vm.abortJob(((AbortJob) abortJob).getJobId());
-            returnAbortJob.setType(IQ.Type.RESULT);
-        } catch (VMWorkerNotFoundException e) {
-            returnAbortJob.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
+        if(null == jobId) {
+            returnAbortJob.setErrorType(LinkedProcess.Errortype.MALFORMED_PACKET);
+            returnAbortJob.setErrorMessage("abort_job XML packet is missing the job_id attribute");
             returnAbortJob.setType(IQ.Type.ERROR);
-        } catch (JobNotFoundException e) {
-            returnAbortJob.setErrorType(LinkedProcess.Errortype.JOB_NOT_FOUND);
-            returnAbortJob.setType(IQ.Type.ERROR);
+        } else {
+            try {
+                this.vm.abortJob(jobId);
+                returnAbortJob.setType(IQ.Type.RESULT);
+            } catch (VMWorkerNotFoundException e) {
+                returnAbortJob.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
+                returnAbortJob.setErrorMessage(e.getMessage());
+                returnAbortJob.setType(IQ.Type.ERROR);
+            } catch (JobNotFoundException e) {
+                returnAbortJob.setErrorType(LinkedProcess.Errortype.JOB_NOT_FOUND);
+                returnAbortJob.setErrorMessage(e.getMessage());
+                returnAbortJob.setType(IQ.Type.ERROR);
+            }
         }
 
         XmppVirtualMachine.LOGGER.fine("Sent CancelListener:");

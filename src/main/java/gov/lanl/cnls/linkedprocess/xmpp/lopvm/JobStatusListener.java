@@ -33,6 +33,7 @@ public class JobStatusListener implements PacketListener {
                 returnJobStatus.setType(IQ.Type.RESULT);
             } catch(VMWorkerNotFoundException e) {
                 returnJobStatus.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
+                returnJobStatus.setErrorMessage(e.getMessage());
                 returnJobStatus.setType(IQ.Type.ERROR);
             }
 

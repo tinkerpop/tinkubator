@@ -38,24 +38,36 @@ public class EvaluateListener implements PacketListener {
         String expression = ((Evaluate) evaluate).getExpression();
         String iqId = evaluate.getPacketID();
         String appJid = evaluate.getFrom();
-               
-        Job job = new Job(vm.getFullJid(), appJid, iqId, expression);
-        try {
-            vm.scheduleJob(job);
-        } catch (VMWorkerNotFoundException e) {
+
+        if(null == expression) {
             Evaluate returnEvaluate = new Evaluate();
             returnEvaluate.setTo(evaluate.getFrom());
             returnEvaluate.setPacketID(evaluate.getPacketID());
-            returnEvaluate.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
+            returnEvaluate.setErrorType(LinkedProcess.Errortype.MALFORMED_PACKET);
+            returnEvaluate.setErrorMessage("evaluate XML stanza is missing the expression text body");
             returnEvaluate.setType(IQ.Type.ERROR);
             vm.getConnection().sendPacket(returnEvaluate);
-        } catch (VMWorkerIsFullException e) {
-            Evaluate returnEvaluate = new Evaluate();
-            returnEvaluate.setTo(evaluate.getFrom());
-            returnEvaluate.setPacketID(evaluate.getPacketID());
-            returnEvaluate.setErrorType(LinkedProcess.Errortype.VM_IS_BUSY);
-            returnEvaluate.setType(IQ.Type.ERROR);
-            vm.getConnection().sendPacket(returnEvaluate);
+        } else {
+            Job job = new Job(vm.getFullJid(), appJid, iqId, expression);
+            try {
+                vm.scheduleJob(job);
+            } catch (VMWorkerNotFoundException e) {
+                Evaluate returnEvaluate = new Evaluate();
+                returnEvaluate.setTo(evaluate.getFrom());
+                returnEvaluate.setPacketID(evaluate.getPacketID());
+                returnEvaluate.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
+                returnEvaluate.setErrorMessage(e.getMessage());
+                returnEvaluate.setType(IQ.Type.ERROR);
+                vm.getConnection().sendPacket(returnEvaluate);
+            } catch (VMWorkerIsFullException e) {
+                Evaluate returnEvaluate = new Evaluate();
+                returnEvaluate.setTo(evaluate.getFrom());
+                returnEvaluate.setPacketID(evaluate.getPacketID());
+                returnEvaluate.setErrorType(LinkedProcess.Errortype.VM_IS_BUSY);
+                returnEvaluate.setErrorMessage(e.getMessage());
+                returnEvaluate.setType(IQ.Type.ERROR);
+                vm.getConnection().sendPacket(returnEvaluate);
+            }
         }
 
     }

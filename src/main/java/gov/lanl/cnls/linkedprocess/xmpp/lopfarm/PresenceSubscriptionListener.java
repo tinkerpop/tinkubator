@@ -36,6 +36,12 @@ public class PresenceSubscriptionListener implements PacketListener {
             farm.getConnection().sendPacket(subscribe);
             farm.getConnection().sendPacket(available);
 
+            try {
+                farm.getRoster().createEntry(packet.getFrom(), packet.getFrom(), null);
+            } catch(XMPPException e) {
+                XmppFarm.LOGGER.severe(e.getMessage());
+            }
+
             return;
 
         } else if(type == Presence.Type.unsubscribe) {
@@ -44,11 +50,14 @@ public class PresenceSubscriptionListener implements PacketListener {
             Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
             unsubscribed.setTo(packet.getFrom());
             unsubscribe.setTo(packet.getFrom());
-            farm.getConnection().sendPacket(unsubscribed);
-            farm.getConnection().sendPacket(unsubscribe);
+
             Presence unavailable = farm.createFarmPresence(XmppFarm.FarmStatus.UNAVAILABLE);
             unavailable.setTo(packet.getFrom());
+
+            farm.getConnection().sendPacket(unsubscribed);
+            farm.getConnection().sendPacket(unsubscribe);
             farm.getConnection().sendPacket(unavailable);
+
             try {
                 farm.getRoster().removeEntry(farm.getRoster().getEntry(packet.getFrom()));
             } catch(XMPPException e) {

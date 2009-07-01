@@ -27,13 +27,13 @@ public class Evaluate extends VirtualMachineIq {
 
         if(this.errorType != null) {
             evaluateElement.setAttribute(LinkedProcess.ERROR_TYPE_ATTRIBUTE, this.errorType.toString());
+            if(this.errorMessage != null) {
+                evaluateElement.setText(this.errorMessage);
+            }
+        } else if(this.expression != null) {
+                evaluateElement.setText(this.expression);
         }
-
-        if(this.expression != null) {
-            evaluateElement.setText(this.expression);
-        }
-
-
+        
         return LinkedProcess.xmlOut.outputString(evaluateElement);
     }
 }

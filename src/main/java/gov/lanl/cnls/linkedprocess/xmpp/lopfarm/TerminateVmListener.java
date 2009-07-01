@@ -42,11 +42,11 @@ public class TerminateVmListener implements PacketListener {
 
         if(null == vmJid) {
             returnTerminateVm.setErrorType(LinkedProcess.Errortype.MALFORMED_PACKET);
-            returnTerminateVm.setErrorMessage("terminate XML packet is missing the vm_jid attribute");
+            returnTerminateVm.setErrorMessage("terminate_vm XML packet is missing the vm_jid attribute");
             returnTerminateVm.setType(IQ.Type.ERROR);
         } else {
             try {
-                farm.destroyVirtualMachine(vmJid);
+                farm.terminateVirtualMachine(vmJid);
             } catch (VMWorkerNotFoundException e) {
                 returnTerminateVm.setVmJid(vmJid);
                 returnTerminateVm.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);

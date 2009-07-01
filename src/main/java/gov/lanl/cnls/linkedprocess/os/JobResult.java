@@ -63,18 +63,23 @@ public class JobResult {
         Evaluate returnEval = new Evaluate();
         returnEval.setTo(job.getAppJid());
         returnEval.setPacketID(job.getJobId());
+        String msg = exception.getMessage();
 
         switch (type) {
             case CANCELLED:
                 returnEval.setType(IQ.Type.ERROR);
                 returnEval.setErrorType(LinkedProcess.Errortype.JOB_ABORTED);
+                if (null != msg) {
+                    returnEval.setExpression(null);
+                    returnEval.setErrorMessage(msg);
+                }
                 break;
             case ERROR:
                 returnEval.setType(IQ.Type.ERROR);
                 returnEval.setErrorType(LinkedProcess.Errortype.EVALUATION_ERROR);
-                String msg = exception.getMessage();
                 if (null != msg) {
-                    returnEval.setExpression(msg);
+                    returnEval.setExpression(null);
+                    returnEval.setErrorMessage(msg);
                 }
                 break;
             case NORMAL_RESULT:

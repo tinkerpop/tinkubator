@@ -40,7 +40,7 @@ public class SpawnVmListener implements PacketListener {
         String vmSpecies = ((SpawnVm) spawnVm).getVmSpecies();
         if(vmSpecies == null) {
             returnSpawnVm.setErrorType(LinkedProcess.Errortype.MALFORMED_PACKET);
-            returnSpawnVm.setErrorMessage("spawn XML packet is missing the vm_species attribute");
+            returnSpawnVm.setErrorMessage("spawn_vm XML packet is missing the vm_species attribute");
             returnSpawnVm.setType(IQ.Type.ERROR);
         } else {
             try {
