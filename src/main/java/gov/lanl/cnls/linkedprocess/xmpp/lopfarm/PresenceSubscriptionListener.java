@@ -19,7 +19,6 @@ public class PresenceSubscriptionListener implements PacketListener {
     }
 
     public void processPacket(Packet packet) {
-        //System.out.println("here" + packet.toXML());
         Presence presence = ((Presence)packet);
         Presence.Type type = presence.getType();
         if(type == Presence.Type.subscribe) {
@@ -33,6 +32,11 @@ public class PresenceSubscriptionListener implements PacketListener {
             Presence available = farm.createFarmPresence(XmppFarm.FarmStatus.AVAILABLE);
             available.setTo(packet.getFrom());
             farm.getConnection().sendPacket(available);
+            /*try {
+                farm.getRoster().createEntry(packet.getFrom(), packet.getFrom(), null);
+            } catch(XMPPException e) {
+                XmppFarm.LOGGER.severe(e.getMessage());
+            }*/
             return;
 
         } else if(type == Presence.Type.unsubscribe) {

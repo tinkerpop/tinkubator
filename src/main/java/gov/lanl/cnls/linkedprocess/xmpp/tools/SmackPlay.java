@@ -34,7 +34,7 @@ public class SmackPlay {
             System.out.println("Logged in as " + connection.getUser());
             // acknowledge to all "buddies" your presence. This presence uses a custom message and a priority value.
             Presence presence = new Presence(Presence.Type.available,
-                    "Waiting to process...", 24, Presence.Mode.available);
+                    "Xmpp Test Client", 24, Presence.Mode.available);
             connection.sendPacket(presence);
             
         } catch (XMPPException ex) {

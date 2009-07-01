@@ -1,7 +1,7 @@
 package gov.lanl.cnls.linkedprocess.xmpp;
 
-import org.jivesoftware.smack.packet.IQ;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import org.jivesoftware.smack.packet.IQ;
 
 /**
  * User: marko
@@ -11,13 +11,22 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
 public abstract class LopIq extends IQ {
 
     protected LinkedProcess.Errortype errorType;
+    protected String errorMessage;
 
-        public void setErrorType(LinkedProcess.Errortype errorType) {
-            this.errorType = errorType;
-        }
+    public void setErrorType(LinkedProcess.Errortype errorType) {
+        this.errorType = errorType;
+    }
 
-        public LinkedProcess.Errortype getErrorType() {
-            return this.errorType;
-        }
+    public LinkedProcess.Errortype getErrorType() {
+        return this.errorType;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    public String getErrorMessage() {
+        return this.errorMessage;
+    }
 
 }

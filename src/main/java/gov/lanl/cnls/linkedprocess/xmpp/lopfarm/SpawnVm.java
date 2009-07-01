@@ -31,7 +31,11 @@ public class SpawnVm extends FarmIq {
         }
         if(this.errorType != null) {
             spawnVmElement.setAttribute(LinkedProcess.ERROR_TYPE_ATTRIBUTE, this.errorType.toString());
+            if(this.errorMessage != null) {
+                spawnVmElement.setText(this.errorMessage);
+            }
         }
+
         return LinkedProcess.xmlOut.outputString(spawnVmElement);
     }
 }

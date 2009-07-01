@@ -39,12 +39,20 @@ public class TerminateVmListener implements PacketListener {
         returnTerminateVm.setPacketID(terminateVm.getPacketID());
 
         String vmJid = ((TerminateVm) terminateVm).getVmJid();
-        try {
-            farm.destroyVirtualMachine(vmJid);
-        } catch (VMWorkerNotFoundException e) {
-            returnTerminateVm.setVmJid(vmJid);
-            returnTerminateVm.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
-            returnTerminateVm.setType(IQ.Type.RESULT);
+
+        if(null == vmJid) {
+            returnTerminateVm.setErrorType(LinkedProcess.Errortype.MALFORMED_PACKET);
+            returnTerminateVm.setErrorMessage("terminate XML packet is missing the vm_jid attribute");
+            returnTerminateVm.setType(IQ.Type.ERROR);
+        } else {
+            try {
+                farm.destroyVirtualMachine(vmJid);
+            } catch (VMWorkerNotFoundException e) {
+                returnTerminateVm.setVmJid(vmJid);
+                returnTerminateVm.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
+                returnTerminateVm.setErrorMessage(e.getMessage());
+                returnTerminateVm.setType(IQ.Type.ERROR);
+            }
         }
 
         XmppFarm.LOGGER.info("Sent DestroyListener:");

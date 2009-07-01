@@ -2,7 +2,17 @@
 
 2. Load up SmackPlay: linked.process.2@xmpp.linkedprocess.org/P9YR0JMR
 
-3. Send from SmackPlay-to-XmppFarm
+3. Send from SmackPlay-to-XmppFarm (Subscribe to the LoP Farm and add it to your buddy list)
+
+    <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="subscribe" / >
+
+    RETURNED
+
+    <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/P9YR0JMR" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="subscribed" / >
+    <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/P9YR0JMR" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="subscribe" / >
+
+
+4. Send from SmackPlay-to-XmppFarm (Spawn an LoP virtual machine from the LoP Farm)
 
     <iq type="get" to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" id="T4tFi-X">
       <spawn_vm xmlns="http://linkedprocess.org/protocol#LoPFarm" vm_species="JavaScript" />
@@ -14,7 +24,7 @@
       <spawn_vm xmlns="http://linkedprocess.org/protocol#LoPFarm" vm_jid="linked.process.1@xmpp.linkedprocess.org/LoPVM/F0E4V2E6"/>
     </iq>
 
-4. Send SmackPlay-to-XmppVirtualMachine
+5. Send SmackPlay-to-XmppVirtualMachine (Evaluate an expression on the LoP virtual machine)
 
     <iq type="get" to="linked.process.1@xmpp.linkedprocess.org/LoPVM/YHC9ZGSK" id="bG23A-X">
       <evaluate xmlns="http://linkedprocess.org/protocol#LoPVM">
@@ -30,7 +40,7 @@
       </evaluate>
     </iq>
 
-5. Send from SmackPlay-to-XmppFarm
+6. Send from SmackPlay-to-XmppFarm (Terminate the LoP virtual machine)
 
     <iq type="get" to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" id="T4tFi-X">
       <terminate_vm xmlns="http://linkedprocess.org/protocol#LoPFarm" vm_jid="linked.process.1@xmpp.linkedprocess.org/LoPVM/F0E4V2E6" />
@@ -41,3 +51,13 @@
     <iq id="T4tFi-X" to="linked.process.2@xmpp.linkedprocess.org/P9YR0JMR" type="get" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47">
       <terminate_vm xmlns="http://linkedprocess.org/protocol#LoPFarm"/>
     </iq>
+
+
+7. Send from SmackPlay-to-XmppFarm (Unsubscribe from the LoP Farm and remove it from your buddy list)
+
+    <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="unsubscribe" / >
+
+    RETURNED
+
+    <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/P9YR0JMR" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="unsubscribed" / >
+    <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/P9YR0JMR" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="unsubscribe" / >
