@@ -25,8 +25,8 @@ public class Evaluate extends VirtualMachineIq {
 
         Element evaluateElement = new Element(LinkedProcess.EVALUATE_TAG, LinkedProcess.LOP_VM_NAMESPACE);
 
-        if(this.vmError != null) {
-            evaluateElement.setAttribute(LinkedProcess.ERROR_ATTRIBUTE, this.vmError.toString());
+        if(this.errorType != null) {
+            evaluateElement.setAttribute(LinkedProcess.ERROR_TYPE_ATTRIBUTE, this.errorType.toString());
         }
 
         if(this.expression != null) {

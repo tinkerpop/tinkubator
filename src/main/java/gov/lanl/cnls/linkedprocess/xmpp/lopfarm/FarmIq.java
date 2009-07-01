@@ -1,13 +1,14 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
 
 import org.jivesoftware.smack.packet.IQ;
+import gov.lanl.cnls.linkedprocess.xmpp.LopIq;
 
 /**
  * User: marko
  * Date: Jun 30, 2009
  * Time: 10:02:49 AM
  */
-public abstract class FarmIq extends IQ {
+public abstract class FarmIq extends LopIq {
 
     protected String vmJid;
 

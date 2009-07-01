@@ -2,33 +2,16 @@ package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
 import org.jivesoftware.smack.packet.IQ;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import gov.lanl.cnls.linkedprocess.xmpp.LopIq;
 
 /**
  * User: marko
  * Date: Jun 30, 2009
  * Time: 10:56:48 AM
  */
-public abstract class VirtualMachineIq extends IQ {
+public abstract class VirtualMachineIq extends LopIq {
 
     protected String jobId;
-    protected LinkedProcess.JobStatus value;
-    protected LinkedProcess.Errortype vmError;
-
-    public void setVmError(LinkedProcess.Errortype vmError) {
-        this.vmError = vmError;
-    }
-
-    public LinkedProcess.Errortype getVmError() {
-        return this.vmError;
-    }
-
-    public void setValue(LinkedProcess.JobStatus status) {
-        this.value = status;
-    }
-
-    public String getValue() {
-        return this.value.toString();
-    }
 
     public void setJobId(String jobId) {
         this.jobId = jobId;

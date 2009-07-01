@@ -3,6 +3,7 @@ package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
 import gov.lanl.cnls.linkedprocess.os.errors.UnsupportedScriptEngineException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMAlreadyExistsException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMSchedulerIsFullException;
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
@@ -42,16 +43,13 @@ public class SpawnVmListener implements PacketListener {
             returnSpawnVm.setVmJid(vmJid);
             returnSpawnVm.setType(IQ.Type.RESULT);
         } catch (VMAlreadyExistsException e) {
-            // TODO: handle this type of error individually
-            returnSpawnVm.setErrorMessage(e.getMessage());
+            returnSpawnVm.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
             returnSpawnVm.setType(IQ.Type.ERROR);
         } catch (VMSchedulerIsFullException e) {
-            // TODO: handle this type of error individually
-            returnSpawnVm.setErrorMessage(e.getMessage());
+            returnSpawnVm.setErrorType(LinkedProcess.Errortype.FARM_IS_BUSY);
             returnSpawnVm.setType(IQ.Type.ERROR);
         } catch (UnsupportedScriptEngineException e) {
-            // TODO: handle this type of error individually
-            returnSpawnVm.setErrorMessage(e.getMessage());
+            returnSpawnVm.setErrorType(LinkedProcess.Errortype.SPECIES_NOT_SUPPORTED);
             returnSpawnVm.setType(IQ.Type.ERROR);
         }
 

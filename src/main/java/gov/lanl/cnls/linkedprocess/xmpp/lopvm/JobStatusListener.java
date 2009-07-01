@@ -3,6 +3,8 @@ package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
+import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
 /**
  * User: marko
@@ -18,7 +20,6 @@ public class JobStatusListener implements PacketListener {
 
     public void processPacket(Packet jobStatus) {
 
-        try {
             XmppVirtualMachine.LOGGER.fine("Arrived StatusListener:");
             XmppVirtualMachine.LOGGER.fine(jobStatus.toXML());
 
@@ -26,16 +27,19 @@ public class JobStatusListener implements PacketListener {
             returnJobStatus.setTo(jobStatus.getFrom());
             returnJobStatus.setPacketID(jobStatus.getPacketID());
 
-            returnJobStatus.setType(IQ.Type.RESULT);
-            returnJobStatus.setValue(this.vm.getJobStatus(((JobStatus)jobStatus).getJobId()));
+
+            try {
+                returnJobStatus.setValue(this.vm.getJobStatus(((JobStatus)jobStatus).getJobId()));
+                returnJobStatus.setType(IQ.Type.RESULT);
+            } catch(VMWorkerNotFoundException e) {
+                returnJobStatus.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
+                returnJobStatus.setType(IQ.Type.ERROR);
+            }
 
             XmppVirtualMachine.LOGGER.fine("Sent StatusListener:");
             XmppVirtualMachine.LOGGER.fine(returnJobStatus.toXML());
             vm.getConnection().sendPacket(returnJobStatus);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
     }
 }

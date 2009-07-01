@@ -11,8 +11,6 @@ import org.jivesoftware.smack.packet.IQ;
  */
 public class JobResult {
 
-    private static final String CANCELED_MESSAGE = "Job canceled."; 
-
     public enum ResultType {
         NORMAL_RESULT, ERROR, CANCELLED
     }
@@ -68,15 +66,12 @@ public class JobResult {
 
         switch (type) {
             case CANCELLED:
-                // TODO: add more information to indicate that the job was
-                // cancelled; there was not necessarily an error in execution.
                 returnEval.setType(IQ.Type.ERROR);
-                returnEval.setVmError(LinkedProcess.Errortype.JOB_ABORTED);
+                returnEval.setErrorType(LinkedProcess.Errortype.JOB_ABORTED);
                 break;
             case ERROR:
-                // TODO: add more information about the error, drawn from this.exception
                 returnEval.setType(IQ.Type.ERROR);
-                returnEval.setVmError(LinkedProcess.Errortype.EVALUATION_ERROR);
+                returnEval.setErrorType(LinkedProcess.Errortype.EVALUATION_ERROR);
                 String msg = exception.getMessage();
                 if (null != msg) {
                     returnEval.setExpression(msg);

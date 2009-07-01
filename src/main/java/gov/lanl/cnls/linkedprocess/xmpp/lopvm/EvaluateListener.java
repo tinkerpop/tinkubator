@@ -3,6 +3,7 @@ package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 import gov.lanl.cnls.linkedprocess.os.Job;
 import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerIsFullException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
@@ -42,19 +43,17 @@ public class EvaluateListener implements PacketListener {
         try {
             vm.scheduleJob(job);
         } catch (VMWorkerNotFoundException e) {
-            // TODO: handle this type of error individually
             Evaluate returnEvaluate = new Evaluate();
             returnEvaluate.setTo(evaluate.getFrom());
             returnEvaluate.setPacketID(evaluate.getPacketID());
-            returnEvaluate.setExpression(e.getMessage());
+            returnEvaluate.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
             returnEvaluate.setType(IQ.Type.ERROR);
             vm.getConnection().sendPacket(returnEvaluate);
         } catch (VMWorkerIsFullException e) {
-            // TODO: handle this type of error individually
             Evaluate returnEvaluate = new Evaluate();
             returnEvaluate.setTo(evaluate.getFrom());
             returnEvaluate.setPacketID(evaluate.getPacketID());
-            returnEvaluate.setExpression(e.getMessage());
+            returnEvaluate.setErrorType(LinkedProcess.Errortype.VM_IS_BUSY);
             returnEvaluate.setType(IQ.Type.ERROR);
             vm.getConnection().sendPacket(returnEvaluate);
         }

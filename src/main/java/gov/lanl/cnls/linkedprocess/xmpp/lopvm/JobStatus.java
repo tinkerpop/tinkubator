@@ -2,7 +2,6 @@ package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
 import org.jdom.Element;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import gov.lanl.cnls.linkedprocess.os.VMScheduler;
 
 /**
  * User: marko
@@ -10,6 +9,16 @@ import gov.lanl.cnls.linkedprocess.os.VMScheduler;
  * Time: 12:54:02 PM
  */
 public class JobStatus extends VirtualMachineIq {
+
+    protected LinkedProcess.JobStatus value;
+
+    public void setValue(LinkedProcess.JobStatus status) {
+        this.value = status;
+    }
+
+    public String getValue() {
+        return this.value.toString();
+    }
 
     public String getChildElementXML() {
 
@@ -20,6 +29,10 @@ public class JobStatus extends VirtualMachineIq {
         if(this.value != null) {
             jobStatusElement.setAttribute(LinkedProcess.VALUE_ATTRIBUTE, this.value.toString());
         }
+        if(this.errorType != null) {
+            jobStatusElement.setAttribute(LinkedProcess.ERROR_TYPE_ATTRIBUTE, this.errorType.toString());
+        }
+
         return LinkedProcess.xmlOut.outputString(jobStatusElement);
     }
 }

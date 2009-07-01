@@ -10,8 +10,7 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
  */
 public class SpawnVm extends FarmIq {
 
-    private String vmSpecies;
-    private String errorMessage;
+    protected String vmSpecies;
 
     public void setVmSpecies(String vmSpecies) {
         this.vmSpecies = vmSpecies;
@@ -19,14 +18,6 @@ public class SpawnVm extends FarmIq {
 
     public String getVmSpecies() {
         return this.vmSpecies;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;   
-    }
-
-    public String getErrorMessage() {
-        return this.errorMessage;
     }
 
     public String getChildElementXML() {
@@ -38,8 +29,8 @@ public class SpawnVm extends FarmIq {
         if(this.vmSpecies != null) {
             spawnVmElement.setAttribute(LinkedProcess.VM_SPECIES_ATTRIBUTE, this.vmSpecies);
         }
-        if(this.errorMessage != null) {
-            spawnVmElement.setText(errorMessage);
+        if(this.errorType != null) {
+            spawnVmElement.setAttribute(LinkedProcess.ERROR_TYPE_ATTRIBUTE, this.errorType.toString());
         }
         return LinkedProcess.xmlOut.outputString(spawnVmElement);
     }

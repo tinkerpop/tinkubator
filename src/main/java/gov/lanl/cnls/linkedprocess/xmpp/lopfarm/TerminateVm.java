@@ -16,6 +16,9 @@ public class TerminateVm extends FarmIq {
         if(this.vmJid != null) {
             terminateVmElement.setAttribute(LinkedProcess.VM_JID_ATTRIBUTE, this.vmJid);
         }
+        if(this.errorType != null) {
+            terminateVmElement.setAttribute(LinkedProcess.ERROR_TYPE_ATTRIBUTE, this.errorType.toString());
+        }
 
         return LinkedProcess.xmlOut.outputString(terminateVmElement);
     }

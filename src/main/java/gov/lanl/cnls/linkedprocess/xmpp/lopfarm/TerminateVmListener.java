@@ -1,6 +1,7 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
 
 import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
@@ -41,8 +42,8 @@ public class TerminateVmListener implements PacketListener {
         try {
             farm.destroyVirtualMachine(vmJid);
         } catch (VMWorkerNotFoundException e) {
-            // TODO: handle this type of error individually
             returnTerminateVm.setVmJid(vmJid);
+            returnTerminateVm.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
             returnTerminateVm.setType(IQ.Type.RESULT);
         }
 

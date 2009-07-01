@@ -3,7 +3,10 @@ package gov.lanl.cnls.linkedprocess.xmpp.tools;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.IQ;
 import gov.lanl.cnls.linkedprocess.xmpp.tools.GenericListener;
 
 public class SmackPlay {
@@ -19,7 +22,7 @@ public class SmackPlay {
         XMPPConnection.DEBUG_ENABLED = true;
 
         System.out.println("Starting client");
-        ConnectionConfiguration connConfig = new ConnectionConfiguration("talk1.l.google.com", 5222);
+        ConnectionConfiguration connConfig = new ConnectionConfiguration("xmpp.linkedprocess.org", 5222);
         XMPPConnection connection = new XMPPConnection(connConfig);
         
         // making a connection to an XMPP server is different than logging into an XMPP server
@@ -58,8 +61,8 @@ public class SmackPlay {
 
         // Smack uses a listener framework to receive packets/stanzas and perform operations on packets.
         // A listener can have a filter to only handle certain types of packets (tags/attributes)
-        //PacketFilter filter = new PacketTypeFilter(IQ.class);
-        //connection.addPacketListener(new GenericListener(), null);
+        PacketFilter filter = new PacketTypeFilter(IQ.class);
+        connection.addPacketListener(new GenericListener(), null);
 
        
     }

@@ -33,12 +33,10 @@ public class AbortJobListener implements PacketListener {
             this.vm.abortJob(((AbortJob) abortJob).getJobId());
             returnAbortJob.setType(IQ.Type.RESULT);
         } catch (VMWorkerNotFoundException e) {
-            // TODO: handle this type of error individually
-            returnAbortJob.setVmError(LinkedProcess.Errortype.JOB_NOT_FOUND);
+            returnAbortJob.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
             returnAbortJob.setType(IQ.Type.ERROR);
         } catch (JobNotFoundException e) {
-            // TODO: handle this type of error individually
-            returnAbortJob.setVmError(LinkedProcess.Errortype.JOB_NOT_FOUND);
+            returnAbortJob.setErrorType(LinkedProcess.Errortype.JOB_NOT_FOUND);
             returnAbortJob.setType(IQ.Type.ERROR);
         }
 
