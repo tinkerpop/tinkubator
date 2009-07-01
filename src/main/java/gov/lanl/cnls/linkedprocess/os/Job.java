@@ -6,31 +6,31 @@ package gov.lanl.cnls.linkedprocess.os;
  * Time: 6:34:20 PM
  */
 public class Job {
-    private final String jobID;
-    private final String vmJID;
-    private final String appJID;
+    private final String jobId;
+    private final String vmJid;
+    private final String appJid;
     private final String expression;
 
-    public Job(final String vmJID,
-               final String appJID,
-               final String jobID,
+    public Job(final String vmJid,
+               final String appJid,
+               final String jobId,
                final String expression) {
-        this.vmJID = vmJID;
-        this.appJID = appJID;
-        this.jobID = jobID;
+        this.vmJid = vmJid;
+        this.appJid = appJid;
+        this.jobId = jobId;
         this.expression = expression;
     }
 
-    public String getAppJID() {
-        return appJID;
+    public String getAppJid() {
+        return appJid;
     }
     
-    public String getJobID() {
-        return jobID;
+    public String getJobId() {
+        return jobId;
     }
 
     public String getVMJID() {
-        return vmJID;
+        return vmJid;
     }
 
     public String getExpression() {
@@ -39,9 +39,9 @@ public class Job {
 
     public String toString() {
         return "Job("
-                + "jobID:'" + jobID + "'"
-                + ", vmJID:'" + vmJID + "'"
-                + ", appJID:'" + appJID + "'"
+                + "jobID:'" + jobId + "'"
+                + ", vmJID:'" + vmJid + "'"
+                + ", appJID:'" + appJid + "'"
                 + ", expression:'" + expression + "')";
 
     }

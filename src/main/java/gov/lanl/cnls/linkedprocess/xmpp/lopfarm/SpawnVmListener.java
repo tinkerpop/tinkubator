@@ -37,20 +37,25 @@ public class SpawnVmListener implements PacketListener {
         returnSpawnVm.setTo(spawnVm.getFrom());
         returnSpawnVm.setPacketID(spawnVm.getPacketID());
         String vmJid;
-
-        try {
-            vmJid = farm.spawnVirtualMachine(((SpawnVm) spawnVm).getVmSpecies());
-            returnSpawnVm.setVmJid(vmJid);
-            returnSpawnVm.setType(IQ.Type.RESULT);
-        } catch (VMAlreadyExistsException e) {
-            returnSpawnVm.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
+        String vmSpecies = ((SpawnVm) spawnVm).getVmSpecies();
+        if(vmSpecies == null) {
+            returnSpawnVm.setErrorType(LinkedProcess.Errortype.MALFORMED_PACKET);
             returnSpawnVm.setType(IQ.Type.ERROR);
-        } catch (VMSchedulerIsFullException e) {
-            returnSpawnVm.setErrorType(LinkedProcess.Errortype.FARM_IS_BUSY);
-            returnSpawnVm.setType(IQ.Type.ERROR);
-        } catch (UnsupportedScriptEngineException e) {
-            returnSpawnVm.setErrorType(LinkedProcess.Errortype.SPECIES_NOT_SUPPORTED);
-            returnSpawnVm.setType(IQ.Type.ERROR);
+        } else {
+            try {
+                vmJid = farm.spawnVirtualMachine(vmSpecies);
+                returnSpawnVm.setVmJid(vmJid);
+                returnSpawnVm.setType(IQ.Type.RESULT);
+            } catch (VMAlreadyExistsException e) {
+                returnSpawnVm.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
+                returnSpawnVm.setType(IQ.Type.ERROR);
+            } catch (VMSchedulerIsFullException e) {
+                returnSpawnVm.setErrorType(LinkedProcess.Errortype.FARM_IS_BUSY);
+                returnSpawnVm.setType(IQ.Type.ERROR);
+            } catch (UnsupportedScriptEngineException e) {
+                returnSpawnVm.setErrorType(LinkedProcess.Errortype.SPECIES_NOT_SUPPORTED);
+                returnSpawnVm.setType(IQ.Type.ERROR);
+            }
         }
 
         XmppFarm.LOGGER.info("Sent SpawnListener:");

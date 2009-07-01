@@ -61,8 +61,8 @@ public class JobResult {
     
     public Evaluate generateReturnEvalulate() {
         Evaluate returnEval = new Evaluate();
-        returnEval.setTo(job.getAppJID());
-        returnEval.setPacketID(job.getJobID());
+        returnEval.setTo(job.getAppJid());
+        returnEval.setPacketID(job.getJobId());
 
         switch (type) {
             case CANCELLED:

@@ -1,15 +1,43 @@
-1. Load up an XmppFarm: linked.process.1@xmpp.linkedprocess.org/LoPFarm/I37PGNYY
+1. Load up an XmppFarm: linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47
 
 2. Load up SmackPlay: linked.process.2@xmpp.linkedprocess.org/P9YR0JMR
 
 3. Send from SmackPlay-to-XmppFarm
 
-    <iq type="get" to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/I37PGNYY" id="T4tFi-X">
+    <iq type="get" to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" id="T4tFi-X">
       <spawn_vm xmlns="http://linkedprocess.org/protocol#LoPFarm" vm_species="JavaScript" />
     </iq>
 
     RETURNED
 
-    <iq id="T4tFi-X" to="linked.process.2@xmpp.linkedprocess.org/P9YR0JMR" type="result" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/I37PGNYY">
+    <iq id="T4tFi-X" to="linked.process.2@xmpp.linkedprocess.org/P9YR0JMR" type="result" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47">
       <spawn_vm xmlns="http://linkedprocess.org/protocol#LoPFarm" vm_jid="linked.process.1@xmpp.linkedprocess.org/LoPVM/F0E4V2E6"/>
+    </iq>
+
+4. Send SmackPlay-to-XmppVirtualMachine
+
+    <iq type="get" to="linked.process.1@xmpp.linkedprocess.org/LoPVM/YHC9ZGSK" id="bG23A-X">
+      <evaluate xmlns="http://linkedprocess.org/protocol#LoPVM">
+        20 + 52;
+      </evaluate>
+    </iq>
+
+    RETURNED
+
+    <iq id="bG23A-X" to="linked.process.2@xmpp.linkedprocess.org/P9YR0JMR" type="result" from="linked.process.1@xmpp.linkedprocess.org/LoPVM/F0E4V2E6">
+      <evaluate xmlns="http://linkedprocess.org/protocol#LoPVM">
+        72.0
+      </evaluate>
+    </iq>
+
+5. Send from SmackPlay-to-XmppFarm
+
+    <iq type="get" to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" id="T4tFi-X">
+      <terminate_vm xmlns="http://linkedprocess.org/protocol#LoPFarm" vm_jid="linked.process.1@xmpp.linkedprocess.org/LoPVM/F0E4V2E6" />
+    </iq>
+
+    RETURNED
+
+    <iq id="T4tFi-X" to="linked.process.2@xmpp.linkedprocess.org/P9YR0JMR" type="get" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47">
+      <terminate_vm xmlns="http://linkedprocess.org/protocol#LoPFarm"/>
     </iq>

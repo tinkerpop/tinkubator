@@ -38,8 +38,8 @@ public class EvaluateListener implements PacketListener {
         String expression = ((Evaluate) evaluate).getExpression();
         String iqId = evaluate.getPacketID();
         String appJid = evaluate.getFrom();
-
-        Job job = new Job(appJid, iqId, expression, vm.getFullJid());
+               
+        Job job = new Job(vm.getFullJid(), appJid, iqId, expression);
         try {
             vm.scheduleJob(job);
         } catch (VMWorkerNotFoundException e) {

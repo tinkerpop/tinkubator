@@ -236,7 +236,7 @@ public class VMWorker {
 
         switch (status) {
             case ACTIVE_SUSPENDED:
-                if (latestJob.getJobID().equals(jobID)) {
+                if (latestJob.getJobId().equals(jobID)) {
                     // Cause the worker thread to cease execution of the current
                     // job and wait.
                     status = Status.IDLE_WAITING;
@@ -257,7 +257,7 @@ public class VMWorker {
         // Look for the job in the queue and remove it if present.
         // FIXME: inefficient
         for (Job j : jobQueue.asCollection()) {
-            if (j.getJobID().equals(jobID)) {
+            if (j.getJobId().equals(jobID)) {
                 jobQueue.remove(j);
                 return;
             }
@@ -269,7 +269,7 @@ public class VMWorker {
     public synchronized boolean jobExists(final String jobID) {
         switch (status) {
             case ACTIVE_SUSPENDED:
-                return jobID.equals(latestJob.getJobID())
+                return jobID.equals(latestJob.getJobId())
                         || jobQueueContains(jobID);
             case IDLE_WAITING:
                 return jobQueueContains(jobID);
@@ -310,7 +310,7 @@ public class VMWorker {
 
     private boolean jobQueueContains(final String jobID) {
         for (Job j : jobQueue.asCollection()) {
-            if (j.getJobID().equals(jobID)) {
+            if (j.getJobId().equals(jobID)) {
                 return true;
             }
         }

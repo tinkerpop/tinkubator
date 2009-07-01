@@ -57,6 +57,7 @@ public class LinkedProcess {
     }
 
     public enum Errortype {
+        MALFORMED_PACKET("malformed_packet"), // when a received packet is not as expected
         EVALUATION_ERROR("evaluation_error"),
         INTERNAL_ERROR("internal_error"), // VMAlreadyExistsException, VMWorkerNotFoundException
         JOB_ABORTED("job_aborted"),

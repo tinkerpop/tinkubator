@@ -1,8 +1,12 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
 
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
 import gov.lanl.cnls.linkedprocess.os.JobResult;
 import gov.lanl.cnls.linkedprocess.os.VMScheduler;
+import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import org.jivesoftware.smack.packet.IQ;
 
 /**
  * User: marko
@@ -18,8 +22,15 @@ public class VMJobResultHandler implements VMScheduler.VMResultHandler {
     }
 
     public void handleResult(JobResult result) {
-        XmppVirtualMachine vm = farm.getVirtualMachine(result.getJob().getVMJID());
-        vm.getConnection().sendPacket(result.generateReturnEvalulate());
-        XmppVirtualMachine.LOGGER.info(result.generateReturnEvalulate().toString());
+        try {
+            XmppVirtualMachine vm = farm.getVirtualMachine(result.getJob().getVMJID());
+            vm.getConnection().sendPacket(result.generateReturnEvalulate());
+        } catch(VMWorkerNotFoundException e) {
+            Evaluate x = result.generateReturnEvalulate();
+            x.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
+            x.setType(IQ.Type.ERROR);
+            XmppVirtualMachine.LOGGER.severe("Could not find virtual machine. Thus, can not send error message");   
+        }
+
     }
 }

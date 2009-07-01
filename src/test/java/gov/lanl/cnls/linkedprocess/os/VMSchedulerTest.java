@@ -140,7 +140,7 @@ public class VMSchedulerTest extends TestCase {
         scheduler.scheduleJob(vm1, job);
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
-        JobResult result = resultsByID.get(job.getJobID());
+        JobResult result = resultsByID.get(job.getJobId());
         assertEquals(JobResult.ResultType.ERROR, result.getType());
         assertNotNull(result.getException());
         assertEquals(null, result.getExpression());
@@ -165,7 +165,7 @@ public class VMSchedulerTest extends TestCase {
         scheduler.spawnVirtualMachine(vm1, vmType);
         Job job = randomLongRunningJob(vm1);
         scheduler.scheduleJob(vm1, job);
-        scheduler.abortJob(vm1, job.getJobID());
+        scheduler.abortJob(vm1, job.getJobId());
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
         assertCancelledResult(job);
@@ -178,13 +178,13 @@ public class VMSchedulerTest extends TestCase {
         return new VMScheduler.VMResultHandler() {
 
             public void handleResult(JobResult result) {
-                resultsByID.put(result.getJob().getJobID(), result);
+                resultsByID.put(result.getJob().getJobId(), result);
             }
         };
     }
 
     private void assertNormalResult(final Job job) {
-        JobResult result = resultsByID.get(job.getJobID());
+        JobResult result = resultsByID.get(job.getJobId());
         assertEquals(JobResult.ResultType.NORMAL_RESULT, result.getType());
         // Note: not "1", but "1.0", as the resulting Object is a Double (for
         // some reason).  This is not particularly important for the test.
@@ -193,14 +193,14 @@ public class VMSchedulerTest extends TestCase {
     }
 
     private void assertErrorResult(final Job job) {
-        JobResult result = resultsByID.get(job.getJobID());
+        JobResult result = resultsByID.get(job.getJobId());
         assertEquals(JobResult.ResultType.ERROR, result.getType());
         assertNotNull(result.getException());
         assertEquals(null, result.getExpression());
     }
 
     private void assertCancelledResult(final Job job) {
-        JobResult result = resultsByID.get(job.getJobID());
+        JobResult result = resultsByID.get(job.getJobId());
         assertEquals(JobResult.ResultType.CANCELLED, result.getType());
         assertNotNull(result.getException());
         assertEquals(null, result.getExpression());

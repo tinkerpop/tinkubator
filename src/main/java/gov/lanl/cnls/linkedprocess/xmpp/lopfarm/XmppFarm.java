@@ -113,12 +113,15 @@ public class XmppFarm extends XmppClient {
         try {
             this.scheduler.spawnVirtualMachine(fullJid, vmSpecies);
             exceptionThrown = false;
+
         } finally {
             if (exceptionThrown) {
                 vm.shutDown();
             }
+             this.machines.put(fullJid, vm);
+            System.out.println(this.machines);
         }
-        this.machines.put(fullJid, vm);
+
         return fullJid;
     }
 
@@ -131,8 +134,13 @@ public class XmppFarm extends XmppClient {
         this.scheduler.terminateVirtualMachine(vmJid);
     }
 
-    public XmppVirtualMachine getVirtualMachine(String vmJid) {
-        return this.machines.get(vmJid);
+    public XmppVirtualMachine getVirtualMachine(String vmJid) throws VMWorkerNotFoundException {
+        XmppVirtualMachine vm = this.machines.get(vmJid);
+        if(vm == null) {
+            throw new VMWorkerNotFoundException("worker not found.");
+        } else {
+            return vm;
+        }
     }
 
     public void shutDown() {

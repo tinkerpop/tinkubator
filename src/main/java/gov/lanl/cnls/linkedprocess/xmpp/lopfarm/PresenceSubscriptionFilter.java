@@ -16,7 +16,6 @@ public class PresenceSubscriptionFilter implements PacketFilter {
 
     public boolean accept(Packet packet) {
         try {
-            System.out.println(packet.toXML().trim());
             if(!packet.toXML().trim().startsWith("<presence")) {
                 return false;
             }
