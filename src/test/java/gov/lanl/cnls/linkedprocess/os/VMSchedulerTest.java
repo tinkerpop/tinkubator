@@ -16,7 +16,7 @@ public class VMSchedulerTest extends TestCase {
     private static final int MAX_RANDOM_INT = 100000;
 
     private final VMScheduler.VMResultHandler resultHandler = createResultHandler();
-    private final VMScheduler.VMSchedulerEventHandler eventHandler = createEventHandler();
+    private final VMScheduler.LopStatusEventHandler eventHandler = createEventHandler();
     private final Map<String, JobResult> resultsByID = new HashMap<String, JobResult>();
     private VMScheduler scheduler;
     private Random random = new Random();
@@ -186,8 +186,8 @@ public class VMSchedulerTest extends TestCase {
         };
     }
 
-    private VMScheduler.VMSchedulerEventHandler createEventHandler() {
-        return new VMScheduler.VMSchedulerEventHandler() {
+    private VMScheduler.LopStatusEventHandler createEventHandler() {
+        return new VMScheduler.LopStatusEventHandler() {
 
             public void schedulerStatusChanged(LinkedProcess.FarmStatus newStatus) {
                 // Do nothing.

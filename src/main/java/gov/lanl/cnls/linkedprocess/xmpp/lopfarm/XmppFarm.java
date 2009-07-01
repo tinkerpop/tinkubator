@@ -36,14 +36,10 @@ public class XmppFarm extends XmppClient {
     public static final String RESOURCE_PREFIX = "LoPFarm";
     public static final String STATUS_MESSAGE = "LoP Farm v0.1";
 
-    // FIXME: reuse VMScheduler.FarmStatus.  In particular, "too many jobs" will not happen.  "Too many VMs" will happen.
-    public static enum FarmStatus {
-        AVAILABLE, UNAVAILABLE, TOO_MANY_JOBS
-    }
 
     protected final Map<String, XmppVirtualMachine> machines;
     protected final VMScheduler scheduler;
-    protected FarmStatus currentStatus;
+    protected final VMScheduler.LopStatusEventHandler statusHandler;
 
     public XmppFarm(final String server, final int port, final String username, final String password) {
     	InputStream resourceAsStream = getClass().getResourceAsStream("/logging.properties");
@@ -73,8 +69,8 @@ public class XmppFarm extends XmppClient {
 
         this.roster = this.connection.getRoster();
         this.roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
-        // FIXME: add event handler
-        this.scheduler = new VMScheduler(new VMJobResultHandler(this), null);
+        this.statusHandler = new StatusEventHandler(this);
+        this.scheduler = new VMScheduler(new VMJobResultHandler(this), this.statusHandler); 
         this.machines = new HashMap<String, XmppVirtualMachine>();
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new IQTypeFilter(IQ.Type.GET));
@@ -87,16 +83,16 @@ public class XmppFarm extends XmppClient {
 
     public void logon(String server, int port, String username, String password) throws XMPPException {
         super.logon(server, port, username, password, RESOURCE_PREFIX);
-        connection.sendPacket(this.createFarmPresence(FarmStatus.AVAILABLE));
+        connection.sendPacket(this.createPresence(LinkedProcess.FarmStatus.ACTIVE));
     }
 
-    public Presence createFarmPresence(final FarmStatus status) {
+    public Presence createPresence(final LinkedProcess.FarmStatus status) {
         switch (status) {
-            case AVAILABLE:
+            case ACTIVE:
                 return new Presence(Presence.Type.available, STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
-            case TOO_MANY_JOBS:
+            case ACTIVE_FULL:
                 return new Presence(Presence.Type.available, STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.dnd);
-            case UNAVAILABLE:
+            case TERMINATED:
                 return new Presence(Presence.Type.unavailable);
             default:
                 throw new IllegalStateException("unhandled state: " + status);
@@ -137,14 +133,14 @@ public class XmppFarm extends XmppClient {
     public XmppVirtualMachine getVirtualMachine(String vmJid) throws VMWorkerNotFoundException {
         XmppVirtualMachine vm = this.machines.get(vmJid);
         if(vm == null) {
-            throw new VMWorkerNotFoundException("worker not found.");
+            throw new VMWorkerNotFoundException(vmJid);
         } else {
             return vm;
         }
     }
 
     public void shutDown() {
-        this.connection.sendPacket(this.createFarmPresence(FarmStatus.UNAVAILABLE));
+        this.connection.sendPacket(this.createPresence(LinkedProcess.FarmStatus.TERMINATED));
         this.scheduler.shutDown();
         try {
             this.scheduler.waitUntilFinished();

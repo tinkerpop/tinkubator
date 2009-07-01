@@ -110,26 +110,6 @@ public abstract class XmppClient {
         return this.connection;
     }
 
-    /*public void subscribe(String clientJid) {
-        Presence subscribe = new Presence(Presence.Type.subscribe);
-        subscribe.setTo(generateBareJid(clientJid));
-        this.connection.sendPacket(subscribe);
-        Presence available = new Presence(Presence.Type.available);
-        available.setTo(clientJid);
-        this.getConnection().sendPacket(available);
-    }
-
-    public void unsubscribe(String clientJid) {
-        Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
-        unsubscribe.setTo(clientJid);
-        this.connection.sendPacket(unsubscribe);
-        try {
-            this.getRoster().removeEntry(this.getRoster().getEntry(clientJid));
-            } catch(XMPPException e) {
-                e.printStackTrace();
-        }
-    }*/
-
     public void shutDown() {
         LOGGER.info("Requesting shutdown");
         shutdownRequested = true;

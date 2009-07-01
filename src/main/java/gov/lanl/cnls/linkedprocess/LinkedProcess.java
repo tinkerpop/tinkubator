@@ -43,7 +43,7 @@ public class LinkedProcess {
     }
 
     public enum VMStatus {
-        ACTIVE("active"), DOES_NOT_EXIST("not_found");
+        ACTIVE("active"), ACTIVE_FULL("full"), DOES_NOT_EXIST("not_found");
 
         private final String name;
 

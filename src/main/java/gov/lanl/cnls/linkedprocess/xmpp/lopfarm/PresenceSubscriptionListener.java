@@ -28,7 +28,7 @@ public class PresenceSubscriptionListener implements PacketListener {
             subscribed.setTo(packet.getFrom());
             subscribe.setTo(packet.getFrom());
 
-            Presence available = farm.createFarmPresence(XmppFarm.FarmStatus.AVAILABLE);
+            Presence available = farm.createPresence(farm.getScheduler().getSchedulerStatus());
             available.setTo(packet.getFrom());
             available.setPacketID(packet.getPacketID());
 
@@ -51,7 +51,7 @@ public class PresenceSubscriptionListener implements PacketListener {
             unsubscribed.setTo(packet.getFrom());
             unsubscribe.setTo(packet.getFrom());
 
-            Presence unavailable = farm.createFarmPresence(XmppFarm.FarmStatus.UNAVAILABLE);
+            Presence unavailable = farm.createPresence(farm.getScheduler().getSchedulerStatus());
             unavailable.setTo(packet.getFrom());
 
             farm.getConnection().sendPacket(unsubscribed);

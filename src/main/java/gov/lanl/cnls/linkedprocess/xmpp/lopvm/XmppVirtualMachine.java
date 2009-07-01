@@ -28,10 +28,6 @@ public class XmppVirtualMachine extends XmppClient {
     public static Logger LOGGER = LinkedProcess.getLogger(XmppVirtualMachine.class);
     public static String RESOURCE_PREFIX = "LoPVM";
 
-    public static enum VirtualMachinePresence {
-        AVAILABLE, TOO_MANY_JOBS
-    }
-
     protected XmppFarm farm;
 
     public XmppVirtualMachine(final String server, final int port, final String username, final String password, XmppFarm farm) {
@@ -66,20 +62,24 @@ public class XmppVirtualMachine extends XmppClient {
     protected void logon(String server, int port, String username, String password) throws XMPPException {
 
         super.logon(server, port, username, password, RESOURCE_PREFIX);
-        connection.sendPacket(this.createVMPresence(VirtualMachinePresence.AVAILABLE));
+        connection.sendPacket(this.createPresence(this.farm.getScheduler().getVirtualMachineStatus(this.getFullJid())));
     }
 
     public XmppFarm getFarm() {
         return this.farm;
     }
 
-    public final Presence createVMPresence(final VirtualMachinePresence type) {
-        String statusMessage = "temp util engine enacted.";
-        //String statusMessage = engine.getFactory().getLanguageName() + "(" + engine.getFactory().getLanguageVersion() + "):" + engine.getFactory().getEngineName() + "(" + engine.getFactory().getEngineVersion() + ")";
-        if (type == VirtualMachinePresence.AVAILABLE) {
-            return new Presence(Presence.Type.available, statusMessage, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.available);
-        } else {
-            return new Presence(Presence.Type.unavailable, statusMessage, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.dnd);
+    public final Presence createPresence(final LinkedProcess.VMStatus status) {
+        String statusMessage = "LoP v0.1";
+        switch (status) {
+            case ACTIVE:
+                return new Presence(Presence.Type.available, statusMessage, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.available);
+            case ACTIVE_FULL:
+                return new Presence(Presence.Type.available, statusMessage, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.dnd);
+            case DOES_NOT_EXIST:
+                return new Presence(Presence.Type.unavailable);
+            default:
+                throw new IllegalStateException("unhandled state: " + status);
         }
     }
 

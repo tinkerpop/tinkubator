@@ -29,7 +29,7 @@ public class VMScheduler {
     private final ScriptEngineManager manager = new ScriptEngineManager();
     private final int maxWorkers;
     private final VMResultHandler resultHandler;
-    private final VMSchedulerEventHandler eventHandler;
+    private final LopStatusEventHandler eventHandler;
     private final int numberOfSequencers;
     private LinkedProcess.FarmStatus status;
 
@@ -42,7 +42,7 @@ public class VMScheduler {
      * @param resultHandler a handler for results produced by the scheduler
      */
     public VMScheduler(final VMResultHandler resultHandler,
-                       final VMSchedulerEventHandler eventHandler) {
+                       final LopStatusEventHandler eventHandler) {
         LOGGER.info("instantiating VMScheduler");
 
         this.resultHandler = new ResultCounter(resultHandler);
@@ -355,7 +355,7 @@ public class VMScheduler {
         void putBackWorker(VMWorker w, boolean idle);
     }
 
-    public interface VMSchedulerEventHandler {
+    public interface LopStatusEventHandler {
         void schedulerStatusChanged(LinkedProcess.FarmStatus newStatus);
         void virtualMachineStatusChanged(String vmJID, LinkedProcess.VMStatus newStatus);
     }
