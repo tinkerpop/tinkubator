@@ -15,6 +15,10 @@ public class SimpleBlockingQueue<T> {
     private static final Logger LOGGER
             = LinkedProcess.getLogger(SimpleBlockingQueue.class);
 
+    // Larger value avoids excessive context-switching overhead while waiting.
+    // Smaller value decreases the wait if the loop misses its notify event.
+    private static final long WAIT_MILLIS = 100;
+
     private final Queue<T> queue;
     private final Object blockingMonitor = "";
 
@@ -22,15 +26,27 @@ public class SimpleBlockingQueue<T> {
         queue = new LinkedList<T>();
     }
 
-    // Synchronized so that threads have to wait their turn for a call.
+    // Synchronized so that threads are served in FIFO order.
     public synchronized T take() throws InterruptedException {
-        if (0 == queue.size()) {
+        LOGGER.info("" + Thread.currentThread() + ": taking from queue");
+        // Break out when the queue is non-empty.
+        while (true) {
+            synchronized (queue) {
+                if (0 < queue.size()) {
+                    LOGGER.info("" + Thread.currentThread() + ": got it!");
+                    return queue.poll();
+                }
+            }
+
+            //LOGGER.info("" + Thread.currentThread() + ": waiting on empty queue");
             synchronized (blockingMonitor) {
-                blockingMonitor.wait();
+                // The limited wait ensures that the waiting thread will
+                // eventually be able to poll the queue once it is
+                // non-empty, even if timing caused the notify event
+                // to be missed.
+                blockingMonitor.wait(WAIT_MILLIS);
             }
         }
-
-        return queue.poll();
     }
 
     public boolean offer(final T t) {
@@ -39,7 +55,30 @@ public class SimpleBlockingQueue<T> {
             b = queue.offer(t);
         }
 
-        notifyMonitor();
+        if (b) {
+            // Notify any currently waiting thread that an item is available in
+            // the queue.
+            synchronized (blockingMonitor) {
+                blockingMonitor.notify();
+            }
+        }
+
+        return b;
+    }
+
+    public boolean offerDistinct(final T t) {
+        boolean b;
+        synchronized (queue) {
+            b = !queue.contains(t) && queue.offer(t);
+        }
+
+        if (b) {
+            // Notify any currently waiting thread that an item is available in
+            // the queue.
+            synchronized (blockingMonitor) {
+                blockingMonitor.notify();
+            }
+        }
 
         return b;
     }
@@ -65,12 +104,6 @@ public class SimpleBlockingQueue<T> {
     public boolean remove(final T t) {
         synchronized (queue) {
             return queue.remove(t);
-        }
-    }
-
-    private void notifyMonitor() {
-        synchronized (blockingMonitor) {
-            blockingMonitor.notify();
         }
     }
 }

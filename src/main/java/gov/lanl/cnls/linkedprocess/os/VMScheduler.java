@@ -121,7 +121,7 @@ public class VMScheduler {
 
         // FIXME: this call may block for as long as one timeslice.
         //        This wait could probably be eliminated.
-        w.cancelJob(jobID);
+        w.abortJob(jobID);
     }
 
     /**
@@ -255,7 +255,7 @@ public class VMScheduler {
         }
 
         for (String machineJID : workersByJID.keySet()) {
-        VMWorker w = workersByJID.get(machineJID);
+            VMWorker w = workersByJID.get(machineJID);
             w.terminate();
             setVirtualMachineStatus(machineJID, LinkedProcess.VMStatus.DOES_NOT_EXIST);
         }
@@ -295,7 +295,7 @@ public class VMScheduler {
 
     private VMSequencerHelper createSequencerHelper() {
         return new VMSequencerHelper() {
-            public synchronized VMWorker getWorker() {
+            public VMWorker getWorker() {
                 try {
                     return workerQueue.take();
                 } catch (InterruptedException e) {
@@ -315,11 +315,14 @@ public class VMScheduler {
     }
 
     private void enqueueWorker(final VMWorker w) {
-        LOGGER.info("enueueing worker: " + w);
-        // Add the worker to the queue if it is not already in the queue.
-        if (!workerQueue.contains(w)) {
-            workerQueue.offer(w);
-        }
+        LOGGER.info("enqueueing worker: " + w);
+        // Add the worker to the queue, unless it is already present.  This
+        // check prevents clients from benefitting from aggressive behavior,
+        // making very frequent requests to the same VM: the scheduler is fair
+        // with respect to VMs.  Note, however, that the client may simply
+        // spawn more VMs for greater throughput with respect to its competitors
+        // on the machine.
+        workerQueue.offerDistinct(w);
         LOGGER.info("...done (workerQueue.size() = " + workerQueue.size() + ")");
     }
 
@@ -357,6 +360,7 @@ public class VMScheduler {
 
     public interface LopStatusEventHandler {
         void schedulerStatusChanged(LinkedProcess.FarmStatus newStatus);
+
         void virtualMachineStatusChanged(String vmJID, LinkedProcess.VMStatus newStatus);
     }
 

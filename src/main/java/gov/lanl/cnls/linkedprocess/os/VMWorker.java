@@ -133,7 +133,7 @@ public class VMWorker {
      * Note: This method should only be called when the value of canWork() is true.
      *
      * @param timeout the length of the time window
-     * @return whether the current job has been finished
+     * @return whether the worker is now idle (has no more work to do)
      */
     public synchronized boolean work(final long timeout) {
         LOGGER.fine("working...");
@@ -188,7 +188,8 @@ public class VMWorker {
                 // Advance to the wait()
                 status = Status.IDLE_WAITING;
                 resumeWorkerThread();
-                return true;
+                // The worker isn't really "idle" if there are jobs in its queue.
+                return 0 == jobQueue.size();
             default:
                 throw new IllegalStateException("status should not occur at the end of a work window: " + status);
         }
@@ -210,7 +211,7 @@ public class VMWorker {
                 status = Status.TERMINATED;
                 interruptWorkerThread();
 
-                // Put the current job back in the queue to be cancelled along
+                // Put the current job back in the queue to be aborted along
                 // with the others.
                 jobQueue.offer(latestJob);
                 break;
@@ -222,25 +223,25 @@ public class VMWorker {
                 // Been there, done that.
                 return;
             default:
-                throw new IllegalStateException("cannot cancel from status: " + status);
+                throw new IllegalStateException("cannot terminate with status: " + status);
         }
 
         // Cancel all jobs in the queue.
         for (Job j : jobQueue) {
-            JobResult cancelledJob = new JobResult(j);
-            resultHandler.handleResult(cancelledJob);
+            JobResult abortedJob = new JobResult(j);
+            resultHandler.handleResult(abortedJob);
         }
     }
 
     /**
      * Cancels a specific job.
      *
-     * @param jobID the ID of the job to be cancelled
+     * @param jobID the ID of the job to be aborted
      * @throws gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException
      *          if no such job exsts
      */
-    public synchronized void cancelJob(final String jobID) throws JobNotFoundException {
-        LOGGER.info("cancelling job " + jobID);
+    public synchronized void abortJob(final String jobID) throws JobNotFoundException {
+        LOGGER.info("aborting job " + jobID);
 
         switch (status) {
             case ACTIVE_SUSPENDED:
@@ -251,7 +252,7 @@ public class VMWorker {
                     interruptWorkerThread();
 
                     // Put the current job in the queue to be discovered and
-                    // cancelled.
+                    // aborted.
                     jobQueue.offer(latestJob);
                 }
                 break;
@@ -259,13 +260,15 @@ public class VMWorker {
                 // Nothing to do.
                 break;
             default:
-                throw new IllegalStateException("can't cancel jobs in status: " + status);
+                throw new IllegalStateException("can't abort job with status: " + status);
         }
 
         // Look for the job in the queue and remove it if present.
         // FIXME: inefficient
         for (Job j : jobQueue) {
             if (j.getJobId().equals(jobID)) {
+                JobResult abortedJob = new JobResult(j);
+                resultHandler.handleResult(abortedJob);
                 jobQueue.remove(j);
                 return;
             }

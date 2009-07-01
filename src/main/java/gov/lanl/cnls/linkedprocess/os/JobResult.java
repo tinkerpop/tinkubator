@@ -1,8 +1,10 @@
 package gov.lanl.cnls.linkedprocess.os;
 
-import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
 import org.jivesoftware.smack.packet.IQ;
+
+import java.util.logging.Logger;
 
 /**
  * Author: josh
@@ -10,9 +12,10 @@ import org.jivesoftware.smack.packet.IQ;
  * Time: 6:35:11 PM
  */
 public class JobResult {
+    private static final Logger LOGGER = LinkedProcess.getLogger(JobResult.class);
 
     public enum ResultType {
-        NORMAL_RESULT, ERROR, CANCELLED
+        NORMAL_RESULT, ERROR, ABORTED
     }
 
     private final Job job;
@@ -26,6 +29,7 @@ public class JobResult {
         this.expression = expression;
         this.exception = null;
         type = ResultType.NORMAL_RESULT;
+        LOGGER.info("normal job result");
     }
 
     public JobResult(final Job job,
@@ -34,13 +38,15 @@ public class JobResult {
         this.expression = null;
         this.exception = exception;
         this.type = ResultType.ERROR;
+        LOGGER.info("error job result");
     }
 
     public JobResult(final Job job) {
         this.job = job;
         this.expression = null;
         this.exception = null;
-        this.type = ResultType.CANCELLED;
+        this.type = ResultType.ABORTED;
+        LOGGER.info("aborted job result");
     }
 
     public Job getJob() {
@@ -66,7 +72,7 @@ public class JobResult {
         String msg = exception.getMessage();
 
         switch (type) {
-            case CANCELLED:
+            case ABORTED:
                 returnEval.setType(IQ.Type.ERROR);
                 returnEval.setErrorType(LinkedProcess.Errortype.JOB_ABORTED);
                 if (null != msg) {

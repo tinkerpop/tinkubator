@@ -24,8 +24,6 @@ public class VMSchedulerTest extends TestCase {
 
     public void setUp() {
         resultsByID.clear();
-
-
     }
 
     public void tearDown() {
@@ -217,8 +215,8 @@ public class VMSchedulerTest extends TestCase {
 
     private void assertCancelledResult(final Job job) {
         JobResult result = resultsByID.get(job.getJobId());
-        assertEquals(JobResult.ResultType.CANCELLED, result.getType());
-        assertNotNull(result.getException());
+        assertEquals(JobResult.ResultType.ABORTED, result.getType());
+        assertNull(result.getException());
         assertEquals(null, result.getExpression());
     }
 
