@@ -62,7 +62,7 @@ public class XmppVirtualMachine extends XmppClient {
     protected void logon(String server, int port, String username, String password) throws XMPPException {
 
         super.logon(server, port, username, password, RESOURCE_PREFIX);
-        connection.sendPacket(this.createPresence(this.farm.getScheduler().getVirtualMachineStatus(this.getFullJid())));
+        connection.sendPacket(this.createPresence(LinkedProcess.VMStatus.ACTIVE));
     }
 
     public XmppFarm getFarm() {
