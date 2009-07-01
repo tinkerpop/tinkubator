@@ -3,25 +3,20 @@ package gov.lanl.cnls.linkedprocess.xmpp.tools;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.IQ;
-import gov.lanl.cnls.linkedprocess.xmpp.tools.GenericListener;
+import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 
 public class SmackPlay {
     
     // this is a development and testing account. please don't use for any other purposes.
     private static String username = "linked.process.2@xmpp.linkedprocess.org";
     private static String password = "linked23";
-    private static String resource = "lop/";
+    private static String resource = XmppClient.generatedRandomID();
         
     public static void main(String[] args) throws Exception {
 
         // this will load a Java Swing GUI and allow you to view and send XMPP XML packets/stanzas
         XMPPConnection.DEBUG_ENABLED = true;
-
-        System.out.println("Starting client");
         ConnectionConfiguration connConfig = new ConnectionConfiguration("xmpp.linkedprocess.org", 5222);
         XMPPConnection connection = new XMPPConnection(connConfig);
         
@@ -57,14 +52,7 @@ public class SmackPlay {
         System.out.println("Compression: " + connection.isUsingCompression());
         System.out.println("Transport Layer Security: " + connection.isUsingTLS());
         System.out.println();
-        
-
-        // Smack uses a listener framework to receive packets/stanzas and perform operations on packets.
-        // A listener can have a filter to only handle certain types of packets (tags/attributes)
-        PacketFilter filter = new PacketTypeFilter(IQ.class);
-        connection.addPacketListener(new GenericListener(), null);
-
-       
+           
     }
 }
 
