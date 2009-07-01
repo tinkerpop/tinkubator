@@ -25,26 +25,25 @@ public class PresenceSubscriptionListener implements PacketListener {
             XmppFarm.LOGGER.info("Subscribing to " + presence.getFrom());
             Presence subscribed = new Presence(Presence.Type.subscribed);
             Presence subscribe = new Presence(Presence.Type.subscribe);
-            subscribed.setFrom(packet.getTo());
-            subscribe.setFrom(packet.getTo());
-            farm.getConnection().sendPacket(subscribed);
-            farm.getConnection().sendPacket(subscribe);
+            subscribed.setTo(packet.getFrom());
+            subscribe.setTo(packet.getFrom());
+
             Presence available = farm.createFarmPresence(XmppFarm.FarmStatus.AVAILABLE);
             available.setTo(packet.getFrom());
+            available.setPacketID(packet.getPacketID());
+
+            farm.getConnection().sendPacket(subscribed);
+            farm.getConnection().sendPacket(subscribe);
             farm.getConnection().sendPacket(available);
-            /*try {
-                farm.getRoster().createEntry(packet.getFrom(), packet.getFrom(), null);
-            } catch(XMPPException e) {
-                XmppFarm.LOGGER.severe(e.getMessage());
-            }*/
+
             return;
 
         } else if(type == Presence.Type.unsubscribe) {
             XmppFarm.LOGGER.info("Unsubscribing from " + presence.getFrom());
             Presence unsubscribed = new Presence(Presence.Type.unsubscribed);
             Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
-            unsubscribed.setFrom(packet.getTo());
-            unsubscribe.setFrom(packet.getTo());
+            unsubscribed.setTo(packet.getFrom());
+            unsubscribe.setTo(packet.getFrom());
             farm.getConnection().sendPacket(unsubscribed);
             farm.getConnection().sendPacket(unsubscribe);
             Presence unavailable = farm.createFarmPresence(XmppFarm.FarmStatus.UNAVAILABLE);
@@ -53,7 +52,7 @@ public class PresenceSubscriptionListener implements PacketListener {
             try {
                 farm.getRoster().removeEntry(farm.getRoster().getEntry(packet.getFrom()));
             } catch(XMPPException e) {
-                e.printStackTrace();
+                XmppFarm.LOGGER.severe(e.getMessage());
             }
             return;
         }

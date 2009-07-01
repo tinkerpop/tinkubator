@@ -4,12 +4,12 @@
 
 3. Send from SmackPlay-to-XmppFarm (Subscribe to the LoP Farm and add it to your buddy list)
 
-    <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="subscribe" / >
+    <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="subscribe" />
 
     RETURNED
 
-    <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/P9YR0JMR" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="subscribed" / >
-    <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/P9YR0JMR" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="subscribe" / >
+    <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/P9YR0JMR" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="subscribed" />
+    <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/P9YR0JMR" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="subscribe" />
 
 
 4. Send from SmackPlay-to-XmppFarm (Spawn an LoP virtual machine from the LoP Farm)
@@ -55,9 +55,9 @@
 
 7. Send from SmackPlay-to-XmppFarm (Unsubscribe from the LoP Farm and remove it from your buddy list)
 
-    <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="unsubscribe" / >
+    <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="unsubscribe" />
 
     RETURNED
 
-    <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/P9YR0JMR" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="unsubscribed" / >
-    <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/P9YR0JMR" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="unsubscribe" / >
+    <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/P9YR0JMR" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="unsubscribed" />
+    <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/P9YR0JMR" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="unsubscribe" />

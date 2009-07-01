@@ -4,6 +4,7 @@ import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.AbortJob;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
+import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import junit.framework.TestCase;
 import org.jivesoftware.smack.XMPPConnection;
 import org.junit.After;
