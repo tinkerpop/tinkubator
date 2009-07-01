@@ -328,7 +328,9 @@ public class VMWorker {
 
     private void evaluate(final Job request) {
         try {
-            Object returnObject = scriptEngine.eval(request.getExpression());
+            String expression = request.getExpression();
+            LOGGER.fine(expression);
+			Object returnObject = scriptEngine.eval(expression);
 
             // Note: the return object is not necessarily a string.  It may,
             // for instance, be a Double which needs to be converted to a

@@ -1,5 +1,6 @@
 package gov.lanl.cnls.linkedprocess.xmpp;
 
+import gov.lanl.cnls.linkedprocess.Connection;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
 import java.util.Iterator;
@@ -7,9 +8,9 @@ import java.util.Random;
 import java.util.logging.Logger;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 
@@ -17,7 +18,7 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 public abstract class XmppClient {
 
     public static Logger LOGGER = LinkedProcess.getLogger(XmppClient.class);
-    protected XMPPConnection connection;
+    protected Connection connection;
     protected Roster roster;
     protected boolean shutdownRequested = false;
     protected ServiceDiscoveryManager discoManager;
@@ -28,7 +29,9 @@ public abstract class XmppClient {
     private int port;
 
     protected void initiateFeatures() {
-        discoManager = ServiceDiscoveryManager.getInstanceFor(connection);
+        XMPPConnection delegate = connection.getDelegate();
+        LOGGER.fine(delegate.toString());
+		discoManager = ServiceDiscoveryManager.getInstanceFor(delegate);
         Iterator<String> features = discoManager.getFeatures();
         while (features.hasNext()) {
             String feature = features.next();
@@ -51,7 +54,7 @@ public abstract class XmppClient {
 
         // logging into an XMPP server requires a username and password
         ConnectionConfiguration connConfig = new ConnectionConfiguration(server, port);
-        this.connection = new XMPPConnection(connConfig);
+        this.connection = new XMPPConnectionWrapper(connConfig);
         this.connection.connect();
 
         LOGGER.info("Connected to " + connection.getHost());
@@ -106,7 +109,7 @@ public abstract class XmppClient {
          return fullJid.substring(0,fullJid.indexOf("/"));
     }
 
-    public XMPPConnection getConnection() {
+    public Connection getConnection() {
         return this.connection;
     }
 
