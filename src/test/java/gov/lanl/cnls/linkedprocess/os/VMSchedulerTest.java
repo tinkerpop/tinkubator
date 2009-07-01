@@ -16,6 +16,7 @@ public class VMSchedulerTest extends TestCase {
     private static final int MAX_RANDOM_INT = 100000;
 
     private final VMScheduler.VMResultHandler resultHandler = createResultHandler();
+    private final VMScheduler.VMSchedulerEventHandler eventHandler = createEventHandler();
     private final Map<String, JobResult> resultsByID = new HashMap<String, JobResult>();
     private VMScheduler scheduler;
     private Random random = new Random();
@@ -23,26 +24,28 @@ public class VMSchedulerTest extends TestCase {
 
     public void setUp() {
         resultsByID.clear();
+
+
     }
 
     public void tearDown() {
     }
 
     public void testCreateAndShutDownScheduler() throws Exception {
-        scheduler = new VMScheduler(resultHandler);
+        scheduler = new VMScheduler(resultHandler, eventHandler);
         assertEquals(LinkedProcess.FarmStatus.ACTIVE, scheduler.getSchedulerStatus());
         scheduler.shutDown();
     }
 
     public void testCreateVM() throws Exception {
-        scheduler = new VMScheduler(resultHandler);
+        scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);
         scheduler.shutDown();
     }
 
     public void testAddMultipleVMs() throws Exception {
-        scheduler = new VMScheduler(resultHandler);
+        scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         String vm2 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);
@@ -54,13 +57,13 @@ public class VMSchedulerTest extends TestCase {
     }
 
     public void testSchedulerStatusAfterShutdown() {
-        scheduler = new VMScheduler(resultHandler);
+        scheduler = new VMScheduler(resultHandler, eventHandler);
         scheduler.shutDown();
         assertEquals(LinkedProcess.FarmStatus.TERMINATED, scheduler.getSchedulerStatus());
     }
 
     public void testVMStatusAfterTermination() throws Exception {
-        scheduler = new VMScheduler(resultHandler);
+        scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);
         assertEquals(LinkedProcess.VMStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm1));
@@ -70,7 +73,7 @@ public class VMSchedulerTest extends TestCase {
     }
 
     public void testVMStatusAfterSchedulerShutDown() throws Exception {
-        scheduler = new VMScheduler(resultHandler);
+        scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);
         assertEquals(LinkedProcess.VMStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm1));
@@ -79,7 +82,7 @@ public class VMSchedulerTest extends TestCase {
     }
 
     public void testAddJob() throws Exception {
-        scheduler = new VMScheduler(resultHandler);
+        scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);
         Job job = randomShortRunningJob(vm1);
@@ -91,7 +94,7 @@ public class VMSchedulerTest extends TestCase {
     }
 
     public void testLongRunningJob() throws Exception {
-        scheduler = new VMScheduler(resultHandler);
+        scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);
         Job job = randomLongRunningJob(vm1);
@@ -103,7 +106,7 @@ public class VMSchedulerTest extends TestCase {
     }
 
     public void testAddMultipleJobs() throws Exception {
-        scheduler = new VMScheduler(resultHandler);
+        scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);
         Job job1 = randomShortRunningJob(vm1);
@@ -118,7 +121,7 @@ public class VMSchedulerTest extends TestCase {
     }
 
     public void testAddConcurrentLongRunningJobs() throws Exception {
-        scheduler = new VMScheduler(resultHandler);
+        scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);
         Job job1 = randomLongRunningJob(vm1);
@@ -133,7 +136,7 @@ public class VMSchedulerTest extends TestCase {
     }
 
     public void testInvalidExpression() throws Exception {
-        scheduler = new VMScheduler(resultHandler);
+        scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);
         Job job = randomInvalidJob(vm1);
@@ -148,7 +151,7 @@ public class VMSchedulerTest extends TestCase {
     }
 
     public void testValidButExceptionGeneratingExpression() throws Exception {
-        scheduler = new VMScheduler(resultHandler);
+        scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);
         Job job = randomValidButExceptionGeneratingJob(vm1);
@@ -160,7 +163,7 @@ public class VMSchedulerTest extends TestCase {
     }
 
     public void testAbortLongRunningJob() throws Exception {
-        scheduler = new VMScheduler(resultHandler);
+        scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, vmType);
         Job job = randomLongRunningJob(vm1);
@@ -179,6 +182,19 @@ public class VMSchedulerTest extends TestCase {
 
             public void handleResult(JobResult result) {
                 resultsByID.put(result.getJob().getJobId(), result);
+            }
+        };
+    }
+
+    private VMScheduler.VMSchedulerEventHandler createEventHandler() {
+        return new VMScheduler.VMSchedulerEventHandler() {
+
+            public void schedulerStatusChanged(LinkedProcess.FarmStatus newStatus) {
+                // Do nothing.
+            }
+
+            public void virtualMachineStatusChanged(String vmJID, LinkedProcess.VMStatus newStatus) {
+                // Do nothing.
             }
         };
     }

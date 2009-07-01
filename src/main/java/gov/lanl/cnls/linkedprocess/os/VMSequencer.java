@@ -1,8 +1,8 @@
 package gov.lanl.cnls.linkedprocess.os;
 
-import java.util.logging.Logger;
-
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
+
+import java.util.logging.Logger;
 
 /**
  * Author: josh
@@ -19,7 +19,6 @@ class VMSequencer {
 
     private Status status;
     private final long timeSlice;
-    private final Thread sequencerThread;
     private final VMScheduler.VMSequencerHelper sequencerHelper;
 
     private static long threadID = 0;
@@ -42,7 +41,7 @@ class VMSequencer {
         this.sequencerHelper = sequencerHelper;
         this.timeSlice = timeSlice;
 
-        sequencerThread = new Thread(new SequencerRunnable(), nextThreadName());
+        Thread sequencerThread = new Thread(new SequencerRunnable(), nextThreadName());
         sequencerThread.start();
 
         status = Status.ACTIVE;

@@ -5,6 +5,8 @@ import gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 /**
@@ -34,7 +36,7 @@ public class VMWorker {
 
     private static final Logger LOGGER = LinkedProcess.getLogger(VMWorker.class);
 
-    private final LoPQueue<Job> jobQueue;
+    private final BlockingQueue<Job> jobQueue;
     private final VMScheduler.VMResultHandler resultHandler;
     private final ScriptEngine scriptEngine;
     private final Thread workerThread;
@@ -46,6 +48,12 @@ public class VMWorker {
     private final Object
             timeoutMonitor = "",
             workerWaitMonitor = "";
+
+    private static long threadID = 0;
+
+    private static synchronized String nextThreadName() {
+        return "LOP VM worker thread #" + ++threadID;
+    }
 
     /**
      * Dummy constructor to create a sentinel value in VMScheduler.
@@ -73,9 +81,9 @@ public class VMWorker {
 
         int capacity = new Integer(LinkedProcess.getProperties().getProperty(
                 LinkedProcess.MESSAGE_QUEUE_CAPACITY));
-        jobQueue = new LoPQueue<Job>(capacity);
+        jobQueue = new LinkedBlockingQueue<Job>(capacity);
 
-        workerThread = new Thread(new WorkerRunnable(), "LOP VM worker thread");
+        workerThread = new Thread(new WorkerRunnable(), nextThreadName());
         workerThread.start();
 
         status = Status.IDLE_WAITING;
@@ -218,7 +226,7 @@ public class VMWorker {
         }
 
         // Cancel all jobs in the queue.
-        for (Job j : jobQueue.asCollection()) {
+        for (Job j : jobQueue) {
             JobResult cancelledJob = new JobResult(j);
             resultHandler.handleResult(cancelledJob);
         }
@@ -256,7 +264,7 @@ public class VMWorker {
 
         // Look for the job in the queue and remove it if present.
         // FIXME: inefficient
-        for (Job j : jobQueue.asCollection()) {
+        for (Job j : jobQueue) {
             if (j.getJobId().equals(jobID)) {
                 jobQueue.remove(j);
                 return;
@@ -309,7 +317,7 @@ public class VMWorker {
     ////////////////////////////////////////////////////////////////////////////
 
     private boolean jobQueueContains(final String jobID) {
-        for (Job j : jobQueue.asCollection()) {
+        for (Job j : jobQueue) {
             if (j.getJobId().equals(jobID)) {
                 return true;
             }

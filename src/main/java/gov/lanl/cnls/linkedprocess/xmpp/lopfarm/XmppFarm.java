@@ -73,7 +73,8 @@ public class XmppFarm extends XmppClient {
 
         this.roster = this.connection.getRoster();
         this.roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
-        this.scheduler = new VMScheduler(new VMJobResultHandler(this));
+        // FIXME: add event handler
+        this.scheduler = new VMScheduler(new VMJobResultHandler(this), null);
         this.machines = new HashMap<String, XmppVirtualMachine>();
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new IQTypeFilter(IQ.Type.GET));
