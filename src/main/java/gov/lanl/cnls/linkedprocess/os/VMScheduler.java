@@ -151,10 +151,9 @@ public class VMScheduler {
         if (null == machineJID || 0 == machineJID.length()) {
             throw new IllegalArgumentException("null or empty machine ID");
         }
-
-        // TODO: check whether the scriptType is one of the allowed types
+        
         if (null == scriptType || 0 == scriptType.length()) {
-            throw new IllegalArgumentException("null or empty virtual machine scriptType");
+            throw new UnsupportedScriptEngineException(scriptType);
         }
 
         if (null != workersByJID.get(machineJID)) {

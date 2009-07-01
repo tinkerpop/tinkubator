@@ -1,0 +1,15 @@
+1. Load up an XmppFarm: linked.process.1@xmpp.linkedprocess.org/LoPFarm/I37PGNYY
+
+2. Load up SmackPlay: linked.process.2@xmpp.linkedprocess.org/P9YR0JMR
+
+3. Send from SmackPlay-to-XmppFarm
+
+    <iq type="get" to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/I37PGNYY" id="T4tFi-X">
+      <spawn_vm xmlns="http://linkedprocess.org/protocol#LoPFarm" vm_species="JavaScript" />
+    </iq>
+
+    RETURNED
+
+    <iq id="T4tFi-X" to="linked.process.2@xmpp.linkedprocess.org/P9YR0JMR" type="result" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/I37PGNYY">
+      <spawn_vm xmlns="http://linkedprocess.org/protocol#LoPFarm" vm_jid="linked.process.1@xmpp.linkedprocess.org/LoPVM/F0E4V2E6"/>
+    </iq>
