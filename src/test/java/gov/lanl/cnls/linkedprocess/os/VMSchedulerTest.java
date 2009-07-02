@@ -150,10 +150,7 @@ public class VMSchedulerTest extends TestCase {
         scheduler.scheduleJob(vm1, job);
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
-        JobResult result = resultsByID.get(job.getJobId());
-        assertEquals(JobResult.ResultType.ERROR, result.getType());
-        assertNotNull(result.getException());
-        assertEquals(null, result.getExpression());
+        assertErrorResult(job);
         scheduler.shutDown();
     }
 
@@ -310,7 +307,7 @@ public class VMSchedulerTest extends TestCase {
         JobResult result = resultsByID.get(job.getJobId());
         assertEquals(JobResult.ResultType.ERROR, result.getType());
         assertNotNull(result.getException());
-        assertEquals(null, result.getExpression());
+        assertNull(result.getExpression());
     }
 
     private void assertCancelledResult(final Job job) {

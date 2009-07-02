@@ -36,6 +36,7 @@ public class JobResult {
                      final Exception exception) {
         this.job = job;
         this.expression = null;
+        //this.expression = exception.getMessage();
         this.exception = exception;
         this.type = ResultType.ERROR;
         LOGGER.info("error job result");
@@ -64,14 +65,14 @@ public class JobResult {
     public Exception getException() {
         return exception;
     }
-    
+
     public Evaluate generateReturnEvalulate() {
         Evaluate returnEval = new Evaluate();
         returnEval.setTo(job.getAppJid());
         returnEval.setPacketID(job.getJobId());
         String msg = "";
-        if(exception!=null) {
-        	exception.getMessage();
+        if (exception != null) {
+            msg = exception.getMessage();
         }
 
         switch (type) {
