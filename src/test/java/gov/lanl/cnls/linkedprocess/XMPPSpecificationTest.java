@@ -76,7 +76,7 @@ public class XMPPSpecificationTest {
 		mockFarmConn.clearPackets();
 		// now we should have 3 PacketListeners to the Farms XMPP connection
 		ArrayList<PacketListener> packetListeners = mockFarmConn.packetListeners;
-		assertTrue(packetListeners.size() == 3);
+		assertEquals(packetListeners.size(), 3);
 		// third registered listener should be our SpawnListener
 		PresenceSubscriptionListener subscriptionListener = (PresenceSubscriptionListener) packetListeners
 				.get(2);

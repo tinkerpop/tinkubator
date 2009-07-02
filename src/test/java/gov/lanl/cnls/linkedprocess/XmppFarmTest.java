@@ -95,14 +95,6 @@ public class XmppFarmTest extends TestCase {
         assertTrue(spawnString.contains("vm_species=\"lop:vm:javascript\""));
     }
 
-    public void testTerminateTag() throws Exception {
-        TerminateVm terminateVm = new TerminateVm();
-        String destroyString = terminateVm.getChildElementXML();
-        System.out.println(destroyString);
-        assertTrue(destroyString.contains("xmlns=\"" + LinkedProcess.LOP_FARM_NAMESPACE));
-        assertTrue(destroyString.contains("vm_jid=\"lp1@gmail.com\""));
-    }
-
     @After
 	public void teardown() {
 		xmppFarm.shutDown();
