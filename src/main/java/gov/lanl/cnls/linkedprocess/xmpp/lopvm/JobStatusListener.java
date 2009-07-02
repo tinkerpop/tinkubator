@@ -32,7 +32,7 @@ public class JobStatusListener implements PacketListener {
 
         if (null == vmPassword || null == jobId) {
             returnJobStatus.setErrorType(LinkedProcess.Errortype.MALFORMED_PACKET);
-            String errorMessage = new String();
+            String errorMessage = "";
             if (null == vmPassword) {
                 errorMessage = "job_status XML packet is missing the vm_password attribute";
             }

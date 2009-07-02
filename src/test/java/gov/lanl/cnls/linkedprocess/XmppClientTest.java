@@ -27,10 +27,10 @@ public class XmppClientTest extends TestCase {
     public void testRandomIDGenerator() {
         // 1,000,000 random IDs are generated without conflict.
         Set<String> uniques = new HashSet<String>();
-        for(int i=0; i<1000000; i++) {
+        for(int i=0; i<100000; i++) {
             //System.out.println(XmppClient.generateRandomID());
             uniques.add(XmppClient.generateRandomID());
         }
-        assertEquals(uniques.size(), 1000000);
+        assertEquals(uniques.size(), 100000);
     }
 }

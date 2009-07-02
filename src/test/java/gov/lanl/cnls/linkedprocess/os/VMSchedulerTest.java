@@ -1,9 +1,10 @@
 package gov.lanl.cnls.linkedprocess.os;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException;
+import gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMAlreadyExistsException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
-import gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;
@@ -169,11 +170,11 @@ public class VMSchedulerTest extends TestCase {
         scheduler.shutDown();
     }
 
-    public void testAbortLongRunningJob() throws Exception {
+    public void testAbortJob() throws Exception {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, VM_TYPE);
-        Job job = randomLongRunningJob(vm1);
+        Job job = randomInfiniteJob(vm1);
         scheduler.scheduleJob(vm1, job);
         scheduler.abortJob(vm1, job.getJobId());
         scheduler.waitUntilFinished();
@@ -294,26 +295,41 @@ public class VMSchedulerTest extends TestCase {
         }
 
         // Try to assign a job to a non-existent VM.
-        Job job = randomLongRunningJob(vm1);
+        Job job1 = randomInfiniteJob(vm1);
         try {
-            scheduler.scheduleJob(vm1, job);
+            scheduler.scheduleJob(vm1, job1);
             assertTrue(false);
         } catch (VMWorkerNotFoundException e) {
         }
 
         scheduler.spawnVirtualMachine(vm1, VM_TYPE);
 
-        // Try to abort a non-existent job.
+        // Try to check on a job that doesn't exist
         try {
-            scheduler.abortJob(vm1, job.getJobId());
+            scheduler.getJobStatus(vm1, job1.getJobId());
             assertTrue(false);
         } catch (JobNotFoundException e) {
         }
-        
+
+        // Try to abort a non-existent job.
+        try {
+            scheduler.abortJob(vm1, job1.getJobId());
+            assertTrue(false);
+        } catch (JobNotFoundException e) {
+        }
+
+        // Try to schedule a job with a duplicate ID (before the original job has finished)
+        scheduler.scheduleJob(vm1, job1);
+        try {
+            scheduler.scheduleJob(vm1, job1);
+            assertTrue(false);
+        } catch (JobAlreadyExistsException e) {
+        }
+
         scheduler.shutDown();
     }
 
-    ////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
 
     private VMScheduler.VMResultHandler createResultHandler() {
         return new VMScheduler.VMResultHandler() {
@@ -341,8 +357,8 @@ public class VMSchedulerTest extends TestCase {
     private void assertNormalResult(final Job job) {
         JobResult result = resultsByID.get(job.getJobId());
         assertEquals(JobResult.ResultType.NORMAL_RESULT, result.getType());
-        // Note: not "1", but "1.0", as the resulting Object is a Double (for
-        // some reason).  This is not particularly important for the test.
+// Note: not "1", but "1.0", as the resulting Object is a Double (for
+// some reason).  This is not particularly important for the test.
         assertEquals("1.0", result.getExpression());
         assertNull(result.getException());
     }
@@ -378,6 +394,10 @@ public class VMSchedulerTest extends TestCase {
 
     private Job randomLongRunningJob(final String vmJID) {
         return randomJob(vmJID, "var p=1; for (i=0; i<100000; i++) {p *= 7; p /= 7;} p;");
+    }
+
+    private Job randomInfiniteJob(final String vmJID) {
+        return randomJob(vmJID, "while (true) {var x = 1;}");
     }
 
     private Job randomInvalidJob(final String vmJID) {

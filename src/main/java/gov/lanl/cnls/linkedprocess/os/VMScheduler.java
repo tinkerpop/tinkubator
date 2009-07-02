@@ -230,22 +230,26 @@ public class VMScheduler {
 
     /**
      * @param machineJID the JID of the machine to execute the job
-     * @param iqID       the ID of the job of interest
+     * @param jobID      the ID of the job of interest
      * @return the status of the given job
      * @throws gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException
      *          if no VM worker with the given JID exists
+     * @throws gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException
+     *          if no job with the given ID exists
      */
     public synchronized LinkedProcess.JobStatus getJobStatus(final String machineJID,
-                                                             final String iqID) throws VMWorkerNotFoundException {
+                                                             final String jobID) throws VMWorkerNotFoundException, JobNotFoundException {
         VMWorker w = workersByJID.get(machineJID);
 
         if (null == w) {
             throw new VMWorkerNotFoundException(machineJID);
         }
 
-        return (w.jobExists(iqID))
-                ? LinkedProcess.JobStatus.IN_PROGRESS
-                : LinkedProcess.JobStatus.DOES_NOT_EXIST;
+        if (w.jobExists(jobID)) {
+            return LinkedProcess.JobStatus.IN_PROGRESS;
+        } else {
+            throw new JobNotFoundException(jobID);
+        }
     }
 
     /**
