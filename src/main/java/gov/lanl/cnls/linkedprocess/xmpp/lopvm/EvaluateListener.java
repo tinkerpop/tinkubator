@@ -1,12 +1,13 @@
 package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import gov.lanl.cnls.linkedprocess.os.Job;
+import gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerIsFullException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Packet;
 
 /**
  * User: marko
@@ -45,7 +46,7 @@ public class EvaluateListener implements PacketListener {
             returnEvaluate.setTo(evaluate.getFrom());
             returnEvaluate.setPacketID(evaluate.getPacketID());
             returnEvaluate.setErrorType(LinkedProcess.Errortype.MALFORMED_PACKET);
-            String errorMessage = new String();
+            String errorMessage = "";
             if(null == vmPassword) {
                 errorMessage = "evaluate XML packet is missing the vm_password attribute";
             }
@@ -94,6 +95,17 @@ public class EvaluateListener implements PacketListener {
                 returnEvaluate.setTo(evaluate.getFrom());
                 returnEvaluate.setPacketID(evaluate.getPacketID());
                 returnEvaluate.setErrorType(LinkedProcess.Errortype.VM_IS_BUSY);
+                returnEvaluate.setErrorMessage(e.getMessage());
+                returnEvaluate.setType(IQ.Type.ERROR);
+                vm.getConnection().sendPacket(returnEvaluate);
+
+                XmppVirtualMachine.LOGGER.info("Sent " + EvaluateListener.class.getName());
+                XmppVirtualMachine.LOGGER.info(returnEvaluate.toXML());
+            } catch (JobAlreadyExistsException e) {
+                Evaluate returnEvaluate = new Evaluate();
+                returnEvaluate.setTo(evaluate.getFrom());
+                returnEvaluate.setPacketID(evaluate.getPacketID());
+                returnEvaluate.setErrorType(LinkedProcess.Errortype.JOB_ALREADY_EXISTS);
                 returnEvaluate.setErrorMessage(e.getMessage());
                 returnEvaluate.setType(IQ.Type.ERROR);
                 vm.getConnection().sendPacket(returnEvaluate);

@@ -1,18 +1,16 @@
 package gov.lanl.cnls.linkedprocess;
 
-import static org.junit.Assert.assertTrue;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.SpawnVm;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.TerminateVm;
 import gov.lanl.cnls.linkedprocess.xmpp.tools.XmppTestClient;
-
+import junit.framework.TestCase;
 import org.jivesoftware.smack.XMPPConnection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import junit.framework.TestCase;
 
 /**
  * User: marko Date: Jun 25, 2009 Time: 12:10:47 PM
@@ -99,7 +97,6 @@ public class XmppFarmTest extends TestCase {
 
     public void testTerminateTag() throws Exception {
         TerminateVm terminateVm = new TerminateVm();
-        terminateVm.setVmJid("lp1@gmail.com");
         String destroyString = terminateVm.getChildElementXML();
         System.out.println(destroyString);
         assertTrue(destroyString.contains("xmlns=\"" + LinkedProcess.LOP_FARM_NAMESPACE));

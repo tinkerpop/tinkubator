@@ -1,6 +1,7 @@
 package gov.lanl.cnls.linkedprocess.os;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException;
 import gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException;
 
 import javax.script.ScriptEngine;
@@ -114,12 +115,15 @@ public class VMWorker {
      * @return whether the job has been added to the worker's queue (if not,
      *         then the queue is full)
      */
-    public synchronized boolean addJob(final Job job) {
+    public synchronized boolean addJob(final Job job) throws JobAlreadyExistsException {
         LOGGER.info("adding job: " + job);
 
         switch (status) {
             case ACTIVE_SUSPENDED:
             case IDLE_WAITING:
+                if (jobQueue.contains(job)) {
+                    throw new JobAlreadyExistsException(job);
+                }
                 return jobQueue.offer(job);
             default:
                 throw new IllegalStateException("can't add jobs in status: " + status);

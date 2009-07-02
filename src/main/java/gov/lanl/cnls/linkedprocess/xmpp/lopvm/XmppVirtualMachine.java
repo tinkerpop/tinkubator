@@ -5,6 +5,7 @@ import gov.lanl.cnls.linkedprocess.os.Job;
 import gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerIsFullException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
+import gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
 import org.jivesoftware.smack.XMPPException;
@@ -97,7 +98,7 @@ public class XmppVirtualMachine extends XmppClient {
         return this.farm.getScheduler().getJobStatus(this.getFullJid(), jobId);
     }
 
-    public void scheduleJob(Job job) throws VMWorkerNotFoundException, VMWorkerIsFullException {
+    public void scheduleJob(Job job) throws VMWorkerNotFoundException, VMWorkerIsFullException, JobAlreadyExistsException {
         this.farm.getScheduler().scheduleJob(this.getFullJid(), job);
     }
 

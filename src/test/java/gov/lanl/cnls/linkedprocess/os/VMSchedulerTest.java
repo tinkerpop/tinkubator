@@ -1,6 +1,9 @@
 package gov.lanl.cnls.linkedprocess.os;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import gov.lanl.cnls.linkedprocess.os.errors.VMAlreadyExistsException;
+import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
+import gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;
@@ -267,6 +270,47 @@ public class VMSchedulerTest extends TestCase {
             assertEquals(LinkedProcess.VMStatus.DOES_NOT_EXIST, vmStatusEventTypes.get(j));
             assertEquals(LinkedProcess.VMStatus.DOES_NOT_EXIST, scheduler.getVirtualMachineStatus(jid));
         }
+    }
+
+    public void testStatusErrors() throws Exception {
+        scheduler = new VMScheduler(resultHandler, eventHandler);
+        String vm1 = randomJID();
+        scheduler.spawnVirtualMachine(vm1, VM_TYPE);
+
+        // Try to spawn a VM with a duplicate VM.
+        try {
+            scheduler.spawnVirtualMachine(vm1, VM_TYPE);
+            assertTrue(false);
+        } catch (VMAlreadyExistsException e) {
+        }
+
+        scheduler.terminateVirtualMachine(vm1);
+
+        // Try to terminate a non-existent virtual machine.
+        try {
+            scheduler.terminateVirtualMachine(vm1);
+            assertTrue(false);
+        } catch (VMWorkerNotFoundException e) {
+        }
+
+        // Try to assign a job to a non-existent VM.
+        Job job = randomLongRunningJob(vm1);
+        try {
+            scheduler.scheduleJob(vm1, job);
+            assertTrue(false);
+        } catch (VMWorkerNotFoundException e) {
+        }
+
+        scheduler.spawnVirtualMachine(vm1, VM_TYPE);
+
+        // Try to abort a non-existent job.
+        try {
+            scheduler.abortJob(vm1, job.getJobId());
+            assertTrue(false);
+        } catch (JobNotFoundException e) {
+        }
+        
+        scheduler.shutDown();
     }
 
     ////////////////////////////////////////////////////////////////////////////

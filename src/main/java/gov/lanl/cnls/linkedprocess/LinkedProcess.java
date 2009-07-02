@@ -62,6 +62,7 @@ public class LinkedProcess {
         EVALUATION_ERROR("evaluation_error"),
         INTERNAL_ERROR("internal_error"), // VMAlreadyExistsException, VMWorkerNotFoundException
         JOB_ABORTED("job_aborted"),
+        JOB_ALREADY_EXISTS("job_already_exists"),
         JOB_NOT_FOUND("job_not_found"), // JobNotFoundException
         SPECIES_NOT_SUPPORTED("species_not_supported"), // UnsupportedScriptEngineException
         FARM_IS_BUSY("farm_is_busy"), // VMSchedulerIsFullException
