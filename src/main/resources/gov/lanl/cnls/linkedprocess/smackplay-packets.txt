@@ -1,4 +1,16 @@
-1. Load up an XmppFarm: linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47
+1.1 Load up an XmppFarm: linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47
+   Sent packages:
+  Farm starting:
+  <presence id="DU6gk-0"><status>LoP Farm v0.1- starting</status><priority>127</priority></presence> 
+  VMScheduler started:
+  <presence id="DU6gk-1"><status>LoP Farm v0.1</status><priority>127</priority></presence>
+
+1.2 Shutdown the XmppFarm
+	VMScheduler stopped:
+	<presence id="95LrE-2" type="unavailable"><status>LoP Farm v0.1 - terminating</status><priority>127</priority><show>dnd</show></presence>
+    XmppFarm stopped:
+    <presence id="95LrE-3" type="unavailable"></presence>
+
 
 2. Load up SmackPlay: linked.process.2@xmpp.linkedprocess.org/P9YR0JMR
 
@@ -8,9 +20,12 @@
 
     RETURNED
 
+	the subscription acc
     <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/P9YR0JMR" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="subscribed" />
+    request to subscribe in the the clients roster
     <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/P9YR0JMR" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="subscribe" />
-
+    the Farms status to the client:
+    <presence id="HHWQ7-2" to="mockClient"><status>LoP Farm v0.1</status><priority>127</priority></presence>
 
 4. Send from SmackPlay-to-XmppFarm (Spawn an LoP virtual machine from the LoP Farm)
 

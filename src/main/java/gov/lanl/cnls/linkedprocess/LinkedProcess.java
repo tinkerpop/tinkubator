@@ -28,7 +28,7 @@ public class LinkedProcess {
     }
 
     public enum FarmStatus {
-        ACTIVE("active"), ACTIVE_FULL("full"), TERMINATED("terminated");
+        ACTIVE("active"), ACTIVE_FULL("full"), TERMINATED("terminated"), STARTING("starting"), TERMINATING("terminating");
 
         private final String name;
 

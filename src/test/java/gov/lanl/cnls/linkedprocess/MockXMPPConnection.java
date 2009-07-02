@@ -37,6 +37,7 @@ public class MockXMPPConnection extends XMPPConnectionWrapper{
 
 	@Override
 	public void addPacketListener(PacketListener listener, PacketFilter filter) {
+		logger.info("registering " + listener);
 		packetListeners .add(listener);
 		
 	}
@@ -124,6 +125,7 @@ public class MockXMPPConnection extends XMPPConnectionWrapper{
 
 	@Override
 	public void sendPacket(Packet packet) {
+		logger.fine("adding " + packet.toXML());
 		sentPackets.add(packet);
 		
 	}
@@ -131,6 +133,11 @@ public class MockXMPPConnection extends XMPPConnectionWrapper{
 	public void setRoster(Roster mockRoster) {
 		this.mockRoster = mockRoster;
 		
+	}
+
+	public void clearPackets() {
+		sentPackets.clear();
+//		packetListeners.clear();
 	}
 
 
