@@ -66,7 +66,7 @@ public class MockingTest {
 	private Roster mockRoster;
 
 	@Test
-	public void subscribingToAFarmsRosterShouldResultInTwoPresencePacketsBack() throws Exception {
+	public void subscribingToAFarmsRosterShouldResultInThreePresencePacketsBack() throws Exception {
 
 		// activate all mock objects
 		replayAll();
