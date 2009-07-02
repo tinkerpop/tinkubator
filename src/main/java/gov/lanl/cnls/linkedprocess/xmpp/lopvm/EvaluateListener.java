@@ -32,7 +32,7 @@ public class EvaluateListener implements PacketListener {
     }
 
     private void processPacketTemp(Packet evaluate) {
-        XmppVirtualMachine.LOGGER.info("Arrived EvaluateListener:");
+        XmppVirtualMachine.LOGGER.info("Arrived " + EvaluateListener.class.getName());
         XmppVirtualMachine.LOGGER.info(evaluate.toXML());
 
         String expression = ((Evaluate) evaluate).getExpression();
@@ -59,6 +59,10 @@ public class EvaluateListener implements PacketListener {
                 returnEvaluate.setErrorMessage(e.getMessage());
                 returnEvaluate.setType(IQ.Type.ERROR);
                 vm.getConnection().sendPacket(returnEvaluate);
+
+                XmppVirtualMachine.LOGGER.info("Sent " + EvaluateListener.class.getName());
+                XmppVirtualMachine.LOGGER.info(returnEvaluate.toXML());
+
             } catch (VMWorkerIsFullException e) {
                 Evaluate returnEvaluate = new Evaluate();
                 returnEvaluate.setTo(evaluate.getFrom());
@@ -67,6 +71,9 @@ public class EvaluateListener implements PacketListener {
                 returnEvaluate.setErrorMessage(e.getMessage());
                 returnEvaluate.setType(IQ.Type.ERROR);
                 vm.getConnection().sendPacket(returnEvaluate);
+
+                XmppVirtualMachine.LOGGER.info("Sent " + EvaluateListener.class.getName());
+                XmppVirtualMachine.LOGGER.info(returnEvaluate.toXML());
             }
         }
 

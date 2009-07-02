@@ -22,7 +22,7 @@ public class AbortJobListener implements PacketListener {
     public void processPacket(Packet abortJob) {
 
 
-        XmppVirtualMachine.LOGGER.fine("Arrived CancelListener:");
+        XmppVirtualMachine.LOGGER.fine("Arrived " + AbortJobListener.class.getName());
         XmppVirtualMachine.LOGGER.fine(abortJob.toXML());
 
         AbortJob returnAbortJob = new AbortJob();
@@ -49,7 +49,7 @@ public class AbortJobListener implements PacketListener {
             }
         }
 
-        XmppVirtualMachine.LOGGER.fine("Sent CancelListener:");
+        XmppVirtualMachine.LOGGER.fine("Sent " + AbortJobListener.class.getName());
         XmppVirtualMachine.LOGGER.fine(returnAbortJob.toXML());
         vm.getConnection().sendPacket(returnAbortJob);
     }

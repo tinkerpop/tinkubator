@@ -30,7 +30,7 @@ public class SpawnVmListener implements PacketListener {
     }
 
     private void processPacketTemp(Packet spawnVm) {
-        XmppFarm.LOGGER.info("Arrived SpawnListener:");
+        XmppFarm.LOGGER.info("Arrived " + SpawnVmListener.class.getName());
         XmppFarm.LOGGER.info(spawnVm.toXML());
 
         SpawnVm returnSpawnVm = new SpawnVm();
@@ -62,7 +62,7 @@ public class SpawnVmListener implements PacketListener {
             }
         }
 
-        XmppFarm.LOGGER.info("Sent SpawnListener:");
+        XmppFarm.LOGGER.info("Sent " + SpawnVmListener.class.getName());
         XmppFarm.LOGGER.info(returnSpawnVm.toXML());
         farm.getConnection().sendPacket(returnSpawnVm);
     }

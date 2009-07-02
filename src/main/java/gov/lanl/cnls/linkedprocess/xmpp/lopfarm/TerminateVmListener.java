@@ -31,7 +31,7 @@ public class TerminateVmListener implements PacketListener {
     }
 
     private void processPacketTemp(Packet terminateVm) {
-        XmppFarm.LOGGER.info("Arrived DestroyListener:");
+        XmppFarm.LOGGER.info("Arrived " + TerminateVmListener.class.getName());
         XmppFarm.LOGGER.info(terminateVm.toXML());
 
         TerminateVm returnTerminateVm = new TerminateVm();
@@ -55,7 +55,7 @@ public class TerminateVmListener implements PacketListener {
             }
         }
 
-        XmppFarm.LOGGER.info("Sent DestroyListener:");
+        XmppFarm.LOGGER.info("Sent " + TerminateVmListener.class.getName());
         XmppFarm.LOGGER.info(returnTerminateVm.toXML());
         farm.getConnection().sendPacket(returnTerminateVm);
     }

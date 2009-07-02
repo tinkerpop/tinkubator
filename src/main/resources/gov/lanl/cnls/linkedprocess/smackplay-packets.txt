@@ -1,13 +1,13 @@
 1.1 Load up an XmppFarm: linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47
 
-    Farm starting -- SENT:
+    Farm starting -- sent from XmppFarm:
 
     <presence id="DU6gk-0">
       <status>LoP Farm v0.1 - starting</status>
       <priority>127</priority>
     </presence>
 
-    VMScheduler started -- SENT:
+    VMScheduler started -- sent from XmppFarm:
 
     <presence id="DU6gk-1">
       <status>LoP Farm v0.1 - active</status>
@@ -16,7 +16,7 @@
 
 1.2 Shutdown the XmppFarm
 
-    VMScheduler stopped -- SENT:
+    VMScheduler stopped -- sent from XmppFarm:
 
     <presence id="95LrE-2" type="unavailable">
       <status>LoP Farm v0.1 - terminating</status>
@@ -24,70 +24,133 @@
       <show>dnd</show>
     </presence>
 
-    XmppFarm stopped -- SENT:
+    XmppFarm stopped -- sent from XmppFarm:
 
     <presence id="95LrE-3" type="unavailable"></presence>
 
 
 2. Load up SmackPlay: linked.process.2@xmpp.linkedprocess.org/P9YR0JMR
 
-3. Send from SmackPlay-to-XmppFarm (Subscribe to the LoP Farm and add it to your buddy list)
+3. Subscribe to the LoP Farm
 
+    A subscription request is sent from SmackPlay-to-XmppFarm:
     <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="subscribe" />
 
-    RETURNED
-
-	the subscription is accepted
+	The subscription is accepted and sent from XmppFarm-to-SmackPlay:
     <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/P9YR0JMR" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="subscribed" />
 
-    request to subscribe in the the clients roster
+    A subscription request is sent from XmppFarm-to-SmackPlay:
     <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/P9YR0JMR" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="subscribe" />
 
-    the Farms status to the client:
-    <presence id="HHWQ7-2" to="mockClient"><status>LoP Farm v0.1</status><priority>127</priority></presence>
+    The XmppFarm's status is sent:
+    <presence id="HHWQ7-2" to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/P9YR0JMR">
+      <status>LoP Farm v0.1</status>
+      <priority>127</priority>
+    </presence>
 
-4. Send from SmackPlay-to-XmppFarm (Spawn an LoP virtual machine from the LoP Farm)
+4. Spawn an LoP virtual machine from the LoP Farm
 
+    GOOD REQUEST:
+
+    A sucessful request to spawn a "JavaScript" virtual machine is sent from SmackPlay-to-XmppFarm:
     <iq type="get" to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" id="T4tFi-X">
       <spawn_vm xmlns="http://linkedprocess.org/protocol#LoPFarm" vm_species="JavaScript" />
     </iq>
 
-    RETURNED
-
+    The result of a sucessful spawn is sent from XmppFarm-to-SmackPlay:
     <iq id="T4tFi-X" to="linked.process.2@xmpp.linkedprocess.org/P9YR0JMR" type="result" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47">
       <spawn_vm xmlns="http://linkedprocess.org/protocol#LoPFarm" vm_jid="linked.process.1@xmpp.linkedprocess.org/LoPVM/F0E4V2E6"/>
     </iq>
 
-5. Send SmackPlay-to-XmppVirtualMachine (Evaluate an expression on the LoP virtual machine)
+    BAD REQUESTS:
 
+    1a. An unsuccessful request to spawn a "JavaSc" virtual machine is sent from SmackPlay-to-XmppFarm:
+    <iq type="get" to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" id="T4tFi-X">
+      <spawn_vm xmlns="http://linkedprocess.org/protocol#LoPFarm" vm_species="JavaSc" />
+    </iq>
+
+    1b. The result of an unsucessful spawn is sent from XmppFarm-to-SmackPlay:
+    <iq id="T4tFi-X" to="linked.process.2@xmpp.linkedprocess.org/61HDAYC1" type="error">
+      <spawn_vm xmlns="http://linkedprocess.org/protocol#LoPFarm" error_type="species_not_supported">
+        script engine 'JavaSc' is not supported
+      </spawn_vm>
+    </iq>
+
+    2a. An unsuccessful request to spawn a non-declared species is sent from SmackPlay-to-XmppFarm:
+    <iq type="get" to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" id="T4tFi-X">
+      <spawn_vm xmlns="http://linkedprocess.org/protocol#LoPFarm" />
+    </iq>
+
+    2b. The result of an unsucessful spawn is sent from XmppFarm-to-SmackPlay:
+    <iq id="T4tFi-X" to="linked.process.2@xmpp.linkedprocess.org/61HDAYC1" type="error">
+      <spawn_vm xmlns="http://linkedprocess.org/protocol#LoPFarm" error_type="malformed_packet">
+        spawn_vm XML packet is missing the vm_species attribute
+      </spawn_vm>
+    </iq>
+
+
+5. Evaluate an expression on the LoP virtual machine
+
+    GOOD REQUEST:
+
+    A successful request to evaluate an expression is sent from SmackPlay-to-XmppVirtualMachine:
     <iq type="get" to="linked.process.1@xmpp.linkedprocess.org/LoPVM/YHC9ZGSK" id="bG23A-X">
       <evaluate xmlns="http://linkedprocess.org/protocol#LoPVM">
         20 + 52;
       </evaluate>
     </iq>
 
-    RETURNED
-
+    The result of a sucessful evaluation is sent from XmppVirtualMachine-to-SmackPlay
     <iq id="bG23A-X" to="linked.process.2@xmpp.linkedprocess.org/P9YR0JMR" type="result" from="linked.process.1@xmpp.linkedprocess.org/LoPVM/F0E4V2E6">
       <evaluate xmlns="http://linkedprocess.org/protocol#LoPVM">
         72.0
       </evaluate>
     </iq>
 
-6. Send from SmackPlay-to-XmppFarm (Terminate the LoP virtual machine)
+    BAD REQUESTS:
 
-    <iq type="get" to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" id="T4tFi-X">
-      <terminate_vm xmlns="http://linkedprocess.org/protocol#LoPFarm" vm_jid="linked.process.1@xmpp.linkedprocess.org/LoPVM/F0E4V2E6" />
+    1a. An unsuccessful request to evaluate a bad expression is sent from SmackPlay-to-XmppVirtualMachine:
+    <iq type="get" to="linked.process.1@xmpp.linkedprocess.org/LoPVM/YHC9ZGSK" id="bG23A-X">
+      <evaluate xmlns="http://linkedprocess.org/protocol#LoPVM">
+        asdf44 > 3s;
+      </evaluate>
     </iq>
 
-    RETURNED
+    1b. The result of an unsucessful evaluation is sent from XmppVirtualMachine-to-SmackPlay:
+    <iq id="bG23A-X" to="linked.process.2@xmpp.linkedprocess.org/P9YR0JMR" from="linked.process.1@xmpp.linkedprocess.org/LoPVM/YHC9ZGSK" type="error">
+      <evaluate xmlns="http://linkedprocess.org/protocol#LoPVM" error_type="evaluation_error"/>
+    </iq>
 
-    <iq id="T4tFi-X" to="linked.process.2@xmpp.linkedprocess.org/P9YR0JMR" type="get" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47">
+6. Terminate the LoP virtual machine
+
+    GOOD REQUEST:
+
+    A sucessful request to terminate a virtual machine is sent from SmackPlay-to-XmppFarm:
+    <iq type="get" to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" id="T4tFi-X">
+      <terminate_vm xmlns="http://linkedprocess.org/protocol#LoPFarm" vm_jid="linked.process.1@xmpp.linkedprocess.org/LoPVM/YHC9ZGSK" />
+    </iq>
+
+
+    <iq id="T4tFi-X" to="linked.process.2@xmpp.linkedprocess.org/61HDAYC1" type="get" from="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47">
       <terminate_vm xmlns="http://linkedprocess.org/protocol#LoPFarm"/>
     </iq>
 
+    BAD REQUESTS:
 
-7. Send from SmackPlay-to-XmppFarm (Unsubscribe from the LoP Farm and remove it from your buddy list)
+    An unsucessful request to terminate a non-existant virtual machine is sent from SmackPlay-to-XmppFarm:
+    <iq type="get" to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" id="T4tFi-X">
+      <terminate_vm xmlns="http://linkedprocess.org/protocol#LoPFarm" vm_jid="linked.process.1@xmpp.linkedprocess.org/LoPVM/D919M4EF" />
+    </iq>
+
+    The result of an unsucessful terminate request is sent from XmppFarm-to-SmackPlay:
+    <iq id="T4tFi-X" to="linked.process.2@xmpp.linkedprocess.org/XYF2QK47" type="error">
+      <terminate_vm xmlns="http://linkedprocess.org/protocol#LoPFarm" vm_jid="linked.process.1@xmpp.linkedprocess.org/LoPVM/D919M4EF" error_type="internal_error">
+        virtual machine 'linked.process.1@xmpp.linkedprocess.org/LoPVM/D919M4EF' does not exist
+      </terminate_vm>
+    </iq>
+
+
+7. Unsubscribe from the LoP Farm
 
     <presence to="linked.process.1@xmpp.linkedprocess.org/LoPFarm/XYF2QK47" type="unsubscribe" />
 

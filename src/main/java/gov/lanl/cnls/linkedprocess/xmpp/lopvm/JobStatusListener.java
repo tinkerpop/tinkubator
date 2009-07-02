@@ -20,7 +20,7 @@ public class JobStatusListener implements PacketListener {
 
     public void processPacket(Packet jobStatus) {
 
-            XmppVirtualMachine.LOGGER.fine("Arrived StatusListener:");
+            XmppVirtualMachine.LOGGER.fine("Arrived " + JobStatusListener.class.getName());
             XmppVirtualMachine.LOGGER.fine(jobStatus.toXML());
 
             JobStatus returnJobStatus = new JobStatus();
@@ -37,7 +37,7 @@ public class JobStatusListener implements PacketListener {
                 returnJobStatus.setType(IQ.Type.ERROR);
             }
 
-            XmppVirtualMachine.LOGGER.fine("Sent StatusListener:");
+            XmppVirtualMachine.LOGGER.fine("Sent " + JobStatusListener.class.getName());
             XmppVirtualMachine.LOGGER.fine(returnJobStatus.toXML());
             vm.getConnection().sendPacket(returnJobStatus);
 
