@@ -48,7 +48,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 		ServiceDiscoveryManager.class })
 // ignore fishy stuff
 @PowerMockIgnore( { "javax.script", "org.apache.log4j" })
-public class MockingTest {
+public class XMPPSpecificationTest {
 
 	private static String username1 = "linked.process.4@gmail.com";
 	private static String password1 = "linked45";
