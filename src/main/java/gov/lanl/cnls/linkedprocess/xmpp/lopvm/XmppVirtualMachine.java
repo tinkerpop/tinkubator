@@ -29,10 +29,12 @@ public class XmppVirtualMachine extends XmppClient {
     public static String RESOURCE_PREFIX = "LoPVM";
 
     protected XmppFarm farm;
+    protected String vmPassword;
 
-    public XmppVirtualMachine(final String server, final int port, final String username, final String password, XmppFarm farm) {
+    public XmppVirtualMachine(final String server, final int port, final String username, final String password, XmppFarm farm, final String vmPassword) {
 
         this.farm = farm;
+        this.vmPassword = vmPassword;
 
         LOGGER.info("Starting LoP virtual machine");
         // Registering the types of IQ packets/stanzas the the Lop VM can respond to.
@@ -40,6 +42,7 @@ public class XmppVirtualMachine extends XmppClient {
         pm.addIQProvider(LinkedProcess.EVALUATE_TAG, LinkedProcess.LOP_VM_NAMESPACE, new EvaluateProvider());
         pm.addIQProvider(LinkedProcess.JOB_STATUS_TAG, LinkedProcess.LOP_VM_NAMESPACE, new JobStatusProvider());
         pm.addIQProvider(LinkedProcess.ABORT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE, new AbortJobProvider());
+        pm.addIQProvider(LinkedProcess.TERMINATE_VM_TAG, LinkedProcess.LOP_VM_NAMESPACE, new TerminateVmProvider());
 
         try {
             this.logon(server, port, username, password);
@@ -53,10 +56,13 @@ public class XmppVirtualMachine extends XmppClient {
         PacketFilter evalFilter = new AndFilter(new PacketTypeFilter(Evaluate.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter statusFilter = new AndFilter(new PacketTypeFilter(JobStatus.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter abandonFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new IQTypeFilter(IQ.Type.GET));
+        PacketFilter terminateFilter = new AndFilter(new PacketTypeFilter(TerminateVm.class), new IQTypeFilter(IQ.Type.GET));
 
         connection.addPacketListener(new EvaluateListener(this), evalFilter);
         connection.addPacketListener(new JobStatusListener(this), statusFilter);
         connection.addPacketListener(new AbortJobListener(this), abandonFilter);
+        connection.addPacketListener(new TerminateVmListener(this), terminateFilter);
+
     }
 
     protected void logon(String server, int port, String username, String password) throws XMPPException {
@@ -98,6 +104,18 @@ public class XmppVirtualMachine extends XmppClient {
     protected void initiateFeatures() {
         super.initiateFeatures();
         discoManager.addFeature(LinkedProcess.LOP_VM_NAMESPACE);
+    }
+
+    protected void terminateSelf() throws VMWorkerNotFoundException  {
+        this.farm.getScheduler().terminateVirtualMachine(this.getFullJid()); 
+    }
+
+    public boolean checkVmPassword(String vmPassword) {
+        return this.vmPassword.equals(vmPassword);
+    }
+
+    public String getVmPassword() {
+        return this.vmPassword;
     }
 
 }

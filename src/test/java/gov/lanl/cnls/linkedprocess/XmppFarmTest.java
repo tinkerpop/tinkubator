@@ -3,7 +3,7 @@ package gov.lanl.cnls.linkedprocess;
 import static org.junit.Assert.assertTrue;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.SpawnVm;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
-import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.TerminateVm;
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.TerminateVm;
 import gov.lanl.cnls.linkedprocess.xmpp.tools.XmppTestClient;
 
 import org.jivesoftware.smack.XMPPConnection;

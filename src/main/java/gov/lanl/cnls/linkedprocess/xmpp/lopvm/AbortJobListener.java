@@ -29,10 +29,24 @@ public class AbortJobListener implements PacketListener {
         returnAbortJob.setTo(abortJob.getFrom());
         returnAbortJob.setPacketID(abortJob.getPacketID());
         String jobId = ((AbortJob) abortJob).getJobId();
+        String vmPassword = ((AbortJob) abortJob).getJobId();
 
-        if(null == jobId) {
+        if(null == vmPassword || null == jobId) {
             returnAbortJob.setErrorType(LinkedProcess.Errortype.MALFORMED_PACKET);
-            returnAbortJob.setErrorMessage("abort_job XML packet is missing the job_id attribute");
+            String errorMessage = new String();
+            if(null == vmPassword) {
+                errorMessage = "abort_job XML packet is missing the vm_password attribute";
+            }
+            if(null == jobId) {
+                if(errorMessage.length() > 0)
+                    errorMessage = errorMessage + "\n";
+                errorMessage = errorMessage + "abort_job XML packet is missing the job_id attribute";
+            }
+            if(errorMessage.length() > 0)
+                returnAbortJob.setErrorMessage(errorMessage);
+            returnAbortJob.setType(IQ.Type.ERROR);
+        } else if(!this.vm.checkVmPassword(vmPassword)) {
+            returnAbortJob.setErrorType(LinkedProcess.Errortype.WRONG_VM_PASSWORD);
             returnAbortJob.setType(IQ.Type.ERROR);
         } else {
             try {

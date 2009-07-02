@@ -23,6 +23,9 @@ public class JobStatus extends VirtualMachineIq {
     public String getChildElementXML() {
 
         Element jobStatusElement = new Element(LinkedProcess.JOB_STATUS_TAG, LinkedProcess.LOP_VM_NAMESPACE);
+        if(this.vmPassword != null) {
+            jobStatusElement.setAttribute(LinkedProcess.VM_PASSWORD_ATTRIBUTE, this.vmPassword);
+        }
         if(this.jobId != null) {
             jobStatusElement.setAttribute(LinkedProcess.JOB_ID_ATTRIBUTE, this.jobId);
         }

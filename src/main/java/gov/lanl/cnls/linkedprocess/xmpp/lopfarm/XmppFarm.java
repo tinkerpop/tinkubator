@@ -8,6 +8,9 @@ import gov.lanl.cnls.linkedprocess.os.errors.VMSchedulerIsFullException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.TerminateVm;
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.TerminateVmListener;
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.TerminateVmProvider;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
@@ -60,7 +63,6 @@ public class XmppFarm extends XmppClient {
 
         ProviderManager pm = ProviderManager.getInstance();
         pm.addIQProvider(LinkedProcess.SPAWN_VM_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new SpawnVmProvider());
-        pm.addIQProvider(LinkedProcess.TERMINATE_VM_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new TerminateVmProvider());
 
         try {
             this.logon(server, port, username, password);
@@ -78,10 +80,8 @@ public class XmppFarm extends XmppClient {
         this.machines = new HashMap<String, XmppVirtualMachine>();
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new IQTypeFilter(IQ.Type.GET));
-        PacketFilter destroyFilter = new AndFilter(new PacketTypeFilter(TerminateVm.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter subscribeFilter = new AndFilter(new PacketTypeFilter(Presence.class), new PresenceSubscriptionFilter());
         connection.addPacketListener(new SpawnVmListener(this), spawnFilter);
-        connection.addPacketListener(new TerminateVmListener(this), destroyFilter);
         connection.addPacketListener(new PresenceSubscriptionListener(this), subscribeFilter);
     }
 
@@ -111,8 +111,8 @@ public class XmppFarm extends XmppClient {
         return this.scheduler;
     }
 
-    public String spawnVirtualMachine(String vmSpecies) throws VMAlreadyExistsException, VMSchedulerIsFullException, UnsupportedScriptEngineException {
-        XmppVirtualMachine vm = new XmppVirtualMachine(this.getServer(), this.getPort(), this.getUsername(), this.getPassword(), this);
+    public XmppVirtualMachine spawnVirtualMachine(String vmSpecies) throws VMAlreadyExistsException, VMSchedulerIsFullException, UnsupportedScriptEngineException {
+        XmppVirtualMachine vm = new XmppVirtualMachine(this.getServer(), this.getPort(), this.getUsername(), this.getPassword(), this, XmppClient.generateRandomPassword());
         String fullJid = vm.getFullJid();
         boolean exceptionThrown = true;
         try {
@@ -126,7 +126,7 @@ public class XmppFarm extends XmppClient {
              this.machines.put(fullJid, vm);
         }
 
-        return fullJid;
+        return vm;
     }
 
     public void terminateVirtualMachine(String vmJid) throws VMWorkerNotFoundException {

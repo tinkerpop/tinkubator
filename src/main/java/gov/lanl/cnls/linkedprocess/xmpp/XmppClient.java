@@ -58,7 +58,7 @@ public abstract class XmppClient {
         this.connection.connect();
 
         LOGGER.info("Connected to " + connection.getHost());
-        connection.login(username, password, resource + LinkedProcess.FORWARD_SLASH + XmppClient.generatedRandomID());
+        connection.login(username, password, resource + LinkedProcess.FORWARD_SLASH + XmppClient.generateRandomID());
         LOGGER.info("Logged in as " + connection.getUser());
   
         Thread shutdownHook = new Thread(new Runnable() {
@@ -140,7 +140,7 @@ public abstract class XmppClient {
         return this.roster;
     }
 
-    public static String generatedRandomID() {
+    public static String generateRandomID() {
         // e.g. from gtalk 6D56433B
         Random random = new Random();
         StringBuilder b = new StringBuilder();
@@ -153,5 +153,9 @@ public abstract class XmppClient {
 
         }
         return b.toString();
+    }
+
+    public static String generateRandomPassword() {
+        return XmppClient.generateRandomID();
     }
 }

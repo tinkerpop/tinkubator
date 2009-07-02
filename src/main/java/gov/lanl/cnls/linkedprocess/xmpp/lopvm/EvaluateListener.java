@@ -38,15 +38,41 @@ public class EvaluateListener implements PacketListener {
         String expression = ((Evaluate) evaluate).getExpression();
         String iqId = evaluate.getPacketID();
         String appJid = evaluate.getFrom();
+        String vmPassword = ((Evaluate)evaluate).getVmPassword();
 
-        if(null == expression) {
+        if(null == vmPassword || null == expression) {
             Evaluate returnEvaluate = new Evaluate();
             returnEvaluate.setTo(evaluate.getFrom());
             returnEvaluate.setPacketID(evaluate.getPacketID());
             returnEvaluate.setErrorType(LinkedProcess.Errortype.MALFORMED_PACKET);
-            returnEvaluate.setErrorMessage("evaluate XML stanza is missing the expression text body");
+            String errorMessage = new String();
+            if(null == vmPassword) {
+                errorMessage = "evaluate XML packet is missing the vm_password attribute";
+            }
+            if(null == expression) {
+                if(errorMessage.length() > 0)
+                    errorMessage = errorMessage + "\n";
+                errorMessage = errorMessage + "evaluate XML stanza is missing the expression text body";
+            }
+            if(errorMessage.length() > 0)
+                returnEvaluate.setErrorMessage(errorMessage);
             returnEvaluate.setType(IQ.Type.ERROR);
             vm.getConnection().sendPacket(returnEvaluate);
+
+            XmppVirtualMachine.LOGGER.info("Sent " + EvaluateListener.class.getName());
+            XmppVirtualMachine.LOGGER.info(returnEvaluate.toXML());
+
+        } else if(!this.vm.checkVmPassword(vmPassword)) {
+            Evaluate returnEvaluate = new Evaluate();
+            returnEvaluate.setTo(evaluate.getFrom());
+            returnEvaluate.setPacketID(evaluate.getPacketID());
+            returnEvaluate.setErrorType(LinkedProcess.Errortype.WRONG_VM_PASSWORD);
+            returnEvaluate.setType(IQ.Type.ERROR);
+            vm.getConnection().sendPacket(returnEvaluate);
+
+            XmppVirtualMachine.LOGGER.info("Sent " + EvaluateListener.class.getName());
+            XmppVirtualMachine.LOGGER.info(returnEvaluate.toXML());
+
         } else {
             Job job = new Job(vm.getFullJid(), appJid, iqId, expression);
             try {

@@ -3,6 +3,7 @@ package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.xmlpull.v1.XmlPullParser;
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
 /**
  * User: marko
@@ -12,12 +13,18 @@ import org.xmlpull.v1.XmlPullParser;
 public class EvaluateProvider implements IQProvider {
 
     public IQ parseIQ(XmlPullParser parser) throws Exception {
-        Evaluate eval = new Evaluate();
+        Evaluate evaluate = new Evaluate();
+
+        String vmPassword = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VM_PASSWORD_ATTRIBUTE);
+        if(null != vmPassword) {
+            evaluate.setVmPassword(vmPassword);
+        }
+
         int v = parser.next();
         if(v == XmlPullParser.TEXT) {
-            eval.setExpression(parser.getText());
+            evaluate.setExpression(parser.getText());
             parser.next();
         }
-        return eval;
+        return evaluate;
     }
 }

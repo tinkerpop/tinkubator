@@ -11,7 +11,7 @@ public class SmackPlay {
     // this is a development and testing account. please don't use for any other purposes.
     private static String username = "linked.process.2@xmpp.linkedprocess.org";
     private static String password = "linked23";
-    private static String resource = XmppClient.generatedRandomID();
+    private static String resource = XmppClient.generateRandomID();
         
     public static void main(String[] args) throws Exception {
 

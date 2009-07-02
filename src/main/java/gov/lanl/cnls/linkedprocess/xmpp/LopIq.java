@@ -12,6 +12,7 @@ public abstract class LopIq extends IQ {
 
     protected LinkedProcess.Errortype errorType;
     protected String errorMessage;
+    protected String vmPassword;
 
     public void setErrorType(LinkedProcess.Errortype errorType) {
         this.errorType = errorType;
@@ -27,6 +28,14 @@ public abstract class LopIq extends IQ {
 
     public String getErrorMessage() {
         return this.errorMessage;
+    }
+
+    public void setVmPassword(String vmPassword) {
+        this.vmPassword = vmPassword;
+    }
+
+    public String getVmPassword() {
+        return this.vmPassword;
     }
 
 }

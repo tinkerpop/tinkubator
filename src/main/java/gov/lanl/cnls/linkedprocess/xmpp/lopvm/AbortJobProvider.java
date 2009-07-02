@@ -21,6 +21,10 @@ public class AbortJobProvider implements IQProvider {
         if(null != jobId) {
             abortJob.setJobId(jobId);
         }
+        String vmPassword = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VM_PASSWORD_ATTRIBUTE);
+        if(null != vmPassword) {
+            abortJob.setVmPassword(vmPassword);
+        }
         parser.next();
         return abortJob;
     }

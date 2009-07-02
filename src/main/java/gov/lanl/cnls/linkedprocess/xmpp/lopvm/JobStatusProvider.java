@@ -18,6 +18,10 @@ public class JobStatusProvider implements IQProvider {
         if(null != jobId) {
             jobStatus.setJobId(jobId);
         }
+        String vmPassword = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VM_PASSWORD_ATTRIBUTE);
+        if(null != vmPassword) {
+            jobStatus.setVmPassword(vmPassword);
+        }
         parser.next();
         return jobStatus;
     }

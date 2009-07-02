@@ -1,7 +1,5 @@
 package gov.lanl.cnls.linkedprocess;
 
-import org.junit.Test;
-
 import junit.framework.TestCase;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 
@@ -22,7 +20,7 @@ public class XmppClientTest extends TestCase {
 
     public void testJidConversion() {
         assertEquals(XmppClient.generateBareJid("linked.process.1@gmail.com/test/12345"), username);
-        assertEquals(XmppClient.generateBareJid("lop1@xmpp.linkedprocess.org/test/" + XmppClient.generatedRandomID()), "lop1@xmpp.linkedprocess.org");
+        assertEquals(XmppClient.generateBareJid("lop1@xmpp.linkedprocess.org/test/" + XmppClient.generateRandomID()), "lop1@xmpp.linkedprocess.org");
 
     }
 
@@ -30,8 +28,8 @@ public class XmppClientTest extends TestCase {
         // 1,000,000 random IDs are generated without conflict.
         Set<String> uniques = new HashSet<String>();
         for(int i=0; i<1000000; i++) {
-            //System.out.println(XmppClient.generatedRandomID());
-            uniques.add(XmppClient.generatedRandomID());
+            //System.out.println(XmppClient.generateRandomID());
+            uniques.add(XmppClient.generateRandomID());
         }
         assertEquals(uniques.size(), 1000000);
     }

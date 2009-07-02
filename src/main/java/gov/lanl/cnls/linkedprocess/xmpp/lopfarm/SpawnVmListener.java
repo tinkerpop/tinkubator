@@ -4,6 +4,7 @@ import gov.lanl.cnls.linkedprocess.os.errors.UnsupportedScriptEngineException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMAlreadyExistsException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMSchedulerIsFullException;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
@@ -36,7 +37,6 @@ public class SpawnVmListener implements PacketListener {
         SpawnVm returnSpawnVm = new SpawnVm();
         returnSpawnVm.setTo(spawnVm.getFrom());
         returnSpawnVm.setPacketID(spawnVm.getPacketID());
-        String vmJid;
         String vmSpecies = ((SpawnVm) spawnVm).getVmSpecies();
         if(vmSpecies == null) {
             returnSpawnVm.setErrorType(LinkedProcess.Errortype.MALFORMED_PACKET);
@@ -44,8 +44,9 @@ public class SpawnVmListener implements PacketListener {
             returnSpawnVm.setType(IQ.Type.ERROR);
         } else {
             try {
-                vmJid = farm.spawnVirtualMachine(vmSpecies);
-                returnSpawnVm.setVmJid(vmJid);
+                XmppVirtualMachine vm = farm.spawnVirtualMachine(vmSpecies);
+                returnSpawnVm.setVmJid(vm.getFullJid());
+                returnSpawnVm.setVmPassword(vm.getVmPassword());
                 returnSpawnVm.setType(IQ.Type.RESULT);
             } catch (VMAlreadyExistsException e) {
                 returnSpawnVm.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);

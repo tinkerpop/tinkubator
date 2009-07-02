@@ -57,6 +57,7 @@ public class LinkedProcess {
     }
 
     public enum Errortype {
+        WRONG_VM_PASSWORD("wrong_vm_password"),
         MALFORMED_PACKET("malformed_packet"), // when a received packet is not as expected
         EVALUATION_ERROR("evaluation_error"),
         INTERNAL_ERROR("internal_error"), // VMAlreadyExistsException, VMWorkerNotFoundException
@@ -93,6 +94,7 @@ public class LinkedProcess {
     // attribute names
     public static final String VM_SPECIES_ATTRIBUTE = "vm_species";
     public static final String VM_JID_ATTRIBUTE = "vm_jid";
+    public static final String VM_PASSWORD_ATTRIBUTE = "vm_password";
     // Lop VM XMPP tag and attribute names
     // tag names
     public static final String EVALUATE_TAG = "evaluate";

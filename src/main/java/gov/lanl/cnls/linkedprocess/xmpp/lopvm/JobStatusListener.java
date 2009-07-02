@@ -26,15 +26,24 @@ public class JobStatusListener implements PacketListener {
             JobStatus returnJobStatus = new JobStatus();
             returnJobStatus.setTo(jobStatus.getFrom());
             returnJobStatus.setPacketID(jobStatus.getPacketID());
+            String vmPassword = ((JobStatus)jobStatus).getVmPassword();
 
-
-            try {
-                returnJobStatus.setValue(this.vm.getJobStatus(((JobStatus)jobStatus).getJobId()));
-                returnJobStatus.setType(IQ.Type.RESULT);
-            } catch(VMWorkerNotFoundException e) {
-                returnJobStatus.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
-                returnJobStatus.setErrorMessage(e.getMessage());
+            if(null == vmPassword) {
+                returnJobStatus.setErrorType(LinkedProcess.Errortype.MALFORMED_PACKET);
+                returnJobStatus.setErrorMessage("job_status XML packet is missing the vm_password attribute");
                 returnJobStatus.setType(IQ.Type.ERROR);
+            } else if(!this.vm.checkVmPassword(vmPassword)) {
+                returnJobStatus.setErrorType(LinkedProcess.Errortype.WRONG_VM_PASSWORD);
+                returnJobStatus.setType(IQ.Type.ERROR);
+            } else {
+                try {
+                    returnJobStatus.setValue(this.vm.getJobStatus(((JobStatus)jobStatus).getJobId()));
+                    returnJobStatus.setType(IQ.Type.RESULT);
+                } catch(VMWorkerNotFoundException e) {
+                    returnJobStatus.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
+                    returnJobStatus.setErrorMessage(e.getMessage());
+                    returnJobStatus.setType(IQ.Type.ERROR);
+                }
             }
 
             XmppVirtualMachine.LOGGER.fine("Sent " + JobStatusListener.class.getName());

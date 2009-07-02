@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess.xmpp.lopfarm;
+package gov.lanl.cnls.linkedprocess.xmpp.lopvm;
 
 import org.jivesoftware.smack.provider.IQProvider;
 import org.jivesoftware.smack.packet.IQ;
@@ -18,10 +18,12 @@ public class TerminateVmProvider implements IQProvider {
     public IQ parseIQ(XmlPullParser parser) throws IOException, XmlPullParserException {
 
         TerminateVm terminateVm = new TerminateVm();
-        String vmJid = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VM_JID_ATTRIBUTE);
-        if(null != vmJid) {
-            terminateVm.setVmJid(vmJid);
+ 
+        String vmPassword = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VM_PASSWORD_ATTRIBUTE);
+        if(null != vmPassword) {
+            terminateVm.setVmPassword(vmPassword);
         }
+
         parser.next();
         return terminateVm;
     }
