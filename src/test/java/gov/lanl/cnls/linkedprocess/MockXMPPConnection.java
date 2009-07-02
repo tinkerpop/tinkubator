@@ -23,7 +23,7 @@ public class MockXMPPConnection extends XMPPConnectionWrapper{
 	private String username;
 	private String password;
 	private String resource;
-	public ArrayList<Packet> sentPackets = new ArrayList<Packet>();
+	public ArrayList<Packet> sentPackets;
 	private Roster mockRoster;
 	public ArrayList<PacketListener> packetListeners = new ArrayList<PacketListener>();
 	private XMPPConnection xmppConnection;
@@ -33,6 +33,7 @@ public class MockXMPPConnection extends XMPPConnectionWrapper{
 		logger.fine(id);
 		host=connConfig.getHost();
 		port=connConfig.getPort();
+		sentPackets = new ArrayList<Packet>();
 	}
 
 	@Override
@@ -125,8 +126,8 @@ public class MockXMPPConnection extends XMPPConnectionWrapper{
 
 	@Override
 	public void sendPacket(Packet packet) {
-		logger.fine("adding " + packet.toXML());
 		sentPackets.add(packet);
+		logger.fine(id + ": adding " + packet.toXML());
 		
 	}
 
@@ -137,7 +138,7 @@ public class MockXMPPConnection extends XMPPConnectionWrapper{
 
 	public void clearPackets() {
 		sentPackets.clear();
-//		packetListeners.clear();
+		logger.fine("clearing packets");
 	}
 
 

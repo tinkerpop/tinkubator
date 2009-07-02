@@ -69,7 +69,10 @@ public class JobResult {
         Evaluate returnEval = new Evaluate();
         returnEval.setTo(job.getAppJid());
         returnEval.setPacketID(job.getJobId());
-        String msg = exception.getMessage();
+        String msg = "";
+        if(exception!=null) {
+        	exception.getMessage();
+        }
 
         switch (type) {
             case ABORTED:
