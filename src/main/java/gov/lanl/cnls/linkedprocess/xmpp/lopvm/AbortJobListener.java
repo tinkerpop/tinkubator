@@ -29,7 +29,7 @@ public class AbortJobListener implements PacketListener {
         returnAbortJob.setTo(abortJob.getFrom());
         returnAbortJob.setPacketID(abortJob.getPacketID());
         String jobId = ((AbortJob) abortJob).getJobId();
-        String vmPassword = ((AbortJob) abortJob).getJobId();
+        String vmPassword = ((AbortJob) abortJob).getVmPassword();
 
         if(null == vmPassword || null == jobId) {
             returnAbortJob.setErrorType(LinkedProcess.Errortype.MALFORMED_PACKET);
