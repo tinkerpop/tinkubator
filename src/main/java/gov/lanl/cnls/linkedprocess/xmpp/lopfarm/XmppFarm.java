@@ -36,7 +36,9 @@ public class XmppFarm extends XmppClient {
     public static final String RESOURCE_PREFIX = "LoPFarm";
     public static final String STATUS_MESSAGE = "LoP Farm v0.1";
 	public static final String STATUS_MESSAGE_STARTING = STATUS_MESSAGE + " - starting";
-	public static final String STATUS_MESSAGE_TERMINATING = STATUS_MESSAGE + " - terminating";
+	public static final String STATUS_MESSAGE_ACTIVE = STATUS_MESSAGE + " - active";
+    public static final String STATUS_MESSAGE_FULL = STATUS_MESSAGE + " - full";
+    public static final String STATUS_MESSAGE_TERMINATING = STATUS_MESSAGE + " - terminating";
 
 
     protected final Map<String, XmppVirtualMachine> machines;
@@ -93,9 +95,9 @@ public class XmppFarm extends XmppClient {
         	case STARTING:
         		return new Presence(Presence.Type.available, STATUS_MESSAGE_STARTING, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
         	case ACTIVE:
-                return new Presence(Presence.Type.available, STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
+                return new Presence(Presence.Type.available, STATUS_MESSAGE_ACTIVE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
             case ACTIVE_FULL:
-                return new Presence(Presence.Type.available, STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.dnd);
+                return new Presence(Presence.Type.available, STATUS_MESSAGE_FULL, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.dnd);
             case TERMINATING:
                 return new Presence(Presence.Type.unavailable, STATUS_MESSAGE_TERMINATING, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.dnd);
             case TERMINATED:

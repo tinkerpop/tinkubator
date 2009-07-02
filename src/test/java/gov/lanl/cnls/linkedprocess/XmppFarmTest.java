@@ -97,7 +97,7 @@ public class XmppFarmTest extends TestCase {
         assertTrue(spawnString.contains("vm_species=\"lop:vm:javascript\""));
     }
 
-    public void testDestroyTag() throws Exception {
+    public void testTerminateTag() throws Exception {
         TerminateVm terminateVm = new TerminateVm();
         terminateVm.setVmJid("lp1@gmail.com");
         String destroyString = terminateVm.getChildElementXML();

@@ -90,15 +90,17 @@ public class XMPPSpecificationTest {
 		subscriptionListener.processPacket(subscriptionPacket);
 		assertEquals(3, sentPackets.size());
 		// subscription acc
-		assertEquals(Presence.Type.subscribed, ((Presence) sentPackets.get(0))
-				.getType());
+		Presence p0 = (Presence) sentPackets.get(0);
+        assertEquals(Presence.Type.subscribed, p0.getType());
 		// subscribe request to the client
-		assertEquals(Presence.Type.subscribe, ((Presence) sentPackets.get(1))
-				.getType());
-		// Farm status
-		assertEquals(Presence.Type.available, ((Presence) sentPackets.get(2))
-				.getType());
-		xmppFarm.shutDown();
+        Presence p1 = (Presence) sentPackets.get(1);
+        assertEquals(Presence.Type.subscribe, p1.getType());
+        // Farm status
+		Presence p2 = (Presence) sentPackets.get(2);
+        assertEquals(Presence.Type.available, p2.getType());
+        assertEquals(p2.getPriority(), LinkedProcess.HIGHEST_PRIORITY);
+        assertEquals(p2.getStatus(), XmppFarm.STATUS_MESSAGE_ACTIVE);
+        xmppFarm.shutDown();
 
 	}
 
@@ -125,7 +127,7 @@ public class XMPPSpecificationTest {
 		// scheduler started
 		assertEquals(Presence.Type.available, ((Presence) sentPackets.get(1))
 				.getType());
-		assertEquals(XmppFarm.STATUS_MESSAGE, ((Presence) sentPackets.get(1))
+		assertEquals(XmppFarm.STATUS_MESSAGE_ACTIVE, ((Presence) sentPackets.get(1))
 				.getStatus());
 		assertEquals(LinkedProcess.HIGHEST_PRIORITY, ((Presence) sentPackets
 				.get(1)).getPriority());
