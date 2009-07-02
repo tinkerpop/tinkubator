@@ -1,16 +1,5 @@
 package gov.lanl.cnls.linkedprocess;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.isA;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.expectNew;
-import static org.powermock.api.easymock.PowerMock.mockStatic;
-import static org.powermock.api.easymock.PowerMock.replayAll;
-import static org.powermock.api.easymock.PowerMock.verifyAll;
 import gov.lanl.cnls.linkedprocess.xmpp.XMPPConnectionWrapper;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.PresenceSubscriptionListener;
@@ -22,11 +11,9 @@ import gov.lanl.cnls.linkedprocess.xmpp.lopvm.AbortJobListener;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.EvaluateListener;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.JobStatusListener;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.isA;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
@@ -36,12 +23,24 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.junit.After;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.expectNew;
+import static org.powermock.api.easymock.PowerMock.mockStatic;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( { XmppFarm.class, XmppClient.class,
@@ -145,8 +144,8 @@ public class XMPPSpecificationTest {
 		// scheduler shut down
 		assertEquals(Presence.Type.unavailable, ((Presence) sentPackets.get(2))
 				.getType());
-		assertEquals(XmppFarm.STATUS_MESSAGE_TERMINATING,
-				((Presence) sentPackets.get(2)).getStatus());
+        assertEquals(XmppFarm.STATUS_MESSAGE_TERMINATING,
+                ((Presence) sentPackets.get(2)).getStatus());
 		assertEquals(LinkedProcess.HIGHEST_PRIORITY, ((Presence) sentPackets
 				.get(2)).getPriority());
 		// The Farm terminated
