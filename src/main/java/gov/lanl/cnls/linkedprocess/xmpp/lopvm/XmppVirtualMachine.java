@@ -94,7 +94,7 @@ public class XmppVirtualMachine extends XmppClient {
         this.farm.getScheduler().abortJob(this.getFullJid(), jobId);
     }
 
-    public LinkedProcess.JobStatus getJobStatus(String jobId) throws VMWorkerNotFoundException {
+    public LinkedProcess.JobStatus getJobStatus(String jobId) throws VMWorkerNotFoundException, JobNotFoundException {
         return this.farm.getScheduler().getJobStatus(this.getFullJid(), jobId);
     }
 

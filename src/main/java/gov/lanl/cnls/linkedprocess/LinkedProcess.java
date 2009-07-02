@@ -14,7 +14,7 @@ import java.io.IOException;
 public class LinkedProcess {
     // TODO: how about a "queued" status for jobs?
     public enum JobStatus {
-        IN_PROGRESS("in_progress"), DOES_NOT_EXIST("does_not_exist");
+        IN_PROGRESS("in_progress");
 
         private final String name;
 
