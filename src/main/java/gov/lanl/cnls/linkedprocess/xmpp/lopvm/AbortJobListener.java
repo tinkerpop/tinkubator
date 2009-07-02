@@ -33,7 +33,7 @@ public class AbortJobListener implements PacketListener {
 
         if(null == vmPassword || null == jobId) {
             returnAbortJob.setErrorType(LinkedProcess.Errortype.MALFORMED_PACKET);
-            String errorMessage = new String();
+            String errorMessage = "";
             if(null == vmPassword) {
                 errorMessage = "abort_job XML packet is missing the vm_password attribute";
             }
