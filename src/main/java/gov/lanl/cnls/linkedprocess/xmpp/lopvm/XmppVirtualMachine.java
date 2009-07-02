@@ -37,7 +37,7 @@ public class XmppVirtualMachine extends XmppClient {
         this.farm = farm;
         this.vmPassword = vmPassword;
 
-        LOGGER.info("Starting LoP virtual machine");
+        LOGGER.info("Starting LoP virtual machine - password:" + vmPassword);
         // Registering the types of IQ packets/stanzas the the Lop VM can respond to.
         ProviderManager pm = ProviderManager.getInstance();
         pm.addIQProvider(LinkedProcess.EVALUATE_TAG, LinkedProcess.LOP_VM_NAMESPACE, new EvaluateProvider());
