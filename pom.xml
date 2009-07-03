@@ -86,6 +86,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!--
         <dependency>
             <groupId>jsr223-engines</groupId>
             <artifactId>beanshell-engine</artifactId>
@@ -195,7 +196,7 @@
             <groupId>jsr223-engines</groupId>
             <artifactId>xslt-engine</artifactId>
             <version>xxx</version>
-        </dependency>
+        </dependency> -->
 
     </dependencies>
 
@@ -216,11 +217,11 @@
             <name>it.su.se Maven repository (for smackx-debug)</name>
             <url>http://maven.it.su.se/it.su.se/maven2</url>
         </repository>
-        <repository>
+        <!--<repository>
             <id>fortytwo</id>
             <name>fortytwo.net Maven repository</name>
             <url>http://fortytwo.net/maven2</url>
-        </repository>
+        </repository>-->
     </repositories>
 
     <build>
