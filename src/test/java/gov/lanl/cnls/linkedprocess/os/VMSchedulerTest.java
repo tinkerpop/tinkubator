@@ -273,6 +273,14 @@ public class VMSchedulerTest extends TestCase {
         }
     }
 
+    public void testJobStatus() throws Exception {
+        scheduler = new VMScheduler(resultHandler, eventHandler);
+         String vm1 = randomJID();
+        scheduler.spawnVirtualMachine(vm1, VM_TYPE);
+        
+        scheduler.shutDown();
+    }
+
     public void testStatusErrors() throws Exception {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
