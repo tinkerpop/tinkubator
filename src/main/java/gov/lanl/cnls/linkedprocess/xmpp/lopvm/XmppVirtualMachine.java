@@ -108,7 +108,7 @@ public class XmppVirtualMachine extends XmppClient {
     }
 
     protected void terminateSelf() throws VMWorkerNotFoundException  {
-        this.farm.getScheduler().terminateVirtualMachine(this.getFullJid()); 
+        this.farm.terminateVirtualMachine(this.getFullJid());
     }
 
     public boolean checkVmPassword(String vmPassword) {
