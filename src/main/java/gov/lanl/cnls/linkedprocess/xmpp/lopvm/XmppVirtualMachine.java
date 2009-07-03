@@ -16,6 +16,7 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smackx.ServiceDiscoveryManager;
 
 import java.util.logging.Logger;
 
@@ -104,6 +105,8 @@ public class XmppVirtualMachine extends XmppClient {
 
     protected void initiateFeatures() {
         super.initiateFeatures();
+        ServiceDiscoveryManager.setIdentityName(RESOURCE_PREFIX);
+        ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
         discoManager.addFeature(LinkedProcess.LOP_VM_NAMESPACE);
     }
 

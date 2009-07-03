@@ -20,11 +20,20 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smackx.NodeInformationProvider;
+import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.packet.DataForm;
 
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -59,7 +68,7 @@ public class XmppFarm extends XmppClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        LOGGER.info("Starting LoP farm");
+        LOGGER.info("Starting " + STATUS_MESSAGE);
 
         ProviderManager pm = ProviderManager.getInstance();
         pm.addIQProvider(LinkedProcess.SPAWN_VM_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new SpawnVmProvider());
@@ -161,6 +170,28 @@ public class XmppFarm extends XmppClient {
 
     protected void initiateFeatures() {
         super.initiateFeatures();
+        ServiceDiscoveryManager.setIdentityName(RESOURCE_PREFIX);
+        ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
         discoManager.addFeature(LinkedProcess.LOP_FARM_NAMESPACE);
+
+        ScriptEngineManager manager = new ScriptEngineManager();
+        List<ScriptEngineFactory> factories = manager.getEngineFactories();
+        for (ScriptEngineFactory factory : factories) {
+            String engName = factory.getEngineName();
+            String engVersion = factory.getEngineVersion();
+            String langName = factory.getLanguageName();
+            String langVersion = factory.getLanguageVersion();
+            String feature = "lop:" + engName + "-" + engVersion + "/" + langName + "-" + langVersion;
+            discoManager.addFeature(feature);
+        }
+
+        /*DataForm form = new DataForm("supported VMS");
+        FormField field = new FormField("1234");
+        field.setRequired(false);
+        field.setLabel("JavaScript");
+        ArrayList<FormField> list = new ArrayList<FormField>();
+        list.add(field);
+        form.addItem(new DataForm.Item(list));*/
+        
     }
 }
