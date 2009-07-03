@@ -74,12 +74,10 @@ public class XMPPSpecificationTest {
 		assertEquals(2, sentPackets.size());
 		// get rid of the startup stuff
 		mockFarmConn.clearPackets();
-		// now we should have 3 PacketListeners to the Farms XMPP connection
 		ArrayList<PacketListener> packetListeners = mockFarmConn.packetListeners;
-		assertEquals(packetListeners.size(), 3);
-		// third registered listener should be our SpawnListener
+		// second registered listener should be our SpawnListener
 		PresenceSubscriptionListener subscriptionListener = (PresenceSubscriptionListener) packetListeners
-				.get(2);
+				.get(1);
 		Presence subscriptionPacket = new Presence(Presence.Type.subscribe);
 		subscriptionPacket.setTo(mockFarmId);
 		subscriptionPacket.setFrom(mockClient);
@@ -128,12 +126,11 @@ public class XMPPSpecificationTest {
 		assertEquals(LinkedProcess.HIGHEST_PRIORITY, ((Presence) sentPackets
 				.get(1)).getPriority());
 
-		// now we should have 3 PacketListeners to the Farms XMPP connection
+		// now we should have 2 PacketListeners to the Farms XMPP connection
 		ArrayList<PacketListener> packetListeners = mockFarmConn.packetListeners;
-		assertTrue(packetListeners.size() == 3);
+		assertEquals(2, packetListeners.size());
 		assertTrue(packetListeners.get(0) instanceof SpawnVmListener);
-		assertTrue(packetListeners.get(1) instanceof TerminateVmListener);
-		assertTrue(packetListeners.get(2) instanceof PresenceSubscriptionListener);
+		assertTrue(packetListeners.get(1) instanceof PresenceSubscriptionListener);
 
 		// shut the farm down
 		xmppFarm.shutDown();
@@ -181,15 +178,16 @@ public class XMPPSpecificationTest {
 				mockFarmConn.getUser().equals(mockVM1Conn.getUser()));
 		// now we should have 3 PacketListeners for the VM
 		ArrayList<PacketListener> vm1packetListeners = mockVM1Conn.packetListeners;
-		assertEquals(3, vm1packetListeners.size());
+		assertEquals(4, vm1packetListeners.size());
 		assertTrue(vm1packetListeners.get(0) instanceof EvaluateListener);
 		assertTrue(vm1packetListeners.get(1) instanceof JobStatusListener);
 		assertTrue(vm1packetListeners.get(2) instanceof AbortJobListener);
+		assertTrue(vm1packetListeners.get(3) instanceof TerminateVmListener);
 		xmppFarm.shutDown();
 	}
 
 	@Test
-	public void sendingAnEvalPacketShouldReturnAResult() throws Exception {
+	public void sendingAnEvalPacketWithoutVMPasswordShouldReturnErrorAndWithPasswordAResult() throws Exception {
 		expectNew(XMPPConnectionWrapper.class,
 				isA(ConnectionConfiguration.class)).andReturn(mockVM1Conn);
 
@@ -205,12 +203,15 @@ public class XMPPSpecificationTest {
 		spawn.setType(IQ.Type.GET);
 		// let's send a spawn packet to the SpwnVMListener!
 		mockFarmConn.packetListeners.get(0).processPacket(spawn);
-
+		//get the password
+		SpawnVm vmAcc = (SpawnVm) mockFarmConn.sentPackets.get(mockFarmConn.sentPackets.size()-1);
+		String vmPassword = vmAcc.getVmPassword();
+		String vmJid = vmAcc.getVmJid();
 		// send the eval packet
 		Evaluate eval = new Evaluate();
 		eval.setPacketID(spawnPacketId);
 		eval.setExpression("20 + 52;");
-		eval.setTo(mockVM1Conn.getUser());
+		eval.setTo(vmJid);
 		eval.setFrom(mockClient);
 		mockVM1Conn.clearPackets();
 		// ArrayList<Packet> vmsentPackets = mockVM1Conn.sentPackets;
@@ -222,7 +223,23 @@ public class XMPPSpecificationTest {
 		// sent packet should refer to the same pID
 		Evaluate result = (Evaluate) mockVM1Conn.sentPackets.get(0);
 		assertEquals(result.getPacketID(), spawnPacketId);
-		assertEquals(result.getType(), IQ.Type.RESULT);
+		assertEquals(IQ.Type.ERROR,result.getType());
+		assertEquals("evaluate XML packet is missing the vm_password attribute", result.getErrorMessage());
+		
+		
+		//now, try with a valid password
+		eval.setVmPassword(vmPassword);
+		mockVM1Conn.clearPackets();
+		// ArrayList<Packet> vmsentPackets = mockVM1Conn.sentPackets;
+		mockVM1Conn.packetListeners.get(0).processPacket(eval);
+		// wait for processing
+		Thread.sleep(1000);
+		// now, a new packet should have been sent back from the VM
+		assertEquals(1, mockVM1Conn.sentPackets.size());
+		// sent packet should refer to the same pID
+		result = (Evaluate) mockVM1Conn.sentPackets.get(0);
+		assertEquals(result.getPacketID(), spawnPacketId);
+		assertEquals(IQ.Type.RESULT,result.getType());
 		assertEquals("72.0", result.getExpression());
 		xmppFarm.shutDown();
 	}
