@@ -167,7 +167,7 @@ public class XMPPSpecificationTest {
 		xmppFarm = new XmppFarm(server, port, username1, password1);
 		ArrayList<Packet> sentPackets = mockFarmConn.sentPackets;
 		mockFarmConn.clearPackets();
-		SpawnVm spawn = createSpawnPackt();
+		SpawnVm spawn = createSpawnPacket();
 		spawn.setType(IQ.Type.GET);
 		// let's send a spawn packet to the SpwnVMListener!
 		mockFarmConn.packetListeners.get(0).processPacket(spawn);
@@ -195,6 +195,33 @@ public class XMPPSpecificationTest {
 		assertEquals(result.getPacketID(), spawnPacketId);
 		assertEquals(
 				"We should not be able to spwn the same type of VM twice!",
+				result.getType(), IQ.Type.RESULT);
+		xmppFarm.shutDown();
+
+	}
+	
+	@Test
+	public void tryingToSpawnAVMWithWrongSpecShouldReturnAnError() throws Exception {
+		expectNew(XMPPConnectionWrapper.class,
+				isA(ConnectionConfiguration.class)).andReturn(
+				mockXMPPConnection("mockVM"));
+
+		// activate all mock objects
+		replayAll();
+
+		// start the farm
+		xmppFarm = new XmppFarm(server, port, username1, password1);
+		SpawnVm spawn = createSpawnPacket();
+		//sent a non-existent specification
+		spawn .setVmSpecies("dummy");
+		mockFarmConn.clearPackets();
+		mockFarmConn.packetListeners.get(0).processPacket(spawn);
+		ArrayList<Packet> sentPackets = mockFarmConn.sentPackets;
+		assertEquals(1, sentPackets .size());
+		SpawnVm result = (SpawnVm) sentPackets.get(0);
+		assertEquals(result.getPacketID(), spawnPacketId);
+		assertEquals(
+				"We should not be able to spawn the same type of VM twice!",
 				result.getType(), IQ.Type.ERROR);
 
 		xmppFarm.shutDown();
@@ -211,7 +238,7 @@ public class XMPPSpecificationTest {
 
 		// start the farm
 		xmppFarm = new XmppFarm(server, port, username1, password1);
-		SpawnVm spawn = createSpawnPackt();
+		SpawnVm spawn = createSpawnPacket();
 
 		// let's send a spawn packet to the SpwnVMListener!
 		mockFarmConn.packetListeners.get(0).processPacket(spawn);
@@ -285,7 +312,7 @@ public class XMPPSpecificationTest {
 
 		// start the farm
 		xmppFarm = new XmppFarm(server, port, username1, password1);
-		SpawnVm spawn = createSpawnPackt();
+		SpawnVm spawn = createSpawnPacket();
 
 		// let's send a spawn packet to the SpwnVMListener!
 		mockFarmConn.packetListeners.get(0).processPacket(spawn);
@@ -315,7 +342,7 @@ public class XMPPSpecificationTest {
 
 	}
 
-	private SpawnVm createSpawnPackt() {
+	private SpawnVm createSpawnPacket() {
 		SpawnVm spawn = new SpawnVm();
 		spawn.setVmSpecies("javascript");
 		spawn.setPacketID(spawnPacketId);
