@@ -5,6 +5,7 @@ import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.PresenceSubscriptionListener;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.SpawnVm;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.SpawnVmListener;
+import gov.lanl.cnls.linkedprocess.xmpp.lopvm.TerminateVm;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.TerminateVmListener;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.*;
@@ -36,6 +37,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -85,16 +87,16 @@ public class XMPPSpecificationTest {
 		assertEquals(3, sentPackets.size());
 		// subscription acc
 		Presence p0 = (Presence) sentPackets.get(0);
-        assertEquals(Presence.Type.subscribed, p0.getType());
+		assertEquals(Presence.Type.subscribed, p0.getType());
 		// subscribe request to the client
-        Presence p1 = (Presence) sentPackets.get(1);
-        assertEquals(Presence.Type.subscribe, p1.getType());
-        // Farm status
+		Presence p1 = (Presence) sentPackets.get(1);
+		assertEquals(Presence.Type.subscribe, p1.getType());
+		// Farm status
 		Presence p2 = (Presence) sentPackets.get(2);
-        assertEquals(Presence.Type.available, p2.getType());
-        assertEquals(p2.getPriority(), LinkedProcess.HIGHEST_PRIORITY);
-        assertEquals(p2.getStatus(), XmppFarm.STATUS_MESSAGE_ACTIVE);
-        xmppFarm.shutDown();
+		assertEquals(Presence.Type.available, p2.getType());
+		assertEquals(p2.getPriority(), LinkedProcess.HIGHEST_PRIORITY);
+		assertEquals(p2.getStatus(), XmppFarm.STATUS_MESSAGE_ACTIVE);
+		xmppFarm.shutDown();
 
 	}
 
@@ -121,8 +123,8 @@ public class XMPPSpecificationTest {
 		// scheduler started
 		assertEquals(Presence.Type.available, ((Presence) sentPackets.get(1))
 				.getType());
-		assertEquals(XmppFarm.STATUS_MESSAGE_ACTIVE, ((Presence) sentPackets.get(1))
-				.getStatus());
+		assertEquals(XmppFarm.STATUS_MESSAGE_ACTIVE, ((Presence) sentPackets
+				.get(1)).getStatus());
 		assertEquals(LinkedProcess.HIGHEST_PRIORITY, ((Presence) sentPackets
 				.get(1)).getPriority());
 
@@ -138,8 +140,8 @@ public class XMPPSpecificationTest {
 		// scheduler shut down
 		assertEquals(Presence.Type.unavailable, ((Presence) sentPackets.get(2))
 				.getType());
-        assertEquals(XmppFarm.STATUS_MESSAGE_TERMINATING,
-                ((Presence) sentPackets.get(2)).getStatus());
+		assertEquals(XmppFarm.STATUS_MESSAGE_TERMINATING,
+				((Presence) sentPackets.get(2)).getStatus());
 		assertEquals(LinkedProcess.HIGHEST_PRIORITY, ((Presence) sentPackets
 				.get(2)).getPriority());
 		// The Farm terminated
@@ -161,10 +163,7 @@ public class XMPPSpecificationTest {
 		xmppFarm = new XmppFarm(server, port, username1, password1);
 		ArrayList<Packet> sentPackets = mockFarmConn.sentPackets;
 		mockFarmConn.clearPackets();
-		SpawnVm spawn = new SpawnVm();
-		spawn.setVmSpecies("javascript");
-		spawn.setPacketID(spawnPacketId);
-		spawn.setFrom(mockClient);
+		SpawnVm spawn = createSpawnPackt();
 		spawn.setType(IQ.Type.GET);
 		// let's send a spawn packet to the SpwnVMListener!
 		mockFarmConn.packetListeners.get(0).processPacket(spawn);
@@ -187,7 +186,8 @@ public class XMPPSpecificationTest {
 	}
 
 	@Test
-	public void sendingAnEvalPacketWithoutVMPasswordShouldReturnErrorAndWithPasswordAResult() throws Exception {
+	public void sendingAnEvalPacketWithoutVMPasswordShouldReturnErrorAndWithPasswordAResult()
+			throws Exception {
 		expectNew(XMPPConnectionWrapper.class,
 				isA(ConnectionConfiguration.class)).andReturn(mockVM1Conn);
 
@@ -196,15 +196,13 @@ public class XMPPSpecificationTest {
 
 		// start the farm
 		xmppFarm = new XmppFarm(server, port, username1, password1);
-		SpawnVm spawn = new SpawnVm();
-		spawn.setVmSpecies("javascript");
-		spawn.setPacketID(spawnPacketId);
-		spawn.setFrom(mockClient);
-		spawn.setType(IQ.Type.GET);
+		SpawnVm spawn = createSpawnPackt();
+
 		// let's send a spawn packet to the SpwnVMListener!
 		mockFarmConn.packetListeners.get(0).processPacket(spawn);
-		//get the password
-		SpawnVm vmAcc = (SpawnVm) mockFarmConn.sentPackets.get(mockFarmConn.sentPackets.size()-1);
+		// get the password
+		SpawnVm vmAcc = (SpawnVm) mockFarmConn.sentPackets
+				.get(mockFarmConn.sentPackets.size() - 1);
 		String vmPassword = vmAcc.getVmPassword();
 		String vmJid = vmAcc.getVmJid();
 		// send the eval packet
@@ -216,32 +214,95 @@ public class XMPPSpecificationTest {
 		mockVM1Conn.clearPackets();
 		// ArrayList<Packet> vmsentPackets = mockVM1Conn.sentPackets;
 		mockVM1Conn.packetListeners.get(0).processPacket(eval);
-		// wait for processing
-		Thread.sleep(1000);
+		waitForResponse(mockFarmConn.sentPackets, 1000);
 		// now, a new packet should have been sent back from the VM
 		assertEquals(1, mockVM1Conn.sentPackets.size());
 		// sent packet should refer to the same pID
 		Evaluate result = (Evaluate) mockVM1Conn.sentPackets.get(0);
 		assertEquals(result.getPacketID(), spawnPacketId);
-		assertEquals(IQ.Type.ERROR,result.getType());
-		assertEquals("evaluate XML packet is missing the vm_password attribute", result.getErrorMessage());
-		
-		
-		//now, try with a valid password
+		assertEquals(IQ.Type.ERROR, result.getType());
+		assertEquals(
+				"evaluate XML packet is missing the vm_password attribute",
+				result.getErrorMessage());
+
+		// now, try with a valid password
 		eval.setVmPassword(vmPassword);
 		mockVM1Conn.clearPackets();
-		// ArrayList<Packet> vmsentPackets = mockVM1Conn.sentPackets;
+		assertEquals(0, mockVM1Conn.sentPackets.size());
 		mockVM1Conn.packetListeners.get(0).processPacket(eval);
-		// wait for processing
-		Thread.sleep(1000);
+		waitForResponse(mockVM1Conn.sentPackets, 1000);
 		// now, a new packet should have been sent back from the VM
 		assertEquals(1, mockVM1Conn.sentPackets.size());
 		// sent packet should refer to the same pID
 		result = (Evaluate) mockVM1Conn.sentPackets.get(0);
 		assertEquals(result.getPacketID(), spawnPacketId);
-		assertEquals(IQ.Type.RESULT,result.getType());
+		assertEquals(IQ.Type.RESULT, result.getType());
 		assertEquals("72.0", result.getExpression());
 		xmppFarm.shutDown();
+	}
+
+	private void waitForResponse(Collection watching, int timeout) {
+		int currentSize = watching.size();
+		long startTime = System.currentTimeMillis();
+		while (System.currentTimeMillis() < startTime + timeout) {
+			if (watching.size() > currentSize) {
+				return;
+			}
+			try {
+				Thread.sleep(50);
+				//System.out.println(watching.size() + " > " + currentSize);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
+	}
+
+	@Test
+	public void sendingATerminatePacketShouldCloseTheVM() throws Exception {
+		expectNew(XMPPConnectionWrapper.class,
+				isA(ConnectionConfiguration.class)).andReturn(mockVM1Conn);
+
+		// activate all mock objects
+		replayAll();
+
+		// start the farm
+		xmppFarm = new XmppFarm(server, port, username1, password1);
+		SpawnVm spawn = createSpawnPackt();
+
+		// let's send a spawn packet to the SpwnVMListener!
+		mockFarmConn.packetListeners.get(0).processPacket(spawn);
+		// get the password
+		SpawnVm vmAcc = (SpawnVm) mockFarmConn.sentPackets
+				.get(mockFarmConn.sentPackets.size() - 1);
+		String vmPassword = vmAcc.getVmPassword();
+		String vmJid = vmAcc.getVmJid();
+
+		TerminateVm terminate = new TerminateVm();
+		terminate.setVmPassword(vmPassword);
+		terminate.setTo(vmJid);
+		mockVM1Conn.clearPackets();
+		mockVM1Conn.packetListeners.get(3).processPacket(terminate);
+		ArrayList<Packet> sentPackets = mockVM1Conn.sentPackets;
+		assertEquals(1, sentPackets.size());
+		// first one should be the unavailable presence
+//		assertEquals(Presence.Type.unavailable, ((Presence) sentPackets.get(0))
+//				.getType());
+		TerminateVm result = (TerminateVm) sentPackets.get(0);
+		assertEquals(IQ.Type.RESULT, result.getType());
+		assertEquals(terminate.getPacketID(), result.getPacketID());
+
+	}
+
+	private SpawnVm createSpawnPackt() {
+		SpawnVm spawn = new SpawnVm();
+		spawn.setVmSpecies("javascript");
+		spawn.setPacketID(spawnPacketId);
+		spawn.setFrom(mockClient);
+		spawn.setType(IQ.Type.GET);
+		return spawn;
 	}
 
 	@After
@@ -251,7 +312,6 @@ public class XMPPSpecificationTest {
 		verifyAll();
 
 	}
-
 
 	@Before
 	public void setup() throws Exception {
@@ -267,9 +327,11 @@ public class XMPPSpecificationTest {
 		Iterator<String> features = new LinkedList<String>().iterator();
 		expect(mdm.getFeatures()).andReturn(features).anyTimes();
 		mdm.addFeature(isA(String.class));
-		// 2 for Farm, 2 for each VM
 		expectLastCall().anyTimes();
-
+		ServiceDiscoveryManager.setIdentityName(isA(String.class));
+		expectLastCall().anyTimes();
+		ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
+		expectLastCall().anyTimes();
 		// the magic of inserting the mock connections!
 		// first call is cfor the LoPFarm
 		expectNew(XMPPConnectionWrapper.class,
