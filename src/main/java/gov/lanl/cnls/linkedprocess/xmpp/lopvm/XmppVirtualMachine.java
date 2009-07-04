@@ -122,4 +122,10 @@ public class XmppVirtualMachine extends XmppClient {
         return this.vmPassword;
     }
 
+    public void shutDown() {
+        this.connection.sendPacket(this.createPresence(LinkedProcess.VMStatus.DOES_NOT_EXIST));
+        super.shutDown();
+
+    }
+
 }

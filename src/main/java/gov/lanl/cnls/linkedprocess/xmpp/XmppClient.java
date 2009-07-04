@@ -82,7 +82,6 @@ public abstract class XmppClient {
 
     public void logout() {
         LOGGER.info("Disconnecting from " + connection.getHost());
-        connection.disconnect(new Presence(Presence.Type.unavailable));
         connection.disconnect();
     }
 

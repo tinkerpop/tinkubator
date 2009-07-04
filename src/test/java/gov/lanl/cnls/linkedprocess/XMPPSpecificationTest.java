@@ -286,18 +286,18 @@ public class XMPPSpecificationTest {
 		mockVM1Conn.clearPackets();
 		mockVM1Conn.packetListeners.get(3).processPacket(terminate);
 		ArrayList<Packet> sentPackets = mockVM1Conn.sentPackets;
-		assertEquals(
-				"we should get back one IQ and one UNAVAILABLE presence packet back.",
+		System.out.println(sentPackets);
+        assertEquals(
+				"we should get back one IQ TERMIANTE RESULT and one UNAVAILABLE presence packet back.",
 				2, sentPackets.size());
-		// first one should be the unavailable presence
-		// assertEquals(Presence.Type.unavailable, ((Presence)
-		// sentPackets.get(0))
-		// .getType());
+
 		TerminateVm result = (TerminateVm) sentPackets.get(0);
 		assertEquals(IQ.Type.RESULT, result.getType());
 		assertEquals(terminate.getPacketID(), result.getPacketID());
+         // second one should be the unavailable presence
+	    assertEquals(Presence.Type.unavailable, ((Presence)sentPackets.get(1)).getType());
 
-	}
+    }
 
 	private SpawnVm createSpawnPackt() {
 		SpawnVm spawn = new SpawnVm();

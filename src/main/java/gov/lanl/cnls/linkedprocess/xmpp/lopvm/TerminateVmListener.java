@@ -49,15 +49,8 @@ public class TerminateVmListener implements PacketListener {
             returnTerminateVm.setErrorType(LinkedProcess.Errortype.WRONG_VM_PASSWORD);
             returnTerminateVm.setType(IQ.Type.ERROR);
         } else {
-            terminate = true;
-            try {
-                this.vm.terminateSelf();
+                terminate = true;
                 returnTerminateVm.setType(IQ.Type.RESULT);
-            } catch (VMWorkerNotFoundException e) {
-                returnTerminateVm.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
-                returnTerminateVm.setErrorMessage(e.getMessage());
-                returnTerminateVm.setType(IQ.Type.ERROR);
-            }
         }
 
         XmppFarm.LOGGER.info("Sent " + TerminateVmListener.class.getName());
@@ -65,7 +58,11 @@ public class TerminateVmListener implements PacketListener {
         vm.getConnection().sendPacket(returnTerminateVm);
 
         if(terminate) {
-            vm.shutDown();
+            try {
+                this.vm.terminateSelf();
+            } catch(VMWorkerNotFoundException e){
+                this.vm.shutDown();
+            }
         }
     }
 }
