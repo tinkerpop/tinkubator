@@ -250,7 +250,7 @@ public class XMPPSpecificationTest {
 			}
 			try {
 				Thread.sleep(50);
-				//System.out.println(watching.size() + " > " + currentSize);
+				// System.out.println(watching.size() + " > " + currentSize);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -286,10 +286,13 @@ public class XMPPSpecificationTest {
 		mockVM1Conn.clearPackets();
 		mockVM1Conn.packetListeners.get(3).processPacket(terminate);
 		ArrayList<Packet> sentPackets = mockVM1Conn.sentPackets;
-		assertEquals(1, sentPackets.size());
+		assertEquals(
+				"we should get back one IQ and one UNAVAILABLE presence packet back.",
+				2, sentPackets.size());
 		// first one should be the unavailable presence
-//		assertEquals(Presence.Type.unavailable, ((Presence) sentPackets.get(0))
-//				.getType());
+		// assertEquals(Presence.Type.unavailable, ((Presence)
+		// sentPackets.get(0))
+		// .getType());
 		TerminateVm result = (TerminateVm) sentPackets.get(0);
 		assertEquals(IQ.Type.RESULT, result.getType());
 		assertEquals(terminate.getPacketID(), result.getPacketID());
