@@ -135,9 +135,9 @@ public class XMPPSpecificationTest {
 		assertTrue(packetListeners.get(0) instanceof SpawnVmListener);
 		assertTrue(packetListeners.get(1) instanceof PresenceSubscriptionListener);
 
-		// shut the farm down
 		xmppFarm.shutDown();
 		assertEquals(4, sentPackets.size());
+		
 		// scheduler shut down
 		assertEquals(Presence.Type.unavailable, ((Presence) sentPackets.get(2))
 				.getType());
@@ -291,6 +291,18 @@ public class XMPPSpecificationTest {
 		assertEquals(result.getPacketID(), spawnPacketId);
 		assertEquals(IQ.Type.RESULT, result.getType());
 		assertEquals("72.0", result.getExpression());
+		
+		//shut down the VM
+		mockVM1Conn.clearPackets();
+		TerminateVm terminate = new TerminateVm();
+		terminate.setVmPassword(vmPassword);
+		terminate.setTo(vmJid);
+		mockVM1Conn.packetListeners.get(3).processPacket(terminate);
+		
+		ArrayList<Packet> sentPackets = mockVM1Conn.sentPackets;
+		assertEquals("we should get two presence pac kets back",2, sentPackets.size());
+		
+		//check right shutdown messages
 		xmppFarm.shutDown();
 	}
 
