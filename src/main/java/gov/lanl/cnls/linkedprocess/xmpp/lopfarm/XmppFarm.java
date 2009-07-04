@@ -8,9 +8,6 @@ import gov.lanl.cnls.linkedprocess.os.errors.VMSchedulerIsFullException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
-import gov.lanl.cnls.linkedprocess.xmpp.lopvm.TerminateVm;
-import gov.lanl.cnls.linkedprocess.xmpp.lopvm.TerminateVmListener;
-import gov.lanl.cnls.linkedprocess.xmpp.lopvm.TerminateVmProvider;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
@@ -20,17 +17,15 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smackx.NodeInformationProvider;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.FormField;
-import org.jivesoftware.smackx.packet.DataForm;
 
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -44,8 +39,8 @@ public class XmppFarm extends XmppClient {
     public static Logger LOGGER = LinkedProcess.getLogger(XmppFarm.class);
     public static final String RESOURCE_PREFIX = "LoPFarm";
     public static final String STATUS_MESSAGE = "LoP Farm v0.1";
-	public static final String STATUS_MESSAGE_STARTING = STATUS_MESSAGE + " - starting";
-	public static final String STATUS_MESSAGE_ACTIVE = STATUS_MESSAGE + " - active";
+    public static final String STATUS_MESSAGE_STARTING = STATUS_MESSAGE + " - starting";
+    public static final String STATUS_MESSAGE_ACTIVE = STATUS_MESSAGE + " - active";
     public static final String STATUS_MESSAGE_FULL = STATUS_MESSAGE + " - full";
     public static final String STATUS_MESSAGE_TERMINATING = STATUS_MESSAGE + " - terminating";
 
@@ -55,16 +50,16 @@ public class XmppFarm extends XmppClient {
     protected final VMScheduler.LopStatusEventHandler statusHandler;
 
     public XmppFarm(final String server, final int port, final String username, final String password) {
-    	InputStream resourceAsStream = getClass().getResourceAsStream("/logging.properties");
-		try {
-			LogManager.getLogManager().readConfiguration(resourceAsStream);
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        InputStream resourceAsStream = getClass().getResourceAsStream("/logging.properties");
+        try {
+            LogManager.getLogManager().readConfiguration(resourceAsStream);
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         LOGGER.info("Starting " + STATUS_MESSAGE);
 
         ProviderManager pm = ProviderManager.getInstance();
@@ -82,7 +77,7 @@ public class XmppFarm extends XmppClient {
         this.roster = this.connection.getRoster();
         this.roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
         this.statusHandler = new StatusEventHandler(this);
-        this.scheduler = new VMScheduler(new VMJobResultHandler(this), this.statusHandler); 
+        this.scheduler = new VMScheduler(new VMJobResultHandler(this), this.statusHandler);
         this.machines = new HashMap<String, XmppVirtualMachine>();
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new IQTypeFilter(IQ.Type.GET));
@@ -98,9 +93,9 @@ public class XmppFarm extends XmppClient {
 
     public Presence createPresence(final LinkedProcess.FarmStatus status) {
         switch (status) {
-        	case STARTING:
-        		return new Presence(Presence.Type.available, STATUS_MESSAGE_STARTING, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
-        	case ACTIVE:
+            case STARTING:
+                return new Presence(Presence.Type.available, STATUS_MESSAGE_STARTING, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
+            case ACTIVE:
                 return new Presence(Presence.Type.available, STATUS_MESSAGE_ACTIVE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
             case ACTIVE_FULL:
                 return new Presence(Presence.Type.available, STATUS_MESSAGE_FULL, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.dnd);
@@ -129,7 +124,7 @@ public class XmppFarm extends XmppClient {
             if (exceptionThrown) {
                 vm.shutDown();
             }
-             this.machines.put(fullJid, vm);
+            this.machines.put(fullJid, vm);
         }
 
         return vm;
@@ -146,7 +141,7 @@ public class XmppFarm extends XmppClient {
 
     public XmppVirtualMachine getVirtualMachine(String vmJid) throws VMWorkerNotFoundException {
         XmppVirtualMachine vm = this.machines.get(vmJid);
-        if(vm == null) {
+        if (vm == null) {
             throw new VMWorkerNotFoundException(vmJid);
         } else {
             return vm;
@@ -154,15 +149,17 @@ public class XmppFarm extends XmppClient {
     }
 
     public void shutDown() {
-        try {
-            String[] vmJids = new String[this.machines.size()];
-            this.machines.keySet().toArray(vmJids);
-            for(String vmJid : vmJids) {
+
+        String[] vmJids = new String[this.machines.size()];
+        this.machines.keySet().toArray(vmJids);
+        for (String vmJid : vmJids) {
+            try {
                 this.terminateVirtualMachine(vmJid);
+            } catch (VMWorkerNotFoundException e) {
+                LOGGER.severe(e.getMessage());
             }
-        } catch(VMWorkerNotFoundException e) {
-            LOGGER.severe(e.getMessage());
         }
+
         this.scheduler.shutDown();
         this.connection.sendPacket(this.createPresence(LinkedProcess.FarmStatus.TERMINATED));
         try {
@@ -198,6 +195,6 @@ public class XmppFarm extends XmppClient {
         ArrayList<FormField> list = new ArrayList<FormField>();
         list.add(field);
         form.addItem(new DataForm.Item(list));*/
-        
+
     }
 }
