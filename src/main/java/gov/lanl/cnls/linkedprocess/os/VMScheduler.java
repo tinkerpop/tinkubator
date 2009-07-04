@@ -205,7 +205,7 @@ public class VMScheduler {
         w.terminate();
         setVirtualMachineStatus(machineJID, LinkedProcess.VMStatus.DOES_NOT_EXIST);
 
-        if (MAX_VM > workersByJID.size()) {
+        if (MAX_VM > workersByJID.size() && this.status != LinkedProcess.FarmStatus.ACTIVE) {
             setSchedulerStatus(LinkedProcess.FarmStatus.ACTIVE);
         }
     }
