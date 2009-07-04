@@ -156,6 +156,10 @@ public class XMPPSpecificationTest {
 		expectNew(XMPPConnectionWrapper.class,
 				isA(ConnectionConfiguration.class)).andReturn(mockVM1Conn);
 
+		expectNew(XMPPConnectionWrapper.class,
+				isA(ConnectionConfiguration.class)).andReturn(
+				mockXMPPConnection("secondVM"));
+
 		// activate all mock objects
 		replayAll();
 
@@ -182,6 +186,17 @@ public class XMPPSpecificationTest {
 		assertTrue(vm1packetListeners.get(1) instanceof JobStatusListener);
 		assertTrue(vm1packetListeners.get(2) instanceof AbortJobListener);
 		assertTrue(vm1packetListeners.get(3) instanceof TerminateVmListener);
+
+		// try one more VM with the same spawn packet as the first!
+		mockFarmConn.clearPackets();
+		mockFarmConn.packetListeners.get(0).processPacket(spawn);
+		assertEquals(1, sentPackets.size());
+		result = (SpawnVm) sentPackets.get(0);
+		assertEquals(result.getPacketID(), spawnPacketId);
+		assertEquals(
+				"We should not be able to spwn the same type of VM twice!",
+				result.getType(), IQ.Type.ERROR);
+
 		xmppFarm.shutDown();
 	}
 
@@ -230,7 +245,7 @@ public class XMPPSpecificationTest {
 		mockVM1Conn.clearPackets();
 		assertEquals(0, mockVM1Conn.sentPackets.size());
 		mockVM1Conn.packetListeners.get(0).processPacket(eval);
-		waitForResponse(mockVM1Conn.sentPackets, 1000);
+		waitForResponse(mockVM1Conn.sentPackets, 1500);
 		// now, a new packet should have been sent back from the VM
 		assertEquals(1, mockVM1Conn.sentPackets.size());
 		// sent packet should refer to the same pID
@@ -287,17 +302,18 @@ public class XMPPSpecificationTest {
 		mockVM1Conn.packetListeners.get(3).processPacket(terminate);
 		ArrayList<Packet> sentPackets = mockVM1Conn.sentPackets;
 		System.out.println(sentPackets);
-        assertEquals(
-				"we should get back one IQ TERMIANTE RESULT and one UNAVAILABLE presence packet back.",
-				2, sentPackets.size());
-
+		assertEquals("we should get back one IQ TERMIANTE RESULT "
+				+ "and one UNAVAILABLE presence packet back.", 2, sentPackets
+				.size());
+		// first one - IQ
 		TerminateVm result = (TerminateVm) sentPackets.get(0);
 		assertEquals(IQ.Type.RESULT, result.getType());
 		assertEquals(terminate.getPacketID(), result.getPacketID());
-         // second one should be the unavailable presence
-	    assertEquals(Presence.Type.unavailable, ((Presence)sentPackets.get(1)).getType());
+		// second one should be the unavailable presence
+		assertEquals(Presence.Type.unavailable, ((Presence) sentPackets.get(1))
+				.getType());
 
-    }
+	}
 
 	private SpawnVm createSpawnPackt() {
 		SpawnVm spawn = new SpawnVm();
