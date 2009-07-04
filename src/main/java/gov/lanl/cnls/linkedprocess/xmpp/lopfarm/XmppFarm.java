@@ -30,10 +30,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -158,7 +155,9 @@ public class XmppFarm extends XmppClient {
 
     public void shutDown() {
         try {
-            for(String vmJid : this.machines.keySet()) {
+            String[] vmJids = new String[this.machines.size()];
+            this.machines.keySet().toArray(vmJids);
+            for(String vmJid : vmJids) {
                 this.terminateVirtualMachine(vmJid);
             }
         } catch(VMWorkerNotFoundException e) {
