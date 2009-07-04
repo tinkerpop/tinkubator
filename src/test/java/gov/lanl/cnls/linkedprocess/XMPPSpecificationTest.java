@@ -63,6 +63,7 @@ public class XMPPSpecificationTest {
 	private MockXMPPConnection mockVM1Conn;
 	private XMPPConnection mockXmppConnection;
 	private Roster mockRoster;
+	private ArrayList<Packet> sentPacketsVM1;
 
 	@Test
 	public void subscribingToAFarmsRosterShouldResultInThreePresencePacketsBack()
@@ -196,12 +197,22 @@ public class XMPPSpecificationTest {
 		assertEquals(
 				"We should not be able to spwn the same type of VM twice!",
 				result.getType(), IQ.Type.RESULT);
+		mockVM1Conn.clearPackets();
+		mockFarmConn.clearPackets();
 		xmppFarm.shutDown();
-
+		sentPacketsVM1 = mockVM1Conn.sentPackets;
+		System.out.println(sentPackets);
+		assertEquals("We were expecting one TERMINATING and one UNAVAILABE", 2, sentPackets.size());
+		assertEquals(Presence.Type.unavailable, ((Presence) sentPackets.get(0))
+				.getType());
+		assertEquals(1, sentPacketsVM1.size());
+		assertEquals(Presence.Type.unavailable, ((Presence) sentPacketsVM1
+				.get(0)).getType());
 	}
-	
+
 	@Test
-	public void tryingToSpawnAVMWithWrongSpecShouldReturnAnError() throws Exception {
+	public void tryingToSpawnAVMWithWrongSpecShouldReturnAnError()
+			throws Exception {
 		expectNew(XMPPConnectionWrapper.class,
 				isA(ConnectionConfiguration.class)).andReturn(
 				mockXMPPConnection("mockVM"));
@@ -212,12 +223,12 @@ public class XMPPSpecificationTest {
 		// start the farm
 		xmppFarm = new XmppFarm(server, port, username1, password1);
 		SpawnVm spawn = createSpawnPacket();
-		//sent a non-existent specification
-		spawn .setVmSpecies("dummy");
+		// sent a non-existent specification
+		spawn.setVmSpecies("dummy");
 		mockFarmConn.clearPackets();
 		mockFarmConn.packetListeners.get(0).processPacket(spawn);
 		ArrayList<Packet> sentPackets = mockFarmConn.sentPackets;
-		assertEquals(1, sentPackets .size());
+		assertEquals(1, sentPackets.size());
 		SpawnVm result = (SpawnVm) sentPackets.get(0);
 		assertEquals(result.getPacketID(), spawnPacketId);
 		assertEquals(
