@@ -157,7 +157,14 @@ public class XmppFarm extends XmppClient {
     }
 
     public void shutDown() {
-    	this.scheduler.shutDown();
+        try {
+            for(String vmJid : this.machines.keySet()) {
+                this.terminateVirtualMachine(vmJid);
+            }
+        } catch(VMWorkerNotFoundException e) {
+            LOGGER.severe(e.getMessage());
+        }
+        this.scheduler.shutDown();
         this.connection.sendPacket(this.createPresence(LinkedProcess.FarmStatus.TERMINATED));
         try {
             this.scheduler.waitUntilFinished();
