@@ -38,7 +38,7 @@ public class XmppVirtualMachineTest extends TestCase {
 
     @Test
     public void testLoginOPS4J() throws Exception {
-        xmppVirtualMachine = new XmppVirtualMachine(OPS4J_SERVER, PORT, USERNAME, PASSWORD, null, "pass");
+        xmppVirtualMachine = new XmppVirtualMachine(OPS4J_SERVER, PORT, USERNAME, PASSWORD, null, "JavaScript", "pass");
         Connection connection = xmppVirtualMachine.getConnection();
         assertTrue(connection.isConnected());
         xmppVirtualMachine.shutDown();
@@ -47,7 +47,7 @@ public class XmppVirtualMachineTest extends TestCase {
 
     @Test
     public void testLoginGTalk() throws Exception {
-        xmppVirtualMachine = new XmppVirtualMachine(GTALK_SERVER, PORT, GTALK_USERNAME, PASSWORD, null, "pass");
+        xmppVirtualMachine = new XmppVirtualMachine(GTALK_SERVER, PORT, GTALK_USERNAME, PASSWORD, null, "JavaScript", "pass");
         Connection connection = xmppVirtualMachine.getConnection();
         assertTrue(connection.isConnected());
         xmppVirtualMachine.shutDown();

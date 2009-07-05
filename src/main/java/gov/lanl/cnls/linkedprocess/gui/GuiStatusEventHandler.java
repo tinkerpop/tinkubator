@@ -27,7 +27,7 @@ public class GuiStatusEventHandler extends StatusEventHandler {
 
     public void virtualMachineStatusChanged(String vmJid, LinkedProcess.VMStatus status) {
         super.virtualMachineStatusChanged(vmJid, status);
-        gui.updateVirtualMachineList(vmJid, status);
+        gui.updateVirtualMachineTree();
 
     }
 }

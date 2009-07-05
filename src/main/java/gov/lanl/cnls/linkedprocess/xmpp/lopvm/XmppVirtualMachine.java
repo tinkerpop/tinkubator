@@ -30,13 +30,15 @@ public class XmppVirtualMachine extends XmppClient {
     public static Logger LOGGER = LinkedProcess.getLogger(XmppVirtualMachine.class);
     public static String RESOURCE_PREFIX = "LoPVM";
 
-    protected XmppFarm farm;
-    protected String vmPassword;
+    protected final XmppFarm farm;
+    protected final String vmPassword;
+    protected final String vmSpecies;
 
-    public XmppVirtualMachine(final String server, final int port, final String username, final String password, XmppFarm farm, final String vmPassword) {
+    public XmppVirtualMachine(final String server, final int port, final String username, final String password, XmppFarm farm, final String vmSpecies, final String vmPassword) {
 
         this.farm = farm;
         this.vmPassword = vmPassword;
+        this.vmSpecies = vmSpecies;
 
         LOGGER.info("Starting LoP virtual machine - password:" + vmPassword);
         // Registering the types of IQ packets/stanzas the the Lop VM can respond to.
@@ -120,6 +122,10 @@ public class XmppVirtualMachine extends XmppClient {
 
     public String getVmPassword() {
         return this.vmPassword;
+    }
+
+    public String getVmSpecies()  {
+        return this.vmSpecies;     
     }
 
     public void shutDown() {
