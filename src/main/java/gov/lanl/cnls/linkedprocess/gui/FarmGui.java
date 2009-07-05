@@ -1,11 +1,16 @@
 package gov.lanl.cnls.linkedprocess.gui;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import gov.lanl.cnls.linkedprocess.os.errors.UnsupportedScriptEngineException;
+import gov.lanl.cnls.linkedprocess.os.errors.VMAlreadyExistsException;
+import gov.lanl.cnls.linkedprocess.os.errors.VMSchedulerIsFullException;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
 import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 
 /**
@@ -19,7 +24,7 @@ public class FarmGui extends JFrame {
     protected JList vmList;
     protected Map<String, LinkedProcess.VMStatus> vmMap;
 
-    public FarmGui(XmppFarm farm) {
+    public FarmGui(final XmppFarm farm) {
 
         super("LoP Farm Manager");
         this.farm = farm;
@@ -29,7 +34,29 @@ public class FarmGui extends JFrame {
         this.vmList = new JList(listModel);
         this.vmList.setCellRenderer(new CustomCellRenderer());
         JPanel panel = new JPanel();
-        panel.add(this.vmList);
+        final JTextField vmSpecLabel = new JTextField("javascript");
+        JButton spawnButton = new JButton("spawn");
+        spawnButton.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					farm.spawnVirtualMachine(vmSpecLabel.getText());
+				} catch (VMAlreadyExistsException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (VMSchedulerIsFullException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (UnsupportedScriptEngineException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				refreshListData();
+			}});
+		panel.add(spawnButton );
+		panel.add(vmSpecLabel);
+		panel.add(this.vmList);
         panel.setForeground(Color.black);
         panel.setBackground(Color.white);
 
@@ -75,6 +102,7 @@ public class FarmGui extends JFrame {
             public void run() {
                 XmppFarm farm = new XmppFarm("xmpp.linkedprocess.org", 5222, "linked.process.1", "linked12");
                 new FarmGui(farm);
+                
             }
         });
     }
