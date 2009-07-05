@@ -38,7 +38,7 @@ public class VMScheduler {
     private final Map<String, VMWorker> workersByJID;
     private final ScriptEngineManager manager = new ScriptEngineManager();
     private final VMResultHandler resultHandler;
-    private final LopStatusEventHandler eventHandler;
+    private LopStatusEventHandler eventHandler;
     private final int numberOfSequencers;
     private LinkedProcess.FarmStatus status;
 
@@ -77,6 +77,10 @@ public class VMScheduler {
         }
 
         setSchedulerStatus(LinkedProcess.FarmStatus.ACTIVE);
+    }
+
+    public synchronized void setStatusEventHandler(LopStatusEventHandler statusHandler) {
+        this.eventHandler = statusHandler;
     }
 
     /**

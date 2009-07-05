@@ -128,4 +128,8 @@ public class XmppVirtualMachine extends XmppClient {
 
     }
 
+    public LinkedProcess.VMStatus getVmStatus() {
+        return this.farm.getScheduler().getVirtualMachineStatus(this.getFullJid());
+    }
+
 }

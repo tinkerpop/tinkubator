@@ -47,7 +47,6 @@ public class XmppFarm extends XmppClient {
 
     protected final Map<String, XmppVirtualMachine> machines;
     protected final VMScheduler scheduler;
-    protected final VMScheduler.LopStatusEventHandler statusHandler;
 
     public XmppFarm(final String server, final int port, final String username, final String password) {
         InputStream resourceAsStream = getClass().getResourceAsStream("/logging.properties");
@@ -76,8 +75,7 @@ public class XmppFarm extends XmppClient {
 
         this.roster = this.connection.getRoster();
         this.roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
-        this.statusHandler = new StatusEventHandler(this);
-        this.scheduler = new VMScheduler(new VMJobResultHandler(this), this.statusHandler);
+        this.scheduler = new VMScheduler(new VMJobResultHandler(this), new StatusEventHandler(this));
         this.machines = new HashMap<String, XmppVirtualMachine>();
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new IQTypeFilter(IQ.Type.GET));
@@ -85,7 +83,7 @@ public class XmppFarm extends XmppClient {
         connection.addPacketListener(new SpawnVmListener(this), spawnFilter);
         connection.addPacketListener(new PresenceSubscriptionListener(this), subscribeFilter);
     }
-
+    
     public void logon(String server, int port, String username, String password) throws XMPPException {
         super.logon(server, port, username, password, RESOURCE_PREFIX);
         connection.sendPacket(this.createPresence(LinkedProcess.FarmStatus.STARTING));
@@ -196,5 +194,9 @@ public class XmppFarm extends XmppClient {
         list.add(field);
         form.addItem(new DataForm.Item(list));*/
 
+    }
+
+    public void setStatusEventHandler(VMScheduler.LopStatusEventHandler statusHandler) {
+        this.scheduler.setStatusEventHandler(statusHandler);
     }
 }
