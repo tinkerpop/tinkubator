@@ -23,6 +23,7 @@ public abstract class XmppClient {
     protected boolean shutdownRequested = false;
     protected ServiceDiscoveryManager discoManager;
 
+    protected long startTime;
     private String username;
     private String password;
     private String server;
@@ -40,12 +41,13 @@ public abstract class XmppClient {
         discoManager.addFeature(LinkedProcess.DISCO_INFO_NAMESPACE);
     }
 
-    protected void logon(String server, int port, String username, String password, String resource) throws XMPPException {
+    protected void logon(final String server, final int port, final String username, final String password, String resource) throws XMPPException {
 
         this.server = server;
         this.port = port;
         this.username = username;
         this.password = password;
+        this.startTime = System.currentTimeMillis();
 
         // if connection is still active, disconnect it.
         if (null != connection && connection.isConnected()) {
@@ -137,6 +139,10 @@ public abstract class XmppClient {
 
     public Roster getRoster() {
         return this.roster;
+    }
+
+    public long getRunningTime() {
+        return System.currentTimeMillis() - this.startTime;
     }
 
     public static String generateRandomID() {

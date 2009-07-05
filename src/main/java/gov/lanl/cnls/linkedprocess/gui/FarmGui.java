@@ -92,6 +92,7 @@ public class FarmGui extends JFrame implements TreeSelectionListener {
             //if (!this.containsVmNode(vm)) {
                 vmNode.add(new DefaultMutableTreeNode(new Properties("vm_species", vm.getVmSpecies())));
                 vmNode.add(new DefaultMutableTreeNode(new Properties("vm_password", vm.getVmPassword())));
+                vmNode.add(new DefaultMutableTreeNode(new Properties("running_time", ((float)vm.getRunningTime() / 60000.0f) + " sec.")));
                 model.insertNodeInto(vmNode, this.vmTreeRoot, this.vmTreeRoot.getChildCount());
                 this.vmTree.scrollPathToVisible(new TreePath(vmNode.getPath()));
             //}
@@ -122,14 +123,18 @@ public class FarmGui extends JFrame implements TreeSelectionListener {
                 }
                 this.setToolTipText("vm_jid");
             } else if (x instanceof Properties) {
-                if (((Properties) x).getKey().equals("vm_password")) {
-                    this.setIcon(new ImageIcon(FarmGui.class.getResource("password.png")));
-                    this.setText(((Properties) x).getValue());
-                    this.setToolTipText("vm_password");
-                } else if (((Properties) x).getKey().equals("vm_species")) {
+                if (((Properties) x).getKey().equals("vm_species")) {
                     this.setIcon(new ImageIcon(FarmGui.class.getResource("species.png")));
                     this.setText(((Properties) x).getValue());
                     this.setToolTipText("vm_species");
+                } else if (((Properties) x).getKey().equals("vm_password")) {
+                    this.setIcon(new ImageIcon(FarmGui.class.getResource("password.png")));
+                    this.setText(((Properties) x).getValue());
+                    this.setToolTipText("vm_password");
+                } else if (((Properties) x).getKey().equals("running_time")) {
+                    this.setIcon(new ImageIcon(FarmGui.class.getResource("time.png")));
+                    this.setText(((Properties) x).getValue());
+                    this.setToolTipText("running_time");
                 }
             }
 
