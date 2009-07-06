@@ -1,5 +1,6 @@
 package gov.lanl.cnls.linkedprocess;
 
+import gov.lanl.cnls.linkedprocess.LinkedProcess.Errortype;
 import gov.lanl.cnls.linkedprocess.xmpp.XMPPConnectionWrapper;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.PresenceSubscriptionListener;
@@ -20,6 +21,7 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.workgroup.agent.WorkgroupQueue.Status;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -137,7 +139,7 @@ public class XMPPSpecificationTest {
 
 		xmppFarm.shutDown();
 		assertEquals(4, sentPackets.size());
-		
+
 		// scheduler shut down
 		assertEquals(Presence.Type.unavailable, ((Presence) sentPackets.get(2))
 				.getType());
@@ -202,7 +204,8 @@ public class XMPPSpecificationTest {
 		xmppFarm.shutDown();
 		sentPacketsVM1 = mockVM1Conn.sentPackets;
 		System.out.println(sentPackets);
-		assertEquals("We were expecting one TERMINATING and one UNAVAILABE", 2, sentPackets.size());
+		assertEquals("We were expecting one TERMINATING and one UNAVAILABE", 2,
+				sentPackets.size());
 		assertEquals(Presence.Type.unavailable, ((Presence) sentPackets.get(0))
 				.getType());
 		assertEquals(1, sentPacketsVM1.size());
@@ -232,12 +235,65 @@ public class XMPPSpecificationTest {
 		SpawnVm result = (SpawnVm) sentPackets.get(0);
 		assertEquals(result.getPacketID(), spawnPacketId);
 		assertEquals(
-				"We should not be able to spawn the same type of VM twice!",
+				"We should not be able to spawn the a VM with a non-existent Script type!",
 				result.getType(), IQ.Type.ERROR);
+		assertEquals(Errortype.SPECIES_NOT_SUPPORTED, result.getErrorType());
 
 		xmppFarm.shutDown();
 	}
 
+	
+	@Test
+	public void checkingStatusOnNonExistingJobShouldReturnError() throws Exception {
+		expectNew(XMPPConnectionWrapper.class,
+				isA(ConnectionConfiguration.class)).andReturn(mockVM1Conn);
+
+		// activate all mock objects
+		replayAll();
+
+		// start the farm
+		xmppFarm = new XmppFarm(server, port, username1, password1);
+		SpawnVm spawn = createSpawnPacket();
+
+		// let's send a spawn packet to the SpwnVMListener!
+		mockFarmConn.packetListeners.get(0).processPacket(spawn);
+		// get the password
+		SpawnVm vmAcc = (SpawnVm) mockFarmConn.sentPackets
+				.get(mockFarmConn.sentPackets.size() - 1);
+		String vmPassword = vmAcc.getVmPassword();
+		String vmJid = vmAcc.getVmJid();
+		
+		JobStatus status = new JobStatus();
+		status.setVmPassword(vmPassword);
+		status.setTo("dummy");
+		status.setPacketID(spawnPacketId);
+		
+		//check without job id
+		mockVM1Conn.clearPackets();
+		mockVM1Conn.packetListeners.get(1).processPacket(status);
+		waitForResponse(mockFarmConn.sentPackets, 1000);
+		// now, a new packet should have been sent back from the VM
+		assertEquals(1, mockVM1Conn.sentPackets.size());
+		// sent packet should refer to the same pID
+		JobStatus result = (JobStatus) mockVM1Conn.sentPackets.get(0);
+		assertEquals(spawnPacketId,result.getPacketID());
+		assertEquals(IQ.Type.ERROR, result.getType());
+		assertEquals(Errortype.MALFORMED_PACKET, result.getErrorType());
+
+		status.setJobId("test");
+		mockVM1Conn.clearPackets();
+		mockVM1Conn.packetListeners.get(1).processPacket(status);
+		waitForResponse(mockFarmConn.sentPackets, 1000);
+		// now, a new packet should have been sent back from the VM
+		assertEquals(1, mockVM1Conn.sentPackets.size());
+		// sent packet should refer to the same pID
+		result = (JobStatus) mockVM1Conn.sentPackets.get(0);
+		assertEquals(spawnPacketId,result.getPacketID());
+		assertEquals(IQ.Type.ERROR, result.getType());
+		assertEquals(Errortype.JOB_NOT_FOUND, result.getErrorType());
+		
+	}
+	
 	@Test
 	public void sendingAnEvalPacketWithoutVMPasswordShouldReturnErrorAndWithPasswordAResult()
 			throws Exception {
@@ -258,7 +314,8 @@ public class XMPPSpecificationTest {
 				.get(mockFarmConn.sentPackets.size() - 1);
 		String vmPassword = vmAcc.getVmPassword();
 		String vmJid = vmAcc.getVmJid();
-		// send the eval packet
+		
+		// send the eval packet, password missing
 		Evaluate eval = new Evaluate();
 		eval.setPacketID(spawnPacketId);
 		eval.setExpression("20 + 52;");
@@ -274,9 +331,21 @@ public class XMPPSpecificationTest {
 		Evaluate result = (Evaluate) mockVM1Conn.sentPackets.get(0);
 		assertEquals(result.getPacketID(), spawnPacketId);
 		assertEquals(IQ.Type.ERROR, result.getType());
-		assertEquals(
-				"evaluate XML packet is missing the vm_password attribute",
-				result.getErrorMessage());
+		assertEquals(Errortype.MALFORMED_PACKET, result.getErrorType());
+		
+		// now, try with a wrong password
+		eval.setVmPassword("wrong");
+		mockVM1Conn.clearPackets();
+		assertEquals(0, mockVM1Conn.sentPackets.size());
+		mockVM1Conn.packetListeners.get(0).processPacket(eval);
+		waitForResponse(mockVM1Conn.sentPackets, 1500);
+		// now, a new packet should have been sent back from the VM
+		assertEquals(1, mockVM1Conn.sentPackets.size());
+		// sent packet should refer to the same pID
+		result = (Evaluate) mockVM1Conn.sentPackets.get(0);
+		assertEquals(result.getPacketID(), spawnPacketId);
+		assertEquals(IQ.Type.ERROR, result.getType());
+		assertEquals(Errortype.WRONG_VM_PASSWORD, result.getErrorType());
 
 		// now, try with a valid password
 		eval.setVmPassword(vmPassword);
@@ -291,18 +360,33 @@ public class XMPPSpecificationTest {
 		assertEquals(result.getPacketID(), spawnPacketId);
 		assertEquals(IQ.Type.RESULT, result.getType());
 		assertEquals("72.0", result.getExpression());
-		
-		//shut down the VM
+
+		// now, try with a wrong evaluation
+		eval.setExpression("buh+2sdf;==");
+		mockVM1Conn.clearPackets();
+		assertEquals(0, mockVM1Conn.sentPackets.size());
+		mockVM1Conn.packetListeners.get(0).processPacket(eval);
+		waitForResponse(mockVM1Conn.sentPackets, 1500);
+		// now, a new packet should have been sent back from the VM
+		assertEquals(1, mockVM1Conn.sentPackets.size());
+		// sent packet should refer to the same pID
+		result = (Evaluate) mockVM1Conn.sentPackets.get(0);
+		assertEquals(result.getPacketID(), spawnPacketId);
+		assertEquals(IQ.Type.ERROR, result.getType());
+		assertEquals(Errortype.EVALUATION_ERROR, result.getErrorType());
+
+		// shut down the VM
 		mockVM1Conn.clearPackets();
 		TerminateVm terminate = new TerminateVm();
 		terminate.setVmPassword(vmPassword);
 		terminate.setTo(vmJid);
 		mockVM1Conn.packetListeners.get(3).processPacket(terminate);
-		
+
 		ArrayList<Packet> sentPackets = mockVM1Conn.sentPackets;
-		assertEquals("we should get two presence pac kets back",2, sentPackets.size());
-		
-		//check right shutdown messages
+		assertEquals("we should get two presence pac kets back", 2, sentPackets
+				.size());
+
+		// check right shutdown messages
 		xmppFarm.shutDown();
 	}
 
