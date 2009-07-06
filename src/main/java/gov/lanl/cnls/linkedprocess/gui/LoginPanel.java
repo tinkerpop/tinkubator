@@ -27,9 +27,8 @@ public class LoginPanel extends JPanel implements ActionListener {
     public LoginPanel(FarmGui farmGui) {
         super(new BorderLayout());
         this.farmGui = farmGui;
-        this.backgroundImage = new ImageIcon(FarmGui.class.getResource("farm-background.png")).getImage();
+        this.backgroundImage = FarmGui.farmBackground.getImage();
         this.setOpaque(false);
-
 
         JPanel mainPanel = new JPanel(new GridLayout(4,2,0,0));
 
@@ -52,42 +51,41 @@ public class LoginPanel extends JPanel implements ActionListener {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton loginButton = new JButton("login");
+        JButton quitButton = new JButton ("quit");
         this.statusLabel = new JLabel();
         buttonPanel.add(loginButton);
+        buttonPanel.add(quitButton);
         buttonPanel.add(statusLabel);
 
         mainPanel.setOpaque(false);
         buttonPanel.setOpaque(false);
+        //this.add(new JLabel("http://linkedprocess.org (Los Alamos National Laboratory)"), BorderLayout.NORTH);
         this.add(mainPanel, BorderLayout.CENTER);
         this.add(buttonPanel, BorderLayout.SOUTH);
 
         loginButton.addActionListener(this);
 
-        Dimension size = new Dimension(backgroundImage.getWidth(null), backgroundImage.getHeight(null));
-        //setPreferredSize(size);
-        //setMinimumSize(size);
-        //setMaximumSize(size);
-        //setSize(size);
-        //setLayout(null);
+        this.setBorder(BorderFactory.createLineBorder(FarmGui.GRAY_COLOR, 2));
+
 
     }
 
     public void actionPerformed(ActionEvent event) {
         try {
-            XmppFarm farm = new XmppFarm(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText());
-            this.farmGui.loadMainFrame(farm);
+            if(event.getActionCommand().equals("login")) {
+                this.statusLabel.setText("");
+                XmppFarm farm = new XmppFarm(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText());
+                this.farmGui.loadMainFrame(farm);
+            } else {
+                System.exit(0);
+            }
         } catch(XMPPException e) {
-            this.statusLabel.setText("Login information is incorrect.");    
+            this.statusLabel.setText("Could not login.");
         }
-
-
     }
 
     public void paintComponent(Graphics g) {
         g.drawImage(backgroundImage, 0, 0, null);
         super.paintComponent(g);
     }
-
-
-
 }

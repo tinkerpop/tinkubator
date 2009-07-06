@@ -54,10 +54,8 @@ public class XmppFarm extends XmppClient {
         try {
             LogManager.getLogManager().readConfiguration(resourceAsStream);
         } catch (SecurityException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         LOGGER.info("Starting " + STATUS_MESSAGE);
@@ -108,8 +106,8 @@ public class XmppFarm extends XmppClient {
         return this.scheduler;
     }
 
-    public XmppVirtualMachine spawnVirtualMachine(String vmSpecies) throws VMAlreadyExistsException, VMSchedulerIsFullException, UnsupportedScriptEngineException {
-        XmppVirtualMachine vm = new XmppVirtualMachine(this.getServer(), this.getPort(), this.getUsername(), this.getPassword(), this, vmSpecies, XmppClient.generateRandomPassword());
+    public XmppVirtualMachine spawnVirtualMachine(String spawningAppJid, String vmSpecies) throws VMAlreadyExistsException, VMSchedulerIsFullException, UnsupportedScriptEngineException {
+        XmppVirtualMachine vm = new XmppVirtualMachine(this.getServer(), this.getPort(), this.getUsername(), this.getPassword(), this, spawningAppJid, vmSpecies, XmppClient.generateRandomPassword());
         String vmJid = vm.getFullJid();
         this.machines.put(vmJid, vm);
         boolean exceptionThrown = true;
@@ -122,9 +120,7 @@ public class XmppFarm extends XmppClient {
                 vm.shutDown();
                 this.machines.remove(vmJid);
             }
-
         }
-
         return vm;
     }
 

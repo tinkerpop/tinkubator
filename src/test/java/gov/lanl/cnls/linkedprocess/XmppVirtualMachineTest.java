@@ -38,7 +38,7 @@ public class XmppVirtualMachineTest extends TestCase {
 
     @Test
     public void testLoginOPS4J() throws Exception {
-        xmppVirtualMachine = new XmppVirtualMachine(OPS4J_SERVER, PORT, USERNAME, PASSWORD, null, "JavaScript", "pass");
+        xmppVirtualMachine = new XmppVirtualMachine(OPS4J_SERVER, PORT, USERNAME, PASSWORD, null, null, "JavaScript", "pass");
         Connection connection = xmppVirtualMachine.getConnection();
         assertTrue(connection.isConnected());
         xmppVirtualMachine.shutDown();
@@ -47,7 +47,7 @@ public class XmppVirtualMachineTest extends TestCase {
 
     @Test
     public void testLoginGTalk() throws Exception {
-        xmppVirtualMachine = new XmppVirtualMachine(GTALK_SERVER, PORT, GTALK_USERNAME, PASSWORD, null, "JavaScript", "pass");
+        xmppVirtualMachine = new XmppVirtualMachine(GTALK_SERVER, PORT, GTALK_USERNAME, PASSWORD, null, null, "JavaScript", "pass");
         Connection connection = xmppVirtualMachine.getConnection();
         assertTrue(connection.isConnected());
         xmppVirtualMachine.shutDown();
@@ -93,14 +93,14 @@ public class XmppVirtualMachineTest extends TestCase {
     @Test
     public void testSpawnVirtualMachine() throws Exception {
         XmppFarm farm = new XmppFarm(OPS4J_SERVER, PORT, USERNAME, PASSWORD);
-        XmppVirtualMachine vm = farm.spawnVirtualMachine("JavaScript");
+        XmppVirtualMachine vm = farm.spawnVirtualMachine("appJid", "JavaScript");
         farm.shutDown();
     }
 
     @Test
     public void testExecuteScript() throws Exception {
         XmppFarm farm = new XmppFarm(OPS4J_SERVER, PORT, USERNAME, PASSWORD);
-        XmppVirtualMachine vm = farm.spawnVirtualMachine("JavaScript");
+        XmppVirtualMachine vm = farm.spawnVirtualMachine("appJid", "JavaScript");
         farm.shutDown();
     }
 }

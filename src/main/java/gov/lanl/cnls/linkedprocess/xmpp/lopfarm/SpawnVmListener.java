@@ -44,7 +44,7 @@ public class SpawnVmListener implements PacketListener {
             returnSpawnVm.setType(IQ.Type.ERROR);
         } else {
             try {
-                XmppVirtualMachine vm = farm.spawnVirtualMachine(vmSpecies);
+                XmppVirtualMachine vm = farm.spawnVirtualMachine(spawnVm.getFrom(), vmSpecies);
                 returnSpawnVm.setVmJid(vm.getFullJid());
                 returnSpawnVm.setVmPassword(vm.getVmPassword());
                 returnSpawnVm.setType(IQ.Type.RESULT);

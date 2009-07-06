@@ -33,12 +33,14 @@ public class XmppVirtualMachine extends XmppClient {
     protected final XmppFarm farm;
     protected final String vmPassword;
     protected final String vmSpecies;
+    protected final String spawningAppJid;
 
-    public XmppVirtualMachine(final String server, final int port, final String username, final String password, XmppFarm farm, final String vmSpecies, final String vmPassword) {
+    public XmppVirtualMachine(final String server, final int port, final String username, final String password, XmppFarm farm, final String spawningAppJid, final String vmSpecies, final String vmPassword) {
 
         this.farm = farm;
         this.vmPassword = vmPassword;
         this.vmSpecies = vmSpecies;
+        this.spawningAppJid = spawningAppJid; 
 
         LOGGER.info("Starting LoP virtual machine - password:" + vmPassword);
         // Registering the types of IQ packets/stanzas the the Lop VM can respond to.
@@ -126,6 +128,10 @@ public class XmppVirtualMachine extends XmppClient {
 
     public String getVmSpecies()  {
         return this.vmSpecies;     
+    }
+
+    public String getSpawningAppJid() {
+        return this.spawningAppJid;
     }
 
     public void shutDown() {
