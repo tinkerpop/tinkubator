@@ -18,6 +18,9 @@ import java.awt.event.ActionEvent;
 public class FarmGui extends JFrame implements ActionListener {
 
     protected static final String FRAME_TITLE = "Simple Linked Process Farm Manager";
+    protected static final String SHOW_MANAGER = "show manager";
+    protected static final String HIDE_MANAGER = "hide manager";
+    protected static final String QUIT_MANAGER = "quit manager";
     protected XmppFarm farm;
     protected JTreeImage vmTree;
     protected DefaultMutableTreeNode vmTreeRoot;
@@ -77,11 +80,11 @@ public class FarmGui extends JFrame implements ActionListener {
 
         try {
             PopupMenu popup = new PopupMenu();
-            MenuItem exit = new MenuItem("quit manager");
+            MenuItem exit = new MenuItem(QUIT_MANAGER);
             if(this.isVisible())
-                show = new MenuItem("show manager");
+                show = new MenuItem(SHOW_MANAGER);
             else
-                show = new MenuItem("hide manager");
+                show = new MenuItem(HIDE_MANAGER);
             popup.add(show);
             popup.addSeparator();
             popup.add(exit);
@@ -195,11 +198,11 @@ public class FarmGui extends JFrame implements ActionListener {
             this.farm.shutDown();
             this.loadLoginFrame();
         } else {
-            if(event.getActionCommand().equals("show manager")) {
-                show.setLabel("hide manager");
+            if(event.getActionCommand().equals(SHOW_MANAGER)) {
+                show.setLabel(HIDE_MANAGER);
                 this.setVisible(true);
-            } else if(event.getActionCommand().equals("hide manager")) {
-                show.setLabel("show manager");
+            } else if(event.getActionCommand().equals(HIDE_MANAGER)) {
+                show.setLabel(SHOW_MANAGER);
                 this.setVisible(false);
             } else {
                 this.shutDown();  
