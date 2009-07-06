@@ -18,7 +18,7 @@ import java.awt.*;
 public class FarmGui extends JFrame implements TreeSelectionListener {
 
     protected XmppFarm farm;
-    protected JTree vmTree;
+    protected JTreeImage vmTree;
     protected DefaultMutableTreeNode vmTreeRoot;
 
     public class Properties {
@@ -41,31 +41,25 @@ public class FarmGui extends JFrame implements TreeSelectionListener {
 
     }
 
-    public FarmGui(final XmppFarm farm) {
-
-        super("LoP Farm Manager");
+    public void loadMainFrame(final XmppFarm farm) {
+        this.getContentPane().removeAll();
         this.farm = farm;
         farm.setStatusEventHandler(new GuiStatusEventHandler(this));
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         this.vmTreeRoot = new DefaultMutableTreeNode(this.farm);
-        this.vmTree = new JTree(this.vmTreeRoot);
+        this.vmTree = new JTreeImage(this.vmTreeRoot, new ImageIcon(FarmGui.class.getResource("farm-background.png")));
         this.vmTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        this.vmTree.setShowsRootHandles(true);
+        this.vmTree.setShowsRootHandles(false);
         this.vmTree.setCellRenderer(new TreeRenderer());
         this.vmTree.setModel(new DefaultTreeModel(vmTreeRoot));
+        this.vmTree.setOpaque(false);
 
         JScrollPane vmTreeScroll = new JScrollPane(this.vmTree);
-
         JPanel panel = new JPanel();
         panel.add(vmTreeScroll);
-        panel.setOpaque(true);
-        //panel.setForeground(Color.black);
-        //panel.setBackground(Color.white);
+        panel.setOpaque(false);
 
         this.getContentPane().add(panel);
         this.setResizable(false);
-        //this.setSize(450, 400);
         this.pack();
         this.setVisible(true);
         /*try {
@@ -73,6 +67,21 @@ public class FarmGui extends JFrame implements TreeSelectionListener {
             this.setIconImage(Toolkit.getDefaultToolkit().getImage(FarmGui.class.getResource("farm.png")));
         } catch(Exception e) { e.printStackTrace(); } */
     }
+
+    public void loadLoginFrame() {
+        this.getContentPane().add(new LoginPanel(this));
+        this.setResizable(false);
+        this.pack();
+        this.setVisible(true);
+    }
+
+    public FarmGui() {
+        super("Simple LoP Farm Manager");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.loadLoginFrame();
+    }
+
+
 
     public boolean containsVmNode(XmppVirtualMachine vm) {
         for(int i=0; i<vmTreeRoot.getChildCount(); i++) {
@@ -104,12 +113,40 @@ public class FarmGui extends JFrame implements TreeSelectionListener {
         return this.farm;
     }
 
+    private class JTreeImage extends JTree {
+
+      private Image backgroundImage;
+
+      public JTreeImage(MutableTreeNode node, ImageIcon backgroundImage) {
+        super(node);
+        this.backgroundImage = backgroundImage.getImage();
+        Dimension size = new Dimension(this.backgroundImage.getWidth(null), this.backgroundImage.getHeight(null));
+        this.setPreferredSize(size);
+        this.setMinimumSize(size);
+        this.setMaximumSize(size);
+        this.setSize(size);
+        this.setLayout(null);
+      }
+
+      public void paintComponent(Graphics g) {
+        g.drawImage(this.backgroundImage, 0, 0, null);
+        super.paintComponent(g);
+      }
+    }
+
+
     private class TreeRenderer extends DefaultTreeCellRenderer {
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+            this.setOpaque(false);
+            this.setBackgroundNonSelectionColor(new Color(0,0,0,0));
+            //this.setBackgroundSelectionColor(new Color(255,255,255,255));
+            //this.setTextNonSelectionColor(new Color(255,255,255,255));
+            
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-
+            
             Object x = ((DefaultMutableTreeNode) value).getUserObject();
             if (x instanceof XmppFarm) {
+
                 this.setIcon(new ImageIcon(FarmGui.class.getResource("farm.png")));
                 this.setText(((XmppFarm) x).getFullJid());
                 this.setToolTipText("farm");
@@ -147,14 +184,7 @@ public class FarmGui extends JFrame implements TreeSelectionListener {
         //this.updateVirtualMachineTree();
     }
 
-
     public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                XmppFarm farm = new XmppFarm("xmpp.linkedprocess.org", 5222, "linked.process.1", "linked12");
-                new FarmGui(farm);
-
-            }
-        });
+        new FarmGui();
     }
 }

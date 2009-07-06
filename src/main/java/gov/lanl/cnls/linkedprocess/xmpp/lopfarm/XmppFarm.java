@@ -49,7 +49,7 @@ public class XmppFarm extends XmppClient {
     protected final Map<String, XmppVirtualMachine> machines;
     protected final VMScheduler scheduler;
 
-    public XmppFarm(final String server, final int port, final String username, final String password) {
+    public XmppFarm(final String server, final int port, final String username, final String password) throws XMPPException {
         InputStream resourceAsStream = getClass().getResourceAsStream("/logging.properties");
         try {
             LogManager.getLogManager().readConfiguration(resourceAsStream);
@@ -65,14 +65,11 @@ public class XmppFarm extends XmppClient {
         ProviderManager pm = ProviderManager.getInstance();
         pm.addIQProvider(LinkedProcess.SPAWN_VM_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new SpawnVmProvider());
 
-        try {
-            this.logon(server, port, username, password);
-            this.initiateFeatures();
-            //this.printClientStatistics();
-        } catch (XMPPException e) {
-            LOGGER.severe("error: " + e);
-            System.exit(1);
-        }
+
+        this.logon(server, port, username, password);
+        this.initiateFeatures();
+        //this.printClientStatistics();
+
 
         this.roster = this.connection.getRoster();
         this.roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
