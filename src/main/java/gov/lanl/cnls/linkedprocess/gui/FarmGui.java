@@ -45,11 +45,8 @@ public class FarmGui extends JFrame implements ActionListener {
         farm.setStatusEventHandler(new GuiStatusEventHandler(this));
         this.vmTreeRoot = new DefaultMutableTreeNode(this.farm);
         this.vmTree = new JTreeImage(this.vmTreeRoot, farmBackground);
-        this.vmTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        this.vmTree.setShowsRootHandles(false);
         this.vmTree.setCellRenderer(new TreeRenderer());
         this.vmTree.setModel(new DefaultTreeModel(vmTreeRoot));
-        this.vmTree.setOpaque(false);
 
         JScrollPane vmTreeScroll = new JScrollPane(this.vmTree);
         JButton logoutButton = new JButton("shutdown farm");
@@ -76,7 +73,7 @@ public class FarmGui extends JFrame implements ActionListener {
 
     public FarmGui() {
         super(FRAME_TITLE);
-        this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         try {
             PopupMenu popup = new PopupMenu();

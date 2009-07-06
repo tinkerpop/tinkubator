@@ -2,6 +2,7 @@ package gov.lanl.cnls.linkedprocess.gui;
 
 import javax.swing.*;
 import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 
 /**
@@ -22,6 +23,10 @@ public class JTreeImage extends JTree {
         this.setMaximumSize(size);
         this.setSize(size);
         this.setLayout(null);
+        this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        this.setShowsRootHandles(false);
+        this.setOpaque(false);
+        this.setAutoscrolls(true);
     }
 
     public void paintComponent(Graphics g) {
