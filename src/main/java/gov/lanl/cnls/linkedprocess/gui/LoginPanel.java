@@ -6,6 +6,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.Properties;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
 
 import org.jivesoftware.smack.XMPPException;
 
@@ -22,7 +27,9 @@ public class LoginPanel extends JPanel implements ActionListener {
     protected JTextField serverField;
     protected JTextField portField;
     protected JLabel statusLabel;
+    protected JCheckBox rememberBox;
     protected Image backgroundImage;
+    protected final static String PROPERTIES_FILE = "farm_manager.properties";
 
     public LoginPanel(FarmGui farmGui) {
         super(new BorderLayout());
@@ -30,12 +37,26 @@ public class LoginPanel extends JPanel implements ActionListener {
         this.backgroundImage = FarmGui.farmBackground.getImage();
         this.setOpaque(false);
 
-        JPanel mainPanel = new JPanel(new GridLayout(4,2,0,0));
-
-        this.usernameField = new JTextField("linked.process.1", 15);
-        this.passwordField = new JPasswordField("linked12", 15);
-        this.serverField = new JTextField("xmpp.linkedprocess.org", 15);
+        this.usernameField = new JTextField("", 15);
+        this.passwordField = new JPasswordField("", 15);
+        this.serverField = new JTextField("", 15);
         this.portField = new JTextField("5222", 15);
+        this.rememberBox = new JCheckBox("remember");
+        this.rememberBox.setSelected(true);
+
+        try {
+            Properties props = new Properties();
+            props.load(new FileInputStream(PROPERTIES_FILE));
+            this.usernameField.setText(props.getProperty("username"));
+            this.passwordField.setText(props.getProperty("password"));
+            this.serverField.setText(props.getProperty("server"));
+            this.portField.setText(props.getProperty("port"));
+        } catch(Exception e) {
+            System.out.println("Could not load " + PROPERTIES_FILE + " file.");
+
+        }
+
+        JPanel mainPanel = new JPanel(new GridLayout(5,2,0,0));
 
         mainPanel.add(new JLabel("username:"));
         mainPanel.add(usernameField);
@@ -48,6 +69,9 @@ public class LoginPanel extends JPanel implements ActionListener {
 
         mainPanel.add(new JLabel("port:"));
         mainPanel.add(portField);
+
+        mainPanel.add(new JLabel());
+        mainPanel.add(this.rememberBox);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton loginButton = new JButton("login");
@@ -64,6 +88,7 @@ public class LoginPanel extends JPanel implements ActionListener {
         this.add(buttonPanel, BorderLayout.SOUTH);
 
         loginButton.addActionListener(this);
+        quitButton.addActionListener(this);
 
         this.setBorder(BorderFactory.createLineBorder(FarmGui.GRAY_COLOR, 2));
 
@@ -71,6 +96,23 @@ public class LoginPanel extends JPanel implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent event) {
+
+        if(this.rememberBox.isSelected()) {
+            Properties props = new Properties();
+            props.put("username", this.usernameField.getText());
+            props.put("password", this.passwordField.getText());
+            props.put("server", this.serverField.getText());
+            props.put("port", this.portField.getText());
+
+            try {
+                props.store(new FileOutputStream(PROPERTIES_FILE), "saved properties for simple linked process farm manager");
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            new File(PROPERTIES_FILE).delete();
+        }
+        
         try {
             if(event.getActionCommand().equals("login")) {
                 this.statusLabel.setText("");
