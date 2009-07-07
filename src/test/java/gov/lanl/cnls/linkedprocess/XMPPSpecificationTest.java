@@ -280,6 +280,7 @@ public class XMPPSpecificationTest {
 		assertEquals(IQ.Type.ERROR, result.getType());
 		assertEquals(Errortype.MALFORMED_PACKET, result.getErrorType());
 
+		//non-existent job
 		status.setJobId("test");
 		mockVM1Conn.clearPackets();
 		mockVM1Conn.packetListeners.get(1).processPacket(status);
