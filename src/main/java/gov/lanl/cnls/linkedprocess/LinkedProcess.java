@@ -1,10 +1,15 @@
 package gov.lanl.cnls.linkedprocess;
 
+import gov.lanl.cnls.linkedprocess.os.JobResult;
+import gov.lanl.cnls.linkedprocess.security.VMSecurityManager;
 import org.jdom.output.XMLOutputter;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Logger;
-import java.io.IOException;
 
 /**
  * Author: josh
@@ -106,7 +111,7 @@ public class LinkedProcess {
     public static final String JOB_ID_ATTRIBUTE = "job_id";
     public static final String ERROR_TYPE_ATTRIBUTE = "error_type";
     public static final String VALUE_ATTRIBUTE = "value";
-    
+
     ///////////////////////////////////////////////////////
 
     public static final int LOWEST_PRIORITY = -128;
@@ -124,13 +129,35 @@ public class LinkedProcess {
     public static final XMLOutputter xmlOut = new XMLOutputter();
 
     static {
-        
         LOGGER = getLogger(LinkedProcess.class);
         try {
             PROPERTIES.load(LinkedProcess.class.getResourceAsStream(LOP_PROPERTIES));
         } catch (IOException e) {
             LOGGER.severe("unable to load properties file " + LOP_PROPERTIES);
             System.exit(1);
+        }
+
+        // Necessary for sandboxing of VM threads.
+        System.setSecurityManager(new VMSecurityManager());
+
+        preLoadingHack();
+    }
+
+    private static void preLoadingHack() {
+
+        // Hack to pre-load JobResult so that a VM worker thread doesn't have to
+        // load a class (which is in general not allowed) to produce the first
+        // result.
+        new JobResult(null, (String) null);
+
+        // Hack to pre-load Rhino resource bundles.  This will have to be extended.
+        ScriptEngineManager m = new ScriptEngineManager();
+        ScriptEngine e = m.getEngineByName("JavaScript");
+        try {
+            e.eval("1 + 1;");
+            e.eval("1 ... 1;");
+        } catch (ScriptException e1) {
+            // Do nothing.
         }
     }
 

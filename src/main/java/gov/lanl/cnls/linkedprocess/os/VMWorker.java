@@ -1,6 +1,7 @@
 package gov.lanl.cnls.linkedprocess.os;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import gov.lanl.cnls.linkedprocess.security.VMSandboxedThread;
 import gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException;
 import gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException;
 
@@ -84,7 +85,7 @@ public class VMWorker {
                 LinkedProcess.MESSAGE_QUEUE_CAPACITY));
         jobQueue = new LinkedBlockingQueue<Job>(capacity);
 
-        workerThread = new Thread(new WorkerRunnable(), nextThreadName());
+        workerThread = new VMSandboxedThread(new WorkerRunnable(), nextThreadName());
         workerThread.start();
 
         status = Status.IDLE_WAITING;
@@ -337,7 +338,7 @@ public class VMWorker {
         try {
             String expression = request.getExpression();
             LOGGER.fine(expression);
-			Object returnObject = scriptEngine.eval(expression);
+            Object returnObject = scriptEngine.eval(expression);
 
             // Note: the return object is not necessarily a string.  It may,
             // for instance, be a Double which needs to be converted to a
@@ -383,11 +384,16 @@ public class VMWorker {
                 } catch (InterruptedException e) {
                     // Ignore and continue.  The point was to break out of the
                     // body of the loop.
+                } catch (SecurityException e) {
+                    // TODO
+                    e.printStackTrace();
                 } catch (Exception e) {
                     // TODO: stack trace
                     LOGGER.severe("worker runnable died with error: " + e.toString());
+                    e.printStackTrace();
                 }
             }
         }
     }
+
 }
