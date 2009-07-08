@@ -21,6 +21,7 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.packet.DataForm;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -480,6 +481,8 @@ public class XMPPSpecificationTest {
 		Iterator<String> features = new LinkedList<String>().iterator();
 		expect(mdm.getFeatures()).andReturn(features).anyTimes();
 		mdm.addFeature(isA(String.class));
+		expectLastCall().anyTimes();
+		mdm.setExtendedInfo(isA(DataForm.class));
 		expectLastCall().anyTimes();
 		ServiceDiscoveryManager.setIdentityName(isA(String.class));
 		expectLastCall().anyTimes();
