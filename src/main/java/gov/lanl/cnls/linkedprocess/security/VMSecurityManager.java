@@ -1,5 +1,9 @@
 package gov.lanl.cnls.linkedprocess.security;
 
+import java.io.FileDescriptor;
+import java.net.InetAddress;
+import java.security.Permission;
+
 /**
  * Author: josh
  * Date: Jul 7, 2009
@@ -12,14 +16,15 @@ public class VMSecurityManager extends SecurityManager {
     }
 
     @Override
-    public void checkPermission(java.security.Permission permission) {
+    public void checkPermission(final Permission permission) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }
     }
 
     @Override
-    public void checkPermission(java.security.Permission permission, java.lang.Object o) {
+    public void checkPermission(final Permission permission,
+                                final Object o) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }
@@ -33,14 +38,14 @@ public class VMSecurityManager extends SecurityManager {
     }
 
     @Override
-    public void checkAccess(java.lang.Thread thread) {
+    public void checkAccess(final Thread thread) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }
     }
 
     @Override
-    public void checkAccess(java.lang.ThreadGroup threadGroup) {
+    public void checkAccess(final ThreadGroup threadGroup) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }
@@ -54,91 +59,96 @@ public class VMSecurityManager extends SecurityManager {
     }
 
     @Override
-    public void checkExec(java.lang.String s) {
+    public void checkExec(final String s) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }
     }
 
     @Override
-    public void checkLink(java.lang.String s) {
+    public void checkLink(final String s) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }
     }
 
     @Override
-    public void checkRead(java.io.FileDescriptor fileDescriptor) {
+    public void checkRead(final FileDescriptor fileDescriptor) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }
     }
 
     @Override
-    public void checkRead(java.lang.String s) {
+    public void checkRead(final String s) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }
     }
 
     @Override
-    public void checkRead(java.lang.String s, java.lang.Object o) {
+    public void checkRead(final String s,
+                          final Object o) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }
     }
 
     @Override
-    public void checkWrite(java.io.FileDescriptor fileDescriptor) {
+    public void checkWrite(final FileDescriptor fileDescriptor) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }
     }
 
     @Override
-    public void checkWrite(java.lang.String s) {
+    public void checkWrite(final String s) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }
     }
 
     @Override
-    public void checkDelete(java.lang.String s) {
+    public void checkDelete(final String s) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }
     }
 
     @Override
-    public void checkConnect(java.lang.String s, int i) {
+    public void checkConnect(final String s,
+                             final int i) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }
     }
 
     @Override
-    public void checkConnect(java.lang.String s, int i, java.lang.Object o) {
+    public void checkConnect(final String s,
+                             final int i,
+                             final Object o) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }
     }
 
     @Override
-    public void checkListen(int i) {
+    public void checkListen(final int i) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }
     }
 
     @Override
-    public void checkAccept(java.lang.String s, int i) {
+    public void checkAccept(final String s,
+                            final int i) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }
     }
 
     @Override
-    public void checkMulticast(java.net.InetAddress inetAddress) {
+    public void checkMulticast(final InetAddress inetAddress) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }
@@ -182,14 +192,14 @@ public class VMSecurityManager extends SecurityManager {
     }
 
     @Override
-    public void checkPackageAccess(java.lang.String s) {
+    public void checkPackageAccess(final String s) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }
     }
 
     @Override
-    public void checkPackageDefinition(java.lang.String s) {
+    public void checkPackageDefinition(final String s) {
         if (isVMWorkerThread()) {
             throw new SecurityException(NOT_ALLOWED_IN_VM);
         }

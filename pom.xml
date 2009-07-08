@@ -17,17 +17,17 @@
         <dependency>
             <groupId>jivesoftware</groupId>
             <artifactId>smack</artifactId>
-            <version>3.0.4</version>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
             <groupId>jivesoftware</groupId>
             <artifactId>smackx</artifactId>
-            <version>3.0.4</version>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
-            <groupId>smack</groupId>
-            <artifactId>smackx-debug.jar</artifactId>
-            <version>3.0.4</version>
+            <groupId>jivesoftware</groupId>
+            <artifactId>smackx-debug</artifactId>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.openrdf.sesame</groupId>
@@ -216,11 +216,11 @@
             <name>it.su.se Maven repository (for smackx-debug)</name>
             <url>http://maven.it.su.se/it.su.se/maven2</url>
         </repository>
-        <!--<repository>
+        <repository>
             <id>fortytwo</id>
             <name>fortytwo.net Maven repository</name>
             <url>http://fortytwo.net/maven2</url>
-        </repository>-->
+        </repository>
     </repositories>
 
     <build>
