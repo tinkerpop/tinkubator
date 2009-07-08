@@ -2,7 +2,6 @@ package gov.lanl.cnls.linkedprocess;
 
 import gov.lanl.cnls.linkedprocess.xmpp.farm.SpawnVm;
 import gov.lanl.cnls.linkedprocess.xmpp.farm.XmppFarm;
-import gov.lanl.cnls.linkedprocess.xmpp.tools.XmppTestClient;
 import junit.framework.TestCase;
 import org.jivesoftware.smack.XMPPConnection;
 import org.junit.After;
@@ -28,7 +27,6 @@ public class XmppFarmTest extends TestCase {
     private static int port = 5222;
 
 	private static XmppFarm xmppFarm;
-	private static XmppTestClient xmppApp;
 
 	public static void main(String[] args) throws Exception {
 		new XmppFarm(server1, port, username1, password1);
@@ -42,16 +40,13 @@ public class XmppFarmTest extends TestCase {
 
 		xmppFarm = new XmppFarm(server1, port, username1, password1);
 		Thread.sleep(1000);
-		xmppApp = new XmppTestClient(server1, port, username2, password2);
-		Thread.sleep(1000);
+
 	}
 
 	@Test
 	public void testLogin() throws Exception {
 		assertTrue(xmppFarm.getConnection().isConnected());
-		assertTrue(xmppApp.getConnection().isConnected());
 		assertTrue(xmppFarm.getConnection().isAuthenticated());
-		assertTrue(xmppApp.getConnection().isAuthenticated());
 	}
 
     //@Test
@@ -78,8 +73,6 @@ public class XmppFarmTest extends TestCase {
 		SpawnVm spawnVm = new SpawnVm();
 		spawnVm.setTo(xmppFarm.getFullJid());
 		spawnVm.setPacketID("abcd");
-		xmppApp.getConnection().sendPacket(spawnVm);
-
 	}
 
 
@@ -97,6 +90,5 @@ public class XmppFarmTest extends TestCase {
     @After
 	public void teardown() {
 		xmppFarm.shutDown();
-		xmppApp.shutDown();
 	}
 }
