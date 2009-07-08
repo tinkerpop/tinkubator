@@ -19,7 +19,7 @@ import org.jivesoftware.smack.XMPPException;
  * Date: Jul 6, 2009
  * Time: 10:32:32 AM
  */
-public class LoginPanel extends JPanel implements ActionListener {
+public class LoginArea extends JPanel implements ActionListener {
 
     protected FarmGui farmGui;
     protected JTextField usernameField;
@@ -29,9 +29,10 @@ public class LoginPanel extends JPanel implements ActionListener {
     protected JLabel statusLabel;
     protected JCheckBox rememberBox;
     protected Image backgroundImage;
+    protected String BORDER_SPACE = "    ";
     protected final static String PROPERTIES_FILE = "farm_manager.properties";
 
-    public LoginPanel(FarmGui farmGui) {
+    public LoginArea(FarmGui farmGui) {
         super(new BorderLayout());
         this.farmGui = farmGui;
         this.backgroundImage = FarmGui.farmBackground.getImage();
@@ -56,18 +57,23 @@ public class LoginPanel extends JPanel implements ActionListener {
 
         }
 
-        JPanel mainPanel = new JPanel(new GridLayout(5,2,0,0));
+        JPanel mainPanel = new JPanel(new GridLayout(6,2,0,0));
 
-        mainPanel.add(new JLabel("username:"));
+        mainPanel.add(new JLabel());
+        this.statusLabel = new JLabel();
+        this.statusLabel.setForeground(Color.RED);
+        mainPanel.add(this.statusLabel);
+
+        mainPanel.add(new JLabel(BORDER_SPACE + "username:"));
         mainPanel.add(usernameField);
 
-        mainPanel.add(new JLabel("password:"));
+        mainPanel.add(new JLabel(BORDER_SPACE + "password:"));
         mainPanel.add(passwordField);
 
-        mainPanel.add(new JLabel("server:"));
+        mainPanel.add(new JLabel(BORDER_SPACE + "server:"));
         mainPanel.add(serverField);
 
-        mainPanel.add(new JLabel("port:"));
+        mainPanel.add(new JLabel(BORDER_SPACE + "port:"));
         mainPanel.add(portField);
 
         mainPanel.add(new JLabel());
@@ -76,14 +82,15 @@ public class LoginPanel extends JPanel implements ActionListener {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton loginButton = new JButton("login");
         JButton quitButton = new JButton ("quit");
-        this.statusLabel = new JLabel();
+
         buttonPanel.add(loginButton);
         buttonPanel.add(quitButton);
-        buttonPanel.add(statusLabel);
+        JLabel copyright = new JLabel("developed by linkedprocess.org");
+        copyright.setFont(new Font(Font.SERIF, Font.PLAIN, 10));
+        buttonPanel.add(copyright);
 
         mainPanel.setOpaque(false);
         buttonPanel.setOpaque(false);
-        //this.add(new JLabel("http://linkedprocess.org (Los Alamos National Laboratory)"), BorderLayout.NORTH);
         this.add(mainPanel, BorderLayout.CENTER);
         this.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -110,7 +117,7 @@ public class LoginPanel extends JPanel implements ActionListener {
                 e.printStackTrace();
             }
         } else {
-            new File(PROPERTIES_FILE).delete();
+            new File(LoginArea.PROPERTIES_FILE).delete();
         }
         
         try {
@@ -118,7 +125,7 @@ public class LoginPanel extends JPanel implements ActionListener {
                 this.statusLabel.setText("");
                 XmppFarm farm = new XmppFarm(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText());
                 this.farmGui.loadMainFrame(farm);
-            } else {
+            } else if (event.getActionCommand().equals("quit")) {
                 System.exit(0);
             }
         } catch(XMPPException e) {

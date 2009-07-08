@@ -29,6 +29,11 @@ public class JTreeImage extends JTree {
         this.setAutoscrolls(true);
     }
 
+    public Dimension getPreferredSize() {
+      return new Dimension(this.getWidth(), this.getHeight());
+    }
+
+
     public void paintComponent(Graphics g) {
         g.drawImage(this.backgroundImage, 0, 0, null);
         super.paintComponent(g);
