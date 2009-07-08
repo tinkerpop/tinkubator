@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess.gui.farm;
+package gov.lanl.cnls.linkedprocess.gui;
 
 import javax.swing.*;
 import javax.swing.tree.MutableTreeNode;

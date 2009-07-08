@@ -8,12 +8,12 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
  * Date: Jul 4, 2009
  * Time: 5:44:41 PM
  */
-public class GuiStatusEventHandler extends StatusEventHandler {
+public class FarmGuiStatusEventHandler extends StatusEventHandler {
 
     protected FarmGui gui;
 
 
-    public GuiStatusEventHandler(FarmGui gui) {
+    public FarmGuiStatusEventHandler(FarmGui gui) {
         super(gui.getFarm());
         this.gui = gui;
     }

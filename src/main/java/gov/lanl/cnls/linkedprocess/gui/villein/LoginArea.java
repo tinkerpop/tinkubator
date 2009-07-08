@@ -1,19 +1,16 @@
-package gov.lanl.cnls.linkedprocess.gui.farm;
+package gov.lanl.cnls.linkedprocess.gui.villein;
 
-import gov.lanl.cnls.linkedprocess.xmpp.farm.XmppFarm;
 import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.*;
 import java.util.Properties;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.File;
-import java.io.FileInputStream;
-
-import org.jivesoftware.smack.XMPPException;
 
 /**
  * User: marko
@@ -22,7 +19,7 @@ import org.jivesoftware.smack.XMPPException;
  */
 public class LoginArea extends JPanel implements ActionListener {
 
-    protected FarmGui farmGui;
+    protected VilleinGui villeinGui;
     protected JTextField usernameField;
     protected JTextField passwordField;
     protected JTextField serverField;
@@ -31,12 +28,12 @@ public class LoginArea extends JPanel implements ActionListener {
     protected JCheckBox rememberBox;
     protected Image backgroundImage;
     protected String BORDER_SPACE = "    ";
-    protected final static String PROPERTIES_FILE = "farm_manager.properties";
+    protected final static String PROPERTIES_FILE = "vm_manager.properties";
 
-    public LoginArea(FarmGui farmGui) {
+    public LoginArea(VilleinGui villeinGui) {
         super(new BorderLayout());
-        this.farmGui = farmGui;
-        this.backgroundImage = ImageHolder.farmBackground.getImage();
+        this.villeinGui = villeinGui;
+        this.backgroundImage = ImageHolder.cowBackground.getImage();
         this.setOpaque(false);
 
         this.usernameField = new JTextField("", 15);
@@ -121,18 +118,18 @@ public class LoginArea extends JPanel implements ActionListener {
         } else {
             new File(LoginArea.PROPERTIES_FILE).delete();
         }
-        
-        try {
+
+        /*try {
             if(event.getActionCommand().equals("login")) {
                 this.statusLabel.setText("");
-                XmppFarm farm = new XmppFarm(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText());
-                this.farmGui.loadMainFrame(farm);
+                //XmppClient client = new XmppClient(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText());
+                //this.farmGui.loadMainFrame(farm);
             } else if (event.getActionCommand().equals("quit")) {
                 System.exit(0);
             }
         } catch(XMPPException e) {
             this.statusLabel.setText("Could not login.");
-        }
+        }*/
     }
 
     public void paintComponent(Graphics g) {

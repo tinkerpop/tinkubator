@@ -24,11 +24,7 @@ public class FarmGui extends JFrame implements ActionListener {
     protected SystemTray systemTray;
     protected TrayIcon systemTrayIcon;
     protected MenuItem show;
-
     protected MainArea mainArea;
-
-
-    public static final Color GRAY_COLOR = new Color(200, 200, 200);
 
 
     public void loadLoginFrame() {
@@ -46,7 +42,7 @@ public class FarmGui extends JFrame implements ActionListener {
         this.getContentPane().add(this.mainArea);
         this.setResizable(false);
         this.pack();
-        farm.setStatusEventHandler(new GuiStatusEventHandler(this));
+        farm.setStatusEventHandler(new FarmGuiStatusEventHandler(this));
     }
 
     public void updateVirtualMachineTree() {

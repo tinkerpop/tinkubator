@@ -4,6 +4,8 @@ import gov.lanl.cnls.linkedprocess.xmpp.farm.XmppFarm;
 import gov.lanl.cnls.linkedprocess.xmpp.vm.XmppVirtualMachine;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
+import gov.lanl.cnls.linkedprocess.gui.JTreeImage;
+import gov.lanl.cnls.linkedprocess.gui.TreeNodeProperty;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -41,7 +43,7 @@ public class MainArea extends JTabbedPane implements ActionListener {
         treePanel.add(vmTreeScroll, BorderLayout.CENTER);
         treePanel.add(shutdownButton, BorderLayout.SOUTH);
         treePanel.setOpaque(false);
-        treePanel.setBorder(BorderFactory.createLineBorder(FarmGui.GRAY_COLOR, 2));
+        treePanel.setBorder(BorderFactory.createLineBorder(ImageHolder.GRAY_COLOR, 2));
 
         JPanel securityPanel = new JPanel();
         this.addTab("virtual machines", treePanel);
@@ -98,6 +100,11 @@ public class MainArea extends JTabbedPane implements ActionListener {
         model.reload();
     }
 
+    public void actionPerformed(ActionEvent event) {
+        this.farmGui.getFarm().shutDown();
+        this.farmGui.loadLoginFrame();
+    }
+
     private class TreeRenderer extends DefaultTreeCellRenderer {
           public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
               this.setOpaque(false);
@@ -150,11 +157,6 @@ public class MainArea extends JTabbedPane implements ActionListener {
               }
               return this;
           }
-      }
-
-      public void actionPerformed(ActionEvent event) {
-              this.farmGui.getFarm().shutDown();
-              this.farmGui.loadLoginFrame();    
       }
 
 }

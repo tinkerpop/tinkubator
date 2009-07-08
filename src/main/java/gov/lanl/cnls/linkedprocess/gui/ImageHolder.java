@@ -1,8 +1,7 @@
 package gov.lanl.cnls.linkedprocess.gui;
 
-import gov.lanl.cnls.linkedprocess.gui.farm.FarmGui;
-
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import java.awt.*;
 
 /**
  * User: marko
@@ -12,6 +11,7 @@ import javax.swing.*;
 public class ImageHolder {
 
     public static final ImageIcon farmBackground = new ImageIcon(ImageHolder.class.getResource("farm-background.png"));
+    public static final ImageIcon cowBackground = new ImageIcon(ImageHolder.class.getResource("cow-background.png"));
     public static final ImageIcon barnIcon = new ImageIcon(ImageHolder.class.getResource("barn.png"));
     public static final ImageIcon lopIcon = new ImageIcon(ImageHolder.class.getResource("lop-logo.png"));
     public static final ImageIcon speciesIcon = new ImageIcon(ImageHolder.class.getResource("species.png"));
@@ -21,4 +21,6 @@ public class ImageHolder {
     public static final ImageIcon statusIcon = new ImageIcon(ImageHolder.class.getResource("status.png"));
     public static final ImageIcon activeIcon = new ImageIcon(ImageHolder.class.getResource("active.png"));
     public static final ImageIcon inactiveIcon = new ImageIcon(ImageHolder.class.getResource("inactive.png"));
+
+    public static final Color GRAY_COLOR = new Color(200, 200, 200);
 }

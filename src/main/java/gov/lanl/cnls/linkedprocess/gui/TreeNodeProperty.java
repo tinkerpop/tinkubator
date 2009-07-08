@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess.gui.farm;
+package gov.lanl.cnls.linkedprocess.gui;
 
 /**
  * User: marko
