@@ -185,7 +185,7 @@ public class VMScheduler {
             setSchedulerStatus(LinkedProcess.FarmStatus.ACTIVE_FULL);
         }
 
-        setVirtualMachineStatus(machineJID, LinkedProcess.VMStatus.ACTIVE);
+        setVirtualMachineStatus(machineJID, LinkedProcess.VmStatus.ACTIVE);
     }
 
     /**
@@ -207,7 +207,7 @@ public class VMScheduler {
         workerQueue.remove(w);
 
         w.terminate();
-        setVirtualMachineStatus(machineJID, LinkedProcess.VMStatus.DOES_NOT_EXIST);
+        setVirtualMachineStatus(machineJID, LinkedProcess.VmStatus.DOES_NOT_EXIST);
 
         if (MAX_VM > workersByJID.size() && this.status != LinkedProcess.FarmStatus.ACTIVE) {
             setSchedulerStatus(LinkedProcess.FarmStatus.ACTIVE);
@@ -225,11 +225,11 @@ public class VMScheduler {
      * @param machineJID the JID of the virtual machine of interest
      * @return the status of the given virtual machine
      */
-    public synchronized LinkedProcess.VMStatus getVirtualMachineStatus(final String machineJID) {
+    public synchronized LinkedProcess.VmStatus getVirtualMachineStatus(final String machineJID) {
         VMWorker w = workersByJID.get(machineJID);
         return (null == w)
-                ? LinkedProcess.VMStatus.DOES_NOT_EXIST
-                : LinkedProcess.VMStatus.ACTIVE;
+                ? LinkedProcess.VmStatus.DOES_NOT_EXIST
+                : LinkedProcess.VmStatus.ACTIVE;
     }
 
     /**
@@ -274,7 +274,7 @@ public class VMScheduler {
         for (String machineJID : workersByJID.keySet()) {
             VMWorker w = workersByJID.get(machineJID);
             w.terminate();
-            setVirtualMachineStatus(machineJID, LinkedProcess.VMStatus.DOES_NOT_EXIST);
+            setVirtualMachineStatus(machineJID, LinkedProcess.VmStatus.DOES_NOT_EXIST);
         }
         workersByJID.clear();
 
@@ -360,7 +360,7 @@ public class VMScheduler {
     }
 
     private void setVirtualMachineStatus(final String machineJID,
-                                         final LinkedProcess.VMStatus newStatus) {
+                                         final LinkedProcess.VmStatus newStatus) {
         eventHandler.virtualMachineStatusChanged(machineJID, newStatus);
     }
 
@@ -379,7 +379,7 @@ public class VMScheduler {
     public interface LopStatusEventHandler {
         void schedulerStatusChanged(LinkedProcess.FarmStatus newStatus);
 
-        void virtualMachineStatusChanged(String vmJID, LinkedProcess.VMStatus newStatus);
+        void virtualMachineStatusChanged(String vmJID, LinkedProcess.VmStatus newStatus);
     }
 
     private class ResultCounter implements VMResultHandler {

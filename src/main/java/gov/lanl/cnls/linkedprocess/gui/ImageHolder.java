@@ -17,7 +17,7 @@ public class ImageHolder {
     public static final ImageIcon speciesIcon = new ImageIcon(ImageHolder.class.getResource("species.png"));
     public static final ImageIcon passwordIcon = new ImageIcon(ImageHolder.class.getResource("password.png"));
     public static final ImageIcon timeIcon = new ImageIcon(ImageHolder.class.getResource("time.png"));
-    public static final ImageIcon spawnerIcon = new ImageIcon(ImageHolder.class.getResource("spawner.png"));
+    public static final ImageIcon villeinIcon = new ImageIcon(ImageHolder.class.getResource("villein.png"));
     public static final ImageIcon statusIcon = new ImageIcon(ImageHolder.class.getResource("status.png"));
     public static final ImageIcon activeIcon = new ImageIcon(ImageHolder.class.getResource("active.png"));
     public static final ImageIcon inactiveIcon = new ImageIcon(ImageHolder.class.getResource("inactive.png"));

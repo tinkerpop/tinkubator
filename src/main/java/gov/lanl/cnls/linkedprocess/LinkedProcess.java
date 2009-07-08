@@ -47,18 +47,33 @@ public class LinkedProcess {
 
     }
 
-    public enum VMStatus {
+    public enum VmStatus {
         ACTIVE("active"), ACTIVE_FULL("full"), DOES_NOT_EXIST("not_found");
 
         private final String name;
 
-        private VMStatus(final String name) {
+        private VmStatus(final String name) {
             this.name = name;
         }
 
         public String toString() {
             return name;
         }
+    }
+
+    public enum VilleinStatus {
+        ACTIVE("active"), INACTIVE("inactive");
+
+        private final String name;
+
+        private VilleinStatus(final String name) {
+            this.name = name;
+        }
+
+        public String toString() {
+            return name;
+        }
+
     }
 
     public enum Errortype {

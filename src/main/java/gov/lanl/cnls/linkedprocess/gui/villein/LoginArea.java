@@ -1,6 +1,7 @@
 package gov.lanl.cnls.linkedprocess.gui.villein;
 
 import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
+import gov.lanl.cnls.linkedprocess.xmpp.villein.XmppVillein;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
@@ -11,6 +12,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.File;
+
+import org.jivesoftware.smack.XMPPException;
 
 /**
  * User: marko
@@ -119,17 +122,17 @@ public class LoginArea extends JPanel implements ActionListener {
             new File(LoginArea.PROPERTIES_FILE).delete();
         }
 
-        /*try {
+        try {
             if(event.getActionCommand().equals("login")) {
                 this.statusLabel.setText("");
-                //XmppClient client = new XmppClient(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText());
-                //this.farmGui.loadMainFrame(farm);
+                XmppVillein villein = new XmppVillein(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText());
+                this.villeinGui.loadBuddyArea(villein);
             } else if (event.getActionCommand().equals("quit")) {
                 System.exit(0);
             }
         } catch(XMPPException e) {
             this.statusLabel.setText("Could not login.");
-        }*/
+        }
     }
 
     public void paintComponent(Graphics g) {

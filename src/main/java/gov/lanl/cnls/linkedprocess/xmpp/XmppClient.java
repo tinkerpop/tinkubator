@@ -7,10 +7,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.logging.Logger;
 
-import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 
@@ -28,18 +25,6 @@ public abstract class XmppClient {
     private String password;
     private String server;
     private int port;
-
-    protected void initiateFeatures() {
-        XMPPConnection delegate = connection.getDelegate();
-        LOGGER.fine(delegate.toString());
-		discoManager = ServiceDiscoveryManager.getInstanceFor(delegate);
-        Iterator<String> features = discoManager.getFeatures();
-        while (features.hasNext()) {
-            String feature = features.next();
-            discoManager.removeFeature(feature);
-        }
-        discoManager.addFeature(LinkedProcess.DISCO_INFO_NAMESPACE);
-    }
 
     protected void logon(final String server, final int port, final String username, final String password, String resource) throws XMPPException {
 
@@ -79,7 +64,7 @@ public abstract class XmppClient {
         }, "Shutdown hook");
         shutdownHook.start();
 
-        //this.roster = this.connection.getRoster();
+        this.roster = this.connection.getRoster();
     }
 
     public void logout() {
@@ -162,5 +147,32 @@ public abstract class XmppClient {
 
     public static String generateRandomPassword() {
         return XmppClient.generateRandomID();
+    }
+
+    protected void initiateFeatures() {
+        XMPPConnection delegate = connection.getDelegate();
+        LOGGER.fine(delegate.toString());
+		discoManager = ServiceDiscoveryManager.getInstanceFor(delegate);
+        Iterator<String> features = discoManager.getFeatures();
+        while (features.hasNext()) {
+            String feature = features.next();
+            discoManager.removeFeature(feature);
+        }
+        discoManager.addFeature(LinkedProcess.DISCO_INFO_NAMESPACE);
+    }
+
+    protected void printRoster() {
+        for(RosterEntry entry : this.roster.getEntries()) {
+            System.out.println(entry.getName() + " " + entry.getUser() + " " + entry.getType() + " " + entry.getStatus());
+            System.out.println(entry);
+            System.out.println(this.roster.getPresence(entry.getUser()).toXML());
+            Iterator<Presence> itty = this.roster.getPresences(entry.getUser());
+            while(itty.hasNext()) {
+                System.out.println(itty.next().toXML());
+            }
+            System.out.println(this.roster.getPresenceResource(entry.getUser()).toXML());
+        }
+
+ 
     }
 }

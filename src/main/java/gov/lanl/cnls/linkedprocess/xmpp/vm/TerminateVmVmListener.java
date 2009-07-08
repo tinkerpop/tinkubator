@@ -12,11 +12,11 @@ import org.jivesoftware.smack.packet.IQ;
  * Date: Jun 25, 2009
  * Time: 2:25:59 PM
  */
-public class TerminateVmListener implements PacketListener {
+public class TerminateVmVmListener implements PacketListener {
 
     private XmppVirtualMachine vm;
 
-    public TerminateVmListener(XmppVirtualMachine vm) {
+    public TerminateVmVmListener(XmppVirtualMachine vm) {
         this.vm = vm;
     }
 
@@ -32,7 +32,7 @@ public class TerminateVmListener implements PacketListener {
     }
 
     private void processPacketTemp(Packet terminateVm) {
-        XmppFarm.LOGGER.info("Arrived " + TerminateVmListener.class.getName());
+        XmppFarm.LOGGER.info("Arrived " + TerminateVmVmListener.class.getName());
         XmppFarm.LOGGER.info(terminateVm.toXML());
 
         TerminateVm returnTerminateVm = new TerminateVm();
@@ -53,7 +53,7 @@ public class TerminateVmListener implements PacketListener {
                 returnTerminateVm.setType(IQ.Type.RESULT);
         }
 
-        XmppFarm.LOGGER.info("Sent " + TerminateVmListener.class.getName());
+        XmppFarm.LOGGER.info("Sent " + TerminateVmVmListener.class.getName());
         XmppFarm.LOGGER.info(returnTerminateVm.toXML());
         vm.getConnection().sendPacket(returnTerminateVm);
 

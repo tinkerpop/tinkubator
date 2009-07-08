@@ -22,7 +22,7 @@ public class FarmGuiStatusEventHandler extends StatusEventHandler {
         super.schedulerStatusChanged(status);
     }
 
-    public void virtualMachineStatusChanged(String vmJid, LinkedProcess.VMStatus status) {
+    public void virtualMachineStatusChanged(String vmJid, LinkedProcess.VmStatus status) {
         super.virtualMachineStatusChanged(vmJid, status);
         gui.updateVirtualMachineTree();
 

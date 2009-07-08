@@ -88,7 +88,7 @@ public class MainArea extends JTabbedPane implements ActionListener {
         for (XmppVirtualMachine vm : this.farmGui.getFarm().getVirtualMachines()) {
             DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(vm);
             //if (!this.containsVmNode(vm)) {
-                vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("spawning_app", vm.getSpawningAppJid())));
+                vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("villein_jid", vm.getVilleinJid())));
                 vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", vm.getVmStatus().toString())));
                 vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", vm.getVmSpecies())));
                 vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", vm.getVmPassword())));
@@ -126,15 +126,15 @@ public class MainArea extends JTabbedPane implements ActionListener {
               } else if (x instanceof XmppVirtualMachine) {
                   XmppVirtualMachine vm = (XmppVirtualMachine) x;
                   this.setText(vm.getFullJid());
-                  if (vm.getVmStatus() == LinkedProcess.VMStatus.ACTIVE) {
+                  if (vm.getVmStatus() == LinkedProcess.VmStatus.ACTIVE) {
                       this.setIcon(ImageHolder.activeIcon);
                   } else {
                       this.setIcon(ImageHolder.inactiveIcon);
                   }
                   this.setToolTipText("vm_jid");
               } else if (x instanceof TreeNodeProperty) {
-                  if (((TreeNodeProperty) x).getKey().equals("spawning_app")) {
-                      this.setIcon(ImageHolder.spawnerIcon);
+                  if (((TreeNodeProperty) x).getKey().equals("villein_jid")) {
+                      this.setIcon(ImageHolder.villeinIcon);
                       this.setText(((TreeNodeProperty) x).getValue());
                       this.setToolTipText("spawning_app");
                   } else if (((TreeNodeProperty) x).getKey().equals("vm_status")) {

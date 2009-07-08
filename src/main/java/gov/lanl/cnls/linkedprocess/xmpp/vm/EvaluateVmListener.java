@@ -14,11 +14,11 @@ import org.jivesoftware.smack.packet.Packet;
  * Date: Jun 23, 2009
  * Time: 2:32:50 PM
  */
-public class EvaluateListener implements PacketListener {
+public class EvaluateVmListener implements PacketListener {
 
     private XmppVirtualMachine vm;
 
-    public EvaluateListener(XmppVirtualMachine vm) {
+    public EvaluateVmListener(XmppVirtualMachine vm) {
         this.vm = vm;
     }
 
@@ -33,12 +33,12 @@ public class EvaluateListener implements PacketListener {
     }
 
     private void processPacketTemp(Packet evaluate) {
-        XmppVirtualMachine.LOGGER.info("Arrived " + EvaluateListener.class.getName());
+        XmppVirtualMachine.LOGGER.info("Arrived " + EvaluateVmListener.class.getName());
         XmppVirtualMachine.LOGGER.info(evaluate.toXML());
 
         String expression = ((Evaluate) evaluate).getExpression();
         String iqId = evaluate.getPacketID();
-        String appJid = evaluate.getFrom();
+        String villeinJid = evaluate.getFrom();
         String vmPassword = ((Evaluate)evaluate).getVmPassword();
 
         if(null == vmPassword || null == expression) {
@@ -60,7 +60,7 @@ public class EvaluateListener implements PacketListener {
             returnEvaluate.setType(IQ.Type.ERROR);
             vm.getConnection().sendPacket(returnEvaluate);
 
-            XmppVirtualMachine.LOGGER.info("Sent " + EvaluateListener.class.getName());
+            XmppVirtualMachine.LOGGER.info("Sent " + EvaluateVmListener.class.getName());
             XmppVirtualMachine.LOGGER.info(returnEvaluate.toXML());
 
         } else if(!this.vm.checkVmPassword(vmPassword)) {
@@ -71,11 +71,11 @@ public class EvaluateListener implements PacketListener {
             returnEvaluate.setType(IQ.Type.ERROR);
             vm.getConnection().sendPacket(returnEvaluate);
 
-            XmppVirtualMachine.LOGGER.info("Sent " + EvaluateListener.class.getName());
+            XmppVirtualMachine.LOGGER.info("Sent " + EvaluateVmListener.class.getName());
             XmppVirtualMachine.LOGGER.info(returnEvaluate.toXML());
 
         } else {
-            Job job = new Job(vm.getFullJid(), appJid, iqId, expression);
+            Job job = new Job(vm.getFullJid(), villeinJid, iqId, expression);
             try {
                 vm.scheduleJob(job);
             } catch (VMWorkerNotFoundException e) {
@@ -87,7 +87,7 @@ public class EvaluateListener implements PacketListener {
                 returnEvaluate.setType(IQ.Type.ERROR);
                 vm.getConnection().sendPacket(returnEvaluate);
 
-                XmppVirtualMachine.LOGGER.info("Sent " + EvaluateListener.class.getName());
+                XmppVirtualMachine.LOGGER.info("Sent " + EvaluateVmListener.class.getName());
                 XmppVirtualMachine.LOGGER.info(returnEvaluate.toXML());
 
             } catch (VMWorkerIsFullException e) {
@@ -99,7 +99,7 @@ public class EvaluateListener implements PacketListener {
                 returnEvaluate.setType(IQ.Type.ERROR);
                 vm.getConnection().sendPacket(returnEvaluate);
 
-                XmppVirtualMachine.LOGGER.info("Sent " + EvaluateListener.class.getName());
+                XmppVirtualMachine.LOGGER.info("Sent " + EvaluateVmListener.class.getName());
                 XmppVirtualMachine.LOGGER.info(returnEvaluate.toXML());
             } catch (JobAlreadyExistsException e) {
                 Evaluate returnEvaluate = new Evaluate();
@@ -110,7 +110,7 @@ public class EvaluateListener implements PacketListener {
                 returnEvaluate.setType(IQ.Type.ERROR);
                 vm.getConnection().sendPacket(returnEvaluate);
 
-                XmppVirtualMachine.LOGGER.info("Sent " + EvaluateListener.class.getName());
+                XmppVirtualMachine.LOGGER.info("Sent " + EvaluateVmListener.class.getName());
                 XmppVirtualMachine.LOGGER.info(returnEvaluate.toXML());
             }
         }

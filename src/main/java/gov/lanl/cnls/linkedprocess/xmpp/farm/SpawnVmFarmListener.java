@@ -14,11 +14,11 @@ import org.jivesoftware.smack.packet.Packet;
  * Date: Jun 25, 2009
  * Time: 11:23:49 AM
  */
-public class SpawnVmListener implements PacketListener {
+public class SpawnVmFarmListener implements PacketListener {
 
     private XmppFarm farm;
 
-    public SpawnVmListener(XmppFarm farm) {
+    public SpawnVmFarmListener(XmppFarm farm) {
         this.farm = farm;
     }
 
@@ -31,7 +31,7 @@ public class SpawnVmListener implements PacketListener {
     }
 
     private void processPacketTemp(Packet spawnVm) {
-        XmppFarm.LOGGER.info("Arrived " + SpawnVmListener.class.getName());
+        XmppFarm.LOGGER.info("Arrived " + SpawnVmFarmListener.class.getName());
         XmppFarm.LOGGER.info(spawnVm.toXML());
 
         SpawnVm returnSpawnVm = new SpawnVm();
@@ -47,6 +47,7 @@ public class SpawnVmListener implements PacketListener {
                 XmppVirtualMachine vm = farm.spawnVirtualMachine(spawnVm.getFrom(), vmSpecies);
                 returnSpawnVm.setVmJid(vm.getFullJid());
                 returnSpawnVm.setVmPassword(vm.getVmPassword());
+                returnSpawnVm.setVmSpecies(vmSpecies);
                 returnSpawnVm.setType(IQ.Type.RESULT);
             } catch (VMAlreadyExistsException e) {
                 returnSpawnVm.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
@@ -63,7 +64,7 @@ public class SpawnVmListener implements PacketListener {
             }
         }
 
-        XmppFarm.LOGGER.info("Sent " + SpawnVmListener.class.getName());
+        XmppFarm.LOGGER.info("Sent " + SpawnVmFarmListener.class.getName());
         XmppFarm.LOGGER.info(returnSpawnVm.toXML());
         farm.getConnection().sendPacket(returnSpawnVm);
     }

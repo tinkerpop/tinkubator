@@ -22,7 +22,7 @@ public class StatusEventHandler implements VMScheduler.LopStatusEventHandler {
         this.farm.getConnection().sendPacket(this.farm.createPresence(status));
     }
 
-    public void virtualMachineStatusChanged(String vmJid, LinkedProcess.VMStatus status) {
+    public void virtualMachineStatusChanged(String vmJid, LinkedProcess.VmStatus status) {
         try {
             XmppVirtualMachine vm = this.farm.getVirtualMachine(vmJid);
             vm.getConnection().sendPacket(vm.createPresence(status));
