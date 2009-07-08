@@ -85,9 +85,10 @@ public class LoginArea extends JPanel implements ActionListener {
 
         buttonPanel.add(loginButton);
         buttonPanel.add(quitButton);
-        JLabel copyright = new JLabel("developed by linkedprocess.org");
-        copyright.setFont(new Font(Font.SERIF, Font.PLAIN, 10));
+        JLabel copyright = new JLabel("developed by linkedprocess.org" + BORDER_SPACE + BORDER_SPACE);
+        copyright.setFont(new Font(Font.SERIF, Font.PLAIN, 12));
         buttonPanel.add(copyright);
+        buttonPanel.add(new JLabel(FarmGui.lopIcon));
 
         mainPanel.setOpaque(false);
         buttonPanel.setOpaque(false);

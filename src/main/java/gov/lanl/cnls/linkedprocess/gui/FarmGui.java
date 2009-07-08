@@ -28,6 +28,7 @@ public class FarmGui extends JFrame implements ActionListener {
 
     public static final ImageIcon farmBackground = new ImageIcon(FarmGui.class.getResource("farm.png"));
     public static final ImageIcon barnIcon = new ImageIcon(FarmGui.class.getResource("barn.png"));
+    public static final ImageIcon lopIcon = new ImageIcon(FarmGui.class.getResource("lop-logo.png"));
 
     public static final Color GRAY_COLOR = new Color(200, 200, 200);
 
