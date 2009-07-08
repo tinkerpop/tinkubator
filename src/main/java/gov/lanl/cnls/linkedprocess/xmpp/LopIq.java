@@ -10,15 +10,15 @@ import org.jivesoftware.smack.packet.IQ;
  */
 public abstract class LopIq extends IQ {
 
-    protected LinkedProcess.Errortype errorType;
+    protected LinkedProcess.ErrorType errorType;
     protected String errorMessage;
     protected String vmPassword;
 
-    public void setErrorType(LinkedProcess.Errortype errorType) {
+    public void setErrorType(LinkedProcess.ErrorType errorType) {
         this.errorType = errorType;
     }
 
-    public LinkedProcess.Errortype getErrorType() {
+    public LinkedProcess.ErrorType getErrorType() {
         return this.errorType;
     }
 

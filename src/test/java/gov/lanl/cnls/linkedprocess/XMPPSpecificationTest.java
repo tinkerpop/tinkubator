@@ -1,6 +1,6 @@
 package gov.lanl.cnls.linkedprocess;
 
-import gov.lanl.cnls.linkedprocess.LinkedProcess.Errortype;
+import gov.lanl.cnls.linkedprocess.LinkedProcess.ErrorType;
 import gov.lanl.cnls.linkedprocess.xmpp.XMPPConnectionWrapper;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.farm.PresenceSubscriptionListener;
@@ -237,7 +237,7 @@ public class XMPPSpecificationTest {
 		assertEquals(
 				"We should not be able to spawn the a VM with a non-existent Script type!",
 				result.getType(), IQ.Type.ERROR);
-		assertEquals(Errortype.SPECIES_NOT_SUPPORTED, result.getErrorType());
+		assertEquals(ErrorType.SPECIES_NOT_SUPPORTED, result.getErrorType());
 
 		xmppFarm.shutDown();
 	}
@@ -278,7 +278,7 @@ public class XMPPSpecificationTest {
 		JobStatus result = (JobStatus) mockVM1Conn.sentPackets.get(0);
 		assertEquals(spawnPacketId,result.getPacketID());
 		assertEquals(IQ.Type.ERROR, result.getType());
-		assertEquals(Errortype.MALFORMED_PACKET, result.getErrorType());
+		assertEquals(ErrorType.MALFORMED_PACKET, result.getErrorType());
 
 		//non-existent job
 		status.setJobId("test");
@@ -291,7 +291,7 @@ public class XMPPSpecificationTest {
 		result = (JobStatus) mockVM1Conn.sentPackets.get(0);
 		assertEquals(spawnPacketId,result.getPacketID());
 		assertEquals(IQ.Type.ERROR, result.getType());
-		assertEquals(Errortype.JOB_NOT_FOUND, result.getErrorType());
+		assertEquals(ErrorType.JOB_NOT_FOUND, result.getErrorType());
 		
 	}
 	
@@ -332,7 +332,7 @@ public class XMPPSpecificationTest {
 		Evaluate result = (Evaluate) mockVM1Conn.sentPackets.get(0);
 		assertEquals(result.getPacketID(), spawnPacketId);
 		assertEquals(IQ.Type.ERROR, result.getType());
-		assertEquals(Errortype.MALFORMED_PACKET, result.getErrorType());
+		assertEquals(ErrorType.MALFORMED_PACKET, result.getErrorType());
 		
 		// now, try with a wrong password
 		eval.setVmPassword("wrong");
@@ -346,7 +346,7 @@ public class XMPPSpecificationTest {
 		result = (Evaluate) mockVM1Conn.sentPackets.get(0);
 		assertEquals(result.getPacketID(), spawnPacketId);
 		assertEquals(IQ.Type.ERROR, result.getType());
-		assertEquals(Errortype.WRONG_VM_PASSWORD, result.getErrorType());
+		assertEquals(ErrorType.WRONG_VM_PASSWORD, result.getErrorType());
 
 		// now, try with a valid password
 		eval.setVmPassword(vmPassword);
@@ -374,7 +374,7 @@ public class XMPPSpecificationTest {
 		result = (Evaluate) mockVM1Conn.sentPackets.get(0);
 		assertEquals(result.getPacketID(), spawnPacketId);
 		assertEquals(IQ.Type.ERROR, result.getType());
-		assertEquals(Errortype.EVALUATION_ERROR, result.getErrorType());
+		assertEquals(ErrorType.EVALUATION_ERROR, result.getErrorType());
 
 		// shut down the VM
 		mockVM1Conn.clearPackets();

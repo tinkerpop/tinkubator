@@ -1,9 +1,10 @@
 package gov.lanl.cnls.linkedprocess.os;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import gov.lanl.cnls.linkedprocess.security.VMSandboxedThread;
 import gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException;
 import gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException;
+import gov.lanl.cnls.linkedprocess.os.errors.JobTimeoutException;
+import gov.lanl.cnls.linkedprocess.security.VMSandboxedThread;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
@@ -42,6 +43,8 @@ public class VMWorker {
     private final VMScheduler.VMResultHandler resultHandler;
     private final ScriptEngine scriptEngine;
     private final Thread workerThread;
+    private final long maxTimeSpentPerJob;
+
     private Status status;
 
     private Job latestJob;
@@ -65,6 +68,7 @@ public class VMWorker {
         resultHandler = null;
         scriptEngine = null;
         workerThread = null;
+        maxTimeSpentPerJob = 0;
     }
 
     /**
@@ -81,6 +85,9 @@ public class VMWorker {
         this.scriptEngine = scriptEngine;
         this.resultHandler = resultHandler;
 
+        maxTimeSpentPerJob = new Long(LinkedProcess.getProperties().getProperty(
+                LinkedProcess.MAX_TIME_SPENT_PER_JOB));
+        
         int capacity = new Integer(LinkedProcess.getProperties().getProperty(
                 LinkedProcess.MESSAGE_QUEUE_CAPACITY));
         jobQueue = new LinkedBlockingQueue<Job>(capacity);
@@ -115,6 +122,7 @@ public class VMWorker {
      * @param job the job to add
      * @return whether the job has been added to the worker's queue (if not,
      *         then the queue is full)
+     * @throws gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException if a job with the given ID is already active or in the queue
      */
     public synchronized boolean addJob(final Job job) throws JobAlreadyExistsException {
         LOGGER.info("adding job: " + job);
@@ -185,8 +193,20 @@ public class VMWorker {
 
         switch (status) {
             case ACTIVE_INPROGRESS:
-                status = Status.ACTIVE_SUSPENDED;
-                return false;
+                // Note: the job may have finished before the timeout, but in that case
+                //       the "time spent" value will never be used.
+                latestJob.increaseTimeSpent(timeout);
+
+                if (latestJob.getTimeSpent() >= maxTimeSpentPerJob) {
+                    yieldTimeoutResult(latestJob, maxTimeSpentPerJob);
+                    interruptWorkerThread();
+                    status = Status.IDLE_WAITING;
+                    resumeWorkerThread();
+                    return 0 == jobQueue.size();
+                } else {
+                    status = Status.ACTIVE_SUSPENDED;
+                    return false;
+                }
             case IDLE_FINISHED:
                 resultHandler.handleResult(latestResult);
 
@@ -360,6 +380,10 @@ public class VMWorker {
     private void yieldResult(final Job job,
                              final String expression) {
         latestResult = new JobResult(job, expression);
+    }
+
+    private void yieldTimeoutResult(final Job job, final long timeout) {
+        latestResult = new JobResult(job, timeout);
     }
 
     private class WorkerRunnable implements Runnable {

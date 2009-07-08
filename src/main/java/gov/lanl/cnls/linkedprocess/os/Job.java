@@ -10,6 +10,7 @@ public class Job {
     private final String vmJid;
     private final String appJid;
     private final String expression;
+    private long timeSpent;
 
     public Job(final String vmJid,
                final String appJid,
@@ -19,6 +20,8 @@ public class Job {
         this.appJid = appJid;
         this.jobId = jobId;
         this.expression = expression;
+
+        timeSpent = 0;
     }
 
     public String getAppJid() {
@@ -35,6 +38,14 @@ public class Job {
 
     public String getExpression() {
         return expression;
+    }
+
+    public void increaseTimeSpent(final long time) {
+        timeSpent += time;
+    }
+    
+    public long getTimeSpent() {
+        return timeSpent;
     }
 
     public String toString() {

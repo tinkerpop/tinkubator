@@ -42,11 +42,11 @@ public class TerminateVmVmListener implements PacketListener {
         String vmPassword = ((TerminateVm) terminateVm).getVmPassword();
         boolean terminate = false;
         if(null == vmPassword) {
-            returnTerminateVm.setErrorType(LinkedProcess.Errortype.MALFORMED_PACKET);
+            returnTerminateVm.setErrorType(LinkedProcess.ErrorType.MALFORMED_PACKET);
             returnTerminateVm.setErrorMessage("terminate_vm XML packet is missing the vm_password attribute");
             returnTerminateVm.setType(IQ.Type.ERROR);
         } else if(!this.vm.checkVmPassword(vmPassword)) {
-            returnTerminateVm.setErrorType(LinkedProcess.Errortype.WRONG_VM_PASSWORD);
+            returnTerminateVm.setErrorType(LinkedProcess.ErrorType.WRONG_VM_PASSWORD);
             returnTerminateVm.setType(IQ.Type.ERROR);
         } else {
                 terminate = true;

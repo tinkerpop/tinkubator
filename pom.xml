@@ -211,11 +211,11 @@
             <url>http://powermock.googlecode.com/svn/repo/
             </url>
         </repository>
-        <repository>
+        <!--<repository>
             <id>it.su.se</id>
             <name>it.su.se Maven repository (for smackx-debug)</name>
             <url>http://maven.it.su.se/it.su.se/maven2</url>
-        </repository>
+        </repository>-->
         <repository>
             <id>fortytwo</id>
             <name>fortytwo.net Maven repository</name>

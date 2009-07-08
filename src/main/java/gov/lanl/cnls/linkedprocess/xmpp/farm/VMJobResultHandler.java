@@ -32,7 +32,7 @@ public class VMJobResultHandler implements VMScheduler.VMResultHandler {
 
         } catch(VMWorkerNotFoundException e) {
             Evaluate x = result.generateReturnEvalulate();
-            x.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
+            x.setErrorType(LinkedProcess.ErrorType.INTERNAL_ERROR);
             x.setType(IQ.Type.ERROR);
             XmppVirtualMachine.LOGGER.severe("Could not find virtual machine. Thus, can not send error message");   
         }

@@ -76,7 +76,7 @@ public class LinkedProcess {
 
     }
 
-    public enum Errortype {
+    public enum ErrorType {
         WRONG_VM_PASSWORD("wrong_vm_password"),
         MALFORMED_PACKET("malformed_packet"), // when a received packet is not as expected
         EVALUATION_ERROR("evaluation_error"),
@@ -84,13 +84,14 @@ public class LinkedProcess {
         JOB_ABORTED("job_aborted"),
         JOB_ALREADY_EXISTS("job_already_exists"),
         JOB_NOT_FOUND("job_not_found"), // JobNotFoundException
+        JOB_TIMED_OUT("job_timed_out"),
         SPECIES_NOT_SUPPORTED("species_not_supported"), // UnsupportedScriptEngineException
         FARM_IS_BUSY("farm_is_busy"), // VMSchedulerIsFullException
         VM_IS_BUSY("vm_is_busy"); // VMWorkerIsFullException
 
         private final String name;
 
-        private Errortype(final String name) {
+        private ErrorType(final String name) {
             this.name = name;
         }
 
@@ -134,6 +135,7 @@ public class LinkedProcess {
 
     public static final String
             MAX_CONCURRENT_WORKER_THREADS = "gov.lanl.cnls.linkedprocess.maxConcurrentWorkerThreads",
+            MAX_TIME_SPENT_PER_JOB = "gov.lanl.cnls.linkedprocess.maxTimeSpentPerJob",
             MAX_VIRTUAL_MACHINES_PER_SCHEDULER = "gov.lanl.cnls.linkedprocess.maxVirtualMachinesPerScheduler",
             MESSAGE_QUEUE_CAPACITY = "gov.lanl.cnls.linkedprocess.messageQueueCapacity",
             ROUND_ROBIN_TIME_SLICE = "gov.lanl.cnls.linkedprocess.roundRobinTimeSlice";

@@ -45,7 +45,7 @@ public class EvaluateVmListener implements PacketListener {
             Evaluate returnEvaluate = new Evaluate();
             returnEvaluate.setTo(evaluate.getFrom());
             returnEvaluate.setPacketID(evaluate.getPacketID());
-            returnEvaluate.setErrorType(LinkedProcess.Errortype.MALFORMED_PACKET);
+            returnEvaluate.setErrorType(LinkedProcess.ErrorType.MALFORMED_PACKET);
             String errorMessage = "";
             if(null == vmPassword) {
                 errorMessage = "evaluate XML packet is missing the vm_password attribute";
@@ -67,7 +67,7 @@ public class EvaluateVmListener implements PacketListener {
             Evaluate returnEvaluate = new Evaluate();
             returnEvaluate.setTo(evaluate.getFrom());
             returnEvaluate.setPacketID(evaluate.getPacketID());
-            returnEvaluate.setErrorType(LinkedProcess.Errortype.WRONG_VM_PASSWORD);
+            returnEvaluate.setErrorType(LinkedProcess.ErrorType.WRONG_VM_PASSWORD);
             returnEvaluate.setType(IQ.Type.ERROR);
             vm.getConnection().sendPacket(returnEvaluate);
 
@@ -82,7 +82,7 @@ public class EvaluateVmListener implements PacketListener {
                 Evaluate returnEvaluate = new Evaluate();
                 returnEvaluate.setTo(evaluate.getFrom());
                 returnEvaluate.setPacketID(evaluate.getPacketID());
-                returnEvaluate.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
+                returnEvaluate.setErrorType(LinkedProcess.ErrorType.INTERNAL_ERROR);
                 returnEvaluate.setErrorMessage(e.getMessage());
                 returnEvaluate.setType(IQ.Type.ERROR);
                 vm.getConnection().sendPacket(returnEvaluate);
@@ -94,7 +94,7 @@ public class EvaluateVmListener implements PacketListener {
                 Evaluate returnEvaluate = new Evaluate();
                 returnEvaluate.setTo(evaluate.getFrom());
                 returnEvaluate.setPacketID(evaluate.getPacketID());
-                returnEvaluate.setErrorType(LinkedProcess.Errortype.VM_IS_BUSY);
+                returnEvaluate.setErrorType(LinkedProcess.ErrorType.VM_IS_BUSY);
                 returnEvaluate.setErrorMessage(e.getMessage());
                 returnEvaluate.setType(IQ.Type.ERROR);
                 vm.getConnection().sendPacket(returnEvaluate);
@@ -105,7 +105,7 @@ public class EvaluateVmListener implements PacketListener {
                 Evaluate returnEvaluate = new Evaluate();
                 returnEvaluate.setTo(evaluate.getFrom());
                 returnEvaluate.setPacketID(evaluate.getPacketID());
-                returnEvaluate.setErrorType(LinkedProcess.Errortype.JOB_ALREADY_EXISTS);
+                returnEvaluate.setErrorType(LinkedProcess.ErrorType.JOB_ALREADY_EXISTS);
                 returnEvaluate.setErrorMessage(e.getMessage());
                 returnEvaluate.setType(IQ.Type.ERROR);
                 vm.getConnection().sendPacket(returnEvaluate);

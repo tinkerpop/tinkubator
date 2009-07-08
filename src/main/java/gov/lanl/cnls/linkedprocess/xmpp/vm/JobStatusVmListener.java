@@ -31,7 +31,7 @@ public class JobStatusVmListener implements PacketListener {
         String vmPassword = ((JobStatus) jobStatus).getVmPassword();
 
         if (null == vmPassword || null == jobId) {
-            returnJobStatus.setErrorType(LinkedProcess.Errortype.MALFORMED_PACKET);
+            returnJobStatus.setErrorType(LinkedProcess.ErrorType.MALFORMED_PACKET);
             String errorMessage = "";
             if (null == vmPassword) {
                 errorMessage = "job_status XML packet is missing the vm_password attribute";
@@ -45,18 +45,18 @@ public class JobStatusVmListener implements PacketListener {
                 returnJobStatus.setErrorMessage(errorMessage);
             returnJobStatus.setType(IQ.Type.ERROR);
         } else if (!this.vm.checkVmPassword(vmPassword)) {
-            returnJobStatus.setErrorType(LinkedProcess.Errortype.WRONG_VM_PASSWORD);
+            returnJobStatus.setErrorType(LinkedProcess.ErrorType.WRONG_VM_PASSWORD);
             returnJobStatus.setType(IQ.Type.ERROR);
         } else {
             try {
                 returnJobStatus.setValue(this.vm.getJobStatus(jobId));
                 returnJobStatus.setType(IQ.Type.RESULT);
             } catch (VMWorkerNotFoundException e) {
-                returnJobStatus.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
+                returnJobStatus.setErrorType(LinkedProcess.ErrorType.INTERNAL_ERROR);
                 returnJobStatus.setErrorMessage(e.getMessage());
                 returnJobStatus.setType(IQ.Type.ERROR);
             } catch (JobNotFoundException e) {
-                returnJobStatus.setErrorType(LinkedProcess.Errortype.JOB_NOT_FOUND);
+                returnJobStatus.setErrorType(LinkedProcess.ErrorType.JOB_NOT_FOUND);
                 returnJobStatus.setErrorMessage(e.getMessage());
                 returnJobStatus.setType(IQ.Type.ERROR);
             }

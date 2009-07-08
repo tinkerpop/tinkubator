@@ -39,7 +39,7 @@ public class SpawnVmFarmListener implements PacketListener {
         returnSpawnVm.setPacketID(spawnVm.getPacketID());
         String vmSpecies = ((SpawnVm) spawnVm).getVmSpecies();
         if(vmSpecies == null) {
-            returnSpawnVm.setErrorType(LinkedProcess.Errortype.MALFORMED_PACKET);
+            returnSpawnVm.setErrorType(LinkedProcess.ErrorType.MALFORMED_PACKET);
             returnSpawnVm.setErrorMessage("spawn_vm XML packet is missing the vm_species attribute");
             returnSpawnVm.setType(IQ.Type.ERROR);
         } else {
@@ -50,15 +50,15 @@ public class SpawnVmFarmListener implements PacketListener {
                 returnSpawnVm.setVmSpecies(vmSpecies);
                 returnSpawnVm.setType(IQ.Type.RESULT);
             } catch (VMAlreadyExistsException e) {
-                returnSpawnVm.setErrorType(LinkedProcess.Errortype.INTERNAL_ERROR);
+                returnSpawnVm.setErrorType(LinkedProcess.ErrorType.INTERNAL_ERROR);
                 returnSpawnVm.setErrorMessage(e.getMessage());
                 returnSpawnVm.setType(IQ.Type.ERROR);
             } catch (VMSchedulerIsFullException e) {
-                returnSpawnVm.setErrorType(LinkedProcess.Errortype.FARM_IS_BUSY);
+                returnSpawnVm.setErrorType(LinkedProcess.ErrorType.FARM_IS_BUSY);
                 returnSpawnVm.setErrorMessage(e.getMessage());
                 returnSpawnVm.setType(IQ.Type.ERROR);
             } catch (UnsupportedScriptEngineException e) {
-                returnSpawnVm.setErrorType(LinkedProcess.Errortype.SPECIES_NOT_SUPPORTED);
+                returnSpawnVm.setErrorType(LinkedProcess.ErrorType.SPECIES_NOT_SUPPORTED);
                 returnSpawnVm.setErrorMessage(e.getMessage());
                 returnSpawnVm.setType(IQ.Type.ERROR);
             }
