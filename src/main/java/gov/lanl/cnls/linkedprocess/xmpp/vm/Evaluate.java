@@ -1,0 +1,42 @@
+package gov.lanl.cnls.linkedprocess.xmpp.vm;
+
+import org.jdom.Element;
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
+
+/**
+ * User: marko
+ * Date: Jun 24, 2009
+ * Time: 12:12:20 PM
+ */
+public class Evaluate extends VirtualMachineIq {
+
+    String expression;
+
+
+    public void setExpression(String expression) {
+        this.expression = expression;
+    }
+
+    public String getExpression() {
+       return this.expression;
+    }
+
+    public String getChildElementXML() {
+
+        Element evaluateElement = new Element(LinkedProcess.EVALUATE_TAG, LinkedProcess.LOP_VM_NAMESPACE);
+
+        if(this.vmPassword != null) {
+            evaluateElement.setAttribute(LinkedProcess.VM_PASSWORD_ATTRIBUTE, this.vmPassword);
+        }
+        if(this.errorType != null) {
+            evaluateElement.setAttribute(LinkedProcess.ERROR_TYPE_ATTRIBUTE, this.errorType.toString());
+            if(this.errorMessage != null) {
+                evaluateElement.setText(this.errorMessage);
+            }
+        } else if(this.expression != null) {
+                evaluateElement.setText(this.expression);
+        }
+        
+        return LinkedProcess.xmlOut.outputString(evaluateElement);
+    }
+}

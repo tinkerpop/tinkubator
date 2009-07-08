@@ -1,7 +1,7 @@
 package gov.lanl.cnls.linkedprocess.os;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
+import gov.lanl.cnls.linkedprocess.xmpp.vm.Evaluate;
 import org.jivesoftware.smack.packet.IQ;
 
 import java.util.logging.Logger;

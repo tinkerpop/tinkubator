@@ -1,13 +1,11 @@
 package gov.lanl.cnls.linkedprocess;
 
-import gov.lanl.cnls.linkedprocess.xmpp.lopfarm.XmppFarm;
-import gov.lanl.cnls.linkedprocess.xmpp.lopvm.AbortJob;
-import gov.lanl.cnls.linkedprocess.xmpp.lopvm.Evaluate;
-import gov.lanl.cnls.linkedprocess.xmpp.lopvm.XmppVirtualMachine;
-import gov.lanl.cnls.linkedprocess.xmpp.lopvm.TerminateVm;
-import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
+import gov.lanl.cnls.linkedprocess.xmpp.farm.XmppFarm;
+import gov.lanl.cnls.linkedprocess.xmpp.vm.AbortJob;
+import gov.lanl.cnls.linkedprocess.xmpp.vm.Evaluate;
+import gov.lanl.cnls.linkedprocess.xmpp.vm.XmppVirtualMachine;
+import gov.lanl.cnls.linkedprocess.xmpp.vm.TerminateVm;
 import junit.framework.TestCase;
-import org.jivesoftware.smack.XMPPConnection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
