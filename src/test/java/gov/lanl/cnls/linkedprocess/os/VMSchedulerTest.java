@@ -29,7 +29,7 @@ public class VMSchedulerTest extends TestCase {
     private final Map<String, JobResult> resultsByID = new HashMap<String, JobResult>();
     private final List<LinkedProcess.FarmStatus> farmStatusEvents = new LinkedList<LinkedProcess.FarmStatus>();
     private final List<String> vmStatusEventJIDs = new LinkedList<String>();
-    private final List<LinkedProcess.VMStatus> vmStatusEventTypes = new LinkedList<LinkedProcess.VMStatus>();
+    private final List<LinkedProcess.VmStatus> vmStatusEventTypes = new LinkedList<LinkedProcess.VmStatus>();
     private VMScheduler scheduler;
     private Random random = new Random();
 
@@ -96,9 +96,9 @@ public class VMSchedulerTest extends TestCase {
         String vm1 = randomJID();
         String vm2 = randomJID();
         scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
-        assertEquals(LinkedProcess.VMStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm1));
+        assertEquals(LinkedProcess.VmStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm1));
         scheduler.spawnVirtualMachine(vm2, JAVASCRIPT);
-        assertEquals(LinkedProcess.VMStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm2));
+        assertEquals(LinkedProcess.VmStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm2));
         assertEquals(LinkedProcess.FarmStatus.ACTIVE, scheduler.getSchedulerStatus());
         scheduler.shutDown();
     }
@@ -113,9 +113,9 @@ public class VMSchedulerTest extends TestCase {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
-        assertEquals(LinkedProcess.VMStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm1));
+        assertEquals(LinkedProcess.VmStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm1));
         scheduler.terminateVirtualMachine(vm1);
-        assertEquals(LinkedProcess.VMStatus.DOES_NOT_EXIST, scheduler.getVirtualMachineStatus(vm1));
+        assertEquals(LinkedProcess.VmStatus.DOES_NOT_EXIST, scheduler.getVirtualMachineStatus(vm1));
         scheduler.shutDown();
     }
 
@@ -123,9 +123,9 @@ public class VMSchedulerTest extends TestCase {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
-        assertEquals(LinkedProcess.VMStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm1));
+        assertEquals(LinkedProcess.VmStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm1));
         scheduler.shutDown();
-        assertEquals(LinkedProcess.VMStatus.DOES_NOT_EXIST, scheduler.getVirtualMachineStatus(vm1));
+        assertEquals(LinkedProcess.VmStatus.DOES_NOT_EXIST, scheduler.getVirtualMachineStatus(vm1));
     }
 
     public void testAddJob() throws Exception {
@@ -264,8 +264,8 @@ public class VMSchedulerTest extends TestCase {
             scheduler.spawnVirtualMachine(jid, JAVASCRIPT);
             int index = vmStatusEventTypes.size() - 1;
             assertEquals(jid, vmStatusEventJIDs.get(index));
-            assertEquals(LinkedProcess.VMStatus.ACTIVE, vmStatusEventTypes.get(index));
-            assertEquals(LinkedProcess.VMStatus.ACTIVE, scheduler.getVirtualMachineStatus(jid));
+            assertEquals(LinkedProcess.VmStatus.ACTIVE, vmStatusEventTypes.get(index));
+            assertEquals(LinkedProcess.VmStatus.ACTIVE, scheduler.getVirtualMachineStatus(jid));
 
             // The very last VM added should make the scheduler full.
             if (VMScheduler.MAX_VM - 1 == i) {
@@ -284,8 +284,8 @@ public class VMSchedulerTest extends TestCase {
         scheduler.terminateVirtualMachine(vmJIDs[removedVMIndex]);
         int index = vmStatusEventTypes.size() - 1;
         assertEquals(vmJIDs[removedVMIndex], vmStatusEventJIDs.get(index));
-        assertEquals(LinkedProcess.VMStatus.DOES_NOT_EXIST, vmStatusEventTypes.get(index));
-        assertEquals(LinkedProcess.VMStatus.DOES_NOT_EXIST, scheduler.getVirtualMachineStatus(vmJIDs[removedVMIndex]));
+        assertEquals(LinkedProcess.VmStatus.DOES_NOT_EXIST, vmStatusEventTypes.get(index));
+        assertEquals(LinkedProcess.VmStatus.DOES_NOT_EXIST, scheduler.getVirtualMachineStatus(vmJIDs[removedVMIndex]));
         assertEquals(3, farmStatusEvents.size());
         assertEquals(LinkedProcess.FarmStatus.ACTIVE, farmStatusEvents.get(2));
         assertEquals(LinkedProcess.FarmStatus.ACTIVE, scheduler.getSchedulerStatus());
@@ -304,8 +304,8 @@ public class VMSchedulerTest extends TestCase {
         for (int j = 1 + vmEventsBefore; j < vmStatusEventJIDs.size(); j++) {
             String jid = vmStatusEventJIDs.get(j);
             assertTrue(vmJIDsColl.contains(jid));
-            assertEquals(LinkedProcess.VMStatus.DOES_NOT_EXIST, vmStatusEventTypes.get(j));
-            assertEquals(LinkedProcess.VMStatus.DOES_NOT_EXIST, scheduler.getVirtualMachineStatus(jid));
+            assertEquals(LinkedProcess.VmStatus.DOES_NOT_EXIST, vmStatusEventTypes.get(j));
+            assertEquals(LinkedProcess.VmStatus.DOES_NOT_EXIST, scheduler.getVirtualMachineStatus(jid));
         }
     }
 
@@ -391,7 +391,7 @@ public class VMSchedulerTest extends TestCase {
                 farmStatusEvents.add(newStatus);
             }
 
-            public void virtualMachineStatusChanged(String vmJID, LinkedProcess.VMStatus newStatus) {
+            public void virtualMachineStatusChanged(String vmJID, LinkedProcess.VmStatus newStatus) {
                 vmStatusEventJIDs.add(vmJID);
                 vmStatusEventTypes.add(newStatus);
             }

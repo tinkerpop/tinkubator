@@ -5,9 +5,9 @@ import gov.lanl.cnls.linkedprocess.xmpp.XMPPConnectionWrapper;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.farm.PresenceSubscriptionListener;
 import gov.lanl.cnls.linkedprocess.xmpp.farm.SpawnVm;
-import gov.lanl.cnls.linkedprocess.xmpp.farm.SpawnVmListener;
+import gov.lanl.cnls.linkedprocess.xmpp.farm.SpawnVmFarmListener;
 import gov.lanl.cnls.linkedprocess.xmpp.vm.TerminateVm;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.TerminateVmListener;
+import gov.lanl.cnls.linkedprocess.xmpp.vm.TerminateVmVmListener;
 import gov.lanl.cnls.linkedprocess.xmpp.farm.XmppFarm;
 import gov.lanl.cnls.linkedprocess.xmpp.vm.*;
 import static org.easymock.EasyMock.expect;
@@ -134,7 +134,7 @@ public class XMPPSpecificationTest {
 		// now we should have 2 PacketListeners to the Farms XMPP connection
 		ArrayList<PacketListener> packetListeners = mockFarmConn.packetListeners;
 		assertEquals(2, packetListeners.size());
-		assertTrue(packetListeners.get(0) instanceof SpawnVmListener);
+		assertTrue(packetListeners.get(0) instanceof SpawnVmFarmListener);
 		assertTrue(packetListeners.get(1) instanceof PresenceSubscriptionListener);
 
 		xmppFarm.shutDown();
@@ -185,10 +185,10 @@ public class XMPPSpecificationTest {
 		// now we should have 3 PacketListeners for the VM
 		ArrayList<PacketListener> vm1packetListeners = mockVM1Conn.packetListeners;
 		assertEquals(4, vm1packetListeners.size());
-		assertTrue(vm1packetListeners.get(0) instanceof EvaluateListener);
-		assertTrue(vm1packetListeners.get(1) instanceof JobStatusListener);
-		assertTrue(vm1packetListeners.get(2) instanceof AbortJobListener);
-		assertTrue(vm1packetListeners.get(3) instanceof TerminateVmListener);
+		assertTrue(vm1packetListeners.get(0) instanceof EvaluateVmListener);
+		assertTrue(vm1packetListeners.get(1) instanceof JobStatusVmListener);
+		assertTrue(vm1packetListeners.get(2) instanceof AbortJobVmListener);
+		assertTrue(vm1packetListeners.get(3) instanceof TerminateVmVmListener);
 
 		// try one more VM with the same spawn packet as the first!
 		mockFarmConn.clearPackets();
