@@ -44,10 +44,8 @@ public class VilleinGui extends JFrame {
     public void loadBuddyArea(XmppVillein villein) {
         this.xmppVillein = villein;
 
-        PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-        PacketFilter terminateFilter = new AndFilter(new PacketTypeFilter(TerminateVm.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-        this.xmppVillein.addPacketListener(new SpawnVmGuiListener(this), spawnFilter);
-        this.xmppVillein.addPacketListener(new TerminateVmGuiListener(this), terminateFilter);
+        PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
+        this.xmppVillein.getConnection().addPacketListener(new PresenceGuiListener(this), presenceFilter);
 
         this.getContentPane().removeAll();
         this.buddyArea = new BuddyArea(this);
@@ -59,8 +57,8 @@ public class VilleinGui extends JFrame {
 
     }
 
-    public void updateTree(Struct struct) {
-        //this.buddyArea.updateTree(struct);
+    public void updateTree(String jid, boolean remove) {
+        this.buddyArea.updateTree(jid, remove);
     }
 
     public void createTree() {

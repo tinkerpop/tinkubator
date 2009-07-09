@@ -11,7 +11,7 @@ import java.util.Collection;
  * Date: Jul 8, 2009
  * Time: 1:02:16 PM
  */
-public class UserStruct extends Struct {
+public class HostStruct extends Struct {
 
 
     protected Map<String, FarmStruct> farmStructs = new HashMap<String, FarmStruct>();
@@ -26,6 +26,10 @@ public class UserStruct extends Struct {
 
     public Collection<FarmStruct> getFarmStructs() {
         return this.farmStructs.values();
+    }
+
+    public void removeFarmStruct(String farmJid) {
+        this.farmStructs.remove(farmJid);
     }
 
 }

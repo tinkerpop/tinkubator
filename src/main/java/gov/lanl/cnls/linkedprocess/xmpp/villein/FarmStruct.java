@@ -28,4 +28,8 @@ public class FarmStruct extends Struct {
     public Collection<VmStruct> getVmStructs() {
         return this.vmStructs.values();
     }
+
+    public void removeVmStruct(String vmJid) {
+        this.vmStructs.remove(vmJid);
+    }
 }

@@ -1,7 +1,7 @@
 package gov.lanl.cnls.linkedprocess.gui.farm;
 
 import gov.lanl.cnls.linkedprocess.xmpp.vm.XmppVirtualMachine;
-import gov.lanl.cnls.linkedprocess.xmpp.villein.UserStruct;
+import gov.lanl.cnls.linkedprocess.xmpp.villein.HostStruct;
 import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
 import gov.lanl.cnls.linkedprocess.gui.JTreeImage;
 import gov.lanl.cnls.linkedprocess.gui.TreeNodeProperty;
@@ -34,9 +34,9 @@ public class MainArea extends JTabbedPane implements ActionListener {
 
      public MainArea(FarmGui farmGui) {
         this.farmGui = farmGui;
-        UserStruct userStruct = new UserStruct();
-        userStruct.setFullJid(LinkedProcess.generateBareJid(farmGui.getXmppFarm().getFullJid()));
-        this.treeRoot = new DefaultMutableTreeNode(userStruct);
+        HostStruct hostStruct = new HostStruct();
+        hostStruct.setFullJid(LinkedProcess.generateBareJid(farmGui.getXmppFarm().getFullJid()));
+        this.treeRoot = new DefaultMutableTreeNode(hostStruct);
         this.tree = new JTreeImage(this.treeRoot, ImageHolder.farmBackground);
         this.tree.setCellRenderer(new TreeRenderer());
         this.tree.setModel(new DefaultTreeModel(treeRoot));

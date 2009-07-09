@@ -3,11 +3,10 @@ package gov.lanl.cnls.linkedprocess.gui;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import gov.lanl.cnls.linkedprocess.xmpp.farm.XmppFarm;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.FarmStruct;
-import gov.lanl.cnls.linkedprocess.xmpp.villein.UserStruct;
+import gov.lanl.cnls.linkedprocess.xmpp.villein.HostStruct;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.VmStruct;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.XmppVillein;
 import gov.lanl.cnls.linkedprocess.xmpp.vm.XmppVirtualMachine;
-import org.jivesoftware.smack.packet.Presence;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -52,9 +51,9 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
             this.setText(LinkedProcess.generateResource(vmStruct.getFullJid()));
             this.setIcon(ImageHolder.vmIcon);
             this.setToolTipText("vm_jid");
-        } else if (x instanceof UserStruct) {
-            UserStruct userStruct = (UserStruct) x;
-            this.setText(userStruct.getFullJid());
+        } else if (x instanceof HostStruct) {
+            HostStruct hostStruct = (HostStruct) x;
+            this.setText(hostStruct.getFullJid());
             this.setIcon(ImageHolder.hostIcon);
             this.setToolTipText("user_jid");
         } else if (x instanceof TreeNodeProperty) {

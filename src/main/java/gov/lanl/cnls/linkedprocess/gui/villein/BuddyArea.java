@@ -1,14 +1,15 @@
 package gov.lanl.cnls.linkedprocess.gui.villein;
 
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
 import gov.lanl.cnls.linkedprocess.gui.JTreeImage;
 import gov.lanl.cnls.linkedprocess.gui.TreeNodeProperty;
 import gov.lanl.cnls.linkedprocess.gui.TreeRenderer;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.FarmStruct;
-import gov.lanl.cnls.linkedprocess.xmpp.villein.VmStruct;
-import gov.lanl.cnls.linkedprocess.xmpp.villein.UserStruct;
+import gov.lanl.cnls.linkedprocess.xmpp.villein.HostStruct;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.Struct;
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import gov.lanl.cnls.linkedprocess.xmpp.villein.VmStruct;
+import org.jivesoftware.smack.packet.Presence;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -17,12 +18,10 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
-import java.util.Map;
+import java.awt.event.MouseListener;
 import java.util.HashMap;
-
-import org.jivesoftware.smack.packet.Presence;
+import java.util.Map;
 
 /**
  * User: marko
@@ -37,14 +36,14 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
     protected JPopupMenu popupMenu;
     protected Object popupTreeObject;
     protected DefaultMutableTreeNode treeRoot;
+    protected DefaultMutableTreeNode villeinNode;
     protected Map<String, DefaultMutableTreeNode> treeMap;
-
 
     public BuddyArea(VilleinGui villeinGui) {
         this.villeinGui = villeinGui;
-        UserStruct userStruct = new UserStruct();
-        userStruct.setFullJid(LinkedProcess.generateBareJid(this.villeinGui.getXmppVillein().getFullJid()));
-        this.treeRoot = new DefaultMutableTreeNode(userStruct);
+        HostStruct hostStruct = new HostStruct();
+        hostStruct.setFullJid(LinkedProcess.generateBareJid(this.villeinGui.getXmppVillein().getFullJid()));
+        this.treeRoot = new DefaultMutableTreeNode(hostStruct);
         this.tree = new JTreeImage(this.treeRoot, ImageHolder.cowBackground);
         this.tree.setCellRenderer(new TreeRenderer());
         this.tree.setModel(new DefaultTreeModel(treeRoot));
@@ -62,7 +61,7 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
         buttonPanel.add(this.addBuddyField);
         buttonPanel.add(addFarmButton);
         buttonPanel.add(shutdownButton);
-        
+
         shutdownButton.addActionListener(this);
         JPanel treePanel = new JPanel(new BorderLayout());
         treePanel.add(vmTreeScroll, BorderLayout.CENTER);
@@ -73,40 +72,38 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
         this.treeMap = new HashMap<String, DefaultMutableTreeNode>();
         this.add(treePanel);
 
+        this.villeinGui.getXmppVillein().createHostStructsFromRoster();
         this.createTree();
     }
 
     public void actionPerformed(ActionEvent event) {
 
         this.popupMenu.setVisible(false);
-        if(event.getActionCommand().equals("add farm")) {
-            if(this.addBuddyField.getText() != null && this.addBuddyField.getText().length() > 0)
+        if (event.getActionCommand().equals("add farm")) {
+            if (this.addBuddyField.getText() != null && this.addBuddyField.getText().length() > 0)
                 this.villeinGui.getXmppVillein().requestSubscription(this.addBuddyField.getText());
-        } else if(event.getActionCommand().equals("unsubscribe")) {
-            if(this.popupTreeObject instanceof UserStruct) {
-                String jid = ((UserStruct)this.popupTreeObject).getFullJid();
+            this.createTree();
+        } else if (event.getActionCommand().equals("unsubscribe")) {
+            if (this.popupTreeObject instanceof HostStruct) {
+                String jid = ((HostStruct) this.popupTreeObject).getFullJid();
                 this.villeinGui.getXmppVillein().requestUnsubscription(jid, true);
                 this.popupTreeObject = null;
             }
-        } else if(event.getActionCommand().equals("terminate vm")) {
-            if(this.popupTreeObject instanceof VmStruct) {
-                String vmJid = ((VmStruct)this.popupTreeObject).getFullJid();
-                String vmPassword = ((VmStruct)this.popupTreeObject).getVmPassword();
-                this.villeinGui.getXmppVillein().terminateVirtualMachine(vmJid, vmPassword);
+        } else if (event.getActionCommand().equals("terminate vm")) {
+            if (this.popupTreeObject instanceof VmStruct) {
+                this.villeinGui.getXmppVillein().terminateVirtualMachine((VmStruct) this.popupTreeObject);
             }
-        } else if(event.getActionCommand().equals("JavaScript")) {
-            if(this.popupTreeObject instanceof FarmStruct) {
-                String farmJid = ((FarmStruct)this.popupTreeObject).getFullJid();
+        } else if (event.getActionCommand().equals("JavaScript")) {
+            if (this.popupTreeObject instanceof FarmStruct) {
+                String farmJid = ((FarmStruct) this.popupTreeObject).getFullJid();
                 this.villeinGui.getXmppVillein().spawnVirtualMachine(farmJid, "JavaScript");
             }
-        } else if(event.getActionCommand().equals("shutdown")) {
+        } else if (event.getActionCommand().equals("shutdown")) {
 
             this.villeinGui.shutDown();
         }
 
 
-        this.villeinGui.getXmppVillein().createUserStructsFromRoster();
-        this.createTree();
     }
 
     protected boolean existsInTree(Object nodeObject) {
@@ -117,91 +114,155 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
     public void createTree() {
         treeRoot.removeAllChildren();
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-        DefaultMutableTreeNode villeinNode = new DefaultMutableTreeNode(this.villeinGui.getXmppVillein());
+        this.villeinNode = new DefaultMutableTreeNode(this.villeinGui.getXmppVillein());
         this.treeMap.put(this.villeinGui.getXmppVillein().getFullJid(), villeinNode);
-        for (UserStruct userStruct : this.villeinGui.getXmppVillein().getUserStructs()) {
-            DefaultMutableTreeNode userNode = new DefaultMutableTreeNode(userStruct);
-            this.treeMap.put(userStruct.getFullJid(), userNode);
-            for(FarmStruct farmStruct : userStruct.getFarmStructs()) {
+        for (HostStruct hostStruct : this.villeinGui.getXmppVillein().getHostStructs()) {
+            DefaultMutableTreeNode hostNode = new DefaultMutableTreeNode(hostStruct);
+            this.treeMap.put(hostStruct.getFullJid(), hostNode);
+            for (FarmStruct farmStruct : hostStruct.getFarmStructs()) {
                 DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(farmStruct);
                 this.treeMap.put(farmStruct.getFullJid(), farmNode);
-                for(VmStruct vmStruct : farmStruct.getVmStructs()) {
+                for (VmStruct vmStruct : farmStruct.getVmStructs()) {
                     DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(vmStruct);
                     this.treeMap.put(vmStruct.getFullJid(), vmNode);
                     model.insertNodeInto(vmNode, farmNode, farmNode.getChildCount());
                     this.tree.scrollPathToVisible(new TreePath(vmNode.getPath()));
                     DefaultMutableTreeNode temp;
                     Presence presence = vmStruct.getPresence();
-                    if(presence != null) {
+                    if (presence != null) {
                         temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", presence.getType().toString()));
                         model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
                         this.tree.scrollPathToVisible(new TreePath(temp.getPath()));
                     }
-                    if(vmStruct.getVmSpecies() != null) {
+                    if (vmStruct.getVmSpecies() != null) {
                         temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", vmStruct.getVmSpecies()));
                         model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
                         this.tree.scrollPathToVisible(new TreePath(temp.getPath()));
                     }
-                    if(vmStruct.getVmPassword() != null) {
+                    if (vmStruct.getVmPassword() != null) {
                         temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", vmStruct.getVmPassword()));
                         model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
                         this.tree.scrollPathToVisible(new TreePath(temp.getPath()));
                     }
                 }
-                model.insertNodeInto(farmNode, userNode, userNode.getChildCount());
+                model.insertNodeInto(farmNode, hostNode, hostNode.getChildCount());
                 this.tree.scrollPathToVisible(new TreePath(farmNode.getPath()));
             }
 
-            model.insertNodeInto(userNode, villeinNode, villeinNode.getChildCount());
-            this.tree.scrollPathToVisible(new TreePath(userNode.getPath()));
+            model.insertNodeInto(hostNode, villeinNode, villeinNode.getChildCount());
+            this.tree.scrollPathToVisible(new TreePath(hostNode.getPath()));
         }
         model.insertNodeInto(villeinNode, this.treeRoot, this.treeRoot.getChildCount());
         this.tree.scrollPathToVisible(new TreePath(villeinNode.getPath()));
         model.reload();
     }
 
-    /*public void updateTree(Struct struct) {
-        DefaultMutableTreeNode node = this.treeMap.get(struct.getFullJid());
+    public void updateTree(String jid, boolean remove) {
+        DefaultMutableTreeNode node = this.treeMap.get(jid);
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-        if(node == null) {
 
-        } else {
-            if(struct instanceof VmStruct) {
-                    VmStruct vmStruct = (VmStruct)struct;
-                    DefaultMutableTreeNode temp;
-                    Presence presence = struct.getPresence();
-                    if(presence != null) {
-                        temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", presence.getType().toString()));
-                        model.insertNodeInto(temp, node, node.getChildCount());
-                        this.tree.scrollPathToVisible(new TreePath(temp.getPath()));
-                    }
-                    if(vmStruct.getVmSpecies() != null) {
-                        temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", vmStruct.getVmSpecies()));
-                        model.insertNodeInto(temp, node, node.getChildCount());
-                        this.tree.scrollPathToVisible(new TreePath(temp.getPath()));
-                    }
-                    if(vmStruct.getVmPassword() != null) {
-                        temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", vmStruct.getVmPassword()));
-                        model.insertNodeInto(temp, node, node.getChildCount());
-                        this.tree.scrollPathToVisible(new TreePath(temp.getPath()));
-                    }
+        if (node != null) {
+            if (remove) {
+                node.removeAllChildren();
+                model.removeNodeFromParent(node);
+                this.treeMap.remove(jid);
+            } else {
+                if (node.getUserObject() instanceof HostStruct) {
+                    //model.reload(node);
+                } else if (node.getUserObject() instanceof FarmStruct) {
+                    //model.reload(node);
+                } else {
+                    node.removeAllChildren();
+                    VmStruct vmStruct = (VmStruct) node.getUserObject();
+                    node.add(new DefaultMutableTreeNode(new TreeNodeProperty("villein_jid", vmStruct.getFullJid())));
+                    node.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", vmStruct.getPresence().getType().toString())));
+                    node.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", vmStruct.getVmSpecies())));
+                    node.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", vmStruct.getVmPassword())));
+                    model.reload(node);
+                }
             }
-            model.reload(node);
+        } else {
+            if (!remove) {
+                System.out.println(jid + "HHHHHHHHHHHHHH");
+                Struct parentStruct = this.villeinGui.getXmppVillein().getParentStruct(jid);
+                System.out.println("here1");
+                DefaultMutableTreeNode parentNode = null;
+                if (parentStruct != null) {
+                    parentNode = this.treeMap.get(parentStruct.getFullJid());
+                }
+                System.out.println("here2");
+                Struct struct = this.villeinGui.getXmppVillein().getStruct(jid);
+                System.out.println("!!!!!!" + struct);
+                if (struct instanceof HostStruct) {
+                    System.out.println("*********" + struct.getFullJid());
+                    DefaultMutableTreeNode hostNode = new DefaultMutableTreeNode(struct);
+                    this.treeMap.put(struct.getFullJid(), hostNode);
+                    model.insertNodeInto(hostNode, villeinNode, villeinNode.getChildCount());
+                    this.tree.scrollPathToVisible(new TreePath(hostNode.getPath()));
+                } else if (struct instanceof FarmStruct) {
+                    if (parentNode != null) {
+                        DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(struct);
+                        this.treeMap.put(struct.getFullJid(), farmNode);
+                        model.insertNodeInto(farmNode, parentNode, parentNode.getChildCount());
+                        this.tree.scrollPathToVisible(new TreePath(farmNode.getPath()));
+                    } else {
+                        parentStruct = this.villeinGui.getXmppVillein().getParentStruct(LinkedProcess.generateBareJid(jid));
+                        parentNode = this.treeMap.get(parentStruct.getFullJid());
+                        if(parentNode != null) {
+                            DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(struct);
+                            this.treeMap.put(struct.getFullJid(), farmNode);
+                            model.insertNodeInto(farmNode, parentNode, parentNode.getChildCount());
+                            this.tree.scrollPathToVisible(new TreePath(farmNode.getPath()));    
+                        }
+                    }
+                } else if (struct instanceof VmStruct) {
+                    if (parentNode != null) {
+                        VmStruct vmStruct = (VmStruct) struct;
+                        DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(struct);
+                        this.treeMap.put(struct.getFullJid(), vmNode);
+                        DefaultMutableTreeNode temp;
+                        if(vmStruct.getFullJid() != null) {
+                            temp = new DefaultMutableTreeNode(new TreeNodeProperty("villein_jid", vmStruct.getFullJid()));
+                            model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
+                            this.tree.scrollPathToVisible(new TreePath(temp.getPath()));
+                        }
+                        if(vmStruct.getPresence() != null) {
+                            temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", vmStruct.getPresence().getType().toString()));
+                            model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
+                            this.tree.scrollPathToVisible(new TreePath(temp.getPath()));
+                        }
+                        if(vmStruct.getVmSpecies() != null) {
+                            temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", vmStruct.getVmSpecies()));
+                            model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
+                            this.tree.scrollPathToVisible(new TreePath(temp.getPath()));
+                        }
+                        if(vmStruct.getVmPassword() != null) {
+                            temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", vmStruct.getVmPassword()));
+                            model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
+                            this.tree.scrollPathToVisible(new TreePath(temp.getPath()));
+                        }
+          
+                        model.insertNodeInto(vmNode, parentNode, parentNode.getChildCount());
+                        this.tree.scrollPathToVisible(new TreePath(vmNode.getPath()));
+                        model.reload(vmNode);
+
+                    }
+                }
+            }
         }
-    }*/
+    }
 
     public void mouseClicked(MouseEvent event) {
         int x = event.getX();
         int y = event.getY();
 
         int selectedRow = tree.getRowForLocation(x, y);
-        if(selectedRow != -1)
-        {
-            if(event.getButton() == MouseEvent.BUTTON3 && event.getClickCount() == 1) {
+        if (selectedRow != -1) {
+            if (event.getButton() == MouseEvent.BUTTON3 && event.getClickCount() == 1) {
                 TreePath selectedPath = tree.getPathForLocation(x, y);
-                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)selectedPath.getLastPathComponent();
+                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
                 Object nodeObject = selectedNode.getUserObject();
-                if(nodeObject instanceof UserStruct) {
+                if (nodeObject instanceof HostStruct) {
                     this.popupTreeObject = nodeObject;
                     popupMenu.removeAll();
                     JLabel menuLabel = new JLabel("Host");
@@ -213,7 +274,7 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
                     unsubscribeItem.addActionListener(this);
                     popupMenu.setLocation(x + villeinGui.getX(), y + villeinGui.getY());
                     popupMenu.setVisible(true);
-                } else if(nodeObject instanceof VmStruct) {
+                } else if (nodeObject instanceof VmStruct) {
                     this.popupTreeObject = nodeObject;
                     popupMenu.removeAll();
                     JLabel menuLabel = new JLabel("Virtual Machine");
@@ -225,7 +286,7 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
                     terminateVmItem.addActionListener(this);
                     popupMenu.setLocation(x + villeinGui.getX(), y + villeinGui.getY());
                     popupMenu.setVisible(true);
-                } else if(nodeObject instanceof FarmStruct) {
+                } else if (nodeObject instanceof FarmStruct) {
                     this.popupTreeObject = nodeObject;
                     popupMenu.removeAll();
                     JLabel menuLabel = new JLabel("Farm");
@@ -242,22 +303,21 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
                     // todo: make popup submenu work correctly, though the bug is still functional
                 }
 
-            } else if(event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
+            } else if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
                 TreePath selectedPath = tree.getPathForLocation(x, y);
-                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)selectedPath.getLastPathComponent();
+                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
                 Object nodeObject = selectedNode.getUserObject();
-                if(nodeObject instanceof VmStruct) {
+                if (nodeObject instanceof VmStruct) {
                     System.out.println("make the VMFrame." + nodeObject);
                     //new FarmFrame(this.villeinGui, (FarmStruct)nodeObject);
-                }    
+                }
             }
 
-         }
+        }
 
     }
 
     public void mouseReleased(MouseEvent e) {
-        System.out.println(e);
         this.popupMenu.setVisible(false);
     }
 
@@ -266,15 +326,12 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
     }
 
     public void mouseExited(MouseEvent e) {
-        
+
     }
 
     public void mousePressed(MouseEvent event) {
 
     }
-
-
-
 
 
 }

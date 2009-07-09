@@ -3,6 +3,7 @@ package gov.lanl.cnls.linkedprocess.xmpp.villein;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
 /**
  * User: marko
@@ -21,26 +22,27 @@ public class PresenceListener implements PacketListener {
         Presence presence = ((Presence) packet);
 
         XmppVillein.LOGGER.info("Presence received from " + presence.getFrom());
+        XmppVillein.LOGGER.info(presence.toXML());
+
+        if(presence.getType() == Presence.Type.unavailable) {
+            this.villein.removeStruct(packet.getFrom());
+            return;
+        }
 
         if (packet.getFrom().contains("LoPFarm")) {
-            FarmStruct checkStruct = this.villein.getFarmStruct(packet.getFrom());
+            Struct checkStruct = this.villein.getStruct(packet.getFrom(), XmppVillein.StructType.FARM);
             if (checkStruct == null) {
                 FarmStruct farmStruct = new FarmStruct();
                 farmStruct.setFullJid(packet.getFrom());
                 farmStruct.setPresence(presence);
-                this.villein.addFarmStruct(farmStruct);
+                this.villein.addFarmStruct(LinkedProcess.generateBareJid(packet.getFrom()), farmStruct);
             } else {
                 checkStruct.setPresence(presence);
             }
 
-        } else if (packet.getFrom().contains("LoPVM")) {
-
-            VmStruct checkStruct = this.villein.getVmStruct(packet.getFrom());
-            if (checkStruct == null) {
-                VmStruct vmStruct = new VmStruct();
-                vmStruct.setFullJid(packet.getFrom());
-                //this.villein.addVmStruct()
-            } else {
+        } else {
+            Struct checkStruct = this.villein.getStruct(packet.getFrom());
+            if (checkStruct != null) {
                 checkStruct.setPresence(presence);
             }
         }
