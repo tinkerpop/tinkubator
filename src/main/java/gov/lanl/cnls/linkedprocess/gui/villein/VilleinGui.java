@@ -14,7 +14,7 @@ public class VilleinGui extends JFrame {
 
     protected static final String FRAME_TITLE = "Simple Linked Process Villein";
 
-    protected XmppVillein villein;
+    protected XmppVillein xmppVillein;
     protected BuddyArea buddyArea;
 
     public VilleinGui() {
@@ -33,24 +33,24 @@ public class VilleinGui extends JFrame {
     }
 
     public void loadBuddyArea(XmppVillein villein) {
-        this.villein = villein;
+        this.xmppVillein = villein;
         this.getContentPane().removeAll();
         this.buddyArea = new BuddyArea(this);
         this.getContentPane().add(buddyArea);
-        this.buddyArea.updateVillenTree();        
+        this.buddyArea.updateVilleinTree();
         this.setResizable(false);
         this.pack();
         this.setVisible(true);
 
     }
 
-    public XmppVillein getVillein() {
-        return this.villein;
+    public XmppVillein getXmppVillein() {
+        return this.xmppVillein;
     }
 
     public void shutDown() {
-        if (this.villein != null)
-            this.villein.shutDown();
+        if (this.xmppVillein != null)
+            this.xmppVillein.shutDown();
         System.exit(0);
     }
 

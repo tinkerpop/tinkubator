@@ -10,10 +10,7 @@ import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
-import org.jivesoftware.smack.filter.IQTypeFilter;
+import org.jivesoftware.smack.filter.*;
 import org.jivesoftware.smack.provider.ProviderManager;
 
 import java.io.InputStream;
@@ -61,14 +58,14 @@ public class XmppVillein extends XmppClient {
         this.initiateFeatures();
         //this.printClientStatistics();
 
-        this.roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
+        this.roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
         this.printRoster();
 
-        PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new AndFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-        PacketFilter terminateFilter = new AndFilter(new PacketTypeFilter(TerminateVm.class), new AndFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-        PacketFilter evaluateFilter = new AndFilter(new PacketTypeFilter(Evaluate.class), new AndFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-        PacketFilter jobStatusFilter = new AndFilter(new PacketTypeFilter(JobStatus.class), new AndFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-        PacketFilter abortJobFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new AndFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
+        PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
+        PacketFilter terminateFilter = new AndFilter(new PacketTypeFilter(TerminateVm.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
+        PacketFilter evaluateFilter = new AndFilter(new PacketTypeFilter(Evaluate.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
+        PacketFilter jobStatusFilter = new AndFilter(new PacketTypeFilter(JobStatus.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
+        PacketFilter abortJobFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
         PacketFilter presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new PresenceFilter());
 
         connection.addPacketListener(new SpawnVmVilleinListener(this), spawnFilter);
@@ -84,7 +81,7 @@ public class XmppVillein extends XmppClient {
     }
 
     public VmStruct getVmStruct(String farmJid, String vmJid) {
-        UserStruct userStruct = this.userStructs.get(generateBareJid(farmJid));
+        UserStruct userStruct = this.userStructs.get(LinkedProcess.generateBareJid(farmJid));
         if(userStruct != null)
             return userStruct.getFarmStruct(farmJid).getVmStruct(vmJid);
         else
@@ -93,7 +90,7 @@ public class XmppVillein extends XmppClient {
     }
 
     public void addVmStruct(String farmJid, VmStruct vmStruct) {
-        UserStruct userStruct = this.userStructs.get(generateBareJid(farmJid));
+        UserStruct userStruct = this.userStructs.get(LinkedProcess.generateBareJid(farmJid));
         if(userStruct != null)
             userStruct.getFarmStruct(farmJid).addVmStruct(vmStruct);
         else
@@ -101,22 +98,52 @@ public class XmppVillein extends XmppClient {
     }
 
     public void addFarmStruct(FarmStruct farmStruct) {
-        UserStruct userStruct = this.userStructs.get(generateBareJid(farmStruct.getFarmJid()));
+        UserStruct userStruct = this.userStructs.get(LinkedProcess.generateBareJid(farmStruct.getFarmJid()));
         if(userStruct != null)
             userStruct.addFarmStruct(farmStruct);
         else
             LOGGER.severe("user struct null for" + farmStruct.getFarmJid());    
     }
 
-    public Collection<FarmStruct> getFarms(String userJid) {
+    public Collection<FarmStruct> getFarmStructs(String userJid) {
         return this.userStructs.get(userJid).getFarmStructs();
+    }
+
+    public FarmStruct getFarmStruct(String farmJid) {
+        for(UserStruct userStruct : this.userStructs.values()) {
+            FarmStruct farmStruct = userStruct.getFarmStruct(farmJid);
+            if(farmStruct != null) {
+                return farmStruct;
+            }
+        }
+        return null;
+    }
+
+    public void spawnVirtualMachine(String farmJid, String vmSpecies) {
+        SpawnVm spawn = new SpawnVm();
+        spawn.setTo(farmJid);
+        spawn.setVmSpecies(vmSpecies);
+        spawn.setType(IQ.Type.GET);
+        this.connection.sendPacket(spawn);
+    }
+
+    public void terminateVirtualMachine(String vmJid, String vmPassword) {
+        TerminateVm terminate = new TerminateVm();
+        terminate.setTo(vmJid);
+        terminate.setVmPassword(vmPassword);
+        terminate.setType(IQ.Type.GET);
+        this.connection.sendPacket(terminate);
     }
 
     public void createUserStructsFromRoster() {
         this.roster.reload();
-        this.userStructs.clear();
+        //this.userStructs.clear();
         for(RosterEntry entry : this.getRoster().getEntries()) {
-            UserStruct userStruct = new UserStruct();
+
+
+            UserStruct userStruct = this.userStructs.get(entry.getUser());
+            if(userStruct == null)
+               userStruct = new UserStruct();
             userStruct.setUserJid(entry.getUser());
             userStruct.setStatus(this.roster.getPresence(entry.getUser()).getMode());
             this.userStructs.put(userStruct.getUserJid(), userStruct);
@@ -148,5 +175,24 @@ public class XmppVillein extends XmppClient {
 
     public LinkedProcess.VilleinStatus getStatus() {
         return this.status;
+    }
+
+    public void requestUnsubscription(String jid, boolean removeFromRoster) {
+        super.requestUnsubscription(jid, removeFromRoster);
+        UserStruct userStruct = this.userStructs.get(jid);
+        if(userStruct != null) {
+            for(FarmStruct farmStruct : userStruct.getFarmStructs()) {
+                for(VmStruct vmStruct : farmStruct.getVmStructs()) {
+                    if(vmStruct.getVmPassword() != null) {
+                        TerminateVm terminate = new TerminateVm();
+                        terminate.setTo(vmStruct.getVmJid());
+                        terminate.setVmPassword(vmStruct.getVmPassword());
+                        this.connection.sendPacket(terminate);
+                    }
+                }
+            }
+        }
+        this.userStructs.remove(jid);
+
     }
 }

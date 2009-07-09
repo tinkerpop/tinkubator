@@ -3,7 +3,7 @@ package gov.lanl.cnls.linkedprocess.gui.villein;
 import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
 import gov.lanl.cnls.linkedprocess.gui.JTreeImage;
 import gov.lanl.cnls.linkedprocess.gui.TreeNodeProperty;
-import gov.lanl.cnls.linkedprocess.xmpp.villein.XmppVillein;
+import gov.lanl.cnls.linkedprocess.gui.TreeRenderer;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.FarmStruct;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.VmStruct;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.UserStruct;
@@ -11,32 +11,40 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
 
-import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.RosterEntry;
 
 /**
  * User: marko
  * Date: Jul 7, 2009
  * Time: 11:13:22 PM
  */
-public class BuddyArea extends JPanel implements ActionListener {
+public class BuddyArea extends JPanel implements ActionListener, MouseListener {
 
     protected VilleinGui villeinGui;
     protected JTreeImage villeinTree;
+    protected JTextField addBuddyField;
+    protected JPopupMenu popupMenu;
+    protected Object popupTreeObject;
     protected DefaultMutableTreeNode villeinTreeRoot;
+
 
     public BuddyArea(VilleinGui villeinGui) {
         this.villeinGui = villeinGui;
-        this.villeinTreeRoot = new DefaultMutableTreeNode(this.villeinGui.getVillein());
+        this.villeinTreeRoot = new DefaultMutableTreeNode(this.villeinGui.getXmppVillein());
         this.villeinTree = new JTreeImage(this.villeinTreeRoot, ImageHolder.cowBackground);
         this.villeinTree.setCellRenderer(new TreeRenderer());
         this.villeinTree.setModel(new DefaultTreeModel(villeinTreeRoot));
+        this.villeinTree.addMouseListener(this);
+        this.popupMenu = new JPopupMenu();
+        this.popupMenu.setBorder(BorderFactory.createLineBorder(ImageHolder.GRAY_COLOR, 2));
 
         JScrollPane vmTreeScroll = new JScrollPane(this.villeinTree);
         JButton shutdownButton = new JButton("shutdown");
@@ -44,7 +52,8 @@ public class BuddyArea extends JPanel implements ActionListener {
         shutdownButton.addActionListener(this);
         addFarmButton.addActionListener(this);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        buttonPanel.add(new JTextField(15));
+        this.addBuddyField = new JTextField(15);
+        buttonPanel.add(this.addBuddyField);
         buttonPanel.add(addFarmButton);
         buttonPanel.add(shutdownButton);
         
@@ -56,38 +65,68 @@ public class BuddyArea extends JPanel implements ActionListener {
         treePanel.setBorder(BorderFactory.createLineBorder(ImageHolder.GRAY_COLOR, 2));
 
         this.add(treePanel);
+
+        this.updateVilleinTree();
     }
 
     public void actionPerformed(ActionEvent event) {
 
-
+        this.popupMenu.setVisible(false);
         if(event.getActionCommand().equals("add farm")) {
-            this.villeinGui.getVillein().createUserStructsFromRoster();
-            this.updateVillenTree();
+            if(this.addBuddyField.getText() != null && this.addBuddyField.getText().length() > 0)
+                this.villeinGui.getXmppVillein().requestSubscription(this.addBuddyField.getText());
+        } else if(event.getActionCommand().equals("unsubscribe")) {
+            if(this.popupTreeObject instanceof UserStruct) {
+                String jid = ((UserStruct)this.popupTreeObject).getUserJid();
+                this.villeinGui.getXmppVillein().requestUnsubscription(jid, true);
+                this.popupTreeObject = null;
+            }
+        } else if(event.getActionCommand().equals("terminate vm")) {
+            if(this.popupTreeObject instanceof VmStruct) {
+                String vmJid = ((VmStruct)this.popupTreeObject).getVmJid();
+                String vmPassword = ((VmStruct)this.popupTreeObject).getVmPassword();
+                this.villeinGui.getXmppVillein().terminateVirtualMachine(vmJid, vmPassword);
+            }
+        } else if(event.getActionCommand().equals("shutdown")) {
 
-        } else {
             this.villeinGui.shutDown();
         }
+
+
+        this.villeinGui.getXmppVillein().createUserStructsFromRoster();
+        this.updateVilleinTree();
     }
 
-    public void updateVillenTree() {
+    public void updateVilleinTree() {
         villeinTreeRoot.removeAllChildren();
         DefaultTreeModel model = (DefaultTreeModel) villeinTree.getModel();
-        System.out.println("The number of users is: " + this.villeinGui.getVillein().getUserStructs());
-        for (UserStruct userStruct : this.villeinGui.getVillein().getUserStructs()) {
+        //System.out.println("The number of users is: " + this.villeinGui.getXmppVillein().getUserStructs());
+        for (UserStruct userStruct : this.villeinGui.getXmppVillein().getUserStructs()) {
             DefaultMutableTreeNode userNode = new DefaultMutableTreeNode(userStruct);
             for(FarmStruct farmStruct : userStruct.getFarmStructs()) {
-                DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(userStruct);
+                DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(farmStruct);
                 for(VmStruct vmStruct : farmStruct.getVmStructs()) {
                     DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(vmStruct);
                     model.insertNodeInto(vmNode, farmNode, farmNode.getChildCount());
-                    vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", vmStruct.getVmStatus().toString())));
-                    vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", vmStruct.getVmSpecies())));
-                    vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", vmStruct.getVmPassword())));
-
-
+                    this.villeinTree.scrollPathToVisible(new TreePath(vmNode.getPath()));
+                    DefaultMutableTreeNode temp;
+                    LinkedProcess.VmStatus status = vmStruct.getVmStatus();
+                    if(status != null) {
+                        temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", status.toString()));
+                        model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
+                        this.villeinTree.scrollPathToVisible(new TreePath(temp.getPath()));
+                    }
+                    if(vmStruct.getVmSpecies() != null) {
+                        temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", vmStruct.getVmSpecies()));
+                        model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
+                        this.villeinTree.scrollPathToVisible(new TreePath(temp.getPath()));
+                    }
+                    if(vmStruct.getVmPassword() != null) {
+                        temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", vmStruct.getVmPassword()));
+                        model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
+                        this.villeinTree.scrollPathToVisible(new TreePath(temp.getPath()));
+                    }
                 }
-                System.out.println("FARM NODE!!!!");
                 model.insertNodeInto(farmNode, userNode, userNode.getChildCount());
                 this.villeinTree.scrollPathToVisible(new TreePath(farmNode.getPath()));
             }
@@ -98,71 +137,78 @@ public class BuddyArea extends JPanel implements ActionListener {
         model.reload();
     }
 
+    public void mouseClicked(MouseEvent event) {
+        int x = event.getX();
+        int y = event.getY();
 
-    private class TreeRenderer extends DefaultTreeCellRenderer {
-        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-            this.setOpaque(false);
-            this.setBackgroundNonSelectionColor(new Color(0, 0, 0, 0));
-            //this.setBackgroundSelectionColor(new Color(255,255,255,255));
-            //this.setTextNonSelectionColor(new Color(255,255,255,255));
+        int selectedRow = villeinTree.getRowForLocation(x, y);
+        System.out.println(event);
+        System.out.println(selectedRow);        
+        if(selectedRow != -1)
+        {
+            if(event.getButton() == MouseEvent.BUTTON3 && event.getClickCount() == 1) {
+                TreePath selectedPath = villeinTree.getPathForLocation(x, y);
+                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)selectedPath.getLastPathComponent();
+                Object nodeObject = selectedNode.getUserObject();
+                if(nodeObject instanceof UserStruct) {
+                    this.popupTreeObject = nodeObject;
+                    popupMenu.removeAll();
+                    JMenuItem unsubscribeItem = new JMenuItem("unsubscribe");
+                    JLabel menuLabel = new JLabel("Host");
+                    menuLabel.setHorizontalTextPosition(JLabel.CENTER);
+                    
+                    popupMenu.add(menuLabel);
+                    popupMenu.addSeparator();
+                    popupMenu.add(unsubscribeItem);
+                    unsubscribeItem.addActionListener(this);
+                    popupMenu.setLocation(x, y);
+                    popupMenu.setVisible(true);
+                } else if(nodeObject instanceof VmStruct) {
+                    this.popupTreeObject = nodeObject;
+                    popupMenu.removeAll();
+                    JMenuItem terminateVmItem = new JMenuItem("terminate vm");
+                    JLabel menuLabel = new JLabel("Virtual Machine");
+                    menuLabel.setHorizontalTextPosition(JLabel.CENTER);
+                    popupMenu.add(menuLabel);
+                    popupMenu.addSeparator();
+                    popupMenu.add(terminateVmItem);
+                    terminateVmItem.addActionListener(this);
+                    popupMenu.setLocation(x, y);
+                    popupMenu.setVisible(true);
+                }
 
-            super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+            } else if(event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
+                TreePath selectedPath = villeinTree.getPathForLocation(x, y);
+                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)selectedPath.getLastPathComponent();
+                Object nodeObject = selectedNode.getUserObject();
+                if(nodeObject instanceof FarmStruct) {
+                    new FarmFrame(this.villeinGui, (FarmStruct)nodeObject);
+                }    
+            }
 
-            Object x = ((DefaultMutableTreeNode) value).getUserObject();
-              if (x instanceof XmppVillein) {
-                  this.setText(((XmppVillein) x).getFullJid());
-                  if (((XmppVillein)x).getStatus() == LinkedProcess.VilleinStatus.ACTIVE) {
-                      this.setIcon(ImageHolder.activeIcon);
-                  } else {
-                      this.setIcon(ImageHolder.inactiveIcon);
-                  }
-                  this.setToolTipText("villen");
-              } else if (x instanceof UserStruct) {
-                  UserStruct userStruct = (UserStruct) x;
-                  this.setText(userStruct.getUserJid());
-                  if (userStruct.getStatus() == Presence.Mode.available) {
-                      this.setIcon(ImageHolder.activeIcon);
-                  } else {
-                      this.setIcon(ImageHolder.inactiveIcon);
-                  }
-                  this.setToolTipText("user_jid");
-              } else if (x instanceof FarmStruct) {
-                  FarmStruct farm = (FarmStruct) x;
-                  this.setText(farm.getFarmJid());
-                  if (farm.getFarmStatus() == LinkedProcess.FarmStatus.ACTIVE) {
-                      this.setIcon(ImageHolder.activeIcon);
-                  } else {
-                      this.setIcon(ImageHolder.inactiveIcon);
-                  }
-                  this.setToolTipText("farm_jid");
-              } else if(x instanceof VmStruct) {
-                  VmStruct vm = (VmStruct) x;
-                  this.setText(vm.getVmJid());
-                  if (vm.getVmStatus() == LinkedProcess.VmStatus.ACTIVE) {
-                      this.setIcon(ImageHolder.activeIcon);
-                  } else {
-                      this.setIcon(ImageHolder.inactiveIcon);
-                  }
-                  this.setToolTipText("farm_jid");
+         }
 
-              } else if (x instanceof TreeNodeProperty) {
-
-                  if (((TreeNodeProperty) x).getKey().equals("vm_status")) {
-                      this.setIcon(ImageHolder.statusIcon);
-                      this.setText(((TreeNodeProperty) x).getValue());
-                      this.setToolTipText("vm_status");
-                  } else if (((TreeNodeProperty) x).getKey().equals("vm_species")) {
-                      this.setIcon(ImageHolder.speciesIcon);
-                      this.setText(((TreeNodeProperty) x).getValue());
-                      this.setToolTipText("vm_species");
-                  } else if (((TreeNodeProperty) x).getKey().equals("vm_password")) {
-                      this.setIcon(ImageHolder.passwordIcon);
-                      this.setText(((TreeNodeProperty) x).getValue());
-                      this.setToolTipText("vm_password");
-                  }
-              }
-              return this;
-        }
     }
+
+    public void mouseReleased(MouseEvent e) {
+        System.out.println(e);
+        this.popupMenu.setVisible(false);
+    }
+
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    public void mouseExited(MouseEvent e) {
+        
+    }
+
+    public void mousePressed(MouseEvent event) {
+
+    }
+
+
+
+
 
 }

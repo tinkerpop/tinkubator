@@ -10,12 +10,12 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
  */
 public class FarmGuiStatusEventHandler extends StatusEventHandler {
 
-    protected FarmGui gui;
+    protected FarmGui farmGui;
 
 
-    public FarmGuiStatusEventHandler(FarmGui gui) {
-        super(gui.getFarm());
-        this.gui = gui;
+    public FarmGuiStatusEventHandler(FarmGui farmGui) {
+        super(farmGui.getXmppFarm());
+        this.farmGui = farmGui;
     }
 
     public void schedulerStatusChanged(LinkedProcess.FarmStatus status) {
@@ -24,7 +24,7 @@ public class FarmGuiStatusEventHandler extends StatusEventHandler {
 
     public void virtualMachineStatusChanged(String vmJid, LinkedProcess.VmStatus status) {
         super.virtualMachineStatusChanged(vmJid, status);
-        gui.updateVirtualMachineTree();
+        farmGui.updateVirtualMachineTree();
 
     }
 }

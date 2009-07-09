@@ -25,6 +25,10 @@ public class SpawnVmProvider implements IQProvider {
         if(null != vmSpecies) {
             spawnVm.setVmSpecies(vmSpecies);
         }
+        String vmPassword = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VM_PASSWORD_ATTRIBUTE);
+        if(null != vmPassword) {
+            spawnVm.setVmPassword(vmPassword);
+        }
         parser.next();
         return spawnVm;
     }

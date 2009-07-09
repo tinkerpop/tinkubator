@@ -1,16 +1,14 @@
 package gov.lanl.cnls.linkedprocess.gui.farm;
 
-import gov.lanl.cnls.linkedprocess.xmpp.farm.XmppFarm;
 import gov.lanl.cnls.linkedprocess.xmpp.vm.XmppVirtualMachine;
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
 import gov.lanl.cnls.linkedprocess.gui.JTreeImage;
 import gov.lanl.cnls.linkedprocess.gui.TreeNodeProperty;
+import gov.lanl.cnls.linkedprocess.gui.TreeRenderer;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -31,7 +29,7 @@ public class MainArea extends JTabbedPane implements ActionListener {
 
      public MainArea(FarmGui farmGui) {
         this.farmGui = farmGui;
-        this.vmTreeRoot = new DefaultMutableTreeNode(this.farmGui.getFarm());
+        this.vmTreeRoot = new DefaultMutableTreeNode(this.farmGui.getXmppFarm());
         this.vmTree = new JTreeImage(this.vmTreeRoot, ImageHolder.farmBackground);
         this.vmTree.setCellRenderer(new TreeRenderer());
         this.vmTree.setModel(new DefaultTreeModel(vmTreeRoot));
@@ -59,8 +57,8 @@ public class MainArea extends JTabbedPane implements ActionListener {
             builder.setFeature("http://xml.org/sax/features/namespaces", false);
             builder.setIgnoringBoundaryWhitespace(true);
             builder.setIgnoringElementContentWhitespace(true);
-            System.out.println(this.farmGui.getFarm().getServiceExtension().toXML());
-            Document doc = builder.build(new BufferedReader(new StringReader("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + this.farmGui.getFarm().getServiceExtension().toXML())));
+            System.out.println(this.farmGui.getFarmStruct().getServiceExtension().toXML());
+            Document doc = builder.build(new BufferedReader(new StringReader("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + this.farmGui.getFarmStruct().getServiceExtension().toXML())));
             XMLOutputter out = new XMLOutputter();
             JPanel featuresPanel = new JPanel();
             this.farmFeaturesText = new JTextArea(out.outputString(doc));
@@ -85,7 +83,7 @@ public class MainArea extends JTabbedPane implements ActionListener {
     public void updateVirtualMachineTree() {
         vmTreeRoot.removeAllChildren();
         DefaultTreeModel model = (DefaultTreeModel) vmTree.getModel();
-        for (XmppVirtualMachine vm : this.farmGui.getFarm().getVirtualMachines()) {
+        for (XmppVirtualMachine vm : this.farmGui.getXmppFarm().getVirtualMachines()) {
             DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(vm);
             //if (!this.containsVmNode(vm)) {
                 vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("villein_jid", vm.getVilleinJid())));
@@ -101,62 +99,7 @@ public class MainArea extends JTabbedPane implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent event) {
-        this.farmGui.getFarm().shutDown();
+        this.farmGui.getXmppFarm().shutDown();
         this.farmGui.loadLoginFrame();
     }
-
-    private class TreeRenderer extends DefaultTreeCellRenderer {
-          public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-              this.setOpaque(false);
-              this.setBackgroundNonSelectionColor(new Color(0,0,0,0));
-              //this.setBackgroundSelectionColor(new Color(255,255,255,255));
-              //this.setTextNonSelectionColor(new Color(255,255,255,255));
-
-              super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-
-              Object x = ((DefaultMutableTreeNode) value).getUserObject();
-              if (x instanceof XmppFarm) {
-                  this.setText(((XmppFarm) x).getFullJid());
-                  if (((XmppFarm)x).getScheduler().getSchedulerStatus() == LinkedProcess.FarmStatus.ACTIVE) {
-                      this.setIcon(ImageHolder.activeIcon);
-                  } else {
-                      this.setIcon(ImageHolder.inactiveIcon);
-                  }
-                  this.setToolTipText("farm");
-              } else if (x instanceof XmppVirtualMachine) {
-                  XmppVirtualMachine vm = (XmppVirtualMachine) x;
-                  this.setText(vm.getFullJid());
-                  if (vm.getVmStatus() == LinkedProcess.VmStatus.ACTIVE) {
-                      this.setIcon(ImageHolder.activeIcon);
-                  } else {
-                      this.setIcon(ImageHolder.inactiveIcon);
-                  }
-                  this.setToolTipText("vm_jid");
-              } else if (x instanceof TreeNodeProperty) {
-                  if (((TreeNodeProperty) x).getKey().equals("villein_jid")) {
-                      this.setIcon(ImageHolder.villeinIcon);
-                      this.setText(((TreeNodeProperty) x).getValue());
-                      this.setToolTipText("spawning_app");
-                  } else if (((TreeNodeProperty) x).getKey().equals("vm_status")) {
-                      this.setIcon(ImageHolder.statusIcon);
-                      this.setText(((TreeNodeProperty) x).getValue());
-                      this.setToolTipText("vm_status");
-                  } else if (((TreeNodeProperty) x).getKey().equals("vm_species")) {
-                      this.setIcon(ImageHolder.speciesIcon);
-                      this.setText(((TreeNodeProperty) x).getValue());
-                      this.setToolTipText("vm_species");
-                  } else if (((TreeNodeProperty) x).getKey().equals("vm_password")) {
-                      this.setIcon(ImageHolder.passwordIcon);
-                      this.setText(((TreeNodeProperty) x).getValue());
-                      this.setToolTipText("vm_password");
-                  } else if (((TreeNodeProperty) x).getKey().equals("running_time")) {
-                      this.setIcon(ImageHolder.timeIcon);
-                      this.setText(((TreeNodeProperty) x).getValue());
-                      this.setToolTipText("running_time");
-                  }
-              }
-              return this;
-          }
-      }
-
 }

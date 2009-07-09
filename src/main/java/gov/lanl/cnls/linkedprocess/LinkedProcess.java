@@ -100,6 +100,14 @@ public class LinkedProcess {
         }
     }
 
+    public static String generateResource(String fullJid) {
+        return fullJid.substring(fullJid.indexOf("/")+1);
+    }
+
+    public static String generateBareJid(String fullJid) {
+         return fullJid.substring(0,fullJid.indexOf("/"));
+    }
+
     public static final String LOP_NAMESPACE = "http://linkedprocess.org/";
     public static final String LOP_FARM_NAMESPACE = LOP_NAMESPACE + "protocol#LoPFarm";
     public static final String LOP_VM_NAMESPACE = LOP_NAMESPACE + "protocol#LoPVM";

@@ -4,6 +4,7 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Packet;
+import gov.lanl.cnls.linkedprocess.xmpp.farm.XmppFarm;
 
 /**
  * User: marko
@@ -25,15 +26,13 @@ public class PresenceListener implements PacketListener {
 
 
                 if(packet.getFrom().contains("LoPFarm")) {
-                    System.out.println("here");
-                    //if(!villein.getUserStructs().containsKey(packet.getFrom())) {
-                        System.out.println("here2");
+
                         FarmStruct farmStruct = new FarmStruct();
                         farmStruct.setFarmJid(packet.getFrom());
-                        villein.addFarmStruct(farmStruct);
-                //}
-
-             
+                        FarmStruct checkStruct = this.villein.getFarmStruct(packet.getFrom());
+                        if(checkStruct == null)
+                            this.villein.addFarmStruct(farmStruct);
+                   
 
     }
     }

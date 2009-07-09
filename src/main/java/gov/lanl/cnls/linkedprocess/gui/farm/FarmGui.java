@@ -19,7 +19,7 @@ public class FarmGui extends JFrame implements ActionListener {
     protected static final String SHOW_MANAGER = "show manager";
     protected static final String HIDE_MANAGER = "hide manager";
     protected static final String QUIT_MANAGER = "quit manager";
-    protected XmppFarm farm;
+    protected XmppFarm xmppFarm;
 
     protected SystemTray systemTray;
     protected TrayIcon systemTrayIcon;
@@ -36,7 +36,7 @@ public class FarmGui extends JFrame implements ActionListener {
     }
 
     public void loadMainFrame(XmppFarm farm) {
-        this.farm = farm;
+        this.xmppFarm = farm;
         this.getContentPane().removeAll();
         this.mainArea = new MainArea(this);
         this.getContentPane().add(this.mainArea);
@@ -78,13 +78,13 @@ public class FarmGui extends JFrame implements ActionListener {
     }
 
 
-    public XmppFarm getFarm() {
-        return this.farm;
+    public XmppFarm getXmppFarm() {
+        return this.xmppFarm;
     }
 
     public void shutDown() {
-        if (this.farm != null)
-            this.farm.shutDown();
+        if (this.xmppFarm != null)
+            this.xmppFarm.shutDown();
         System.exit(0);
     }
 

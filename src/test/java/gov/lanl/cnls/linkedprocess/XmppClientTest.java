@@ -19,9 +19,9 @@ public class XmppClientTest extends TestCase {
     private static int port = 5222;
 
     public void testJidConversion() {
-        assertEquals(XmppClient.generateBareJid("linked.process.1@gmail.com/test/12345"), username);
-        assertEquals(XmppClient.generateBareJid("lop1@xmpp.linkedprocess.org/test/" + XmppClient.generateRandomID()), "lop1@xmpp.linkedprocess.org");
-
+        assertEquals(LinkedProcess.generateBareJid("linked.process.1@gmail.com/test/12345"), username);
+        assertEquals(LinkedProcess.generateBareJid("lop1@xmpp.linkedprocess.org/test/" + XmppClient.generateRandomID()), "lop1@xmpp.linkedprocess.org");
+        assertEquals(LinkedProcess.generateResource("lop1@xmpp.linkedprocess.org/test/"), "test/");
     }
 
     public void testRandomIDGenerator() {

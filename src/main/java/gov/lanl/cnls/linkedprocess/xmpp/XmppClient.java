@@ -88,11 +88,7 @@ public abstract class XmppClient {
 
     public String getBareJid() {
         String fullJid = this.getFullJid();
-        return XmppClient.generateBareJid(fullJid);
-    }
-
-    public static String generateBareJid(String fullJid) {
-         return fullJid.substring(0,fullJid.indexOf("/"));
+        return LinkedProcess.generateBareJid(fullJid);
     }
 
     public Connection getConnection() {
@@ -161,6 +157,28 @@ public abstract class XmppClient {
         discoManager.addFeature(LinkedProcess.DISCO_INFO_NAMESPACE);
     }
 
+    public void requestSubscription(String jid) {
+        Presence subscribe = new Presence(Presence.Type.subscribe);
+        subscribe.setTo(jid);
+        this.connection.sendPacket(subscribe);
+    }
+
+    public void requestUnsubscription(String jid, boolean removeFromRoster) {
+        Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
+        unsubscribe.setTo(jid);
+        this.connection.sendPacket(unsubscribe);
+        if(removeFromRoster) {
+            try {
+                this.roster.removeEntry(this.roster.getEntry(jid));
+            } catch(XMPPException e) {
+                LOGGER.severe(e.getMessage());
+            }
+        }
+        Presence unsubscribed = new Presence(Presence.Type.unsubscribed);
+        unsubscribed.setTo(jid);
+        this.connection.sendPacket(unsubscribed);
+    }
+
     protected void printRoster() {
         for(RosterEntry entry : this.roster.getEntries()) {
             System.out.println(entry.getName() + " " + entry.getUser() + " " + entry.getType() + " " + entry.getStatus());
@@ -172,7 +190,5 @@ public abstract class XmppClient {
             }
             System.out.println(this.roster.getPresenceResource(entry.getUser()).toXML());
         }
-
- 
     }
 }
