@@ -3,7 +3,6 @@ package gov.lanl.cnls.linkedprocess.os;
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException;
 import gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException;
-import gov.lanl.cnls.linkedprocess.os.errors.JobTimeoutException;
 import gov.lanl.cnls.linkedprocess.security.VMSandboxedThread;
 
 import javax.script.ScriptEngine;

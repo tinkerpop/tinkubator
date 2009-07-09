@@ -68,7 +68,7 @@ public class VMSchedulerTest extends TestCase {
             loadClass("com.sun.script.jython.JythonScriptEngine");
         }
     }
-    
+
     public void setUp() {
         resultsByID.clear();
         farmStatusEvents.clear();
@@ -369,6 +369,32 @@ public class VMSchedulerTest extends TestCase {
             assertTrue(false);
         } catch (JobAlreadyExistsException e) {
         }
+
+        scheduler.shutDown();
+    }
+
+    public void testSecurity() throws Exception {
+        scheduler = new VMScheduler(resultHandler, eventHandler);
+        String vm1 = randomJID();
+        scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
+
+//        String expr = "var url = \"http://example.org/\";" +
+//                "var xmlhttp=new XMLHttpRequest();" +
+//                "xmlhttp.onreadystatechange=state_Change;" +
+//                "xmlhttp.open(\"GET\",url,true);" +
+//                "xmlhttp.send(null);";
+        //String expr = "java.io.File";
+        //String expr = "importPackage(java.io)\n" + "File";
+        //String expr = "java.lang.Math.PI;";
+        //String expr = "f = new Packages.java.io.File(\"test.txt\");";
+        String expr = "java.lang.System.exit(0);";
+        Job job1 = randomJob(vm1, expr);
+        scheduler.scheduleJob(vm1, job1);
+        scheduler.waitUntilFinished();
+        assertEquals(1, resultsByID.size());
+        assertErrorResult(job1);
+//        assertEquals("foo", resultsByID.get(job1.getJobId()).getException().getMessage());
+//        assertEquals("foo", resultsByID.get(job1.getJobId()).getExpression());
 
         scheduler.shutDown();
     }
