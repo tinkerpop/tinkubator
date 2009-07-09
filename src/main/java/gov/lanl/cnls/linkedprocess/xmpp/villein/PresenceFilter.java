@@ -18,7 +18,8 @@ public class PresenceFilter implements PacketFilter {
             }
             Presence presence = (Presence)packet;
             Presence.Type type = presence.getType();
-            if(type == Presence.Type.available || type == null)
+            if(type != Presence.Type.subscribe && type != Presence.Type.unsubscribe &&
+                    type != Presence.Type.subscribed && type != Presence.Type.unsubscribed)
                 return true;
             else
                 return false;

@@ -207,7 +207,7 @@ public class VMScheduler {
         workerQueue.remove(w);
 
         w.terminate();
-        setVirtualMachineStatus(machineJID, LinkedProcess.VmStatus.DOES_NOT_EXIST);
+        setVirtualMachineStatus(machineJID, LinkedProcess.VmStatus.NOT_FOUND);
 
         if (MAX_VM > workersByJID.size() && this.status != LinkedProcess.FarmStatus.ACTIVE) {
             setSchedulerStatus(LinkedProcess.FarmStatus.ACTIVE);
@@ -228,7 +228,7 @@ public class VMScheduler {
     public synchronized LinkedProcess.VmStatus getVirtualMachineStatus(final String machineJID) {
         VMWorker w = workersByJID.get(machineJID);
         return (null == w)
-                ? LinkedProcess.VmStatus.DOES_NOT_EXIST
+                ? LinkedProcess.VmStatus.NOT_FOUND
                 : LinkedProcess.VmStatus.ACTIVE;
     }
 
@@ -274,7 +274,7 @@ public class VMScheduler {
         for (String machineJID : workersByJID.keySet()) {
             VMWorker w = workersByJID.get(machineJID);
             w.terminate();
-            setVirtualMachineStatus(machineJID, LinkedProcess.VmStatus.DOES_NOT_EXIST);
+            setVirtualMachineStatus(machineJID, LinkedProcess.VmStatus.NOT_FOUND);
         }
         workersByJID.clear();
 

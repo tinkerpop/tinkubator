@@ -68,16 +68,27 @@ public class XmppVillein extends XmppClient {
         PacketFilter abortJobFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
         PacketFilter presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new PresenceFilter());
 
-        connection.addPacketListener(new SpawnVmVilleinListener(this), spawnFilter);
-        connection.addPacketListener(new TerminateVmVilleinListener(this), terminateFilter);
-        connection.addPacketListener(new EvaluateVilleinListener(this), evaluateFilter);
-        connection.addPacketListener(new JobStatusVilleinListener(this), jobStatusFilter);
-        connection.addPacketListener(new AbortJobVilleinListener(this), abortJobFilter);
-        connection.addPacketListener(new PresenceListener(this), presenceFilter);
+        this.addPacketListener(new SpawnVmVilleinListener(this), spawnFilter);
+        this.addPacketListener(new TerminateVmVilleinListener(this), terminateFilter);
+        this.addPacketListener(new EvaluateVilleinListener(this), evaluateFilter);
+        this.addPacketListener(new JobStatusVilleinListener(this), jobStatusFilter);
+        this.addPacketListener(new AbortJobVilleinListener(this), abortJobFilter);
+        this.addPacketListener(new PresenceListener(this), presenceFilter);
 
         this.userStructs = new HashMap<String, UserStruct>();
         this.status = LinkedProcess.VilleinStatus.ACTIVE;
        // this.createFarmsFromRoster();
+    }
+
+    public VmStruct getVmStruct(String vmJid) {
+        for(UserStruct userStruct : this.getUserStructs()) {
+            for(FarmStruct farmStruct : this.getFarmStructs(userStruct.getFullJid())) {
+                VmStruct vmStruct = this.getVmStruct(farmStruct.getFullJid(), vmJid);
+                if(vmStruct != null)
+                    return vmStruct;
+            }
+        }
+        return null;
     }
 
     public VmStruct getVmStruct(String farmJid, String vmJid) {
@@ -98,11 +109,11 @@ public class XmppVillein extends XmppClient {
     }
 
     public void addFarmStruct(FarmStruct farmStruct) {
-        UserStruct userStruct = this.userStructs.get(LinkedProcess.generateBareJid(farmStruct.getFarmJid()));
+        UserStruct userStruct = this.userStructs.get(LinkedProcess.generateBareJid(farmStruct.getFullJid()));
         if(userStruct != null)
             userStruct.addFarmStruct(farmStruct);
         else
-            LOGGER.severe("user struct null for" + farmStruct.getFarmJid());    
+            LOGGER.severe("user struct null for" + farmStruct.getFullJid());
     }
 
     public Collection<FarmStruct> getFarmStructs(String userJid) {
@@ -144,9 +155,9 @@ public class XmppVillein extends XmppClient {
             UserStruct userStruct = this.userStructs.get(entry.getUser());
             if(userStruct == null)
                userStruct = new UserStruct();
-            userStruct.setUserJid(entry.getUser());
-            userStruct.setStatus(this.roster.getPresence(entry.getUser()).getMode());
-            this.userStructs.put(userStruct.getUserJid(), userStruct);
+            userStruct.setFullJid(entry.getUser());
+            userStruct.setPresence(this.roster.getPresence(entry.getUser()));
+            this.userStructs.put(userStruct.getFullJid(), userStruct);
             ProbePresence probe = new ProbePresence();
             probe.setTo(entry.getUser());
             this.connection.sendPacket(probe);
@@ -185,7 +196,7 @@ public class XmppVillein extends XmppClient {
                 for(VmStruct vmStruct : farmStruct.getVmStructs()) {
                     if(vmStruct.getVmPassword() != null) {
                         TerminateVm terminate = new TerminateVm();
-                        terminate.setTo(vmStruct.getVmJid());
+                        terminate.setTo(vmStruct.getFullJid());
                         terminate.setVmPassword(vmStruct.getVmPassword());
                         this.connection.sendPacket(terminate);
                     }

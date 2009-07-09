@@ -44,17 +44,17 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
             this.setToolTipText("villein");
         } else if (x instanceof FarmStruct) {
             FarmStruct farmStruct = (FarmStruct) x;
-            this.setText(LinkedProcess.generateResource(farmStruct.getFarmJid()));
+            this.setText(LinkedProcess.generateResource(farmStruct.getFullJid()));
             this.setIcon(ImageHolder.farmIcon);
             this.setToolTipText("farm_jid");
         } else if (x instanceof VmStruct) {
             VmStruct vmStruct = (VmStruct) x;
-            this.setText(LinkedProcess.generateResource(vmStruct.getVmJid()));
+            this.setText(LinkedProcess.generateResource(vmStruct.getFullJid()));
             this.setIcon(ImageHolder.vmIcon);
             this.setToolTipText("vm_jid");
         } else if (x instanceof UserStruct) {
             UserStruct userStruct = (UserStruct) x;
-            this.setText(userStruct.getUserJid());
+            this.setText(userStruct.getFullJid());
             this.setIcon(ImageHolder.hostIcon);
             this.setToolTipText("user_jid");
         } else if (x instanceof TreeNodeProperty) {

@@ -64,10 +64,10 @@ public class XmppVirtualMachine extends XmppClient {
         PacketFilter abandonFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter terminateFilter = new AndFilter(new PacketTypeFilter(TerminateVm.class), new IQTypeFilter(IQ.Type.GET));
 
-        connection.addPacketListener(new EvaluateVmListener(this), evalFilter);
-        connection.addPacketListener(new JobStatusVmListener(this), statusFilter);
-        connection.addPacketListener(new AbortJobVmListener(this), abandonFilter);
-        connection.addPacketListener(new TerminateVmVmListener(this), terminateFilter);
+        this.addPacketListener(new EvaluateVmListener(this), evalFilter);
+        this.addPacketListener(new JobStatusVmListener(this), statusFilter);
+        this.addPacketListener(new AbortJobVmListener(this), abandonFilter);
+        this.addPacketListener(new TerminateVmVmListener(this), terminateFilter);
 
     }
 
@@ -88,7 +88,7 @@ public class XmppVirtualMachine extends XmppClient {
                 return new Presence(Presence.Type.available, statusMessage, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.available);
             case ACTIVE_FULL:
                 return new Presence(Presence.Type.available, statusMessage, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.dnd);
-            case DOES_NOT_EXIST:
+            case NOT_FOUND:
                 return new Presence(Presence.Type.unavailable);
             default:
                 throw new IllegalStateException("unhandled state: " + status);
@@ -135,7 +135,7 @@ public class XmppVirtualMachine extends XmppClient {
     }
 
     public void shutDown() {
-        this.connection.sendPacket(this.createPresence(LinkedProcess.VmStatus.DOES_NOT_EXIST));
+        this.connection.sendPacket(this.createPresence(LinkedProcess.VmStatus.NOT_FOUND));
         super.shutDown();
 
     }

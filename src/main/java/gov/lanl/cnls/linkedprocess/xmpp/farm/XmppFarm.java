@@ -74,8 +74,9 @@ public class XmppFarm extends XmppClient {
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter subscribeFilter = new AndFilter(new PacketTypeFilter(Presence.class), new PresenceSubscriptionFilter());
-        connection.addPacketListener(new SpawnVmFarmListener(this), spawnFilter);
-        connection.addPacketListener(new PresenceSubscriptionListener(this), subscribeFilter);
+
+        this.addPacketListener(new SpawnVmFarmListener(this), spawnFilter);
+        this.addPacketListener(new PresenceSubscriptionListener(this), subscribeFilter);
     }
     
     public void logon(String server, int port, String username, String password) throws XMPPException {

@@ -7,20 +7,10 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
  * Date: Jul 8, 2009
  * Time: 9:13:19 AM
  */
-public class VmStruct {
+public class VmStruct extends Struct {
 
-    protected String vmJid;
     protected String vmPassword;
     protected String vmSpecies;
-    protected LinkedProcess.VmStatus vmStatus;
-
-    public void setVmJid(final String vmJid) {
-        this.vmJid = vmJid;
-    }
-
-    public String getVmJid() {
-        return this.vmJid;
-    }
 
     public void setVmPassword(final String vmPassword) {
         this.vmPassword = vmPassword;
@@ -37,14 +27,5 @@ public class VmStruct {
     public String getVmSpecies() {
         return this.vmSpecies;
     }
-
-    public void setStatus(LinkedProcess.VmStatus vmStatus) {
-        this.vmStatus = vmStatus;
-    }
-
-    public LinkedProcess.VmStatus getVmStatus() {
-        return this.vmStatus;
-    }
-
 }
 

@@ -2,6 +2,7 @@ package gov.lanl.cnls.linkedprocess.gui.farm;
 
 import gov.lanl.cnls.linkedprocess.xmpp.farm.XmppFarm;
 import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,8 +46,12 @@ public class FarmGui extends JFrame implements ActionListener {
         farm.setStatusEventHandler(new FarmGuiStatusEventHandler(this));
     }
 
-    public void updateVirtualMachineTree() {
-        this.mainArea.updateVirtualMachineTree();
+    public void createVirtualMachineTree() {
+        this.mainArea.createTree();
+    }
+
+    public void updateVirtualMachineTree(String vmJid, LinkedProcess.VmStatus status) {
+        this.mainArea.updateTree(vmJid, status);
     }
 
     public FarmGui() {

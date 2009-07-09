@@ -1,10 +1,8 @@
 package gov.lanl.cnls.linkedprocess.xmpp.villein;
 
 import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Packet;
-import gov.lanl.cnls.linkedprocess.xmpp.farm.XmppFarm;
+import org.jivesoftware.smack.packet.Presence;
 
 /**
  * User: marko
@@ -20,20 +18,31 @@ public class PresenceListener implements PacketListener {
     }
 
     public void processPacket(Packet packet) {
-        Presence presence = ((Presence)packet);
+        Presence presence = ((Presence) packet);
 
-            XmppVillein.LOGGER.info("Presence received from " + presence.getFrom());
+        XmppVillein.LOGGER.info("Presence received from " + presence.getFrom());
 
+        if (packet.getFrom().contains("LoPFarm")) {
+            FarmStruct checkStruct = this.villein.getFarmStruct(packet.getFrom());
+            if (checkStruct == null) {
+                FarmStruct farmStruct = new FarmStruct();
+                farmStruct.setFullJid(packet.getFrom());
+                farmStruct.setPresence(presence);
+                this.villein.addFarmStruct(farmStruct);
+            } else {
+                checkStruct.setPresence(presence);
+            }
 
-                if(packet.getFrom().contains("LoPFarm")) {
+        } else if (packet.getFrom().contains("LoPVM")) {
 
-                        FarmStruct farmStruct = new FarmStruct();
-                        farmStruct.setFarmJid(packet.getFrom());
-                        FarmStruct checkStruct = this.villein.getFarmStruct(packet.getFrom());
-                        if(checkStruct == null)
-                            this.villein.addFarmStruct(farmStruct);
-                   
-
-    }
+            VmStruct checkStruct = this.villein.getVmStruct(packet.getFrom());
+            if (checkStruct == null) {
+                VmStruct vmStruct = new VmStruct();
+                vmStruct.setFullJid(packet.getFrom());
+                //this.villein.addVmStruct()
+            } else {
+                checkStruct.setPresence(presence);
+            }
+        }
     }
 }

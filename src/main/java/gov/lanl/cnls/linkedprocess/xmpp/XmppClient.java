@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.logging.Logger;
 
 import org.jivesoftware.smack.*;
+import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 
@@ -67,6 +68,10 @@ public abstract class XmppClient {
         this.roster = this.connection.getRoster();
     }
 
+    public void addPacketListener(PacketListener listener, PacketFilter filter) {
+        this.connection.addPacketListener(listener, filter);
+    }
+    
     public void logout() {
         LOGGER.info("Disconnecting from " + connection.getHost());
         connection.disconnect();

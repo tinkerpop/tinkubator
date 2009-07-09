@@ -15,6 +15,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * User: marko
@@ -24,21 +26,22 @@ import java.awt.event.ActionListener;
 public class MainArea extends JTabbedPane implements ActionListener {
 
     protected FarmGui farmGui;
-    protected JTreeImage vmTree;
+    protected JTreeImage tree;
     protected JTextArea farmFeaturesText;
-    protected DefaultMutableTreeNode vmTreeRoot;
+    protected DefaultMutableTreeNode treeRoot;
+    protected Map<String, DefaultMutableTreeNode> treeMap;
 
 
      public MainArea(FarmGui farmGui) {
         this.farmGui = farmGui;
         UserStruct userStruct = new UserStruct();
-        userStruct.setUserJid(LinkedProcess.generateBareJid(farmGui.getXmppFarm().getFullJid()));
-        this.vmTreeRoot = new DefaultMutableTreeNode(userStruct);
-        this.vmTree = new JTreeImage(this.vmTreeRoot, ImageHolder.farmBackground);
-        this.vmTree.setCellRenderer(new TreeRenderer());
-        this.vmTree.setModel(new DefaultTreeModel(vmTreeRoot));
+        userStruct.setFullJid(LinkedProcess.generateBareJid(farmGui.getXmppFarm().getFullJid()));
+        this.treeRoot = new DefaultMutableTreeNode(userStruct);
+        this.tree = new JTreeImage(this.treeRoot, ImageHolder.farmBackground);
+        this.tree.setCellRenderer(new TreeRenderer());
+        this.tree.setModel(new DefaultTreeModel(treeRoot));
 
-        JScrollPane vmTreeScroll = new JScrollPane(this.vmTree);
+        JScrollPane vmTreeScroll = new JScrollPane(this.tree);
         JButton shutdownButton = new JButton("shutdown farm");
         shutdownButton.addActionListener(this);
         JPanel treePanel = new JPanel(new BorderLayout());
@@ -70,13 +73,14 @@ public class MainArea extends JTabbedPane implements ActionListener {
             this.addTab("farm features", featuresPanel);
         } catch(Exception e) { e.printStackTrace(); }   */
 
-         
+        this.treeMap = new HashMap<String, DefaultMutableTreeNode>();
+        this.createTree();
         this.setVisible(true);
     }
 
        public boolean containsVmNode(XmppVirtualMachine vm) {
-        for(int i=0; i<vmTreeRoot.getChildCount(); i++) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) vmTreeRoot.getChildAt(i);
+        for(int i=0; i< treeRoot.getChildCount(); i++) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeRoot.getChildAt(i);
             if(node.getUserObject() == vm) {
                 return true;
             }
@@ -84,25 +88,62 @@ public class MainArea extends JTabbedPane implements ActionListener {
         return false;
     }
 
-    public void updateVirtualMachineTree() {
-        vmTreeRoot.removeAllChildren();
-        DefaultTreeModel model = (DefaultTreeModel) vmTree.getModel();
+    public void createTree() {
+        treeRoot.removeAllChildren();
+        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
         DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(this.farmGui.getXmppFarm());
+        this.treeMap.put(this.farmGui.getXmppFarm().getFullJid(), farmNode);
         for (XmppVirtualMachine vm : this.farmGui.getXmppFarm().getVirtualMachines()) {
             DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(vm);
-            //if (!this.containsVmNode(vm)) {
-                vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("villein_jid", vm.getVilleinJid())));
-                vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", vm.getVmStatus().toString())));
-                vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", vm.getVmSpecies())));
-                vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", vm.getVmPassword())));
-                vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", ((float)vm.getRunningTime() / 60000.0f) + " sec.")));
-                model.insertNodeInto(vmNode, farmNode, farmNode.getChildCount());
-                this.vmTree.scrollPathToVisible(new TreePath(vmNode.getPath()));
-            //}
+            this.treeMap.put(vm.getFullJid(), vmNode);
+            vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("villein_jid", vm.getVilleinJid())));
+            vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", vm.getVmStatus().toString())));
+            vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", vm.getVmSpecies())));
+            vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", vm.getVmPassword())));
+            vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", ((float)vm.getRunningTime() / 60000.0f) + " sec.")));
+            model.insertNodeInto(vmNode, farmNode, farmNode.getChildCount());
+            this.tree.scrollPathToVisible(new TreePath(vmNode.getPath()));
         }
-        model.insertNodeInto(farmNode, this.vmTreeRoot, this.vmTreeRoot.getChildCount());
-        this.vmTree.scrollPathToVisible(new TreePath(farmNode));
+        model.insertNodeInto(farmNode, this.treeRoot, this.treeRoot.getChildCount());
+        this.tree.scrollPathToVisible(new TreePath(farmNode));
         model.reload();
+    }
+
+    public void updateTree(String vmJid, LinkedProcess.VmStatus status) {
+        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+        DefaultMutableTreeNode farmNode = this.treeMap.get(this.farmGui.getXmppFarm().getFullJid());
+        DefaultMutableTreeNode node = this.treeMap.get(vmJid);
+        //System.out.println(node + "---------" + status);
+        if(node == null && status != LinkedProcess.VmStatus.NOT_FOUND) {
+            try {
+                XmppVirtualMachine xmppVm = this.farmGui.getXmppFarm().getVirtualMachine(vmJid);
+                DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(xmppVm);
+                vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("villein_jid", xmppVm.getVilleinJid())));
+                vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", xmppVm.getVmStatus().toString())));
+                vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", xmppVm.getVmSpecies())));
+                vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", xmppVm.getVmPassword())));
+                vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", ((float)xmppVm.getRunningTime() / 60000.0f) + " sec.")));
+                model.insertNodeInto(vmNode, farmNode, farmNode.getChildCount());
+                this.tree.scrollPathToVisible(new TreePath(vmNode.getPath()));
+                this.treeMap.put(vmJid, vmNode);
+                model.reload(vmNode);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        } else if(node != null && (status == LinkedProcess.VmStatus.ACTIVE || status == LinkedProcess.VmStatus.ACTIVE_FULL)) {
+            node.removeAllChildren();
+            XmppVirtualMachine xmppVm = (XmppVirtualMachine) node.getUserObject();
+            node.add(new DefaultMutableTreeNode(new TreeNodeProperty("villein_jid", xmppVm.getVilleinJid())));
+            node.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", xmppVm.getVmStatus().toString())));
+            node.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", xmppVm.getVmSpecies())));
+            node.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", xmppVm.getVmPassword())));
+            node.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", ((float)xmppVm.getRunningTime() / 60000.0f) + " sec.")));
+            model.reload(node);
+        } else if(node != null && status == LinkedProcess.VmStatus.NOT_FOUND) {
+            node.removeAllChildren();
+            model.removeNodeFromParent(node);
+            this.treeMap.remove(vmJid);
+        }
     }
 
     public void actionPerformed(ActionEvent event) {
