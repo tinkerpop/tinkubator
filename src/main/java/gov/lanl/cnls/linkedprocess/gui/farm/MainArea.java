@@ -1,10 +1,12 @@
 package gov.lanl.cnls.linkedprocess.gui.farm;
 
 import gov.lanl.cnls.linkedprocess.xmpp.vm.XmppVirtualMachine;
+import gov.lanl.cnls.linkedprocess.xmpp.villein.UserStruct;
 import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
 import gov.lanl.cnls.linkedprocess.gui.JTreeImage;
 import gov.lanl.cnls.linkedprocess.gui.TreeNodeProperty;
 import gov.lanl.cnls.linkedprocess.gui.TreeRenderer;
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -29,7 +31,9 @@ public class MainArea extends JTabbedPane implements ActionListener {
 
      public MainArea(FarmGui farmGui) {
         this.farmGui = farmGui;
-        this.vmTreeRoot = new DefaultMutableTreeNode(this.farmGui.getXmppFarm());
+        UserStruct userStruct = new UserStruct();
+        userStruct.setUserJid(LinkedProcess.generateBareJid(farmGui.getXmppFarm().getFullJid()));
+        this.vmTreeRoot = new DefaultMutableTreeNode(userStruct);
         this.vmTree = new JTreeImage(this.vmTreeRoot, ImageHolder.farmBackground);
         this.vmTree.setCellRenderer(new TreeRenderer());
         this.vmTree.setModel(new DefaultTreeModel(vmTreeRoot));
@@ -83,6 +87,7 @@ public class MainArea extends JTabbedPane implements ActionListener {
     public void updateVirtualMachineTree() {
         vmTreeRoot.removeAllChildren();
         DefaultTreeModel model = (DefaultTreeModel) vmTree.getModel();
+        DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(this.farmGui.getXmppFarm());
         for (XmppVirtualMachine vm : this.farmGui.getXmppFarm().getVirtualMachines()) {
             DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(vm);
             //if (!this.containsVmNode(vm)) {
@@ -91,10 +96,12 @@ public class MainArea extends JTabbedPane implements ActionListener {
                 vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", vm.getVmSpecies())));
                 vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", vm.getVmPassword())));
                 vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", ((float)vm.getRunningTime() / 60000.0f) + " sec.")));
-                model.insertNodeInto(vmNode, this.vmTreeRoot, this.vmTreeRoot.getChildCount());
+                model.insertNodeInto(vmNode, farmNode, farmNode.getChildCount());
                 this.vmTree.scrollPathToVisible(new TreePath(vmNode.getPath()));
             //}
         }
+        model.insertNodeInto(farmNode, this.vmTreeRoot, this.vmTreeRoot.getChildCount());
+        this.vmTree.scrollPathToVisible(new TreePath(farmNode));
         model.reload();
     }
 

@@ -66,7 +66,7 @@ public class FarmGui extends JFrame implements ActionListener {
             popup.addActionListener(this);
 
             this.systemTray = SystemTray.getSystemTray();
-            this.systemTrayIcon = new TrayIcon(ImageHolder.barnIcon.getImage(), FarmGui.FRAME_TITLE, popup);
+            this.systemTrayIcon = new TrayIcon(ImageHolder.farmIcon.getImage(), FarmGui.FRAME_TITLE, popup);
             this.systemTray.add(this.systemTrayIcon);
             this.systemTrayIcon.setImageAutoSize(true);
 

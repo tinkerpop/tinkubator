@@ -38,7 +38,9 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
 
     public BuddyArea(VilleinGui villeinGui) {
         this.villeinGui = villeinGui;
-        this.villeinTreeRoot = new DefaultMutableTreeNode(this.villeinGui.getXmppVillein());
+        UserStruct userStruct = new UserStruct();
+        userStruct.setUserJid(LinkedProcess.generateBareJid(this.villeinGui.getXmppVillein().getFullJid()));
+        this.villeinTreeRoot = new DefaultMutableTreeNode(userStruct);
         this.villeinTree = new JTreeImage(this.villeinTreeRoot, ImageHolder.cowBackground);
         this.villeinTree.setCellRenderer(new TreeRenderer());
         this.villeinTree.setModel(new DefaultTreeModel(villeinTreeRoot));
@@ -100,7 +102,7 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
     public void updateVilleinTree() {
         villeinTreeRoot.removeAllChildren();
         DefaultTreeModel model = (DefaultTreeModel) villeinTree.getModel();
-        //System.out.println("The number of users is: " + this.villeinGui.getXmppVillein().getUserStructs());
+        DefaultMutableTreeNode villeinNode = new DefaultMutableTreeNode(this.villeinGui.getXmppVillein());
         for (UserStruct userStruct : this.villeinGui.getXmppVillein().getUserStructs()) {
             DefaultMutableTreeNode userNode = new DefaultMutableTreeNode(userStruct);
             for(FarmStruct farmStruct : userStruct.getFarmStructs()) {
@@ -131,9 +133,11 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
                 this.villeinTree.scrollPathToVisible(new TreePath(farmNode.getPath()));
             }
 
-            model.insertNodeInto(userNode, this.villeinTreeRoot, this.villeinTreeRoot.getChildCount());
+            model.insertNodeInto(userNode, villeinNode, villeinNode.getChildCount());
             this.villeinTree.scrollPathToVisible(new TreePath(userNode.getPath()));
         }
+        model.insertNodeInto(villeinNode, this.villeinTreeRoot, this.villeinTreeRoot.getChildCount());
+        this.villeinTree.scrollPathToVisible(new TreePath(villeinNode.getPath()));
         model.reload();
     }
 

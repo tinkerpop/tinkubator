@@ -30,57 +30,32 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
 
         Object x = ((DefaultMutableTreeNode) value).getUserObject();
         if (x instanceof XmppFarm) {
-            this.setText(((XmppFarm) x).getFullJid());
-            if (((XmppFarm) x).getScheduler().getSchedulerStatus() == LinkedProcess.FarmStatus.ACTIVE) {
-                this.setIcon(ImageHolder.activeIcon);
-            } else {
-                this.setIcon(ImageHolder.inactiveIcon);
-            }
+            this.setText(LinkedProcess.generateResource(((XmppFarm) x).getFullJid()));
+            this.setIcon(ImageHolder.farmIcon);
             this.setToolTipText("farm");
         } else if (x instanceof XmppVirtualMachine) {
             XmppVirtualMachine vm = (XmppVirtualMachine) x;
-            this.setText(vm.getFullJid());
-            if (vm.getVmStatus() == LinkedProcess.VmStatus.ACTIVE) {
-                this.setIcon(ImageHolder.activeIcon);
-            } else {
-                this.setIcon(ImageHolder.inactiveIcon);
-            }
+            this.setText(LinkedProcess.generateResource(vm.getFullJid()));
+            this.setIcon(ImageHolder.vmIcon);
             this.setToolTipText("virtual machine");
         } else if (x instanceof XmppVillein) {
-            this.setText(((XmppVillein) x).getFullJid());
-            if (((XmppVillein) x).getStatus() == LinkedProcess.VilleinStatus.ACTIVE) {
-                this.setIcon(ImageHolder.activeIcon);
-            } else {
-                this.setIcon(ImageHolder.inactiveIcon);
-            }
+            this.setText(LinkedProcess.generateResource(((XmppVillein) x).getFullJid()));
+            this.setIcon(ImageHolder.villeinIcon);
             this.setToolTipText("villein");
         } else if (x instanceof FarmStruct) {
             FarmStruct farmStruct = (FarmStruct) x;
             this.setText(LinkedProcess.generateResource(farmStruct.getFarmJid()));
-            if (farmStruct.getFarmStatus() == LinkedProcess.FarmStatus.ACTIVE) {
-                this.setIcon(ImageHolder.activeIcon);
-            } else {
-                this.setIcon(ImageHolder.inactiveIcon);
-            }
+            this.setIcon(ImageHolder.farmIcon);
             this.setToolTipText("farm_jid");
         } else if (x instanceof VmStruct) {
             VmStruct vmStruct = (VmStruct) x;
             this.setText(LinkedProcess.generateResource(vmStruct.getVmJid()));
-            if (vmStruct.getVmStatus() == LinkedProcess.VmStatus.ACTIVE) {
-                this.setIcon(ImageHolder.activeIcon);
-            } else {
-                this.setIcon(ImageHolder.inactiveIcon);
-            }
+            this.setIcon(ImageHolder.vmIcon);
             this.setToolTipText("vm_jid");
-
         } else if (x instanceof UserStruct) {
             UserStruct userStruct = (UserStruct) x;
             this.setText(userStruct.getUserJid());
-            if (userStruct.getStatus() == Presence.Mode.available) {
-                this.setIcon(ImageHolder.activeIcon);
-            } else {
-                this.setIcon(ImageHolder.inactiveIcon);
-            }
+            this.setIcon(ImageHolder.hostIcon);
             this.setToolTipText("user_jid");
         } else if (x instanceof TreeNodeProperty) {
             if (((TreeNodeProperty) x).getKey().equals("villein_jid")) {
