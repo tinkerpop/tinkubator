@@ -59,7 +59,7 @@ public class TerminateVmVmListener implements PacketListener {
 
         if(terminate) {
             try {
-                this.vm.terminateSelf();
+                this.vm.getFarm().getScheduler().terminateVirtualMachine(vm.getFullJid());
             } catch(VMWorkerNotFoundException e){
                 this.vm.shutDown();
             }

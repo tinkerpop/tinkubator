@@ -129,7 +129,6 @@ public class XmppFarm extends XmppClient {
             vm.shutDown();
             this.machines.remove(vmJid);
         }
-        this.scheduler.terminateVirtualMachine(vmJid);
     }
 
     public XmppVirtualMachine getVirtualMachine(String vmJid) throws VMWorkerNotFoundException {

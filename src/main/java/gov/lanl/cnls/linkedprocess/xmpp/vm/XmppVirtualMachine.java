@@ -114,7 +114,7 @@ public class XmppVirtualMachine extends XmppClient {
         discoManager.addFeature(LinkedProcess.LOP_VM_NAMESPACE);
     }
 
-    protected void terminateSelf() throws VMWorkerNotFoundException  {
+    public void terminateSelf() throws VMWorkerNotFoundException  {
         this.farm.terminateVirtualMachine(this.getFullJid());
     }
 

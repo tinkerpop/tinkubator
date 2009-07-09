@@ -24,8 +24,13 @@ public class StatusEventHandler implements VMScheduler.LopStatusEventHandler {
 
     public void virtualMachineStatusChanged(String vmJid, LinkedProcess.VmStatus status) {
         try {
+
             XmppVirtualMachine vm = this.farm.getVirtualMachine(vmJid);
-            vm.getConnection().sendPacket(vm.createPresence(status));
+            if(status == LinkedProcess.VmStatus.NOT_FOUND) {
+                vm.terminateSelf();
+            } else {
+                vm.getConnection().sendPacket(vm.createPresence(status));
+            }
 
         } catch(VMWorkerNotFoundException e) {
             this.farm.LOGGER.severe(e.getMessage());
