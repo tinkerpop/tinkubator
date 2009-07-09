@@ -45,6 +45,8 @@ class VMSequencer {
         status = Status.ACTIVE;
 
         Thread sequencerThread = new Thread(new SequencerRunnable(), nextThreadName());
+        // Sequencer threads have less priority than the scheduler's thread.
+        sequencerThread.setPriority(Thread.currentThread().getPriority() - 1);
         sequencerThread.start();
     }
 

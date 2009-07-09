@@ -93,6 +93,9 @@ public class VMWorker {
         jobQueue = new LinkedBlockingQueue<Job>(capacity);
 
         workerThread = new VMSandboxedThread(new WorkerRunnable(), nextThreadName());
+        // Worker threads have less priority than sequencer threads, which have
+        // less priority than the scheduler's thread.
+        workerThread.setPriority(Thread.currentThread().getPriority() - 2);
         workerThread.start();
 
         status = Status.IDLE_WAITING;
