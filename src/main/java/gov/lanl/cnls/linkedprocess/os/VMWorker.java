@@ -45,6 +45,7 @@ public class VMWorker {
     private final long maxTimeSpentPerJob;
 
     private Status status;
+    private long timeLastActive;
 
     private Job latestJob;
     private JobResult latestResult;
@@ -86,7 +87,7 @@ public class VMWorker {
 
         maxTimeSpentPerJob = new Long(LinkedProcess.getProperties().getProperty(
                 LinkedProcess.MAX_TIME_SPENT_PER_JOB));
-        
+
         int capacity = new Integer(LinkedProcess.getProperties().getProperty(
                 LinkedProcess.MESSAGE_QUEUE_CAPACITY));
         jobQueue = new LinkedBlockingQueue<Job>(capacity);
@@ -95,6 +96,7 @@ public class VMWorker {
         workerThread.start();
 
         status = Status.IDLE_WAITING;
+        setTimeLastActive();
     }
 
     /**
@@ -121,7 +123,8 @@ public class VMWorker {
      * @param job the job to add
      * @return whether the job has been added to the worker's queue (if not,
      *         then the queue is full)
-     * @throws gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException if a job with the given ID is already active or in the queue
+     * @throws gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException
+     *          if a job with the given ID is already active or in the queue
      */
     public synchronized boolean addJob(final Job job) throws JobAlreadyExistsException {
         LOGGER.info("adding job: " + job);
@@ -181,14 +184,15 @@ public class VMWorker {
                 }
             }
         } catch (InterruptedException e) {
-            LOGGER.fine("interrupted unexpectedly");
+            LOGGER.severe("interrupted unexpectedly");
             System.exit(1);
         }
 
         // Suspend the thread immediately, regardless of what status we're in.
         suspendWorkerThread();
 
-        LOGGER.fine("...done working");
+        //LOGGER.fine("...done working");
+        setTimeLastActive();
 
         switch (status) {
             case ACTIVE_INPROGRESS:
@@ -313,6 +317,10 @@ public class VMWorker {
         }
     }
 
+    public synchronized long getTimeLastActive() {
+        return timeLastActive;
+    }
+
     ////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -351,6 +359,10 @@ public class VMWorker {
         }
 
         return false;
+    }
+
+    private void setTimeLastActive() {
+        timeLastActive = System.currentTimeMillis();
     }
 
     private void evaluate(final Job request) {

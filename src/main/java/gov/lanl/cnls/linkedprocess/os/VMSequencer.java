@@ -36,7 +36,7 @@ class VMSequencer {
      */
     public VMSequencer(final VMScheduler.VMSequencerHelper sequencerHelper,
                        final long timeSlice) {
-        LOGGER.info("instantiating VMSequencer");
+        //LOGGER.info("instantiating VMSequencer");
 
         this.sequencerHelper = sequencerHelper;
         this.timeSlice = timeSlice;
@@ -51,14 +51,14 @@ class VMSequencer {
     ////////////////////////////////////////////////////////////////////////////
 
     private void executeForTimeSlice() {
-        LOGGER.info("getting worker...");
+        //LOGGER.info("getting worker...");
         // Note: thread may block while waiting for a worker to become available.
         VMWorker w = sequencerHelper.getWorker();
-        LOGGER.info("...got worker: " + w);
+        //LOGGER.info("...got worker: " + w);
 
         // This sequencer is terminated by the receipt of a null worker.
         if (VMWorker.SCHEDULER_TERMINATED_SENTINEL == w) {
-            LOGGER.info("VMSequencer has received SCHEDULER_TERMINATED_SENTINEL");
+            //LOGGER.info("VMSequencer has received SCHEDULER_TERMINATED_SENTINEL");
             status = Status.TERMINATED;
             return;
         }
@@ -70,26 +70,25 @@ class VMSequencer {
         }
 
         boolean idle = w.work(timeSlice);
-        LOGGER.info("idle: " + idle);
+        //LOGGER.info("idle: " + idle);
         sequencerHelper.putBackWorker(w, idle);
     }
 
     private class SequencerRunnable implements Runnable {
         public SequencerRunnable() {
-            LOGGER.info("instantiating SequencerRunnable");
+            //LOGGER.info("instantiating SequencerRunnable");
         }
 
         public void run() {
-            LOGGER.info("running SequencerRunnable");
+            //LOGGER.info("running SequencerRunnable");
 
             try {
                 // Break out when the sequencer is terminated.
                 while (Status.ACTIVE == status) {
                     executeForTimeSlice();
                 }
-                LOGGER.info("SequencerRunnable is terminating");
+                //LOGGER.info("SequencerRunnable is terminating");
             } catch (Throwable t) {
-                // TODO: stack trace in log message
                 LOGGER.severe("sequencer runnable died with error: " + t.toString());
                 t.printStackTrace();
             }

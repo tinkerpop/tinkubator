@@ -1,17 +1,19 @@
 package gov.lanl.cnls.linkedprocess.os;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException;
 import gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException;
 import gov.lanl.cnls.linkedprocess.os.errors.UnsupportedScriptEngineException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMAlreadyExistsException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMSchedulerIsFullException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerIsFullException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
-import gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -25,13 +27,19 @@ public class VMScheduler {
     private static final Logger LOGGER
             = LinkedProcess.getLogger(VMScheduler.class);
 
-    public final static int MAX_VM;
+    public static final int MAX_VM;
+    private static final long VM_TIMEOUT;
+    private static final long SCHEDULER_CLEANUP_INTERVAL;
 
     static {
         Properties props = LinkedProcess.getProperties();
 
         MAX_VM = new Integer(props.getProperty(
                 LinkedProcess.MAX_VIRTUAL_MACHINES_PER_SCHEDULER));
+        VM_TIMEOUT = new Long(props.getProperty(
+                LinkedProcess.VM_TIMEOUT));
+        SCHEDULER_CLEANUP_INTERVAL = new Long(props.getProperty(
+                LinkedProcess.SCHEDULER_CLEANUP_INTERVAL));
     }
 
     private final SimpleBlockingQueue<VMWorker> workerQueue;
@@ -41,6 +49,7 @@ public class VMScheduler {
     private LopStatusEventHandler eventHandler;
     private final int numberOfSequencers;
     private LinkedProcess.FarmStatus status;
+    private long lastCleanupTime = System.currentTimeMillis();
 
     private long jobsReceived = 0;
     private long jobsCompleted = 0;
@@ -112,6 +121,8 @@ public class VMScheduler {
         }
 
         enqueueWorker(w);
+
+        cleanup();
     }
 
     /**
@@ -135,6 +146,8 @@ public class VMScheduler {
         // FIXME: this call may block for as long as one timeslice.
         //        This wait could probably be eliminated.
         w.abortJob(jobID);
+
+        cleanup();
     }
 
     /**
@@ -186,6 +199,8 @@ public class VMScheduler {
         }
 
         setVirtualMachineStatus(machineJID, LinkedProcess.VmStatus.ACTIVE);
+
+        cleanup();
     }
 
     /**
@@ -212,6 +227,8 @@ public class VMScheduler {
         if (MAX_VM > workersByJID.size() && this.status != LinkedProcess.FarmStatus.ACTIVE) {
             setSchedulerStatus(LinkedProcess.FarmStatus.ACTIVE);
         }
+
+        cleanup();
     }
 
     /**
@@ -301,6 +318,36 @@ public class VMScheduler {
     }
 
     ////////////////////////////////////////////////////////////////////////////
+
+    // Note: this method is currently called only each time the schedler is
+    //       accessed to manipulate VMs and jobs.  An idle scheduler may
+    //       therefore not shut down idle VMs for some time after the timeout
+    //       value.
+    private void cleanup() {
+        long time = System.currentTimeMillis();
+
+        Collection<String> toShutDown = new LinkedList<String>();
+        if (time - lastCleanupTime >= SCHEDULER_CLEANUP_INTERVAL) {
+            for (String jid : workersByJID.keySet()) {
+                VMWorker w = workersByJID.get(jid);
+                if (!w.canWork()) {
+                    if (time - w.getTimeLastActive() >= VM_TIMEOUT) {
+                        toShutDown.add(jid);
+                    }
+                }
+            }
+
+            for (String jid : toShutDown) {
+                try {
+                    terminateVirtualMachine(jid);
+                } catch (VMWorkerNotFoundException e) {
+                    // Ignore this error: it means the worker has already been explicitly terminated.
+                }
+            }
+
+            lastCleanupTime = time;
+        }
+    }
 
     /*
     private VMResultHandler createResultHandler() {

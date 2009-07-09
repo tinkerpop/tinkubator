@@ -23,7 +23,7 @@ public class SimpleBlockingQueue<T> {
     private final Object blockingMonitor = "";
 
     public SimpleBlockingQueue() {
-    	LOGGER.fine("CONSTRUCTED");
+    	//LOGGER.info("CONSTRUCTED");
         queue = new LinkedList<T>();
     }
 
@@ -34,7 +34,7 @@ public class SimpleBlockingQueue<T> {
         while (true) {
             synchronized (queue) {
                 if (0 < queue.size()) {
-                    LOGGER.info("" + Thread.currentThread() + ": got it!");
+                    //LOGGER.info("" + Thread.currentThread() + ": got it!");
                     return queue.poll();
                 }
             }

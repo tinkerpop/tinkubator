@@ -44,7 +44,6 @@ public class LinkedProcess {
         public String toString() {
             return name;
         }
-
     }
 
     public enum VmStatus {
@@ -73,7 +72,6 @@ public class LinkedProcess {
         public String toString() {
             return name;
         }
-
     }
 
     public enum ErrorType {
@@ -146,7 +144,9 @@ public class LinkedProcess {
             MAX_TIME_SPENT_PER_JOB = "gov.lanl.cnls.linkedprocess.maxTimeSpentPerJob",
             MAX_VIRTUAL_MACHINES_PER_SCHEDULER = "gov.lanl.cnls.linkedprocess.maxVirtualMachinesPerScheduler",
             MESSAGE_QUEUE_CAPACITY = "gov.lanl.cnls.linkedprocess.messageQueueCapacity",
-            ROUND_ROBIN_TIME_SLICE = "gov.lanl.cnls.linkedprocess.roundRobinTimeSlice";
+            ROUND_ROBIN_TIME_SLICE = "gov.lanl.cnls.linkedprocess.roundRobinTimeSlice",
+            VM_TIMEOUT = "gov.lanl.cnls.linkedprocess.virtualMachineTimeout",
+            SCHEDULER_CLEANUP_INTERVAL = "gov.lanl.cnls.linkedprocess.schedulerCleanupInterval";
 
     private static final Properties PROPERTIES = new Properties();
     private static final Logger LOGGER;
