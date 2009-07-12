@@ -106,6 +106,10 @@ public class LinkedProcess {
          return fullJid.substring(0,fullJid.indexOf("/"));
     }
 
+    public static boolean isBareJid(String jid) {
+        return !jid.contains("/");
+    }
+
     public static final String LOP_NAMESPACE = "http://linkedprocess.org/";
     public static final String LOP_FARM_NAMESPACE = LOP_NAMESPACE + "protocol#LoPFarm";
     public static final String LOP_VM_NAMESPACE = LOP_NAMESPACE + "protocol#LoPVM";

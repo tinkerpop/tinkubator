@@ -21,7 +21,6 @@ public class SpawnVmVilleinListener implements PacketListener {
     public void processPacket(Packet packet) {
         SpawnVm spawnVm = (SpawnVm)packet;
 
-        System.out.println(spawnVm.toXML());
         String farmJid = spawnVm.getFrom();
         if(spawnVm.getType() == IQ.Type.RESULT) {
             VmStruct vmStruct = new VmStruct();

@@ -186,14 +186,10 @@ public abstract class XmppClient {
 
     protected void printRoster() {
         for(RosterEntry entry : this.roster.getEntries()) {
-            System.out.println(entry.getName() + " " + entry.getUser() + " " + entry.getType() + " " + entry.getStatus());
-            System.out.println(entry);
-            System.out.println(this.roster.getPresence(entry.getUser()).toXML());
             Iterator<Presence> itty = this.roster.getPresences(entry.getUser());
             while(itty.hasNext()) {
                 System.out.println(itty.next().toXML());
             }
-            System.out.println(this.roster.getPresenceResource(entry.getUser()).toXML());
         }
     }
 }

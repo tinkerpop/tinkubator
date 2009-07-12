@@ -67,7 +67,7 @@ public class XmppVillein extends XmppClient {
         PacketFilter evaluateFilter = new AndFilter(new PacketTypeFilter(Evaluate.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
         PacketFilter jobStatusFilter = new AndFilter(new PacketTypeFilter(JobStatus.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
         PacketFilter abortJobFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-        PacketFilter presenceFilter = new AndFilter(new PacketTypeFilter(Presence.class), new PresenceFilter());
+        PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
 
         this.addPacketListener(new SpawnVmVilleinListener(this), spawnFilter);
         this.addPacketListener(new TerminateVmVilleinListener(this), terminateFilter);
@@ -148,12 +148,12 @@ public class XmppVillein extends XmppClient {
         this.hostStructs.put(hostStruct.getFullJid(), hostStruct);
     }
 
-    public void addFarmStruct(String hostJid, FarmStruct farmStruct) {
-        Struct hostStruct = this.getStruct(hostJid, StructType.HOST);
+    public void addFarmStruct(FarmStruct farmStruct) {
+        Struct hostStruct = this.getStruct(LinkedProcess.generateBareJid(farmStruct.getFullJid()), StructType.HOST);
         if(hostStruct != null)
             ((HostStruct)hostStruct).addFarmStruct(farmStruct);
         else
-            LOGGER.severe("host struct null for" + farmStruct.getFullJid());
+            LOGGER.severe("host struct null for " + farmStruct.getFullJid());
     }
 
     public void addVmStruct(String farmJid, VmStruct vmStruct) {
