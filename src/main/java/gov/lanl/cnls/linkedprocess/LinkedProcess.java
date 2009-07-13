@@ -99,11 +99,11 @@ public class LinkedProcess {
     }
 
     public static String generateResource(String fullJid) {
-        return fullJid.substring(fullJid.indexOf("/")+1);
+        return fullJid.substring(fullJid.indexOf("/") + 1);
     }
 
     public static String generateBareJid(String fullJid) {
-         return fullJid.substring(0,fullJid.indexOf("/"));
+        return fullJid.substring(0, fullJid.indexOf("/"));
     }
 
     public static boolean isBareJid(String jid) {
@@ -155,6 +155,7 @@ public class LinkedProcess {
     private static final Properties PROPERTIES = new Properties();
     private static final Logger LOGGER;
     private static final String LOP_PROPERTIES = "lop.properties";
+    private static final String SECURITYDEFAULT_PROPERTIES = "security-default.properties";
     public static final XMLOutputter xmlOut = new XMLOutputter();
 
     static {
@@ -167,7 +168,13 @@ public class LinkedProcess {
         }
 
         // Necessary for sandboxing of VM threads.
-        System.setSecurityManager(new VMSecurityManager());
+        Properties p = new Properties();
+        try {
+            p.load(VMSecurityManager.class.getResourceAsStream(SECURITYDEFAULT_PROPERTIES));
+        } catch (IOException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+        System.setSecurityManager(new VMSecurityManager(p));
 
         preLoadingHack();
     }

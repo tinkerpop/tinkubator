@@ -29,7 +29,8 @@ public class SimpleBlockingQueue<T> {
 
     // Synchronized so that threads are served in FIFO order.
     public synchronized T take() throws InterruptedException {
-        LOGGER.info("" + Thread.currentThread() + ": taking from queue");
+        //LOGGER.info("" + Thread.currentThread() + ": taking from queue");
+
         // Break out when the queue is non-empty.
         while (true) {
             synchronized (queue) {

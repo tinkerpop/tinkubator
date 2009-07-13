@@ -380,7 +380,8 @@ public class VMScheduler {
     }
 
     private void enqueueWorker(final VMWorker w) {
-        LOGGER.info("enqueueing worker: " + w);
+        //LOGGER.info("enqueueing worker: " + w);
+
         // Add the worker to the queue, unless it is already present.  This
         // check prevents clients from benefitting from aggressive behavior,
         // making very frequent requests to the same VM: the scheduler is fair
@@ -388,7 +389,7 @@ public class VMScheduler {
         // spawn more VMs for greater throughput with respect to its competitors
         // on the machine.
         workerQueue.offerDistinct(w);
-        LOGGER.info("...done (workerQueue.size() = " + workerQueue.size() + ")");
+        //LOGGER.info("...done (workerQueue.size() = " + workerQueue.size() + ")");
     }
 
     private VMWorker getWorkerByJID(final String machineJID) throws VMWorkerNotFoundException {
