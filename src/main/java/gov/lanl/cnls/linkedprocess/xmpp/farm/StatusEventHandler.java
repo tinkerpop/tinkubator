@@ -12,20 +12,20 @@ import gov.lanl.cnls.linkedprocess.xmpp.vm.XmppVirtualMachine;
  */
 public class StatusEventHandler implements VMScheduler.LopStatusEventHandler {
 
-    protected XmppFarm farm;
+    protected XmppFarm xmppFarm;
 
-    public StatusEventHandler(XmppFarm farm) {
-        this.farm = farm;
+    public StatusEventHandler(XmppFarm xmppFarm) {
+        this.xmppFarm = xmppFarm;
     }
 
     public void schedulerStatusChanged(LinkedProcess.FarmStatus status) {
-        this.farm.getConnection().sendPacket(this.farm.createPresence(status));
+        this.xmppFarm.getConnection().sendPacket(this.xmppFarm.createPresence(status));
     }
 
     public void virtualMachineStatusChanged(String vmJid, LinkedProcess.VmStatus status) {
         try {
 
-            XmppVirtualMachine vm = this.farm.getVirtualMachine(vmJid);
+            XmppVirtualMachine vm = this.xmppFarm.getVirtualMachine(vmJid);
             if(status == LinkedProcess.VmStatus.NOT_FOUND) {
                 vm.terminateSelf();
             } else {
@@ -33,7 +33,7 @@ public class StatusEventHandler implements VMScheduler.LopStatusEventHandler {
             }
 
         } catch(VMWorkerNotFoundException e) {
-            this.farm.LOGGER.severe(e.getMessage());
+            this.xmppFarm.LOGGER.severe(e.getMessage());
         }
     }
 }

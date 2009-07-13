@@ -13,10 +13,10 @@ import org.jivesoftware.smack.packet.Packet;
  * Time: 12:54:11 PM
  */
 public class JobStatusVmListener implements PacketListener {
-    private XmppVirtualMachine vm;
+    private XmppVirtualMachine xmppVirtualMachine;
 
-    public JobStatusVmListener(XmppVirtualMachine vm) {
-        this.vm = vm;
+    public JobStatusVmListener(XmppVirtualMachine xmppVirtualMachine) {
+        this.xmppVirtualMachine = xmppVirtualMachine;
     }
 
     public void processPacket(Packet jobStatus) {
@@ -44,12 +44,12 @@ public class JobStatusVmListener implements PacketListener {
             if (errorMessage.length() > 0)
                 returnJobStatus.setErrorMessage(errorMessage);
             returnJobStatus.setType(IQ.Type.ERROR);
-        } else if (!this.vm.checkVmPassword(vmPassword)) {
+        } else if (!this.xmppVirtualMachine.checkVmPassword(vmPassword)) {
             returnJobStatus.setErrorType(LinkedProcess.ErrorType.WRONG_VM_PASSWORD);
             returnJobStatus.setType(IQ.Type.ERROR);
         } else {
             try {
-                returnJobStatus.setValue(this.vm.getJobStatus(jobId));
+                returnJobStatus.setValue(this.xmppVirtualMachine.getJobStatus(jobId));
                 returnJobStatus.setType(IQ.Type.RESULT);
             } catch (VMWorkerNotFoundException e) {
                 returnJobStatus.setErrorType(LinkedProcess.ErrorType.INTERNAL_ERROR);
@@ -64,7 +64,7 @@ public class JobStatusVmListener implements PacketListener {
 
         XmppVirtualMachine.LOGGER.fine("Sent " + JobStatusVmListener.class.getName());
         XmppVirtualMachine.LOGGER.fine(returnJobStatus.toXML());
-        vm.getConnection().sendPacket(returnJobStatus);
+        xmppVirtualMachine.getConnection().sendPacket(returnJobStatus);
 
 
     }

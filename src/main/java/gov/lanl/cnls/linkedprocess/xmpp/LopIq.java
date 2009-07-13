@@ -2,6 +2,13 @@ package gov.lanl.cnls.linkedprocess.xmpp;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import org.jivesoftware.smack.packet.IQ;
+import org.jdom.output.XMLOutputter;
+import org.jdom.Document;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+
+import java.io.StringReader;
+import java.io.IOException;
 
 /**
  * User: marko
@@ -9,6 +16,8 @@ import org.jivesoftware.smack.packet.IQ;
  * Time: 10:14:25 AM
  */
 public abstract class LopIq extends IQ {
+
+    protected static XMLOutputter output = new XMLOutputter();
 
     protected LinkedProcess.ErrorType errorType;
     protected String errorMessage;
@@ -36,6 +45,12 @@ public abstract class LopIq extends IQ {
 
     public String getVmPassword() {
         return this.vmPassword;
+    }
+
+    public String toIndentedXML() throws JDOMException, IOException {
+        SAXBuilder builder = new SAXBuilder();
+        Document doc = builder.build(new StringReader(this.toXML()));
+        return output.outputString(doc);
     }
 
 }

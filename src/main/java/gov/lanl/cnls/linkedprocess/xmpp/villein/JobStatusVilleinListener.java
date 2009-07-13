@@ -10,10 +10,10 @@ import org.jivesoftware.smack.packet.Packet;
  */
 public class JobStatusVilleinListener implements PacketListener {
 
-    protected XmppVillein villein;
+    protected XmppVillein xmppVillein;
 
-    public JobStatusVilleinListener(XmppVillein villein) {
-        this.villein = villein;
+    public JobStatusVilleinListener(XmppVillein xmppVillein) {
+        this.xmppVillein = xmppVillein;
     }
 
     public void processPacket(Packet jobStatus) {

@@ -14,10 +14,10 @@ import org.jivesoftware.smack.packet.IQ;
  */
 public class TerminateVmVmListener implements PacketListener {
 
-    private XmppVirtualMachine vm;
+    private XmppVirtualMachine xmppVirtualMachine;
 
-    public TerminateVmVmListener(XmppVirtualMachine vm) {
-        this.vm = vm;
+    public TerminateVmVmListener(XmppVirtualMachine xmppVirtualMachine) {
+        this.xmppVirtualMachine = xmppVirtualMachine;
     }
 
     public void processPacket(Packet terminateVm) {
@@ -45,7 +45,7 @@ public class TerminateVmVmListener implements PacketListener {
             returnTerminateVm.setErrorType(LinkedProcess.ErrorType.MALFORMED_PACKET);
             returnTerminateVm.setErrorMessage("terminate_vm XML packet is missing the vm_password attribute");
             returnTerminateVm.setType(IQ.Type.ERROR);
-        } else if(!this.vm.checkVmPassword(vmPassword)) {
+        } else if(!this.xmppVirtualMachine.checkVmPassword(vmPassword)) {
             returnTerminateVm.setErrorType(LinkedProcess.ErrorType.WRONG_VM_PASSWORD);
             returnTerminateVm.setType(IQ.Type.ERROR);
         } else {
@@ -55,13 +55,13 @@ public class TerminateVmVmListener implements PacketListener {
 
         XmppFarm.LOGGER.info("Sent " + TerminateVmVmListener.class.getName());
         XmppFarm.LOGGER.info(returnTerminateVm.toXML());
-        vm.getConnection().sendPacket(returnTerminateVm);
+        xmppVirtualMachine.getConnection().sendPacket(returnTerminateVm);
 
         if(terminate) {
             try {
-                this.vm.getFarm().getScheduler().terminateVirtualMachine(vm.getFullJid());
+                this.xmppVirtualMachine.getFarm().getScheduler().terminateVirtualMachine(xmppVirtualMachine.getFullJid());
             } catch(VMWorkerNotFoundException e){
-                this.vm.shutDown();
+                this.xmppVirtualMachine.shutDown();
             }
         }
     }

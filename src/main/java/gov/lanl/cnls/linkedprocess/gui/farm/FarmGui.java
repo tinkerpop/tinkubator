@@ -30,20 +30,20 @@ public class FarmGui extends JFrame implements ActionListener {
 
     public void loadLoginFrame() {
         this.getContentPane().removeAll();
-        this.getContentPane().add(new LoginArea(this));
+        this.getContentPane().add(new FarmLoginArea(this));
         this.setResizable(false);
         this.pack();
         this.setVisible(true);
     }
 
-    public void loadMainFrame(XmppFarm farm) {
-        this.xmppFarm = farm;
+    public void loadMainFrame(XmppFarm xmppFarm) {
+        this.xmppFarm = xmppFarm;
         this.getContentPane().removeAll();
         this.mainArea = new MainArea(this);
         this.getContentPane().add(this.mainArea);
         this.setResizable(false);
         this.pack();
-        farm.setStatusEventHandler(new FarmGuiStatusEventHandler(this));
+        xmppFarm.setStatusEventHandler(new FarmGuiStatusEventHandler(this));
     }
 
     public void createVirtualMachineTree() {
@@ -93,10 +93,6 @@ public class FarmGui extends JFrame implements ActionListener {
         System.exit(0);
     }
 
-    public static void main(String[] args) {
-        new FarmGui();
-    }
-
     public void actionPerformed(ActionEvent event) {
 
         if (event.getActionCommand().equals(FarmGui.SHOW_MANAGER)) {
@@ -109,5 +105,9 @@ public class FarmGui extends JFrame implements ActionListener {
             this.shutDown();
         }
 
+    }
+
+    public static void main(String[] args) {
+        new FarmGui();
     }
 }

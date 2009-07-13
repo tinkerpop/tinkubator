@@ -16,10 +16,10 @@ import org.jivesoftware.smack.packet.Packet;
  */
 public class EvaluateVmListener implements PacketListener {
 
-    private XmppVirtualMachine vm;
+    private XmppVirtualMachine xmppVirtualMachine;
 
-    public EvaluateVmListener(XmppVirtualMachine vm) {
-        this.vm = vm;
+    public EvaluateVmListener(XmppVirtualMachine xmppVirtualMachine) {
+        this.xmppVirtualMachine = xmppVirtualMachine;
     }
 
     public void processPacket(Packet evaluate) {
@@ -58,26 +58,26 @@ public class EvaluateVmListener implements PacketListener {
             if(errorMessage.length() > 0)
                 returnEvaluate.setErrorMessage(errorMessage);
             returnEvaluate.setType(IQ.Type.ERROR);
-            vm.getConnection().sendPacket(returnEvaluate);
+            xmppVirtualMachine.getConnection().sendPacket(returnEvaluate);
 
             XmppVirtualMachine.LOGGER.info("Sent " + EvaluateVmListener.class.getName());
             XmppVirtualMachine.LOGGER.info(returnEvaluate.toXML());
 
-        } else if(!this.vm.checkVmPassword(vmPassword)) {
+        } else if(!this.xmppVirtualMachine.checkVmPassword(vmPassword)) {
             Evaluate returnEvaluate = new Evaluate();
             returnEvaluate.setTo(evaluate.getFrom());
             returnEvaluate.setPacketID(evaluate.getPacketID());
             returnEvaluate.setErrorType(LinkedProcess.ErrorType.WRONG_VM_PASSWORD);
             returnEvaluate.setType(IQ.Type.ERROR);
-            vm.getConnection().sendPacket(returnEvaluate);
+            xmppVirtualMachine.getConnection().sendPacket(returnEvaluate);
 
             XmppVirtualMachine.LOGGER.info("Sent " + EvaluateVmListener.class.getName());
             XmppVirtualMachine.LOGGER.info(returnEvaluate.toXML());
 
         } else {
-            Job job = new Job(vm.getFullJid(), villeinJid, iqId, expression);
+            Job job = new Job(xmppVirtualMachine.getFullJid(), villeinJid, iqId, expression);
             try {
-                vm.scheduleJob(job);
+                xmppVirtualMachine.scheduleJob(job);
             } catch (VMWorkerNotFoundException e) {
                 Evaluate returnEvaluate = new Evaluate();
                 returnEvaluate.setTo(evaluate.getFrom());
@@ -85,7 +85,7 @@ public class EvaluateVmListener implements PacketListener {
                 returnEvaluate.setErrorType(LinkedProcess.ErrorType.INTERNAL_ERROR);
                 returnEvaluate.setErrorMessage(e.getMessage());
                 returnEvaluate.setType(IQ.Type.ERROR);
-                vm.getConnection().sendPacket(returnEvaluate);
+                xmppVirtualMachine.getConnection().sendPacket(returnEvaluate);
 
                 XmppVirtualMachine.LOGGER.info("Sent " + EvaluateVmListener.class.getName());
                 XmppVirtualMachine.LOGGER.info(returnEvaluate.toXML());
@@ -97,7 +97,7 @@ public class EvaluateVmListener implements PacketListener {
                 returnEvaluate.setErrorType(LinkedProcess.ErrorType.VM_IS_BUSY);
                 returnEvaluate.setErrorMessage(e.getMessage());
                 returnEvaluate.setType(IQ.Type.ERROR);
-                vm.getConnection().sendPacket(returnEvaluate);
+                xmppVirtualMachine.getConnection().sendPacket(returnEvaluate);
 
                 XmppVirtualMachine.LOGGER.info("Sent " + EvaluateVmListener.class.getName());
                 XmppVirtualMachine.LOGGER.info(returnEvaluate.toXML());
@@ -108,7 +108,7 @@ public class EvaluateVmListener implements PacketListener {
                 returnEvaluate.setErrorType(LinkedProcess.ErrorType.JOB_ALREADY_EXISTS);
                 returnEvaluate.setErrorMessage(e.getMessage());
                 returnEvaluate.setType(IQ.Type.ERROR);
-                vm.getConnection().sendPacket(returnEvaluate);
+                xmppVirtualMachine.getConnection().sendPacket(returnEvaluate);
 
                 XmppVirtualMachine.LOGGER.info("Sent " + EvaluateVmListener.class.getName());
                 XmppVirtualMachine.LOGGER.info(returnEvaluate.toXML());

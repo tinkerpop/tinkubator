@@ -12,10 +12,10 @@ import org.jivesoftware.smack.packet.Presence;
  */
 public class PresenceSubscriptionListener implements PacketListener {
 
-    XmppFarm farm;
+    XmppFarm xmppFarm;
 
-    public PresenceSubscriptionListener(XmppFarm farm) {
-        this.farm = farm;
+    public PresenceSubscriptionListener(XmppFarm xmppFarm) {
+        this.xmppFarm = xmppFarm;
     }
 
     public void processPacket(Packet packet) {
@@ -28,16 +28,16 @@ public class PresenceSubscriptionListener implements PacketListener {
             subscribed.setTo(packet.getFrom());
             subscribe.setTo(packet.getFrom());
 
-            Presence available = farm.createPresence(farm.getScheduler().getSchedulerStatus());
+            Presence available = xmppFarm.createPresence(xmppFarm.getScheduler().getSchedulerStatus());
             available.setTo(packet.getFrom());
             available.setPacketID(packet.getPacketID());
 
-            farm.getConnection().sendPacket(subscribed);
-            farm.getConnection().sendPacket(subscribe);
-            farm.getConnection().sendPacket(available);
+            xmppFarm.getConnection().sendPacket(subscribed);
+            xmppFarm.getConnection().sendPacket(subscribe);
+            xmppFarm.getConnection().sendPacket(available);
 
             try {
-                farm.getRoster().createEntry(packet.getFrom(), packet.getFrom(), null);
+                xmppFarm.getRoster().createEntry(packet.getFrom(), packet.getFrom(), null);
             } catch(XMPPException e) {
                 XmppFarm.LOGGER.severe(e.getMessage());
             }
@@ -51,15 +51,15 @@ public class PresenceSubscriptionListener implements PacketListener {
             unsubscribed.setTo(packet.getFrom());
             unsubscribe.setTo(packet.getFrom());
 
-            Presence unavailable = farm.createPresence(farm.getScheduler().getSchedulerStatus());
+            Presence unavailable = xmppFarm.createPresence(xmppFarm.getScheduler().getSchedulerStatus());
             unavailable.setTo(packet.getFrom());
 
-            farm.getConnection().sendPacket(unsubscribed);
-            farm.getConnection().sendPacket(unsubscribe);
-            farm.getConnection().sendPacket(unavailable);
+            xmppFarm.getConnection().sendPacket(unsubscribed);
+            xmppFarm.getConnection().sendPacket(unsubscribe);
+            xmppFarm.getConnection().sendPacket(unavailable);
 
             try {
-                farm.getRoster().removeEntry(farm.getRoster().getEntry(packet.getFrom()));
+                xmppFarm.getRoster().removeEntry(xmppFarm.getRoster().getEntry(packet.getFrom()));
             } catch(XMPPException e) {
                 XmppFarm.LOGGER.severe(e.getMessage());
             }

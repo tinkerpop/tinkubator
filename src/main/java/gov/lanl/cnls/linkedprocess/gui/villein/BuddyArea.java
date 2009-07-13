@@ -316,8 +316,14 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
                 DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
                 Object nodeObject = selectedNode.getUserObject();
                 if (nodeObject instanceof VmStruct) {
-                    System.out.println("make the VMFrame." + nodeObject);
-                    //new FarmFrame(this.villeinGui, (FarmStruct)nodeObject);
+                    VmStruct vmStruct = (VmStruct)nodeObject;
+                    VmFrame vmFrame = this.villeinGui.getVmFrame(vmStruct.getFullJid());
+                    if(vmFrame == null) {
+                        this.villeinGui.addVmFrame(vmStruct);
+                    } else {
+                        vmFrame.setVisible(true);
+                    }
+
                 }
             }
 

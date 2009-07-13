@@ -27,6 +27,10 @@ public class PresenceGuiListener implements PacketListener {
 
         if(presence.getType() == Presence.Type.unavailable || presence.getType() == Presence.Type.unsubscribe || presence.getType() == Presence.Type.unsubscribed) {
             this.villeinGui.updateTree(packet.getFrom(), true);
+        } else if(presence.getType() == Presence.Type.error) {
+            if(presence.getError().getCode() == 404) {
+                this.villeinGui.updateTree(packet.getFrom(), true);
+            }
         } else {
             this.villeinGui.updateTree(packet.getFrom(), false);
         }

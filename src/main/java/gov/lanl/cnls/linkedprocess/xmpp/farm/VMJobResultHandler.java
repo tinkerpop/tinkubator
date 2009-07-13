@@ -15,15 +15,15 @@ import org.jivesoftware.smack.packet.IQ;
  */
 public class VMJobResultHandler implements VMScheduler.VMResultHandler {
 
-    XmppFarm farm;
+    XmppFarm xmppFarm;
 
-    public VMJobResultHandler(XmppFarm farm) {
-        this.farm = farm;
+    public VMJobResultHandler(XmppFarm xmppFarm) {
+        this.xmppFarm = xmppFarm;
     }
 
     public void handleResult(JobResult result) {
         try {
-            XmppVirtualMachine vm = farm.getVirtualMachine(result.getJob().getVMJID());
+            XmppVirtualMachine vm = xmppFarm.getVirtualMachine(result.getJob().getVMJID());
             Evaluate returnEvaluate = result.generateReturnEvalulate();
             vm.getConnection().sendPacket(returnEvaluate);
 

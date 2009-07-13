@@ -10,10 +10,10 @@ import org.jivesoftware.smack.packet.Packet;
  */
 public class EvaluateVilleinListener implements PacketListener {
 
-    protected XmppVillein villein;
+    protected XmppVillein xmppVillein;
 
-    public EvaluateVilleinListener(XmppVillein villein) {
-        this.villein = villein;
+    public EvaluateVilleinListener(XmppVillein xmppVillein) {
+        this.xmppVillein = xmppVillein;
     }
 
     public void processPacket(Packet evaluate) {

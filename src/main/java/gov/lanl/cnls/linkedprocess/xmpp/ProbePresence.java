@@ -9,12 +9,15 @@ import org.jivesoftware.smack.packet.Presence;
  */
 public class ProbePresence extends Presence {
 
+    private static final String OLD_PRESENCE_PREFIX = "<presence";
+    private static final String NEW_PRESENCE_PREFIX = "<presence type=\"probe\"";
+
     public ProbePresence() {
         super(Presence.Type.available);
 
     }
 
     public String toXML() {
-        return super.toXML().replace("<presence", "<presence type=\"probe\"");
+        return super.toXML().replace(OLD_PRESENCE_PREFIX, NEW_PRESENCE_PREFIX);
     }
 }

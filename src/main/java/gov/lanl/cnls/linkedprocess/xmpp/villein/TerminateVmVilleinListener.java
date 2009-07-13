@@ -10,10 +10,10 @@ import org.jivesoftware.smack.packet.Packet;
  */
 public class TerminateVmVilleinListener implements PacketListener {
 
-    protected XmppVillein villein;
+    protected XmppVillein xmppVillein;
 
-    public TerminateVmVilleinListener(XmppVillein villein) {
-        this.villein = villein;
+    public TerminateVmVilleinListener(XmppVillein xmppVillein) {
+        this.xmppVillein = xmppVillein;
     }
 
     public void processPacket(Packet terminateVm) {

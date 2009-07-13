@@ -1,17 +1,17 @@
-package gov.lanl.cnls.linkedprocess.gui.farm;
+package gov.lanl.cnls.linkedprocess.gui;
 
-import gov.lanl.cnls.linkedprocess.xmpp.farm.XmppFarm;
 import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
+import gov.lanl.cnls.linkedprocess.xmpp.villein.XmppVillein;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.*;
 import java.util.Properties;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.File;
-import java.io.FileInputStream;
 
 import org.jivesoftware.smack.XMPPException;
 
@@ -20,9 +20,8 @@ import org.jivesoftware.smack.XMPPException;
  * Date: Jul 6, 2009
  * Time: 10:32:32 AM
  */
-public class LoginArea extends JPanel implements ActionListener {
+public abstract class LoginArea extends JPanel implements ActionListener {
 
-    protected FarmGui farmGui;
     protected JTextField usernameField;
     protected JTextField passwordField;
     protected JTextField serverField;
@@ -31,12 +30,12 @@ public class LoginArea extends JPanel implements ActionListener {
     protected JCheckBox rememberBox;
     protected Image backgroundImage;
     protected String BORDER_SPACE = "    ";
-    protected final static String PROPERTIES_FILE = "farm_manager.properties";
+    protected String propertiesFile;
 
-    public LoginArea(FarmGui farmGui) {
+    public LoginArea(Image backgroundImage, String propertiesFile) {
         super(new BorderLayout());
-        this.farmGui = farmGui;
-        this.backgroundImage = ImageHolder.farmBackground.getImage();
+        this.backgroundImage = backgroundImage;
+        this.propertiesFile = propertiesFile;
         this.setOpaque(false);
 
         this.usernameField = new JTextField("", 15);
@@ -48,13 +47,13 @@ public class LoginArea extends JPanel implements ActionListener {
 
         try {
             Properties props = new Properties();
-            props.load(new FileInputStream(PROPERTIES_FILE));
+            props.load(new FileInputStream(this.propertiesFile));
             this.usernameField.setText(props.getProperty("username"));
             this.passwordField.setText(props.getProperty("password"));
             this.serverField.setText(props.getProperty("server"));
             this.portField.setText(props.getProperty("port"));
         } catch(Exception e) {
-            System.out.println("Could not load " + PROPERTIES_FILE + " file.");
+            System.out.println("Could not load " + this.propertiesFile + " file.");
 
         }
 
@@ -104,9 +103,8 @@ public class LoginArea extends JPanel implements ActionListener {
 
     }
 
-    public void actionPerformed(ActionEvent event) {
-
-        if(this.rememberBox.isSelected()) {
+    public void doRememberedProperties() {
+         if(this.rememberBox.isSelected()) {
             Properties props = new Properties();
             props.put("username", this.usernameField.getText());
             props.put("password", this.passwordField.getText());
@@ -114,27 +112,15 @@ public class LoginArea extends JPanel implements ActionListener {
             props.put("port", this.portField.getText());
 
             try {
-                props.store(new FileOutputStream(PROPERTIES_FILE), "saved properties for simple linked process farm manager");
+                props.store(new FileOutputStream(this.propertiesFile), "remembered properties.");
             } catch(IOException e) {
                 e.printStackTrace();
             }
         } else {
-            new File(LoginArea.PROPERTIES_FILE).delete();
-        }
-        
-        try {
-            if(event.getActionCommand().equals("login")) {
-                this.statusLabel.setText("");
-                XmppFarm farm = new XmppFarm(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText());
-                this.farmGui.loadMainFrame(farm);
-            } else if (event.getActionCommand().equals("quit")) {
-                System.exit(0);
-            }
-        } catch(XMPPException e) {
-            this.statusLabel.setText("Could not login.");
+            new File(this.propertiesFile).delete();
         }
     }
-
+    
     public void paintComponent(Graphics g) {
         g.drawImage(backgroundImage, 0, 0, null);
         super.paintComponent(g);

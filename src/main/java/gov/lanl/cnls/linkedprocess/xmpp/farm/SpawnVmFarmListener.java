@@ -16,10 +16,10 @@ import org.jivesoftware.smack.packet.Packet;
  */
 public class SpawnVmFarmListener implements PacketListener {
 
-    private XmppFarm farm;
+    private XmppFarm xmppFarm;
 
-    public SpawnVmFarmListener(XmppFarm farm) {
-        this.farm = farm;
+    public SpawnVmFarmListener(XmppFarm xmppFarm) {
+        this.xmppFarm = xmppFarm;
     }
 
     public void processPacket(Packet spawnVm) {
@@ -44,7 +44,7 @@ public class SpawnVmFarmListener implements PacketListener {
             returnSpawnVm.setType(IQ.Type.ERROR);
         } else {
             try {
-                XmppVirtualMachine vm = farm.spawnVirtualMachine(spawnVm.getFrom(), vmSpecies);
+                XmppVirtualMachine vm = xmppFarm.spawnVirtualMachine(spawnVm.getFrom(), vmSpecies);
                 returnSpawnVm.setVmJid(vm.getFullJid());
                 returnSpawnVm.setVmPassword(vm.getVmPassword());
                 returnSpawnVm.setVmSpecies(vmSpecies);
@@ -66,7 +66,7 @@ public class SpawnVmFarmListener implements PacketListener {
 
         XmppFarm.LOGGER.info("Sent " + SpawnVmFarmListener.class.getName());
         XmppFarm.LOGGER.info(returnSpawnVm.toXML());
-        farm.getConnection().sendPacket(returnSpawnVm);
+        xmppFarm.getConnection().sendPacket(returnSpawnVm);
     }
 }
 

@@ -10,10 +10,10 @@ import org.jivesoftware.smack.packet.Packet;
  */
 public class AbortJobVilleinListener implements PacketListener {
 
-    protected XmppVillein villein;
+    protected XmppVillein xmppVillein;
 
-    public AbortJobVilleinListener(XmppVillein villein) {
-        this.villein = villein;
+    public AbortJobVilleinListener(XmppVillein xmppVillein) {
+        this.xmppVillein = xmppVillein;
     }
 
     public void processPacket(Packet abortJob) {

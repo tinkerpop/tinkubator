@@ -12,10 +12,10 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
  */
 public class PresenceListener implements PacketListener {
 
-    XmppVillein villein;
+    XmppVillein xmppVillein;
 
-    public PresenceListener(XmppVillein villein) {
-        this.villein = villein;
+    public PresenceListener(XmppVillein xmppVillein) {
+        this.xmppVillein = xmppVillein;
     }
 
     public void processPacket(Packet packet) {
@@ -28,34 +28,34 @@ public class PresenceListener implements PacketListener {
         if(presence.getType() == Presence.Type.unavailable ||
                 presence.getType() == Presence.Type.unsubscribe ||
                 presence.getType() == Presence.Type.unsubscribed) {
-            this.villein.removeStruct(packet.getFrom());
+            this.xmppVillein.removeStruct(packet.getFrom());
             return;
         }
 
         if(LinkedProcess.isBareJid(packet.getFrom())) {
-            Struct checkStruct = this.villein.getStruct(packet.getFrom(), XmppVillein.StructType.HOST);
+            Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom(), XmppVillein.StructType.HOST);
             if (checkStruct == null) {
                 HostStruct hostStruct = new HostStruct();
                 hostStruct.setFullJid(packet.getFrom());
                 hostStruct.setPresence(presence);
-                this.villein.addHostStruct(hostStruct);
+                this.xmppVillein.addHostStruct(hostStruct);
             } else {
                 checkStruct.setPresence(presence);
             }
         } else if (packet.getFrom().contains("LoPFarm")) {
-            Struct checkStruct = this.villein.getStruct(packet.getFrom(), XmppVillein.StructType.FARM);
+            Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom(), XmppVillein.StructType.FARM);
             if (checkStruct == null) {
                 FarmStruct farmStruct = new FarmStruct();
                 farmStruct.setFullJid(packet.getFrom());
                 farmStruct.setPresence(presence);
-                this.villein.addFarmStruct(farmStruct);
+                this.xmppVillein.addFarmStruct(farmStruct);
             } else {
                 checkStruct.setPresence(presence);
             }
 
         } else {
             // ONLY REPRESENT THOSE VMS THAT YOU HAVE SPAWNEDs
-            Struct checkStruct = this.villein.getStruct(packet.getFrom());
+            Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom());
             if (checkStruct != null) {
                 checkStruct.setPresence(presence);
             }
