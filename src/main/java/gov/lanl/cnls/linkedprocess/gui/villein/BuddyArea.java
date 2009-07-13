@@ -95,7 +95,8 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
             }
         } else if (event.getActionCommand().equals("shutdown")) {
 
-            this.villeinGui.shutDown();
+            this.villeinGui.getXmppVillein().shutDown();
+            this.villeinGui.loadLoginFrame();
         }
 
 

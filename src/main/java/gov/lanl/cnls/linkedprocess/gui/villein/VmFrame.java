@@ -16,6 +16,7 @@ import java.util.HashMap;
 import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.VmStruct;
 import gov.lanl.cnls.linkedprocess.xmpp.vm.Evaluate;
+import gov.lanl.cnls.linkedprocess.xmpp.vm.AbortJob;
 
 /**
  * User: marko
@@ -42,9 +43,9 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
         this.jobList = new JList(listModel);
         jobList.addListSelectionListener(this);
         JScrollPane listScrollPane = new JScrollPane(this.jobList);
-        JButton addJobButton = new JButton(ImageHolder.activeIcon);
+        JButton addJobButton = new JButton(ImageHolder.addIcon);
         addJobButton.setActionCommand(ADD_JOB);
-        JButton removeJobButton = new JButton(ImageHolder.inactiveIcon);
+        JButton removeJobButton = new JButton(ImageHolder.removeIcon);
         removeJobButton.setActionCommand(REMOVE_JOB);
         addJobButton.addActionListener(this);
         removeJobButton.addActionListener(this);
@@ -105,9 +106,21 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
         }   
     }
 
+    public void handleIncomingAbortJob(AbortJob abortJob) {
+        String jobId = abortJob.getPacketID();
+        for(int i=0; i < this.jobList.getModel().getSize(); i++) {
+            JobPane jobPane = (JobPane) this.jobList.getModel().getElementAt(i);
+            if(jobPane.getJobId().equals(jobId)) {
+                jobPane.handleIncomingAbortJob(abortJob);
+            }
+        }
+    }
+
     public void actionPerformed(ActionEvent event) {
         if(event.getActionCommand().equals(ADD_JOB)) {
-            ((DefaultListModel)this.jobList.getModel()).addElement(new JobPane(this, generatedJobId()));
+            JobPane jobPane = new JobPane(this, generatedJobId());
+            ((DefaultListModel)this.jobList.getModel()).addElement(jobPane);
+            this.jobList.setSelectedValue(jobPane, true);
         } else if(event.getActionCommand().equals(REMOVE_JOB)) {
             if(this.jobList.getSelectedValue() != null) {
                 JobPane jobPane = (JobPane) this.jobList.getSelectedValue();
