@@ -23,7 +23,7 @@ public class SimpleBlockingQueue<T> {
     private final Object blockingMonitor = "";
 
     public SimpleBlockingQueue() {
-    	//LOGGER.info("CONSTRUCTED");
+        //LOGGER.info("CONSTRUCTED");
         queue = new LinkedList<T>();
     }
 

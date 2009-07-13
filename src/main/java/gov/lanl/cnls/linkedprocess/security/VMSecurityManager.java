@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class VMSecurityManager extends SecurityManager {
 
-    private enum PermissionType {
+    public enum PermissionType {
         permission,
         createClassLoader,
         access,
@@ -40,7 +40,7 @@ public class VMSecurityManager extends SecurityManager {
         securityAccess;
 
         public boolean isPermitted(final Properties props) {
-            return Boolean.valueOf(props.getProperty("gov.lanl.cnls.linkedprocess.security." + this));
+            return Boolean.valueOf(props.getProperty(getPropertyName()));
         }
 
         public static Set<PermissionType> createSet(final Properties props) {
@@ -53,6 +53,10 @@ public class VMSecurityManager extends SecurityManager {
             }
 
             return set;
+        }
+
+        public String getPropertyName() {
+            return "gov.lanl.cnls.linkedprocess.security." + this;
         }
     }
 

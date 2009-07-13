@@ -323,6 +323,7 @@ public class VMScheduler {
     //       accessed to manipulate VMs and jobs.  An idle scheduler may
     //       therefore not shut down idle VMs for some time after the timeout
     //       value.
+
     private void cleanup() {
         long time = System.currentTimeMillis();
 

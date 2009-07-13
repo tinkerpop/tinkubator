@@ -31,8 +31,8 @@ class VMSequencer {
      * Creates a new sequencer for VM jobs.
      *
      * @param sequencerHelper a source for workers ready to execute jobs.  When
-     *                     this sequencer receives a null from this source, it terminates.
-     * @param timeSlice    the time slice in which to execute jobs
+     *                        this sequencer receives a null from this source, it terminates.
+     * @param timeSlice       the time slice in which to execute jobs
      */
     public VMSequencer(final VMScheduler.VMSequencerHelper sequencerHelper,
                        final long timeSlice) {

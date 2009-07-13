@@ -1,19 +1,20 @@
 package gov.lanl.cnls.linkedprocess.gui.villein;
 
-import gov.lanl.cnls.linkedprocess.gui.villein.VilleinLoginArea;
-import gov.lanl.cnls.linkedprocess.xmpp.villein.*;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.Evaluate;
 import gov.lanl.cnls.linkedprocess.Connection;
-
-import javax.swing.*;
-
-import org.jivesoftware.smack.filter.*;
-import org.jivesoftware.smack.packet.Presence;
+import gov.lanl.cnls.linkedprocess.xmpp.villein.VmStruct;
+import gov.lanl.cnls.linkedprocess.xmpp.villein.XmppVillein;
+import gov.lanl.cnls.linkedprocess.xmpp.vm.Evaluate;
+import org.jivesoftware.smack.filter.AndFilter;
+import org.jivesoftware.smack.filter.IQTypeFilter;
+import org.jivesoftware.smack.filter.OrFilter;
+import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.packet.Presence;
 
-import java.util.Map;
+import javax.swing.JFrame;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: marko

@@ -27,7 +27,7 @@ public class Job {
     public String getAppJid() {
         return appJid;
     }
-    
+
     public String getJobId() {
         return jobId;
     }
@@ -43,7 +43,7 @@ public class Job {
     public void increaseTimeSpent(final long time) {
         timeSpent += time;
     }
-    
+
     public long getTimeSpent() {
         return timeSpent;
     }
