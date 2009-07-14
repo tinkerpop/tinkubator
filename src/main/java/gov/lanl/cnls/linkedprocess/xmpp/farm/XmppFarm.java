@@ -174,7 +174,7 @@ public class XmppFarm extends XmppClient {
 
         this.serviceExtension = new DataForm("farm_extended_features");
 
-        ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngineManager manager = LinkedProcess.createScriptEngineManager();
         List<ScriptEngineFactory> factories = manager.getEngineFactories();
         for (ScriptEngineFactory factory : factories) {
             FormField field = new FormField("vm_species");

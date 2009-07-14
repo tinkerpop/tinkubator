@@ -85,6 +85,32 @@
             <version>2.4</version>
             <scope>test</scope>
         </dependency>
+        <!---->
+        <dependency>
+            <groupId>jython</groupId>
+            <artifactId>jython</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>jsr223-engines</groupId>
+            <artifactId>jython-engine</artifactId>
+            <version>xxx</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>rhino</groupId>
+            <artifactId>rhino</artifactId>
+            <version>1.5R4.1</version>
+        </dependency> -->
+        <dependency>
+            <groupId>rhino</groupId>
+            <artifactId>js</artifactId>
+            <version>1.7R1</version>
+        </dependency>
+        <dependency>
+            <groupId>jsr223-engines</groupId>
+            <artifactId>javascript-engine</artifactId>
+            <version>xxx</version>
+        </dependency>
         <!--
         <dependency>
             <groupId>jsr223-engines</groupId>
@@ -123,11 +149,6 @@
         </dependency>
         <dependency>
             <groupId>jsr223-engines</groupId>
-            <artifactId>javascript-engine</artifactId>
-            <version>xxx</version>
-        </dependency>
-        <dependency>
-            <groupId>jsr223-engines</groupId>
             <artifactId>jawk-engine</artifactId>
             <version>xxx</version>
         </dependency>
@@ -159,11 +180,6 @@
         <dependency>
             <groupId>jsr223-engines</groupId>
             <artifactId>juel-engine</artifactId>
-            <version>xxx</version>
-        </dependency>
-        <dependency>
-            <groupId>jsr223-engines</groupId>
-            <artifactId>jython-engine</artifactId>
             <version>xxx</version>
         </dependency>
         <dependency>

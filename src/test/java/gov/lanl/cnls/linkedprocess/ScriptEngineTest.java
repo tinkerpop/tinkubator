@@ -1,5 +1,6 @@
 package gov.lanl.cnls.linkedprocess;
 
+import gov.lanl.cnls.linkedprocess.os.errors.UnsupportedScriptEngineException;
 import junit.framework.TestCase;
 
 import javax.script.ScriptEngine;
@@ -15,8 +16,8 @@ import java.util.List;
 public class ScriptEngineTest extends TestCase {
 
     public void testLanguageSupport() {
-        ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName("JavaScript");
+        ScriptEngineManager manager = LinkedProcess.createScriptEngineManager();
+        ScriptEngine engine = manager.getEngineByName(LinkedProcess.JAVASCRIPT);
         assertNotNull(engine);
 
         List<ScriptEngineFactory> factories = manager.getEngineFactories();
@@ -33,6 +34,36 @@ public class ScriptEngineTest extends TestCase {
             }
             System.out.printf("\tLanguage: %s (%s)\n", langName, langVersion);
         }
+    }
+
+    public void testGetEngines() throws Exception {
+        Class c = ScriptEngineFactory.class;
+        for (Class c2 : c.getClasses()) {
+            System.out.println("class: " + c2);
+
+        }
+        for (Class c2 : c.getDeclaredClasses()) {
+            System.out.println("declared class: " + c2);
+
+        }
+
+        ScriptEngineManager manager = LinkedProcess.createScriptEngineManager();
+
+        for (ScriptEngineFactory f : manager.getEngineFactories()) {
+            System.out.println("" + f.getEngineName());
+        }
+        ScriptEngine engine;
+        engine = manager.getEngineByName(LinkedProcess.JAVASCRIPT);
+        if (null == engine) {
+            throw new UnsupportedScriptEngineException(LinkedProcess.JAVASCRIPT);
+        }
+
+        engine = manager.getEngineByName(LinkedProcess.PYTHON);
+        if (null == engine) {
+            throw new UnsupportedScriptEngineException(LinkedProcess.PYTHON);
+        }
+
+        engine.eval("print \"Hello, World!\"\n");
     }
 
 }

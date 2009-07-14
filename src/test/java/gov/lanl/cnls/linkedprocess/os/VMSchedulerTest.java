@@ -22,7 +22,6 @@ import java.util.Random;
  */
 public class VMSchedulerTest extends TestCase {
     private static final int MAX_RANDOM_INT = 100000;
-    private static final String JAVASCRIPT = "JavaScript";
 
     private final VMScheduler.VMResultHandler resultHandler = createResultHandler();
     private final VMScheduler.LopStatusEventHandler eventHandler = createEventHandler();
@@ -32,42 +31,6 @@ public class VMSchedulerTest extends TestCase {
     private final List<LinkedProcess.VmStatus> vmStatusEventTypes = new LinkedList<LinkedProcess.VmStatus>();
     private VMScheduler scheduler;
     private Random random = new Random();
-
-    /*
-    //public static void main(final String[] args) throws Exception {
-    public void testGetEngines() throws Exception {
-        System.out.println("################################################################");
-        Class c = ScriptEngineFactory.class;
-        for (Class c2 : c.getClasses()) {
-            System.out.println("class: " + c2);
-
-        }
-        for (Class c2 : c.getDeclaredClasses()) {
-            System.out.println("declared class: " + c2);
-
-        }
-        new TempLoader();
-        System.out.println("================================================================");
-
-
-
-        ScriptEngineManager manager = new ScriptEngineManager(new TempLoader());
-        for (ScriptEngineFactory f : manager.getEngineFactories()) {
-            System.out.println("" + f.getEngineName());
-        }
-        System.out.println("################################################################");
-        ScriptEngine engine = manager.getEngineByName(JAVASCRIPT);
-        if (null == engine) {
-            throw new UnsupportedScriptEngineException(JAVASCRIPT);
-        }
-    } */
-
-    private class TempLoader extends ClassLoader {
-        public TempLoader() throws ClassNotFoundException {
-            super(VMSchedulerTest.class.getClassLoader());
-            loadClass("com.sun.script.jython.JythonScriptEngine");
-        }
-    }
 
     public void setUp() {
         resultsByID.clear();
@@ -87,7 +50,7 @@ public class VMSchedulerTest extends TestCase {
     public void testCreateVM() throws Exception {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
-        scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         scheduler.shutDown();
     }
 
@@ -95,9 +58,9 @@ public class VMSchedulerTest extends TestCase {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         String vm2 = randomJID();
-        scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         assertEquals(LinkedProcess.VmStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm1));
-        scheduler.spawnVirtualMachine(vm2, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm2, LinkedProcess.JAVASCRIPT);
         assertEquals(LinkedProcess.VmStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm2));
         assertEquals(LinkedProcess.FarmStatus.ACTIVE, scheduler.getSchedulerStatus());
         scheduler.shutDown();
@@ -112,7 +75,7 @@ public class VMSchedulerTest extends TestCase {
     public void testVMStatusAfterTermination() throws Exception {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
-        scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         assertEquals(LinkedProcess.VmStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm1));
         scheduler.terminateVirtualMachine(vm1);
         assertEquals(LinkedProcess.VmStatus.NOT_FOUND, scheduler.getVirtualMachineStatus(vm1));
@@ -122,7 +85,7 @@ public class VMSchedulerTest extends TestCase {
     public void testVMStatusAfterSchedulerShutDown() throws Exception {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
-        scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         assertEquals(LinkedProcess.VmStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm1));
         scheduler.shutDown();
         assertEquals(LinkedProcess.VmStatus.NOT_FOUND, scheduler.getVirtualMachineStatus(vm1));
@@ -131,7 +94,7 @@ public class VMSchedulerTest extends TestCase {
     public void testAddJob() throws Exception {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
-        scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         Job job = randomShortRunningJob(vm1);
         scheduler.scheduleJob(vm1, job);
         scheduler.waitUntilFinished();
@@ -143,7 +106,7 @@ public class VMSchedulerTest extends TestCase {
     public void testLongRunningJob() throws Exception {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
-        scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         Job job = randomLongRunningJob(vm1);
         scheduler.scheduleJob(vm1, job);
         scheduler.waitUntilFinished();
@@ -155,7 +118,7 @@ public class VMSchedulerTest extends TestCase {
     public void testAddMultipleJobs() throws Exception {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
-        scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         Job job1 = randomShortRunningJob(vm1);
         Job job2 = randomShortRunningJob(vm1);
         scheduler.scheduleJob(vm1, job1);
@@ -170,7 +133,7 @@ public class VMSchedulerTest extends TestCase {
     public void testAddConcurrentLongRunningJobs() throws Exception {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
-        scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         Job job1 = randomLongRunningJob(vm1);
         Job job2 = randomLongRunningJob(vm1);
         scheduler.scheduleJob(vm1, job1);
@@ -185,7 +148,7 @@ public class VMSchedulerTest extends TestCase {
     public void testInvalidExpression() throws Exception {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
-        scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         Job job = randomInvalidJob(vm1);
         scheduler.scheduleJob(vm1, job);
         scheduler.waitUntilFinished();
@@ -197,7 +160,7 @@ public class VMSchedulerTest extends TestCase {
     public void testValidButExceptionGeneratingExpression() throws Exception {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
-        scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         Job job = randomValidButExceptionGeneratingJob(vm1);
         scheduler.scheduleJob(vm1, job);
         scheduler.waitUntilFinished();
@@ -209,7 +172,7 @@ public class VMSchedulerTest extends TestCase {
     public void testAbortJob() throws Exception {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
-        scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         Job job = randomInfiniteJob(vm1);
         scheduler.scheduleJob(vm1, job);
         scheduler.abortJob(vm1, job.getJobId());
@@ -222,11 +185,11 @@ public class VMSchedulerTest extends TestCase {
     public void testMultipleVMs() throws Exception {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
-        scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         String vm2 = randomJID();
-        scheduler.spawnVirtualMachine(vm2, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm2, LinkedProcess.JAVASCRIPT);
         String vm3 = randomJID();
-        scheduler.spawnVirtualMachine(vm3, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm3, LinkedProcess.JAVASCRIPT);
         Job job1 = randomLongRunningJob(vm1);
         scheduler.scheduleJob(vm1, job1);
         Job job2 = randomLongRunningJob(vm1);
@@ -261,7 +224,7 @@ public class VMSchedulerTest extends TestCase {
         for (int i = 0; i < VMScheduler.MAX_VM; i++) {
             String jid = randomJID();
             vmJIDs[i] = jid;
-            scheduler.spawnVirtualMachine(jid, JAVASCRIPT);
+            scheduler.spawnVirtualMachine(jid, LinkedProcess.JAVASCRIPT);
             int index = vmStatusEventTypes.size() - 1;
             assertEquals(jid, vmStatusEventJIDs.get(index));
             assertEquals(LinkedProcess.VmStatus.ACTIVE, vmStatusEventTypes.get(index));
@@ -312,7 +275,7 @@ public class VMSchedulerTest extends TestCase {
     public void testJobStatus() throws Exception {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
-        scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
 
         scheduler.shutDown();
     }
@@ -320,11 +283,11 @@ public class VMSchedulerTest extends TestCase {
     public void testStatusErrors() throws Exception {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
-        scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
 
         // Try to spawn a VM with a duplicate VM.
         try {
-            scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
+            scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
             assertTrue(false);
         } catch (VMAlreadyExistsException e) {
         }
@@ -346,7 +309,7 @@ public class VMSchedulerTest extends TestCase {
         } catch (VMWorkerNotFoundException e) {
         }
 
-        scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
 
         // Try to check on a job that doesn't exist
         try {
@@ -376,7 +339,7 @@ public class VMSchedulerTest extends TestCase {
     public void testSecurity() throws Exception {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
-        scheduler.spawnVirtualMachine(vm1, JAVASCRIPT);
+        scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
 
 //        String expr = "var url = \"http://example.org/\";" +
 //                "var xmlhttp=new XMLHttpRequest();" +

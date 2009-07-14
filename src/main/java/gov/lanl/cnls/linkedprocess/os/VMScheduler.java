@@ -44,7 +44,7 @@ public class VMScheduler {
 
     private final SimpleBlockingQueue<VMWorker> workerQueue;
     private final Map<String, VMWorker> workersByJID;
-    private final ScriptEngineManager manager = new ScriptEngineManager();
+    private final ScriptEngineManager manager;
     private final VMResultHandler resultHandler;
     private LopStatusEventHandler eventHandler;
     private final int numberOfSequencers;
@@ -86,6 +86,8 @@ public class VMScheduler {
         }
 
         setSchedulerStatus(LinkedProcess.FarmStatus.ACTIVE);
+
+        manager = LinkedProcess.createScriptEngineManager();
     }
 
     public synchronized void setStatusEventHandler(LopStatusEventHandler statusHandler) {

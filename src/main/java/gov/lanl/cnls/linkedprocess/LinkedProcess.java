@@ -17,6 +17,10 @@ import java.util.logging.Logger;
  * Time: 2:44:21 PM
  */
 public class LinkedProcess {
+    public static final String
+            JAVASCRIPT = "JavaScript",
+            PYTHON = "jython";
+
     // TODO: how about a "queued" status for jobs?
     public enum JobStatus {
         IN_PROGRESS("in_progress");
@@ -186,14 +190,17 @@ public class LinkedProcess {
         // result.
         new JobResult(null, (String) null);
 
-        // Hack to pre-load Rhino resource bundles.  This will have to be extended.
+        // Hack to pre-load Rhino and Jython resource bundles.  This will have to be extended.
         ScriptEngineManager m = new ScriptEngineManager();
-        ScriptEngine e = m.getEngineByName("JavaScript");
-        try {
-            e.eval("1 + 1;");
-            e.eval("1 ... 1;");
-        } catch (ScriptException e1) {
-            // Do nothing.
+        for (String name : new String[]{JAVASCRIPT, PYTHON}) {
+            ScriptEngine e = m.getEngineByName(name);
+            try {
+                e.eval("1 + 1;");
+                e.eval("1 ... 1;");
+                e.eval("print \"Hello, World!\"\n");
+            } catch (ScriptException e1) {
+                // Do nothing.
+            }
         }
     }
 
@@ -203,5 +210,12 @@ public class LinkedProcess {
 
     public static Properties getProperties() {
         return PROPERTIES;
+    }
+
+    public static ScriptEngineManager createScriptEngineManager() {
+        ClassLoader loader = new ScriptEngineClassLoader();
+
+//        return new ScriptEngineManager();
+        return new ScriptEngineManager(loader);
     }
 }

@@ -22,6 +22,7 @@ public class XmppVirtualMachineTest extends TestCase {
     public static final String PASSWORD = "linked34";
     public static final String OPS4J_SERVER = "srv03.codedragons.com";
     public static final String GTALK_SERVER = "talk1.l.google.com";
+    public static final String XMPP42_SERVER = "xmpp42.linkedprocess.org";
     public static final int PORT = 5222;
 
     private XmppVirtualMachine xmppVirtualMachine;
@@ -32,6 +33,15 @@ public class XmppVirtualMachineTest extends TestCase {
 
     @After
     public void tearDown() {
+    }
+
+    @Test
+    public void testLoginXmpp42() throws Exception {
+        xmppVirtualMachine = new XmppVirtualMachine(XMPP42_SERVER, PORT, USERNAME, PASSWORD, null, null, "JavaScript", "pass");
+        Connection connection = xmppVirtualMachine.getConnection();
+        assertTrue(connection.isConnected());
+        xmppVirtualMachine.shutDown();
+
     }
 
     @Test
