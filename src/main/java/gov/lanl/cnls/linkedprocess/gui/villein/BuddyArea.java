@@ -10,16 +10,23 @@ import gov.lanl.cnls.linkedprocess.xmpp.villein.HostStruct;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.Struct;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.VmStruct;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Set;
 
 /**
  * User: marko
@@ -88,10 +95,10 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
             if (this.popupTreeObject instanceof VmStruct) {
                 this.villeinGui.getXmppVillein().terminateVirtualMachine((VmStruct) this.popupTreeObject);
             }
-        } else if (event.getActionCommand().equals("JavaScript")) {
+        } else if (event.getActionCommand().equals(LinkedProcess.JAVASCRIPT)) {
             if (this.popupTreeObject instanceof FarmStruct) {
                 String farmJid = ((FarmStruct) this.popupTreeObject).getFullJid();
-                this.villeinGui.getXmppVillein().spawnVirtualMachine(farmJid, "JavaScript");
+                this.villeinGui.getXmppVillein().spawnVirtualMachine(farmJid, LinkedProcess.JAVASCRIPT);
             }
         } else if (event.getActionCommand().equals("shutdown")) {
 
@@ -300,7 +307,7 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
                     popupMenu.removeAll();
                     JLabel menuLabel = new JLabel("Farm");
                     JMenuItem spawnItem = new JMenuItem("spawn vm");
-                    JMenuItem javaScriptItem = new JMenuItem("JavaScript");
+                    JMenuItem javaScriptItem = new JMenuItem(LinkedProcess.JAVASCRIPT);
                     spawnItem.add(javaScriptItem);
                     menuLabel.setHorizontalTextPosition(JLabel.CENTER);
                     popupMenu.add(menuLabel);

@@ -1,8 +1,12 @@
 package gov.lanl.cnls.linkedprocess.security;
 
 import org.jdom.Element;
+import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.packet.DataForm;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Author: josh
@@ -21,12 +25,24 @@ public class ServiceDiscoveryConfiguration {
             writePermissions,
             execPermissions,
             linkPermissions,
-            httpGetPermissions,
-            httpPutPermissions,
-            httpPostPermissions;
+            httpGetPermissions = null,
+            httpPutPermissions = null,
+            httpPostPermissions = null;
+
+    private final Set<VMSecurityManager.PermissionType> permittedTypes;
+
+    public ServiceDiscoveryConfiguration(final VMSecurityManager m) {
+        permittedTypes = m.getPermittedTypes();
+        readPermissions = m.getReadPermissions();
+        writePermissions = m.getWritePermissions();
+        execPermissions = m.getExecPermissions();
+        linkPermissions = m.getLinkPermissions();
+    }
 
     // TODO: namespace logic
     public ServiceDiscoveryConfiguration(final Element x) {
+        permittedTypes = new HashSet<VMSecurityManager.PermissionType>();
+
         if (!x.getName().equals(X)) {
             throw new IllegalArgumentException("expected a jabber:x:data element named 'x'");
         }
@@ -37,6 +53,8 @@ public class ServiceDiscoveryConfiguration {
             if (null == type) {
                 throw new IllegalArgumentException("missing '" + VAR + "' attribute");
             }
+
+            permittedTypes.add(type);
 
             switch (type) {
                 case read:
@@ -52,7 +70,7 @@ public class ServiceDiscoveryConfiguration {
                     linkPermissions = createPathPermissions(field);
                     break;
                 default:
-                    // Ignore.
+                    // Other types have no special formatting.
             }
         }
     }
@@ -78,5 +96,76 @@ public class ServiceDiscoveryConfiguration {
         manager.setWritePermissions(writePermissions);
         manager.setExecPermissions(execPermissions);
         manager.setLinkPermissions(linkPermissions);
+    }
+
+    public Element toElement() {
+        Element x = new Element(X);
+
+        for (VMSecurityManager.PermissionType type : permittedTypes) {
+            Element field = new Element(FIELD);
+            field.setAttribute(VAR, type.toString());
+            x.addContent(field);
+
+            switch (type) {
+                case read:
+                    addPermittedPaths(field, readPermissions);
+                    break;
+                case write:
+                    addPermittedPaths(field, writePermissions);
+                    break;
+                case exec:
+                    addPermittedPaths(field, execPermissions);
+                    break;
+                case link:
+                    addPermittedPaths(field, linkPermissions);
+                    break;
+                default:
+                    // Other types have no special formatting.
+            }
+        }
+
+        return x;
+    }
+
+    public void addFields(final DataForm serviceExtension) {
+        for (VMSecurityManager.PermissionType type : permittedTypes) {
+            FormField field = new FormField();
+            field.setLabel(type.toString());
+
+            switch (type) {
+                case read:
+                    addPermittedPaths(field, readPermissions);
+                    break;
+                case write:
+                    addPermittedPaths(field, writePermissions);
+                    break;
+                case exec:
+                    addPermittedPaths(field, execPermissions);
+                    break;
+                case link:
+                    addPermittedPaths(field, linkPermissions);
+                    break;
+                default:
+                    // Other types have no special formatting.
+            }
+
+            serviceExtension.addField(field);
+        }
+    }
+
+    private void addPermittedPaths(final Element field,
+                                   final PathPermissions p) {
+        for (String path : p.getPositiveRules()) {
+            Element value = new Element(VALUE);
+            value.setText(path);
+            field.addContent(value);
+        }
+    }
+
+    private void addPermittedPaths(final FormField field,
+                                   final PathPermissions p) {
+        for (String path : p.getPositiveRules()) {
+            field.addValue(path);
+        }
     }
 }

@@ -37,7 +37,7 @@ public class XmppVirtualMachineTest extends TestCase {
 
     @Test
     public void testLoginXmpp42() throws Exception {
-        xmppVirtualMachine = new XmppVirtualMachine(XMPP42_SERVER, PORT, USERNAME, PASSWORD, null, null, "JavaScript", "pass");
+        xmppVirtualMachine = new XmppVirtualMachine(XMPP42_SERVER, PORT, USERNAME, PASSWORD, null, null, LinkedProcess.JAVASCRIPT, "pass");
         Connection connection = xmppVirtualMachine.getConnection();
         assertTrue(connection.isConnected());
         xmppVirtualMachine.shutDown();
@@ -46,7 +46,7 @@ public class XmppVirtualMachineTest extends TestCase {
 
     @Test
     public void testLoginOPS4J() throws Exception {
-        xmppVirtualMachine = new XmppVirtualMachine(OPS4J_SERVER, PORT, USERNAME, PASSWORD, null, null, "JavaScript", "pass");
+        xmppVirtualMachine = new XmppVirtualMachine(OPS4J_SERVER, PORT, USERNAME, PASSWORD, null, null, LinkedProcess.JAVASCRIPT, "pass");
         Connection connection = xmppVirtualMachine.getConnection();
         assertTrue(connection.isConnected());
         xmppVirtualMachine.shutDown();
@@ -55,7 +55,7 @@ public class XmppVirtualMachineTest extends TestCase {
 
     @Test
     public void testLoginGTalk() throws Exception {
-        xmppVirtualMachine = new XmppVirtualMachine(GTALK_SERVER, PORT, GTALK_USERNAME, PASSWORD, null, null, "JavaScript", "pass");
+        xmppVirtualMachine = new XmppVirtualMachine(GTALK_SERVER, PORT, GTALK_USERNAME, PASSWORD, null, null, LinkedProcess.JAVASCRIPT, "pass");
         Connection connection = xmppVirtualMachine.getConnection();
         assertTrue(connection.isConnected());
         xmppVirtualMachine.shutDown();
@@ -101,14 +101,14 @@ public class XmppVirtualMachineTest extends TestCase {
     @Test
     public void testSpawnVirtualMachine() throws Exception {
         XmppFarm farm = new XmppFarm(OPS4J_SERVER, PORT, USERNAME, PASSWORD);
-        XmppVirtualMachine vm = farm.spawnVirtualMachine("appJid", "JavaScript");
+        XmppVirtualMachine vm = farm.spawnVirtualMachine("appJid", LinkedProcess.JAVASCRIPT);
         farm.shutDown();
     }
 
     @Test
     public void testExecuteScript() throws Exception {
         XmppFarm farm = new XmppFarm(OPS4J_SERVER, PORT, USERNAME, PASSWORD);
-        XmppVirtualMachine vm = farm.spawnVirtualMachine("appJid", "JavaScript");
+        XmppVirtualMachine vm = farm.spawnVirtualMachine("appJid", LinkedProcess.JAVASCRIPT);
         farm.shutDown();
     }
 }

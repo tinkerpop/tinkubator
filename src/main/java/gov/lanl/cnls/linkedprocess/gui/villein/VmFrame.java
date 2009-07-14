@@ -1,22 +1,27 @@
 package gov.lanl.cnls.linkedprocess.gui.villein;
 
-import org.jivesoftware.smack.packet.Packet;
-
-import javax.swing.*;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.util.Map;
-import java.util.HashMap;
-
+import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.VmStruct;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.Evaluate;
 import gov.lanl.cnls.linkedprocess.xmpp.vm.AbortJob;
+import gov.lanl.cnls.linkedprocess.xmpp.vm.Evaluate;
+import org.jivesoftware.smack.packet.Packet;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * User: marko
@@ -149,7 +154,7 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
         VmStruct vmStruct = new VmStruct();
         vmStruct.setFullJid("linked.process.1@xmpp.linkedprocess.org/LoPVM/12345");
         vmStruct.setVmPassword("PASSWORD");
-        vmStruct.setVmSpecies("JavaScript");
+        vmStruct.setVmSpecies(LinkedProcess.JAVASCRIPT);
         new VmFrame(vmStruct, null);
     }
 

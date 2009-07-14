@@ -100,6 +100,30 @@ public class VMSecurityManager extends SecurityManager {
         permittedTypes = PermissionType.createSet(props);
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    
+    public Set<PermissionType> getPermittedTypes() {
+        return permittedTypes;
+    }
+
+    public PathPermissions getReadPermissions() {
+        return readPermissions;
+    }
+
+    public PathPermissions getWritePermissions() {
+        return writePermissions;
+    }
+
+    public PathPermissions getExecPermissions() {
+        return execPermissions;
+    }
+
+    public PathPermissions getLinkPermissions() {
+        return linkPermissions;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+
     public void setReadPermissions(final PathPermissions p) {
         readPermissions = p;
     }

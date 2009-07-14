@@ -2,6 +2,7 @@ package gov.lanl.cnls.linkedprocess.security;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Author: josh
@@ -32,6 +33,11 @@ public class PathPermissions {
 
         // Note: this check for null is not really necessary...
         return null == b ? false : b;
+    }
+
+    // TODO: interleave positive and negative rules
+    public List<String> getPositiveRules() {
+        return rootNode.getRulesForTarget(PERMIT);
     }
 
     private class Node<T> implements Comparable<Node<T>> {
@@ -104,6 +110,22 @@ public class PathPermissions {
 
         public int compareTo(final Node<T> other) {
             return this.prefix.compareTo(other.prefix);
+        }
+
+        public List<String> getRulesForTarget(final T t) {
+            List<String> results = new LinkedList<String>();
+
+            if (target == t) {
+                results.add(prefix);
+            }
+
+            for (Node<T> n : children) {
+                for (String suffix : n.getRulesForTarget(t)) {
+                    results.add(prefix + suffix);
+                }
+            }
+
+            return results;
         }
     }
 }

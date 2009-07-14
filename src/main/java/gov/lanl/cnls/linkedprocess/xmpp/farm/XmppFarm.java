@@ -6,6 +6,8 @@ import gov.lanl.cnls.linkedprocess.os.errors.UnsupportedScriptEngineException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMAlreadyExistsException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMSchedulerIsFullException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
+import gov.lanl.cnls.linkedprocess.security.ServiceDiscoveryConfiguration;
+import gov.lanl.cnls.linkedprocess.security.VMSecurityManager;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.vm.XmppVirtualMachine;
 import org.jivesoftware.smack.Roster;
@@ -17,15 +19,18 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DataForm;
 
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -190,6 +195,10 @@ public class XmppFarm extends XmppClient {
             field.addOption(new FormField.Option("species_engine_version", engVersion));
             this.serviceExtension.addField(field);
         }
+
+        VMSecurityManager man = (VMSecurityManager) System.getSecurityManager();
+        ServiceDiscoveryConfiguration conf = new ServiceDiscoveryConfiguration(man);
+        conf.addFields(this.serviceExtension);
 
         discoManager.setExtendedInfo(this.serviceExtension);
 
