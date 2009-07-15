@@ -134,7 +134,7 @@ public class LinkedProcess {
     public static final String VM_PASSWORD_ATTRIBUTE = "vm_password";
     // Lop VM XMPP tag and attribute names
     // tag names
-    public static final String EVALUATE_TAG = "evaluate";
+    public static final String SUBMIT_JOB_TAG = "submit_job";
     public static final String JOB_STATUS_TAG = "job_status";
     public static final String ABORT_JOB_TAG = "abort_job";
     // attribute names

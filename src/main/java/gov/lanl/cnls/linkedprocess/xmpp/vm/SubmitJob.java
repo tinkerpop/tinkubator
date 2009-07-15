@@ -8,7 +8,7 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
  * Date: Jun 24, 2009
  * Time: 12:12:20 PM
  */
-public class Evaluate extends VirtualMachineIq {
+public class SubmitJob extends VirtualMachineIq {
 
     String expression;
 
@@ -23,7 +23,7 @@ public class Evaluate extends VirtualMachineIq {
 
     public String getChildElementXML() {
 
-        Element evaluateElement = new Element(LinkedProcess.EVALUATE_TAG, LinkedProcess.LOP_VM_NAMESPACE);
+        Element evaluateElement = new Element(LinkedProcess.SUBMIT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE);
 
         if(this.vmPassword != null) {
             evaluateElement.setAttribute(LinkedProcess.VM_PASSWORD_ATTRIBUTE, this.vmPassword);

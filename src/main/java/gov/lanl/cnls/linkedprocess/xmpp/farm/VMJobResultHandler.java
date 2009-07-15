@@ -1,7 +1,7 @@
 package gov.lanl.cnls.linkedprocess.xmpp.farm;
 
 import gov.lanl.cnls.linkedprocess.xmpp.vm.XmppVirtualMachine;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.Evaluate;
+import gov.lanl.cnls.linkedprocess.xmpp.vm.SubmitJob;
 import gov.lanl.cnls.linkedprocess.os.JobResult;
 import gov.lanl.cnls.linkedprocess.os.VMScheduler;
 import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
@@ -24,14 +24,14 @@ public class VMJobResultHandler implements VMScheduler.VMResultHandler {
     public void handleResult(JobResult result) {
         try {
             XmppVirtualMachine vm = xmppFarm.getVirtualMachine(result.getJob().getVMJID());
-            Evaluate returnEvaluate = result.generateReturnEvalulate();
-            vm.getConnection().sendPacket(returnEvaluate);
+            SubmitJob returnSubmitJob = result.generateReturnEvalulate();
+            vm.getConnection().sendPacket(returnSubmitJob);
 
             XmppVirtualMachine.LOGGER.info("Sent " + VMJobResultHandler.class.getName());
-            XmppVirtualMachine.LOGGER.info(returnEvaluate.toXML());
+            XmppVirtualMachine.LOGGER.info(returnSubmitJob.toXML());
 
         } catch(VMWorkerNotFoundException e) {
-            Evaluate x = result.generateReturnEvalulate();
+            SubmitJob x = result.generateReturnEvalulate();
             x.setErrorType(LinkedProcess.ErrorType.INTERNAL_ERROR);
             x.setType(IQ.Type.ERROR);
             XmppVirtualMachine.LOGGER.severe("Could not find virtual machine. Thus, can not send error message");   

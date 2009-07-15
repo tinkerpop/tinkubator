@@ -4,7 +4,7 @@ import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.VmStruct;
 import gov.lanl.cnls.linkedprocess.xmpp.vm.AbortJob;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.Evaluate;
+import gov.lanl.cnls.linkedprocess.xmpp.vm.SubmitJob;
 import org.jivesoftware.smack.packet.Packet;
 
 import javax.swing.DefaultListModel;
@@ -101,12 +101,12 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
         
     }
 
-    public void handleIncomingEvaluate(Evaluate evaluate) {
-        String jobId = evaluate.getPacketID();
+    public void handleIncomingEvaluate(SubmitJob submitJob) {
+        String jobId = submitJob.getPacketID();
         for(int i=0; i < this.jobList.getModel().getSize(); i++) {
             JobPane jobPane = (JobPane) this.jobList.getModel().getElementAt(i);
             if(jobPane.getJobId().equals(jobId)) {
-                jobPane.handleIncomingEvaluate(evaluate);
+                jobPane.handleIncomingEvaluate(submitJob);
             }
         }   
     }

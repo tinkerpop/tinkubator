@@ -1,7 +1,7 @@
 package gov.lanl.cnls.linkedprocess.os;
 
 import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.Evaluate;
+import gov.lanl.cnls.linkedprocess.xmpp.vm.SubmitJob;
 import org.jivesoftware.smack.packet.IQ;
 
 import java.util.logging.Logger;
@@ -80,8 +80,8 @@ public class JobResult {
         return exception;
     }
 
-    public Evaluate generateReturnEvalulate() {
-        Evaluate returnEval = new Evaluate();
+    public SubmitJob generateReturnEvalulate() {
+        SubmitJob returnEval = new SubmitJob();
         returnEval.setTo(job.getAppJid());
         returnEval.setPacketID(job.getJobId());
         String msg = "";

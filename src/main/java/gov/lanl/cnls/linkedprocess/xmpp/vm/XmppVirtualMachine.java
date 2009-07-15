@@ -45,7 +45,7 @@ public class XmppVirtualMachine extends XmppClient {
         LOGGER.info("Starting LoP virtual machine - password:" + vmPassword);
         // Registering the types of IQ packets/stanzas the the Lop VM can respond to.
         ProviderManager pm = ProviderManager.getInstance();
-        pm.addIQProvider(LinkedProcess.EVALUATE_TAG, LinkedProcess.LOP_VM_NAMESPACE, new EvaluateProvider());
+        pm.addIQProvider(LinkedProcess.SUBMIT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE, new SubmitJobProvider());
         pm.addIQProvider(LinkedProcess.JOB_STATUS_TAG, LinkedProcess.LOP_VM_NAMESPACE, new JobStatusProvider());
         pm.addIQProvider(LinkedProcess.ABORT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE, new AbortJobProvider());
         pm.addIQProvider(LinkedProcess.TERMINATE_VM_TAG, LinkedProcess.LOP_VM_NAMESPACE, new TerminateVmProvider());
@@ -59,12 +59,12 @@ public class XmppVirtualMachine extends XmppClient {
             System.exit(1);
         }
 
-        PacketFilter evalFilter = new AndFilter(new PacketTypeFilter(Evaluate.class), new IQTypeFilter(IQ.Type.GET));
+        PacketFilter submitFilter = new AndFilter(new PacketTypeFilter(SubmitJob.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter statusFilter = new AndFilter(new PacketTypeFilter(JobStatus.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter abandonFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter terminateFilter = new AndFilter(new PacketTypeFilter(TerminateVm.class), new IQTypeFilter(IQ.Type.GET));
 
-        this.addPacketListener(new EvaluateVmListener(this), evalFilter);
+        this.addPacketListener(new SubmitJobVmListener(this), submitFilter);
         this.addPacketListener(new JobStatusVmListener(this), statusFilter);
         this.addPacketListener(new AbortJobVmListener(this), abandonFilter);
         this.addPacketListener(new TerminateVmVmListener(this), terminateFilter);

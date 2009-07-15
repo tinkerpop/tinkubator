@@ -2,7 +2,7 @@ package gov.lanl.cnls.linkedprocess;
 
 import gov.lanl.cnls.linkedprocess.xmpp.farm.XmppFarm;
 import gov.lanl.cnls.linkedprocess.xmpp.vm.AbortJob;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.Evaluate;
+import gov.lanl.cnls.linkedprocess.xmpp.vm.SubmitJob;
 import gov.lanl.cnls.linkedprocess.xmpp.vm.XmppVirtualMachine;
 import gov.lanl.cnls.linkedprocess.xmpp.vm.TerminateVm;
 import junit.framework.TestCase;
@@ -64,7 +64,7 @@ public class XmppVirtualMachineTest extends TestCase {
 
     @Test
     public void testEvaluateTag() {
-        Evaluate eval = new Evaluate();
+        SubmitJob eval = new SubmitJob();
         eval.setVmPassword("pass");
         eval.setExpression("for(int i=0; i<10; i++) { i; };");
         String evalString = eval.getChildElementXML();

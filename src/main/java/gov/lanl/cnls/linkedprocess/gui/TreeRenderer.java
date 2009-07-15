@@ -55,7 +55,7 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
             HostStruct hostStruct = (HostStruct) x;
             this.setText(hostStruct.getFullJid());
             this.setIcon(ImageHolder.hostIcon);
-            this.setToolTipText("user_jid");
+            this.setToolTipText("host_jid");
         } else if (x instanceof TreeNodeProperty) {
             if (((TreeNodeProperty) x).getKey().equals("villein_jid")) {
                 this.setIcon(ImageHolder.villeinIcon);

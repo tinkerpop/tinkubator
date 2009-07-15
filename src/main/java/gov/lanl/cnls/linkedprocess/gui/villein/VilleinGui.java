@@ -3,7 +3,7 @@ package gov.lanl.cnls.linkedprocess.gui.villein;
 import gov.lanl.cnls.linkedprocess.Connection;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.VmStruct;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.XmppVillein;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.Evaluate;
+import gov.lanl.cnls.linkedprocess.xmpp.vm.SubmitJob;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.IQTypeFilter;
 import org.jivesoftware.smack.filter.OrFilter;
@@ -26,7 +26,7 @@ public class VilleinGui extends JFrame {
     protected static final String FRAME_TITLE = "Simple Linked Process Villein";
 
     protected XmppVillein xmppVillein;
-    protected BuddyArea buddyArea;
+    protected HostArea hostArea;
     protected Map<String, VmFrame> vmFrames = new HashMap<String, VmFrame>();
 
     public VilleinGui() {
@@ -48,18 +48,18 @@ public class VilleinGui extends JFrame {
         this.setVisible(true);
     }
 
-    public void loadBuddyArea(XmppVillein xmppVillein) {
+    public void loadHostArea(XmppVillein xmppVillein) {
         this.xmppVillein = xmppVillein;
 
         PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
-        PacketFilter evaluateFilter = new AndFilter(new PacketTypeFilter(Evaluate.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
+        PacketFilter evaluateFilter = new AndFilter(new PacketTypeFilter(SubmitJob.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
         this.xmppVillein.getConnection().addPacketListener(new PresenceGuiListener(this), presenceFilter);
         this.xmppVillein.getConnection().addPacketListener(new EvaluateGuiListener(this), evaluateFilter);
 
         this.getContentPane().removeAll();
-        this.buddyArea = new BuddyArea(this);
-        this.buddyArea.createTree();
-        this.getContentPane().add(buddyArea);
+        this.hostArea = new HostArea(this);
+        this.hostArea.createTree();
+        this.getContentPane().add(hostArea);
         this.setResizable(false);
         this.pack();
         this.setVisible(true);
@@ -76,19 +76,19 @@ public class VilleinGui extends JFrame {
     }
 
     public void updateTree(String jid, boolean remove) {
-        this.buddyArea.updateTree(jid, remove);
+        this.hostArea.updateTree(jid, remove);
     }
 
     public void createTree() {
-        this.buddyArea.createTree();
+        this.hostArea.createTree();
     }
 
     public XmppVillein getXmppVillein() {
         return this.xmppVillein;
     }
 
-    public BuddyArea getBuddyArea() {
-        return this.buddyArea;
+    public HostArea getBuddyArea() {
+        return this.hostArea;
     }
 
     public void shutDown() {

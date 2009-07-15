@@ -50,7 +50,7 @@ public class XmppVillein extends XmppClient {
         ProviderManager pm = ProviderManager.getInstance();
         pm.addIQProvider(LinkedProcess.SPAWN_VM_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new SpawnVmProvider());
         pm.addIQProvider(LinkedProcess.TERMINATE_VM_TAG, LinkedProcess.LOP_VM_NAMESPACE, new TerminateVmProvider());
-        pm.addIQProvider(LinkedProcess.EVALUATE_TAG, LinkedProcess.LOP_VM_NAMESPACE, new EvaluateProvider());
+        pm.addIQProvider(LinkedProcess.SUBMIT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE, new SubmitJobProvider());
         pm.addIQProvider(LinkedProcess.JOB_STATUS_TAG, LinkedProcess.LOP_VM_NAMESPACE, new JobStatusProvider());
         pm.addIQProvider(LinkedProcess.ABORT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE, new AbortJobProvider());
 
@@ -64,14 +64,12 @@ public class XmppVillein extends XmppClient {
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
         PacketFilter terminateFilter = new AndFilter(new PacketTypeFilter(TerminateVm.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-        PacketFilter evaluateFilter = new AndFilter(new PacketTypeFilter(Evaluate.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
         PacketFilter jobStatusFilter = new AndFilter(new PacketTypeFilter(JobStatus.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
         PacketFilter abortJobFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
         PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
 
         this.addPacketListener(new SpawnVmVilleinListener(this), spawnFilter);
         this.addPacketListener(new TerminateVmVilleinListener(this), terminateFilter);
-        this.addPacketListener(new EvaluateVilleinListener(this), evaluateFilter);
         this.addPacketListener(new JobStatusVilleinListener(this), jobStatusFilter);
         this.addPacketListener(new AbortJobVilleinListener(this), abortJobFilter);
         this.addPacketListener(new PresenceListener(this), presenceFilter);

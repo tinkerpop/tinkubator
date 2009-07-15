@@ -185,7 +185,7 @@ public class XMPPSpecificationTest {
 		// now we should have 3 PacketListeners for the VM
 		ArrayList<PacketListener> vm1packetListeners = mockVM1Conn.packetListeners;
 		assertEquals(4, vm1packetListeners.size());
-		assertTrue(vm1packetListeners.get(0) instanceof EvaluateVmListener);
+		assertTrue(vm1packetListeners.get(0) instanceof SubmitJobVmListener);
 		assertTrue(vm1packetListeners.get(1) instanceof JobStatusVmListener);
 		assertTrue(vm1packetListeners.get(2) instanceof AbortJobVmListener);
 		assertTrue(vm1packetListeners.get(3) instanceof TerminateVmVmListener);
@@ -317,7 +317,7 @@ public class XMPPSpecificationTest {
 		String vmJid = vmAcc.getVmJid();
 		
 		// send the eval packet, password missing
-		Evaluate eval = new Evaluate();
+		SubmitJob eval = new SubmitJob();
 		eval.setPacketID(spawnPacketId);
 		eval.setExpression("20 + 52;");
 		eval.setTo(vmJid);
@@ -329,7 +329,7 @@ public class XMPPSpecificationTest {
 		// now, a new packet should have been sent back from the VM
 		assertEquals(1, mockVM1Conn.sentPackets.size());
 		// sent packet should refer to the same pID
-		Evaluate result = (Evaluate) mockVM1Conn.sentPackets.get(0);
+		SubmitJob result = (SubmitJob) mockVM1Conn.sentPackets.get(0);
 		assertEquals(result.getPacketID(), spawnPacketId);
 		assertEquals(IQ.Type.ERROR, result.getType());
 		assertEquals(ErrorType.MALFORMED_PACKET, result.getErrorType());
@@ -343,7 +343,7 @@ public class XMPPSpecificationTest {
 		// now, a new packet should have been sent back from the VM
 		assertEquals(1, mockVM1Conn.sentPackets.size());
 		// sent packet should refer to the same pID
-		result = (Evaluate) mockVM1Conn.sentPackets.get(0);
+		result = (SubmitJob) mockVM1Conn.sentPackets.get(0);
 		assertEquals(result.getPacketID(), spawnPacketId);
 		assertEquals(IQ.Type.ERROR, result.getType());
 		assertEquals(ErrorType.WRONG_VM_PASSWORD, result.getErrorType());
@@ -357,7 +357,7 @@ public class XMPPSpecificationTest {
 		// now, a new packet should have been sent back from the VM
 		assertEquals(1, mockVM1Conn.sentPackets.size());
 		// sent packet should refer to the same pID
-		result = (Evaluate) mockVM1Conn.sentPackets.get(0);
+		result = (SubmitJob) mockVM1Conn.sentPackets.get(0);
 		assertEquals(result.getPacketID(), spawnPacketId);
 		assertEquals(IQ.Type.RESULT, result.getType());
 		assertEquals("72.0", result.getExpression());
@@ -371,7 +371,7 @@ public class XMPPSpecificationTest {
 		// now, a new packet should have been sent back from the VM
 		assertEquals(1, mockVM1Conn.sentPackets.size());
 		// sent packet should refer to the same pID
-		result = (Evaluate) mockVM1Conn.sentPackets.get(0);
+		result = (SubmitJob) mockVM1Conn.sentPackets.get(0);
 		assertEquals(result.getPacketID(), spawnPacketId);
 		assertEquals(IQ.Type.ERROR, result.getType());
 		assertEquals(ErrorType.EVALUATION_ERROR, result.getErrorType());

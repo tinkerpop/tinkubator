@@ -4,15 +4,8 @@ import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
 import gov.lanl.cnls.linkedprocess.gui.LoginArea;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.XmppVillein;
 
-import javax.swing.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.*;
-import java.util.Properties;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.File;
 
 import org.jivesoftware.smack.XMPPException;
 
@@ -39,7 +32,7 @@ public class VilleinLoginArea extends LoginArea {
             if(event.getActionCommand().equals("login")) {
                 this.statusLabel.setText("");
                 XmppVillein villein = new XmppVillein(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText());
-                this.villeinGui.loadBuddyArea(villein);
+                this.villeinGui.loadHostArea(villein);
             } else if (event.getActionCommand().equals("quit")) {
                 System.exit(0);
             }

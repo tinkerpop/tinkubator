@@ -10,14 +10,7 @@ import gov.lanl.cnls.linkedprocess.xmpp.villein.HostStruct;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.Struct;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.VmStruct;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -33,17 +26,16 @@ import java.awt.event.MouseListener;
  * Date: Jul 7, 2009
  * Time: 11:13:22 PM
  */
-public class BuddyArea extends JPanel implements ActionListener, MouseListener {
+public class HostArea extends JPanel implements ActionListener, MouseListener {
 
     protected VilleinGui villeinGui;
     protected JTreeImage tree;
-    protected JTextField addBuddyField;
+    protected JTextField addHostField;
     protected JPopupMenu popupMenu;
     protected Object popupTreeObject;
     protected DefaultMutableTreeNode treeRoot;
-    protected DefaultMutableTreeNode villeinNode;
 
-    public BuddyArea(VilleinGui villeinGui) {
+    public HostArea(VilleinGui villeinGui) {
         this.villeinGui = villeinGui;
         HostStruct hostStruct = new HostStruct();
         hostStruct.setFullJid(LinkedProcess.generateBareJid(this.villeinGui.getXmppVillein().getFullJid()));
@@ -52,18 +44,19 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
         this.tree.setCellRenderer(new TreeRenderer());
         this.tree.setModel(new DefaultTreeModel(treeRoot));
         this.tree.addMouseListener(this);
+        this.tree.setRootVisible(false);
         this.popupMenu = new JPopupMenu();
         this.popupMenu.setBorder(BorderFactory.createLineBorder(ImageHolder.GRAY_COLOR, 2));
 
         JScrollPane vmTreeScroll = new JScrollPane(this.tree);
         JButton shutdownButton = new JButton("shutdown");
-        JButton addFarmButton = new JButton("add farm");
+        JButton addHostButton = new JButton("add host");
         shutdownButton.addActionListener(this);
-        addFarmButton.addActionListener(this);
+        addHostButton.addActionListener(this);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        this.addBuddyField = new JTextField(15);
-        buttonPanel.add(this.addBuddyField);
-        buttonPanel.add(addFarmButton);
+        this.addHostField = new JTextField(15);
+        buttonPanel.add(this.addHostField);
+        buttonPanel.add(addHostButton);
         buttonPanel.add(shutdownButton);
 
         shutdownButton.addActionListener(this);
@@ -82,9 +75,9 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
     public void actionPerformed(ActionEvent event) {
 
         this.popupMenu.setVisible(false);
-        if (event.getActionCommand().equals("add farm")) {
-            if (this.addBuddyField.getText() != null && this.addBuddyField.getText().length() > 0)
-                this.villeinGui.getXmppVillein().requestSubscription(this.addBuddyField.getText());
+        if (event.getActionCommand().equals("add host")) {
+            if (this.addHostField.getText() != null && this.addHostField.getText().length() > 0)
+                this.villeinGui.getXmppVillein().requestSubscription(this.addHostField.getText());
         } else if (event.getActionCommand().equals("unsubscribe")) {
             if (this.popupTreeObject instanceof HostStruct) {
                 String jid = ((HostStruct) this.popupTreeObject).getFullJid();
@@ -95,10 +88,28 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
             if (this.popupTreeObject instanceof VmStruct) {
                 this.villeinGui.getXmppVillein().terminateVirtualMachine((VmStruct) this.popupTreeObject);
             }
+        } else if (event.getActionCommand().equals("open vm controls")) {
+
+                if (this.popupTreeObject instanceof VmStruct) {
+                    VmStruct vmStruct = (VmStruct)this.popupTreeObject;
+                    VmFrame vmFrame = this.villeinGui.getVmFrame(vmStruct.getFullJid());
+                    if(vmFrame == null) {
+                        this.villeinGui.addVmFrame(vmStruct);
+                    } else {
+                        vmFrame.setVisible(true);
+                    }
+
+                }
+            
         } else if (event.getActionCommand().equals(LinkedProcess.JAVASCRIPT)) {
             if (this.popupTreeObject instanceof FarmStruct) {
                 String farmJid = ((FarmStruct) this.popupTreeObject).getFullJid();
                 this.villeinGui.getXmppVillein().spawnVirtualMachine(farmJid, LinkedProcess.JAVASCRIPT);
+            }
+        } else if (event.getActionCommand().equals(LinkedProcess.PYTHON)) {
+            if (this.popupTreeObject instanceof FarmStruct) {
+                String farmJid = ((FarmStruct) this.popupTreeObject).getFullJid();
+                this.villeinGui.getXmppVillein().spawnVirtualMachine(farmJid, LinkedProcess.PYTHON);
             }
         } else if (event.getActionCommand().equals("shutdown")) {
 
@@ -112,7 +123,6 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
     public void createTree() {
         treeRoot.removeAllChildren();
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-        this.villeinNode = new DefaultMutableTreeNode(this.villeinGui.getXmppVillein());
         for (HostStruct hostStruct : this.villeinGui.getXmppVillein().getHostStructs()) {
             DefaultMutableTreeNode hostNode = new DefaultMutableTreeNode(hostStruct);
             for (FarmStruct farmStruct : hostStruct.getFarmStructs()) {
@@ -140,11 +150,9 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
                 this.tree.scrollPathToVisible(new TreePath(farmNode.getPath()));
             }
 
-            model.insertNodeInto(hostNode, villeinNode, villeinNode.getChildCount());
+            model.insertNodeInto(hostNode, this.treeRoot, this.treeRoot.getChildCount());
             this.tree.scrollPathToVisible(new TreePath(hostNode.getPath()));
         }
-        model.insertNodeInto(villeinNode, this.treeRoot, this.treeRoot.getChildCount());
-        this.tree.scrollPathToVisible(new TreePath(villeinNode.getPath()));
         model.reload();
     }
 
@@ -217,7 +225,7 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
                 Struct struct = this.villeinGui.getXmppVillein().getStruct(jid);
                 if (struct instanceof HostStruct) {
                     DefaultMutableTreeNode hostNode = new DefaultMutableTreeNode(struct);
-                    model.insertNodeInto(hostNode, villeinNode, villeinNode.getChildCount());
+                    model.insertNodeInto(hostNode, this.treeRoot, this.treeRoot.getChildCount());
                     this.tree.scrollPathToVisible(new TreePath(hostNode.getPath()));
                     model.reload(hostNode);
                 } else if (struct instanceof FarmStruct) {
@@ -272,15 +280,18 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
         int x = event.getX();
         int y = event.getY();
 
+
+
         int selectedRow = tree.getRowForLocation(x, y);
         if (selectedRow != -1) {
+
+            TreePath selectedPath = tree.getPathForLocation(x, y);
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
+            this.popupTreeObject = selectedNode.getUserObject();
+
             if (event.getButton() == MouseEvent.BUTTON3 && event.getClickCount() == 1) {
-                TreePath selectedPath = tree.getPathForLocation(x, y);
-                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
-                Object nodeObject = selectedNode.getUserObject();
-                if (nodeObject instanceof HostStruct) {
-                    this.popupTreeObject = nodeObject;
-                    popupMenu.removeAll();
+                this.popupMenu.removeAll();
+                if (this.popupTreeObject instanceof HostStruct) {
                     JLabel menuLabel = new JLabel("Host");
                     JMenuItem unsubscribeItem = new JMenuItem("unsubscribe");
                     menuLabel.setHorizontalTextPosition(JLabel.CENTER);
@@ -289,42 +300,40 @@ public class BuddyArea extends JPanel implements ActionListener, MouseListener {
                     popupMenu.add(unsubscribeItem);
                     unsubscribeItem.addActionListener(this);
                     popupMenu.setLocation(x + villeinGui.getX(), y + villeinGui.getY());
-                    popupMenu.setVisible(true);
-                } else if (nodeObject instanceof VmStruct) {
-                    this.popupTreeObject = nodeObject;
-                    popupMenu.removeAll();
+                    popupMenu.show(event.getComponent(), event.getX(), event.getY());
+                } else if (this.popupTreeObject instanceof VmStruct) {
                     JLabel menuLabel = new JLabel("Virtual Machine");
                     JMenuItem terminateVmItem = new JMenuItem("terminate vm");
+                    JMenuItem openVmControl = new JMenuItem("open vm controls");
                     menuLabel.setHorizontalTextPosition(JLabel.CENTER);
                     popupMenu.add(menuLabel);
                     popupMenu.addSeparator();
+                    popupMenu.add(openVmControl);
                     popupMenu.add(terminateVmItem);
                     terminateVmItem.addActionListener(this);
+                    openVmControl.addActionListener(this);
                     popupMenu.setLocation(x + villeinGui.getX(), y + villeinGui.getY());
-                    popupMenu.setVisible(true);
-                } else if (nodeObject instanceof FarmStruct) {
-                    this.popupTreeObject = nodeObject;
-                    popupMenu.removeAll();
+                    popupMenu.show(event.getComponent(), event.getX(), event.getY());
+                } else if (this.popupTreeObject instanceof FarmStruct) {
                     JLabel menuLabel = new JLabel("Farm");
-                    JMenuItem spawnItem = new JMenuItem("spawn vm");
+                    JMenu spawnItem = new JMenu("spawn vm");
                     JMenuItem javaScriptItem = new JMenuItem(LinkedProcess.JAVASCRIPT);
+                    JMenuItem pythonScriptItem = new JMenuItem(LinkedProcess.PYTHON);
                     spawnItem.add(javaScriptItem);
+                    spawnItem.add(pythonScriptItem);
                     menuLabel.setHorizontalTextPosition(JLabel.CENTER);
                     popupMenu.add(menuLabel);
                     popupMenu.addSeparator();
                     popupMenu.add(spawnItem);
                     javaScriptItem.addActionListener(this);
+                    pythonScriptItem.addActionListener(this);
                     popupMenu.setLocation(x + villeinGui.getX(), y + villeinGui.getY());
-                    popupMenu.setVisible(true);
-                    // todo: make popup submenu work correctly, though the bug is still functional
+                    popupMenu.show(event.getComponent(), event.getX(), event.getY());
                 }
 
             } else if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
-                TreePath selectedPath = tree.getPathForLocation(x, y);
-                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
-                Object nodeObject = selectedNode.getUserObject();
-                if (nodeObject instanceof VmStruct) {
-                    VmStruct vmStruct = (VmStruct)nodeObject;
+                if (this.popupTreeObject instanceof VmStruct) {
+                    VmStruct vmStruct = (VmStruct)this.popupTreeObject;
                     VmFrame vmFrame = this.villeinGui.getVmFrame(vmStruct.getFullJid());
                     if(vmFrame == null) {
                         this.villeinGui.addVmFrame(vmStruct);
