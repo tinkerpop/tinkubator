@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess.security;
+package org.linkedprocess.security;
 
 /**
  * This is merely a marker class which allows VMSecurityManager to distinguish VM worker threads from all others.

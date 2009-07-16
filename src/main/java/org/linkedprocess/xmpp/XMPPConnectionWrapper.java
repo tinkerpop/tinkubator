@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess.xmpp;
+package org.linkedprocess.xmpp;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.PacketListener;
@@ -10,7 +10,7 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.omg.CORBA.portable.Delegate;
 
-import gov.lanl.cnls.linkedprocess.Connection;
+import org.linkedprocess.Connection;
 
 public class XMPPConnectionWrapper implements Connection {
 

@@ -1,6 +1,6 @@
-package gov.lanl.cnls.linkedprocess.gui.villein;
+package org.linkedprocess.gui.villein;
 
-import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
+import org.linkedprocess.gui.ImageHolder;
 
 import javax.swing.*;
 import java.awt.*;

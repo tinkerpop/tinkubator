@@ -1,7 +1,7 @@
-package gov.lanl.cnls.linkedprocess.xmpp;
+package org.linkedprocess.xmpp;
 
-import gov.lanl.cnls.linkedprocess.Connection;
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import org.linkedprocess.Connection;
+import org.linkedprocess.LinkedProcess;
 
 import java.util.Iterator;
 import java.util.Random;

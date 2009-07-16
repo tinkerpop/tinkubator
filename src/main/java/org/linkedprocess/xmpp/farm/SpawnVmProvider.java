@@ -1,10 +1,10 @@
-package gov.lanl.cnls.linkedprocess.xmpp.farm;
+package org.linkedprocess.xmpp.farm;
 
 import org.jivesoftware.smack.provider.IQProvider;
 import org.jivesoftware.smack.packet.IQ;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import org.linkedprocess.LinkedProcess;
 
 import java.io.IOException;
 

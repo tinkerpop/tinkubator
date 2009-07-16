@@ -1,6 +1,6 @@
-package gov.lanl.cnls.linkedprocess.security;
+package org.linkedprocess.security;
 
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import org.linkedprocess.LinkedProcess;
 import junit.framework.TestCase;
 import org.jdom.output.XMLOutputter;
 
@@ -15,7 +15,7 @@ public class ServiceDiscoveryConfigurationTest extends TestCase {
     public void testAll() throws Exception {
         Properties p = new Properties();
         p.load(VMSecurityManager.class.getResourceAsStream(LinkedProcess.SECURITYDEFAULT_PROPERTIES));
-        p.setProperty("gov.lanl.cnls.linkedprocess.security.read", "true");
+        p.setProperty("org.linkedprocess.security.read", "true");
 
         VMSecurityManager m = new VMSecurityManager(p);
         PathPermissions pp = new PathPermissions();

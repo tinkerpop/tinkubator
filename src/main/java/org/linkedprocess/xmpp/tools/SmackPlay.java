@@ -1,10 +1,10 @@
-package gov.lanl.cnls.linkedprocess.xmpp.tools;
+package org.linkedprocess.xmpp.tools;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
-import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
+import org.linkedprocess.xmpp.XmppClient;
 
 public class SmackPlay {
     

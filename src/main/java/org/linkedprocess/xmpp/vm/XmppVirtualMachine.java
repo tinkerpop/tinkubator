@@ -1,13 +1,13 @@
-package gov.lanl.cnls.linkedprocess.xmpp.vm;
+package org.linkedprocess.xmpp.vm;
 
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import gov.lanl.cnls.linkedprocess.os.Job;
-import gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException;
-import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerIsFullException;
-import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
-import gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException;
-import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
-import gov.lanl.cnls.linkedprocess.xmpp.farm.XmppFarm;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.os.Job;
+import org.linkedprocess.os.errors.JobNotFoundException;
+import org.linkedprocess.os.errors.VMWorkerIsFullException;
+import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.os.errors.JobAlreadyExistsException;
+import org.linkedprocess.xmpp.XmppClient;
+import org.linkedprocess.xmpp.farm.XmppFarm;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.IQTypeFilter;

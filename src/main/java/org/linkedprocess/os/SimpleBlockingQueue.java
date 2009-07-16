@@ -1,6 +1,6 @@
-package gov.lanl.cnls.linkedprocess.os;
+package org.linkedprocess.os;
 
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import org.linkedprocess.LinkedProcess;
 
 import java.util.LinkedList;
 import java.util.Queue;

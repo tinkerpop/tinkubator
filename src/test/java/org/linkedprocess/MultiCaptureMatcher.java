@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess;
+package org.linkedprocess;
 import static org.easymock.EasyMock.reportMatcher;
 
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess.security;
+package org.linkedprocess.security;
 
 import java.util.Collection;
 import java.util.LinkedList;

@@ -1,9 +1,9 @@
-package gov.lanl.cnls.linkedprocess;
+package org.linkedprocess;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import gov.lanl.cnls.linkedprocess.xmpp.XMPPConnectionWrapper;
+import org.linkedprocess.xmpp.XMPPConnectionWrapper;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.PacketListener;

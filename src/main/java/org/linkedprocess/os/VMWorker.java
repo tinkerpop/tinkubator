@@ -1,9 +1,9 @@
-package gov.lanl.cnls.linkedprocess.os;
+package org.linkedprocess.os;
 
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException;
-import gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException;
-import gov.lanl.cnls.linkedprocess.security.VMSandboxedThread;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.os.errors.JobAlreadyExistsException;
+import org.linkedprocess.os.errors.JobNotFoundException;
+import org.linkedprocess.security.VMSandboxedThread;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
@@ -126,7 +126,7 @@ public class VMWorker {
      * @param job the job to add
      * @return whether the job has been added to the worker's queue (if not,
      *         then the queue is full)
-     * @throws gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException
+     * @throws org.linkedprocess.os.errors.JobAlreadyExistsException
      *          if a job with the given ID is already active or in the queue
      */
     public synchronized boolean addJob(final Job job) throws JobAlreadyExistsException {
@@ -268,7 +268,7 @@ public class VMWorker {
      * Cancels a specific job.
      *
      * @param jobID the ID of the job to be aborted
-     * @throws gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException
+     * @throws org.linkedprocess.os.errors.JobNotFoundException
      *          if no such job exsts
      */
     public synchronized void abortJob(final String jobID) throws JobNotFoundException {

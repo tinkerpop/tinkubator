@@ -1,6 +1,6 @@
-package gov.lanl.cnls.linkedprocess.xmpp.villein;
+package org.linkedprocess.xmpp.villein;
 
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import org.linkedprocess.LinkedProcess;
 
 import java.util.Map;
 import java.util.HashMap;

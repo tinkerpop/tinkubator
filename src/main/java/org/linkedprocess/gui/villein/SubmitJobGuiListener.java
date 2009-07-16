@@ -1,9 +1,9 @@
-package gov.lanl.cnls.linkedprocess.gui.villein;
+package org.linkedprocess.gui.villein;
 
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Packet;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.SubmitJob;
-import gov.lanl.cnls.linkedprocess.xmpp.villein.XmppVillein;
+import org.linkedprocess.xmpp.vm.SubmitJob;
+import org.linkedprocess.xmpp.villein.XmppVillein;
 
 /**
  * User: marko

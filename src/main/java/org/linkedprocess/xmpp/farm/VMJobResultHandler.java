@@ -1,11 +1,11 @@
-package gov.lanl.cnls.linkedprocess.xmpp.farm;
+package org.linkedprocess.xmpp.farm;
 
-import gov.lanl.cnls.linkedprocess.xmpp.vm.XmppVirtualMachine;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.SubmitJob;
-import gov.lanl.cnls.linkedprocess.os.JobResult;
-import gov.lanl.cnls.linkedprocess.os.VMScheduler;
-import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
+import org.linkedprocess.xmpp.vm.SubmitJob;
+import org.linkedprocess.os.JobResult;
+import org.linkedprocess.os.VMScheduler;
+import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.LinkedProcess;
 import org.jivesoftware.smack.packet.IQ;
 
 /**

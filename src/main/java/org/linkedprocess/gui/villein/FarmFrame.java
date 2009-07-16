@@ -1,7 +1,7 @@
-package gov.lanl.cnls.linkedprocess.gui.villein;
+package org.linkedprocess.gui.villein;
 
-import gov.lanl.cnls.linkedprocess.xmpp.villein.FarmStruct;
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.villein.FarmStruct;
+import org.linkedprocess.LinkedProcess;
 
 import javax.swing.*;
 

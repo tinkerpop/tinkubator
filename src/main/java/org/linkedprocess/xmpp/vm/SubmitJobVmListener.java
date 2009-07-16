@@ -1,10 +1,10 @@
-package gov.lanl.cnls.linkedprocess.xmpp.vm;
+package org.linkedprocess.xmpp.vm;
 
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import gov.lanl.cnls.linkedprocess.os.Job;
-import gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException;
-import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerIsFullException;
-import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.os.Job;
+import org.linkedprocess.os.errors.JobAlreadyExistsException;
+import org.linkedprocess.os.errors.VMWorkerIsFullException;
+import org.linkedprocess.os.errors.VMWorkerNotFoundException;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;

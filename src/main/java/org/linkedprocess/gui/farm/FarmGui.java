@@ -1,8 +1,8 @@
-package gov.lanl.cnls.linkedprocess.gui.farm;
+package org.linkedprocess.gui.farm;
 
-import gov.lanl.cnls.linkedprocess.xmpp.farm.XmppFarm;
-import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.farm.XmppFarm;
+import org.linkedprocess.gui.ImageHolder;
+import org.linkedprocess.LinkedProcess;
 
 import javax.swing.JFrame;
 import java.awt.MenuItem;

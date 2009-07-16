@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess.os.errors;
+package org.linkedprocess.os.errors;
 
 /**
  * Author: josh

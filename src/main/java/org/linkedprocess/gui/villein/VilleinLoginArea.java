@@ -1,8 +1,8 @@
-package gov.lanl.cnls.linkedprocess.gui.villein;
+package org.linkedprocess.gui.villein;
 
-import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
-import gov.lanl.cnls.linkedprocess.gui.LoginArea;
-import gov.lanl.cnls.linkedprocess.xmpp.villein.XmppVillein;
+import org.linkedprocess.gui.ImageHolder;
+import org.linkedprocess.gui.LoginArea;
+import org.linkedprocess.xmpp.villein.XmppVillein;
 
 import java.awt.event.ActionEvent;
 import java.awt.*;

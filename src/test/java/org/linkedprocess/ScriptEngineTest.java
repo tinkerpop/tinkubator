@@ -1,9 +1,9 @@
-package gov.lanl.cnls.linkedprocess;
+package org.linkedprocess;
 
 import com.sun.phobos.script.javascript.RhinoScriptEngine;
 import com.sun.script.jruby.JRubyScriptEngine;
 import com.sun.script.jython.JythonScriptEngine;
-import gov.lanl.cnls.linkedprocess.os.errors.UnsupportedScriptEngineException;
+import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
 import junit.framework.TestCase;
 
 import javax.script.Bindings;

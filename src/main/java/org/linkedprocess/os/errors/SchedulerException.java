@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess.os.errors;
+package org.linkedprocess.os.errors;
 
 /**
  * An exception representing an error condition which is the reponsibility of the client application.

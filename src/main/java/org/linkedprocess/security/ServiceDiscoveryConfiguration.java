@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess.security;
+package org.linkedprocess.security;
 
 import org.jdom.Element;
 import org.jivesoftware.smackx.FormField;

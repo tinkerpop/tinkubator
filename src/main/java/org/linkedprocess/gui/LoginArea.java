@@ -1,7 +1,7 @@
-package gov.lanl.cnls.linkedprocess.gui;
+package org.linkedprocess.gui;
 
-import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
-import gov.lanl.cnls.linkedprocess.xmpp.villein.XmppVillein;
+import org.linkedprocess.gui.ImageHolder;
+import org.linkedprocess.xmpp.villein.XmppVillein;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;

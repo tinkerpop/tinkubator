@@ -1,7 +1,7 @@
-package gov.lanl.cnls.linkedprocess.gui.villein;
+package org.linkedprocess.gui.villein;
 
-import gov.lanl.cnls.linkedprocess.xmpp.villein.XmppVillein;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.AbortJob;
+import org.linkedprocess.xmpp.villein.XmppVillein;
+import org.linkedprocess.xmpp.vm.AbortJob;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.PacketListener;
 

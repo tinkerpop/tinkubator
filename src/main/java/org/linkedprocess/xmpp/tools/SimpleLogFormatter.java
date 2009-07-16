@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess.xmpp.tools;
+package org.linkedprocess.xmpp.tools;
 
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;

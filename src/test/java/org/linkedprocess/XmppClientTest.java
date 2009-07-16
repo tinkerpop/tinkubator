@@ -1,7 +1,7 @@
-package gov.lanl.cnls.linkedprocess;
+package org.linkedprocess;
 
 import junit.framework.TestCase;
-import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
+import org.linkedprocess.xmpp.XmppClient;
 
 import java.util.Set;
 import java.util.HashSet;

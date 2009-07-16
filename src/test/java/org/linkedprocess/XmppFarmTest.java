@@ -1,7 +1,7 @@
-package gov.lanl.cnls.linkedprocess;
+package org.linkedprocess;
 
-import gov.lanl.cnls.linkedprocess.xmpp.farm.SpawnVm;
-import gov.lanl.cnls.linkedprocess.xmpp.farm.XmppFarm;
+import org.linkedprocess.xmpp.farm.SpawnVm;
+import org.linkedprocess.xmpp.farm.XmppFarm;
 import junit.framework.TestCase;
 import org.jivesoftware.smack.XMPPConnection;
 import org.junit.After;

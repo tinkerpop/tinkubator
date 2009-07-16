@@ -1,15 +1,15 @@
-package gov.lanl.cnls.linkedprocess;
+package org.linkedprocess;
 
-import gov.lanl.cnls.linkedprocess.LinkedProcess.ErrorType;
-import gov.lanl.cnls.linkedprocess.xmpp.XMPPConnectionWrapper;
-import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
-import gov.lanl.cnls.linkedprocess.xmpp.farm.PresenceSubscriptionListener;
-import gov.lanl.cnls.linkedprocess.xmpp.farm.SpawnVm;
-import gov.lanl.cnls.linkedprocess.xmpp.farm.SpawnVmFarmListener;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.TerminateVm;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.TerminateVmVmListener;
-import gov.lanl.cnls.linkedprocess.xmpp.farm.XmppFarm;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.*;
+import org.linkedprocess.LinkedProcess.ErrorType;
+import org.linkedprocess.xmpp.XMPPConnectionWrapper;
+import org.linkedprocess.xmpp.XmppClient;
+import org.linkedprocess.xmpp.farm.PresenceSubscriptionListener;
+import org.linkedprocess.xmpp.farm.SpawnVm;
+import org.linkedprocess.xmpp.farm.SpawnVmFarmListener;
+import org.linkedprocess.xmpp.vm.TerminateVm;
+import org.linkedprocess.xmpp.vm.TerminateVmVmListener;
+import org.linkedprocess.xmpp.farm.XmppFarm;
+import org.linkedprocess.xmpp.vm.*;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;

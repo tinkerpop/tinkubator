@@ -1,9 +1,9 @@
-package gov.lanl.cnls.linkedprocess.xmpp.farm;
+package org.linkedprocess.xmpp.farm;
 
-import gov.lanl.cnls.linkedprocess.os.VMScheduler;
-import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.XmppVirtualMachine;
+import org.linkedprocess.os.VMScheduler;
+import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 /**
  * User: marko

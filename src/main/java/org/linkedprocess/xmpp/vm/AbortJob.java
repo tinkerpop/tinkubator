@@ -1,7 +1,7 @@
-package gov.lanl.cnls.linkedprocess.xmpp.vm;
+package org.linkedprocess.xmpp.vm;
 
 import org.jdom.Element;
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import org.linkedprocess.LinkedProcess;
 
 /**
  * User: marko

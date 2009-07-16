@@ -1,10 +1,10 @@
-package gov.lanl.cnls.linkedprocess.xmpp.farm;
+package org.linkedprocess.xmpp.farm;
 
-import gov.lanl.cnls.linkedprocess.os.errors.UnsupportedScriptEngineException;
-import gov.lanl.cnls.linkedprocess.os.errors.VMAlreadyExistsException;
-import gov.lanl.cnls.linkedprocess.os.errors.VMSchedulerIsFullException;
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.XmppVirtualMachine;
+import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
+import org.linkedprocess.os.errors.VMAlreadyExistsException;
+import org.linkedprocess.os.errors.VMSchedulerIsFullException;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;

@@ -1,10 +1,10 @@
-package gov.lanl.cnls.linkedprocess.xmpp.villein;
+package org.linkedprocess.xmpp.villein;
 
-import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
-import gov.lanl.cnls.linkedprocess.xmpp.ProbePresence;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.*;
-import gov.lanl.cnls.linkedprocess.xmpp.farm.*;
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.XmppClient;
+import org.linkedprocess.xmpp.ProbePresence;
+import org.linkedprocess.xmpp.vm.*;
+import org.linkedprocess.xmpp.farm.*;
+import org.linkedprocess.LinkedProcess;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;

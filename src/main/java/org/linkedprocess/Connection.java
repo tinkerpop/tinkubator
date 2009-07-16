@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess;
+package org.linkedprocess;
 
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;

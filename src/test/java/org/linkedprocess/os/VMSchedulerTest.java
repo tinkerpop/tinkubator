@@ -1,10 +1,10 @@
-package gov.lanl.cnls.linkedprocess.os;
+package org.linkedprocess.os;
 
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException;
-import gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException;
-import gov.lanl.cnls.linkedprocess.os.errors.VMAlreadyExistsException;
-import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.os.errors.JobAlreadyExistsException;
+import org.linkedprocess.os.errors.JobNotFoundException;
+import org.linkedprocess.os.errors.VMAlreadyExistsException;
+import org.linkedprocess.os.errors.VMWorkerNotFoundException;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;

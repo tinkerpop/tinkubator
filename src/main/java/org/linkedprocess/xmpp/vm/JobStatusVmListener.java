@@ -1,8 +1,8 @@
-package gov.lanl.cnls.linkedprocess.xmpp.vm;
+package org.linkedprocess.xmpp.vm;
 
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
-import gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.os.errors.JobNotFoundException;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;

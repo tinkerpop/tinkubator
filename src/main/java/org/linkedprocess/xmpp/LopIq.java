@@ -1,6 +1,6 @@
-package gov.lanl.cnls.linkedprocess.xmpp;
+package org.linkedprocess.xmpp;
 
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import org.linkedprocess.LinkedProcess;
 import org.jivesoftware.smack.packet.IQ;
 import org.jdom.output.XMLOutputter;
 import org.jdom.Document;

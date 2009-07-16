@@ -1,7 +1,7 @@
-package gov.lanl.cnls.linkedprocess;
+package org.linkedprocess;
 
-import gov.lanl.cnls.linkedprocess.os.JobResult;
-import gov.lanl.cnls.linkedprocess.security.VMSecurityManager;
+import org.linkedprocess.os.JobResult;
+import org.linkedprocess.security.VMSecurityManager;
 import org.jdom.output.XMLOutputter;
 import org.jdom.output.Format;
 import org.jdom.input.SAXBuilder;
@@ -163,13 +163,13 @@ public class LinkedProcess {
     public static final int HIGHEST_PRIORITY = 127;
 
     public static final String
-            MAX_CONCURRENT_WORKER_THREADS = "gov.lanl.cnls.linkedprocess.maxConcurrentWorkerThreads",
-            MAX_TIME_SPENT_PER_JOB = "gov.lanl.cnls.linkedprocess.maxTimeSpentPerJob",
-            MAX_VIRTUAL_MACHINES_PER_SCHEDULER = "gov.lanl.cnls.linkedprocess.maxVirtualMachinesPerScheduler",
-            MESSAGE_QUEUE_CAPACITY = "gov.lanl.cnls.linkedprocess.messageQueueCapacity",
-            ROUND_ROBIN_TIME_SLICE = "gov.lanl.cnls.linkedprocess.roundRobinTimeSlice",
-            VM_TIMEOUT = "gov.lanl.cnls.linkedprocess.virtualMachineTimeout",
-            SCHEDULER_CLEANUP_INTERVAL = "gov.lanl.cnls.linkedprocess.schedulerCleanupInterval";
+            MAX_CONCURRENT_WORKER_THREADS = "org.linkedprocess.maxConcurrentWorkerThreads",
+            MAX_TIME_SPENT_PER_JOB = "org.linkedprocess.maxTimeSpentPerJob",
+            MAX_VIRTUAL_MACHINES_PER_SCHEDULER = "org.linkedprocess.maxVirtualMachinesPerScheduler",
+            MESSAGE_QUEUE_CAPACITY = "org.linkedprocess.messageQueueCapacity",
+            ROUND_ROBIN_TIME_SLICE = "org.linkedprocess.roundRobinTimeSlice",
+            VM_TIMEOUT = "org.linkedprocess.virtualMachineTimeout",
+            SCHEDULER_CLEANUP_INTERVAL = "org.linkedprocess.schedulerCleanupInterval";
 
     private static final Properties PROPERTIES = new Properties();
     private static final Logger LOGGER;

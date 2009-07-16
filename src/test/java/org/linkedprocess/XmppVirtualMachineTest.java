@@ -1,10 +1,10 @@
-package gov.lanl.cnls.linkedprocess;
+package org.linkedprocess;
 
-import gov.lanl.cnls.linkedprocess.xmpp.farm.XmppFarm;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.AbortJob;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.SubmitJob;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.XmppVirtualMachine;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.TerminateVm;
+import org.linkedprocess.xmpp.farm.XmppFarm;
+import org.linkedprocess.xmpp.vm.AbortJob;
+import org.linkedprocess.xmpp.vm.SubmitJob;
+import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
+import org.linkedprocess.xmpp.vm.TerminateVm;
 import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;

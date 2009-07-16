@@ -1,13 +1,13 @@
-package gov.lanl.cnls.linkedprocess.os;
+package org.linkedprocess.os;
 
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException;
-import gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException;
-import gov.lanl.cnls.linkedprocess.os.errors.UnsupportedScriptEngineException;
-import gov.lanl.cnls.linkedprocess.os.errors.VMAlreadyExistsException;
-import gov.lanl.cnls.linkedprocess.os.errors.VMSchedulerIsFullException;
-import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerIsFullException;
-import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.os.errors.JobAlreadyExistsException;
+import org.linkedprocess.os.errors.JobNotFoundException;
+import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
+import org.linkedprocess.os.errors.VMAlreadyExistsException;
+import org.linkedprocess.os.errors.VMSchedulerIsFullException;
+import org.linkedprocess.os.errors.VMWorkerIsFullException;
+import org.linkedprocess.os.errors.VMWorkerNotFoundException;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -99,11 +99,11 @@ public class VMScheduler {
      *
      * @param machineJID the JID of the virtual machine to execute the job
      * @param job        the job to execute
-     * @throws gov.lanl.cnls.linkedprocess.os.errors.VMWorkerIsFullException
+     * @throws org.linkedprocess.os.errors.VMWorkerIsFullException
      *          if the VM in question has a full queue
-     * @throws gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException
+     * @throws org.linkedprocess.os.errors.VMWorkerNotFoundException
      *          if no such VM exists
-     * @throws gov.lanl.cnls.linkedprocess.os.errors.JobAlreadyExistsException
+     * @throws org.linkedprocess.os.errors.JobAlreadyExistsException
      *          if a job with the given ID already exists on the machine with the given ID
      */
     public synchronized void scheduleJob(final String machineJID,
@@ -132,9 +132,9 @@ public class VMScheduler {
      *
      * @param machineJID the machine who was to have received the job
      * @param jobID      the ID of the specific job to be removed
-     * @throws gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException
+     * @throws org.linkedprocess.os.errors.JobNotFoundException
      *          if no job with the specified ID exists
-     * @throws gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException
+     * @throws org.linkedprocess.os.errors.VMWorkerNotFoundException
      *          if no VM worker with the specified JID exists
      */
     public synchronized void abortJob(final String machineJID,
@@ -157,11 +157,11 @@ public class VMScheduler {
      *
      * @param machineJID the intended JID of the virtual machine
      * @param scriptType the type of virtual machine to create
-     * @throws gov.lanl.cnls.linkedprocess.os.errors.UnsupportedScriptEngineException
+     * @throws org.linkedprocess.os.errors.UnsupportedScriptEngineException
      *          if the given script engine is not supported
-     * @throws gov.lanl.cnls.linkedprocess.os.errors.VMAlreadyExistsException
+     * @throws org.linkedprocess.os.errors.VMAlreadyExistsException
      *          if a VM with the given JID already exists in this scheduler
-     * @throws gov.lanl.cnls.linkedprocess.os.errors.VMSchedulerIsFullException
+     * @throws org.linkedprocess.os.errors.VMSchedulerIsFullException
      *          if the scheduler cannot create additional virtual machines
      */
     public synchronized void spawnVirtualMachine(final String machineJID,
@@ -209,7 +209,7 @@ public class VMScheduler {
      * Destroys an already-created virtual machine.
      *
      * @param machineJID the JID of the virtual machine to destroy
-     * @throws gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException
+     * @throws org.linkedprocess.os.errors.VMWorkerNotFoundException
      *          if a VM worker with the JID does not exist
      */
     public synchronized void terminateVirtualMachine(final String machineJID) throws VMWorkerNotFoundException {
@@ -255,9 +255,9 @@ public class VMScheduler {
      * @param machineJID the JID of the machine to execute the job
      * @param jobID      the ID of the job of interest
      * @return the status of the given job
-     * @throws gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException
+     * @throws org.linkedprocess.os.errors.VMWorkerNotFoundException
      *          if no VM worker with the given JID exists
-     * @throws gov.lanl.cnls.linkedprocess.os.errors.JobNotFoundException
+     * @throws org.linkedprocess.os.errors.JobNotFoundException
      *          if no job with the given ID exists
      */
     public synchronized LinkedProcess.JobStatus getJobStatus(final String machineJID,

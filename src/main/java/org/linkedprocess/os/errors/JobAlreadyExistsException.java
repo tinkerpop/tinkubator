@@ -1,6 +1,6 @@
-package gov.lanl.cnls.linkedprocess.os.errors;
+package org.linkedprocess.os.errors;
 
-import gov.lanl.cnls.linkedprocess.os.Job;
+import org.linkedprocess.os.Job;
 
 /**
  * Author: josh

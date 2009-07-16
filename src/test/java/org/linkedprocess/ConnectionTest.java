@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess;
+package org.linkedprocess;
 
 import junit.framework.TestCase;
 

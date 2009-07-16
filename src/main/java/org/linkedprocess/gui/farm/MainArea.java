@@ -1,12 +1,12 @@
-package gov.lanl.cnls.linkedprocess.gui.farm;
+package org.linkedprocess.gui.farm;
 
-import gov.lanl.cnls.linkedprocess.xmpp.vm.XmppVirtualMachine;
-import gov.lanl.cnls.linkedprocess.xmpp.villein.HostStruct;
-import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
-import gov.lanl.cnls.linkedprocess.gui.JTreeImage;
-import gov.lanl.cnls.linkedprocess.gui.TreeNodeProperty;
-import gov.lanl.cnls.linkedprocess.gui.TreeRenderer;
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
+import org.linkedprocess.xmpp.villein.HostStruct;
+import org.linkedprocess.gui.ImageHolder;
+import org.linkedprocess.gui.JTreeImage;
+import org.linkedprocess.gui.TreeNodeProperty;
+import org.linkedprocess.gui.TreeRenderer;
+import org.linkedprocess.LinkedProcess;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;

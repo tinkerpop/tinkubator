@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess.os;
+package org.linkedprocess.os;
 
 /**
  * Author: josh

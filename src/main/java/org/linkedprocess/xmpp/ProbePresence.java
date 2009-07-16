@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess.xmpp;
+package org.linkedprocess.xmpp;
 
 import org.jivesoftware.smack.packet.Presence;
 

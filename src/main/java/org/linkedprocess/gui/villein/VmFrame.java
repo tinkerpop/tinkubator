@@ -1,9 +1,9 @@
-package gov.lanl.cnls.linkedprocess.gui.villein;
+package org.linkedprocess.gui.villein;
 
-import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
-import gov.lanl.cnls.linkedprocess.xmpp.villein.VmStruct;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.AbortJob;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.SubmitJob;
+import org.linkedprocess.gui.ImageHolder;
+import org.linkedprocess.xmpp.villein.VmStruct;
+import org.linkedprocess.xmpp.vm.AbortJob;
+import org.linkedprocess.xmpp.vm.SubmitJob;
 import org.jivesoftware.smack.packet.Packet;
 
 import javax.swing.*;

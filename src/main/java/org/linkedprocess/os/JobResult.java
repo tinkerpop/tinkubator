@@ -1,7 +1,7 @@
-package gov.lanl.cnls.linkedprocess.os;
+package org.linkedprocess.os;
 
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.SubmitJob;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.vm.SubmitJob;
 import org.jivesoftware.smack.packet.IQ;
 
 import java.util.logging.Logger;

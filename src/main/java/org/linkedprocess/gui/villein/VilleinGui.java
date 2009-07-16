@@ -1,10 +1,10 @@
-package gov.lanl.cnls.linkedprocess.gui.villein;
+package org.linkedprocess.gui.villein;
 
-import gov.lanl.cnls.linkedprocess.Connection;
-import gov.lanl.cnls.linkedprocess.xmpp.villein.VmStruct;
-import gov.lanl.cnls.linkedprocess.xmpp.villein.XmppVillein;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.SubmitJob;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.AbortJob;
+import org.linkedprocess.Connection;
+import org.linkedprocess.xmpp.villein.VmStruct;
+import org.linkedprocess.xmpp.villein.XmppVillein;
+import org.linkedprocess.xmpp.vm.SubmitJob;
+import org.linkedprocess.xmpp.vm.AbortJob;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.IQTypeFilter;
 import org.jivesoftware.smack.filter.OrFilter;

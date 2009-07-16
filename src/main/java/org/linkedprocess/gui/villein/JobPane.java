@@ -1,8 +1,8 @@
-package gov.lanl.cnls.linkedprocess.gui.villein;
+package org.linkedprocess.gui.villein;
 
-import gov.lanl.cnls.linkedprocess.xmpp.vm.SubmitJob;
-import gov.lanl.cnls.linkedprocess.xmpp.vm.AbortJob;
-import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
+import org.linkedprocess.xmpp.vm.SubmitJob;
+import org.linkedprocess.xmpp.vm.AbortJob;
+import org.linkedprocess.gui.ImageHolder;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;

@@ -1,6 +1,6 @@
-package gov.lanl.cnls.linkedprocess.xmpp.farm;
+package org.linkedprocess.xmpp.farm;
 
-import gov.lanl.cnls.linkedprocess.xmpp.LopIq;
+import org.linkedprocess.xmpp.LopIq;
 
 /**
  * User: marko

@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess.xmpp.farm;
+package org.linkedprocess.xmpp.farm;
 
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;

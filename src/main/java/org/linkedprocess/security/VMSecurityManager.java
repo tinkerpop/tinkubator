@@ -1,4 +1,4 @@
-package gov.lanl.cnls.linkedprocess.security;
+package org.linkedprocess.security;
 
 import java.io.FileDescriptor;
 import java.net.InetAddress;
@@ -62,7 +62,7 @@ public class VMSecurityManager extends SecurityManager {
         }
 
         public String getPropertyName() {
-            return "gov.lanl.cnls.linkedprocess.security." + this;
+            return "org.linkedprocess.security." + this;
         }
 
         public String getSpecName() {

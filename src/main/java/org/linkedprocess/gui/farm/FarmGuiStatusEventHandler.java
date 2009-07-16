@@ -1,7 +1,7 @@
-package gov.lanl.cnls.linkedprocess.gui.farm;
+package org.linkedprocess.gui.farm;
 
-import gov.lanl.cnls.linkedprocess.xmpp.farm.StatusEventHandler;
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.farm.StatusEventHandler;
+import org.linkedprocess.LinkedProcess;
 
 /**
  * User: marko
