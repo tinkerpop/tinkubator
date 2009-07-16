@@ -1,8 +1,13 @@
 package gov.lanl.cnls.linkedprocess;
 
+import com.sun.phobos.script.javascript.RhinoScriptEngine;
+import com.sun.script.jruby.JRubyScriptEngine;
+import com.sun.script.jython.JythonScriptEngine;
 import gov.lanl.cnls.linkedprocess.os.errors.UnsupportedScriptEngineException;
 import junit.framework.TestCase;
 
+import javax.script.Bindings;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
@@ -44,7 +49,6 @@ public class ScriptEngineTest extends TestCase {
         }
         for (Class c2 : c.getDeclaredClasses()) {
             System.out.println("declared class: " + c2);
-
         }
 
         ScriptEngineManager manager = LinkedProcess.createScriptEngineManager();
@@ -66,4 +70,42 @@ public class ScriptEngineTest extends TestCase {
         engine.eval("print \"Hello, World!\"\n");
     }
 
+    public void testJavaScript() throws Exception {
+        // Note: we're using the "phobos" engine
+        ScriptEngine engine = new RhinoScriptEngine();
+        assertEquals("42", engine.eval("42").toString());
+
+        ScriptEngineManager manager = LinkedProcess.createScriptEngineManager();
+        engine = manager.getEngineByName(LinkedProcess.JAVASCRIPT);
+        System.out.println("" + engine.getClass());
+        assertNotNull(engine);
+        assertEquals("42", engine.eval("42").toString());
+    }
+
+    public void testJython() throws Exception {
+        /*
+        ScriptEngineManager man = LinkedProcess.createScriptEngineManager();
+        ScriptEngine engine = man.getEngineByName(LinkedProcess.PYTHON);
+
+        assertEquals("2", engine.eval("my_list = ['john', 'pat', 'gary', 'michael']").toString());
+        */
+
+        JythonScriptEngine engine = new JythonScriptEngine();
+        //ctx.setBindings();
+        engine.eval("print 42");
+        engine.eval("foo = 1331");
+        ScriptContext ctx = engine.getContext();
+        Bindings b = ctx.getBindings(ScriptContext.ENGINE_SCOPE);
+        System.out.println(b.get("foo"));
+    }
+
+    public void testJRuby() throws Exception {
+        ScriptEngine engine = new JRubyScriptEngine();
+        assertEquals("42", engine.eval("42").toString());
+
+        ScriptEngineManager manager = LinkedProcess.createScriptEngineManager();
+        engine = manager.getEngineByName(LinkedProcess.RUBY);
+        assertNotNull(engine);
+        assertEquals("42", engine.eval("42").toString());
+    }
 }

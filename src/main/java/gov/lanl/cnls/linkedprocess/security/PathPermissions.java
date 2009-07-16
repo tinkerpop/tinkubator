@@ -26,6 +26,11 @@ public class PathPermissions {
 
     public void addDenyRule(final String path) {
         rootNode.addChild(path, DENY);
+
+        /*PathPermissions p = new PathPermissions();
+        p.addPermitRule("/tmp/somedir/somefile");
+        p.addPermitRule("/opt/someotherdir");
+        ((VMSecurityManager) System.getSecurityManager()).setReadPermissions(p);*/
     }
 
     public boolean isPermitted(final String path) {

@@ -173,12 +173,20 @@ public class VMSchedulerTest extends TestCase {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
-        Job job = randomInfiniteJob(vm1);
-        scheduler.scheduleJob(vm1, job);
-        scheduler.abortJob(vm1, job.getJobId());
+        Job job1 = randomInfiniteJob(vm1);
+        scheduler.scheduleJob(vm1, job1);
+        scheduler.abortJob(vm1, job1.getJobId());
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
-        assertCancelledResult(job);
+        assertCancelledResult(job1);
+
+        // Make sure other jobs can still complete normally.
+        Job job2 = this.randomShortRunningJob(vm1);
+        scheduler.scheduleJob(vm1, job2);
+        scheduler.waitUntilFinished();
+        assertEquals(2, resultsByID.size());
+        assertNormalResult(job2);
+
         scheduler.shutDown();
     }
 

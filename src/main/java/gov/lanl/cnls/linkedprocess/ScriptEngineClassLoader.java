@@ -15,6 +15,7 @@ public class ScriptEngineClassLoader extends ClassLoader {
         try {
             loadClass("com.sun.phobos.script.javascript.RhinoScriptEngineFactory");
             loadClass("com.sun.script.jython.JythonScriptEngineFactory");
+            loadClass("com.sun.script.jruby.JRubyScriptEngine");
         } catch (ClassNotFoundException e) {
             LOGGER.severe("failed to load script engine factory classes: " + e);
             System.exit(1);

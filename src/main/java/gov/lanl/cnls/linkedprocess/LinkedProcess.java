@@ -24,7 +24,8 @@ import java.util.logging.Logger;
 public class LinkedProcess {
     public static final String
             JAVASCRIPT = "JavaScript",
-            PYTHON = "jython";
+            PYTHON = "jython",
+            RUBY = "jruby";
 
     // TODO: how about a "queued" status for jobs?
     public enum JobStatus {
@@ -173,7 +174,7 @@ public class LinkedProcess {
     private static final Properties PROPERTIES = new Properties();
     private static final Logger LOGGER;
     private static final String LOP_PROPERTIES = "lop.properties";
-    private static final String SECURITYDEFAULT_PROPERTIES = "security-default.properties";
+    public static final String SECURITYDEFAULT_PROPERTIES = "security-default.properties";
     public static final XMLOutputter xmlOut = new XMLOutputter();
 
     static {
