@@ -10,11 +10,11 @@ import gov.lanl.cnls.linkedprocess.xmpp.villein.XmppVillein;
  * Date: Jul 12, 2009
  * Time: 7:46:14 PM
  */
-public class EvaluateGuiListener implements PacketListener {
+public class SubmitJobGuiListener implements PacketListener {
 
     protected VilleinGui villeinGui;
 
-    public EvaluateGuiListener(VilleinGui villeinGui) {
+    public SubmitJobGuiListener(VilleinGui villeinGui) {
         this.villeinGui = villeinGui;
     }
 
@@ -23,7 +23,7 @@ public class EvaluateGuiListener implements PacketListener {
 
         VmFrame vmFrame = this.villeinGui.getVmFrame(submitJob.getFrom());
         if(vmFrame != null) {
-            vmFrame.handleIncomingEvaluate(submitJob);
+            vmFrame.handleIncomingSubmitJob(submitJob);
         } else {
             XmppVillein.LOGGER.severe("Could not find vmframe for " + submitJob.toXML());
         }

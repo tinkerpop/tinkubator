@@ -80,7 +80,7 @@ public class JobPane extends JTabbedPane implements ActionListener {
         this.resultTextArea.setText(BLANK_STRING);
     }
 
-    public SubmitJob getEvaluate() {
+    public SubmitJob getSubmitJob() {
         SubmitJob submitJob = new SubmitJob();
         submitJob.setTo(this.vmFrame.getVmStruct().getFullJid());
         submitJob.setExpression(this.expressionTextArea.getText());
@@ -97,7 +97,7 @@ public class JobPane extends JTabbedPane implements ActionListener {
         return abortJob;
     }
 
-    public void handleIncomingEvaluate(SubmitJob submitJob) {
+    public void handleIncomingSubmitJob(SubmitJob submitJob) {
         if(submitJob.getErrorType() == null) {
             this.resultTextArea.setText(submitJob.getExpression());
             this.submitJobButton.setEnabled(false);
@@ -123,8 +123,8 @@ public class JobPane extends JTabbedPane implements ActionListener {
 
     public void actionPerformed(ActionEvent event) {
         if(event.getActionCommand().equals(SUBMIT_JOB)) {
-            //System.out.println(this.getEvaluate().toXML());
-            this.vmFrame.getVilleinGui().getConnection().sendPacket(this.getEvaluate());
+            //System.out.println(this.getSubmitJob().toXML());
+            this.vmFrame.getVilleinGui().getConnection().sendPacket(this.getSubmitJob());
             submitJobButton.setText(ABORT_JOB);
             submitJobButton.setActionCommand(ABORT_JOB);
             clearButton.setEnabled(false);

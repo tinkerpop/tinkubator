@@ -62,15 +62,9 @@ public class XmppVillein extends XmppClient {
         this.roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-        PacketFilter terminateFilter = new AndFilter(new PacketTypeFilter(TerminateVm.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-        PacketFilter jobStatusFilter = new AndFilter(new PacketTypeFilter(JobStatus.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-        PacketFilter abortJobFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
         PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
 
         this.addPacketListener(new SpawnVmVilleinListener(this), spawnFilter);
-        this.addPacketListener(new TerminateVmVilleinListener(this), terminateFilter);
-        this.addPacketListener(new JobStatusVilleinListener(this), jobStatusFilter);
-        this.addPacketListener(new AbortJobVilleinListener(this), abortJobFilter);
         this.addPacketListener(new PresenceListener(this), presenceFilter);
 
         this.hostStructs = new HashMap<String, HostStruct>();

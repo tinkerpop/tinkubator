@@ -1,6 +1,5 @@
 package gov.lanl.cnls.linkedprocess.gui.villein;
 
-import gov.lanl.cnls.linkedprocess.LinkedProcess;
 import gov.lanl.cnls.linkedprocess.gui.ImageHolder;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.VmStruct;
 import gov.lanl.cnls.linkedprocess.xmpp.vm.AbortJob;
@@ -16,6 +15,8 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * User: marko
@@ -28,11 +29,14 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
     protected JSplitPane splitPane;
     protected VmStruct vmStruct;
     protected VilleinGui villeinGui;
+    protected Map<String, JobStatus> jobStatus = new HashMap<String, JobStatus>();
 
     protected static final String ADD_JOB = "add job";
     protected static final String REMOVE_JOB = "remove job";
     protected static final String TERMINATE_VM = "terminate vm";
     protected static final String CLOSE = "close";
+
+    public enum JobStatus { ABORTED, COMPLETED, ERROR }
 
 
     public VmFrame(VmStruct vmStruct, VilleinGui villeinGui) {
@@ -42,7 +46,8 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
 
         DefaultListModel listModel = new DefaultListModel();
         this.jobList = new JList(listModel);
-        jobList.addListSelectionListener(this);
+        this.jobList.addListSelectionListener(this);
+        jobList.setCellRenderer(new JobListRenderer(this));
         JScrollPane listScrollPane = new JScrollPane(this.jobList);
         JButton addJobButton = new JButton(ImageHolder.addIcon);
         addJobButton.setActionCommand(ADD_JOB);
@@ -93,6 +98,10 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
 
     }
 
+    public JobStatus getJobStatus(String jobId) {
+        return this.jobStatus.get(jobId);
+    }
+
     public static String generatedJobId() {
         return Packet.nextID();
     }
@@ -110,18 +119,26 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
         
     }
 
-    public void handleIncomingEvaluate(SubmitJob submitJob) {
+    public void handleIncomingSubmitJob(SubmitJob submitJob) {
         String jobId = submitJob.getPacketID();
+        if(null == this.jobStatus.get(jobId)) {
+            if(null == submitJob.getErrorType())
+                this.jobStatus.put(jobId, JobStatus.COMPLETED);
+            else
+                this.jobStatus.put(jobId, JobStatus.ERROR);
+        }
+
         for(int i=0; i < this.jobList.getModel().getSize(); i++) {
             JobPane jobPane = (JobPane) this.jobList.getModel().getElementAt(i);
             if(jobPane.getJobId().equals(jobId)) {
-                jobPane.handleIncomingEvaluate(submitJob);
+                jobPane.handleIncomingSubmitJob(submitJob);
             }
         }   
     }
 
     public void handleIncomingAbortJob(AbortJob abortJob) {
-        String jobId = abortJob.getPacketID();
+        String jobId = abortJob.getJobId();
+        this.jobStatus.put(jobId, JobStatus.ABORTED);
         for(int i=0; i < this.jobList.getModel().getSize(); i++) {
             JobPane jobPane = (JobPane) this.jobList.getModel().getElementAt(i);
             if(jobPane.getJobId().equals(jobId)) {
@@ -164,13 +181,13 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
 
 
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         VmStruct vmStruct = new VmStruct();
         vmStruct.setFullJid("linked.process.1@xmpp.linkedprocess.org/LoPVM/12345");
         vmStruct.setVmPassword("PASSWORD");
         vmStruct.setVmSpecies(LinkedProcess.JAVASCRIPT);
         new VmFrame(vmStruct, null);
-    }
+    }*/
 
 }
 

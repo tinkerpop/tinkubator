@@ -29,6 +29,7 @@ public class AbortJobVmListener implements PacketListener {
         returnAbortJob.setTo(abortJob.getFrom());
         returnAbortJob.setPacketID(abortJob.getPacketID());
         String jobId = ((AbortJob) abortJob).getJobId();
+        returnAbortJob.setJobId(jobId);
         String vmPassword = ((AbortJob) abortJob).getVmPassword();
 
         if(null == vmPassword || null == jobId) {

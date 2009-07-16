@@ -4,6 +4,7 @@ import gov.lanl.cnls.linkedprocess.Connection;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.VmStruct;
 import gov.lanl.cnls.linkedprocess.xmpp.villein.XmppVillein;
 import gov.lanl.cnls.linkedprocess.xmpp.vm.SubmitJob;
+import gov.lanl.cnls.linkedprocess.xmpp.vm.AbortJob;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.IQTypeFilter;
 import org.jivesoftware.smack.filter.OrFilter;
@@ -52,9 +53,12 @@ public class VilleinGui extends JFrame {
         this.xmppVillein = xmppVillein;
 
         PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
-        PacketFilter evaluateFilter = new AndFilter(new PacketTypeFilter(SubmitJob.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
+        PacketFilter submitFilter = new AndFilter(new PacketTypeFilter(SubmitJob.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
+        PacketFilter abortFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
+
         this.xmppVillein.getConnection().addPacketListener(new PresenceGuiListener(this), presenceFilter);
-        this.xmppVillein.getConnection().addPacketListener(new EvaluateGuiListener(this), evaluateFilter);
+        this.xmppVillein.getConnection().addPacketListener(new SubmitJobGuiListener(this), submitFilter);
+        this.xmppVillein.getConnection().addPacketListener(new AbortJobGuiListener(this), abortFilter);
 
         this.getContentPane().removeAll();
         this.hostArea = new HostArea(this);
