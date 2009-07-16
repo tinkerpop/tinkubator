@@ -17,8 +17,6 @@ import java.io.IOException;
  */
 public abstract class LopIq extends IQ {
 
-    protected static XMLOutputter output = new XMLOutputter();
-
     protected LinkedProcess.ErrorType errorType;
     protected String errorMessage;
     protected String vmPassword;
@@ -45,12 +43,6 @@ public abstract class LopIq extends IQ {
 
     public String getVmPassword() {
         return this.vmPassword;
-    }
-
-    public String toIndentedXML() throws JDOMException, IOException {
-        SAXBuilder builder = new SAXBuilder();
-        Document doc = builder.build(new StringReader(this.toXML()));
-        return output.outputString(doc);
     }
 
 }

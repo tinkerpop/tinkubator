@@ -71,6 +71,14 @@ public class VilleinGui extends JFrame {
         this.vmFrames.put(vmStruct.getFullJid(), vmFrame);
     }
 
+    public void removeVmFrame(VmStruct vmStruct) {
+        VmFrame vmFrame = this.vmFrames.remove(vmStruct.getFullJid());
+        if(vmFrame != null) {
+            vmFrame.setVisible(false);
+            vmFrame = null;
+        }
+    }
+
     public VmFrame getVmFrame(String vmJid) {
         return this.vmFrames.get(vmJid);
     }
@@ -87,7 +95,7 @@ public class VilleinGui extends JFrame {
         return this.xmppVillein;
     }
 
-    public HostArea getBuddyArea() {
+    public HostArea getHostArea() {
         return this.hostArea;
     }
 

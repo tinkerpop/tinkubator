@@ -150,6 +150,10 @@ public abstract class XmppClient {
         return XmppClient.generateRandomID();
     }
 
+    public ServiceDiscoveryManager getDiscoManager() {
+        return this.discoManager;
+    }
+
     protected void initiateFeatures() {
         XMPPConnection delegate = connection.getDelegate();
         LOGGER.fine(delegate.toString());
@@ -182,14 +186,5 @@ public abstract class XmppClient {
         Presence unsubscribed = new Presence(Presence.Type.unsubscribed);
         unsubscribed.setTo(jid);
         this.connection.sendPacket(unsubscribed);
-    }
-
-    protected void printRoster() {
-        for(RosterEntry entry : this.roster.getEntries()) {
-            Iterator<Presence> itty = this.roster.getPresences(entry.getUser());
-            while(itty.hasNext()) {
-                System.out.println(itty.next().toXML());
-            }
-        }
     }
 }

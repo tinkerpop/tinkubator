@@ -3,11 +3,16 @@ package gov.lanl.cnls.linkedprocess;
 import gov.lanl.cnls.linkedprocess.os.JobResult;
 import gov.lanl.cnls.linkedprocess.security.VMSecurityManager;
 import org.jdom.output.XMLOutputter;
+import org.jdom.output.Format;
+import org.jdom.input.SAXBuilder;
+import org.jdom.JDOMException;
+import org.jdom.Document;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -112,6 +117,15 @@ public class LinkedProcess {
 
     public static boolean isBareJid(String jid) {
         return !jid.contains("/");
+    }
+
+    public static String createPrettyXML(String xml) throws JDOMException, IOException {
+        SAXBuilder builder = new SAXBuilder();
+        Document doc = builder.build(new StringReader(xml));
+        XMLOutputter output = new XMLOutputter();
+        output.setFormat(Format.getPrettyFormat());
+        return output.outputString(doc);
+
     }
 
     public static final String LOP_NAMESPACE = "http://linkedprocess.org/";

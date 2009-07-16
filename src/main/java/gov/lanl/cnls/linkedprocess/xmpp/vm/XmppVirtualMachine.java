@@ -109,7 +109,7 @@ public class XmppVirtualMachine extends XmppClient {
 
     protected void initiateFeatures() {
         super.initiateFeatures();
-        ServiceDiscoveryManager.setIdentityName(RESOURCE_PREFIX);
+        ServiceDiscoveryManager.setIdentityName(XmppVirtualMachine.RESOURCE_PREFIX);
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
         discoManager.addFeature(LinkedProcess.LOP_VM_NAMESPACE);
     }

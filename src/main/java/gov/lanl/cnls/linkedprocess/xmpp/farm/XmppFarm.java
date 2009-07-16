@@ -8,6 +8,7 @@ import gov.lanl.cnls.linkedprocess.os.errors.VMSchedulerIsFullException;
 import gov.lanl.cnls.linkedprocess.os.errors.VMWorkerNotFoundException;
 import gov.lanl.cnls.linkedprocess.security.ServiceDiscoveryConfiguration;
 import gov.lanl.cnls.linkedprocess.security.VMSecurityManager;
+import gov.lanl.cnls.linkedprocess.security.PathPermissions;
 import gov.lanl.cnls.linkedprocess.xmpp.XmppClient;
 import gov.lanl.cnls.linkedprocess.xmpp.vm.XmppVirtualMachine;
 import org.jivesoftware.smack.Roster;
@@ -172,7 +173,7 @@ public class XmppFarm extends XmppClient {
 
     protected void initiateFeatures() {
         super.initiateFeatures();
-        ServiceDiscoveryManager.setIdentityName(RESOURCE_PREFIX);
+        ServiceDiscoveryManager.setIdentityName(XmppFarm.RESOURCE_PREFIX);
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
         discoManager.addFeature(LinkedProcess.LOP_FARM_NAMESPACE);
 
@@ -187,7 +188,6 @@ public class XmppFarm extends XmppClient {
             String engVersion = factory.getEngineVersion();
             String langName = factory.getLanguageName();
             String langVersion = factory.getLanguageVersion();
-            //String feature = "lop:" + engName + "-" + engVersion + "/" + langName + "-" + langVersion;
             field.setType(factory.getNames().get(0));
             field.addOption(new FormField.Option("species_language", langName));
             field.addOption(new FormField.Option("species_language_version", langVersion));
@@ -195,6 +195,7 @@ public class XmppFarm extends XmppClient {
             field.addOption(new FormField.Option("species_engine_version", engVersion));
             this.serviceExtension.addField(field);
         }
+
 
         VMSecurityManager man = (VMSecurityManager) System.getSecurityManager();
         ServiceDiscoveryConfiguration conf = new ServiceDiscoveryConfiguration(man);

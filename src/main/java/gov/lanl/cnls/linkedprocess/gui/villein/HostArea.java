@@ -14,8 +14,7 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -35,6 +34,14 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
     protected Object popupTreeObject;
     protected DefaultMutableTreeNode treeRoot;
 
+    protected final static String DISCOVER_FEATURES = "discover features";
+    protected final static String TERMINATE_VM = "terminate vm";
+    protected final static String SPAWN_VM = "spawn vm";
+    protected final static String ADD_HOST = "add host";
+    protected final static String SHUTDOWN = "shutdown";
+    protected final static String UNSUBSCRIBE = "unsubscribe";
+    protected final static String VM_CONTROL = "vm control";
+
     public HostArea(VilleinGui villeinGui) {
         this.villeinGui = villeinGui;
         HostStruct hostStruct = new HostStruct();
@@ -49,8 +56,8 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         this.popupMenu.setBorder(BorderFactory.createLineBorder(ImageHolder.GRAY_COLOR, 2));
 
         JScrollPane vmTreeScroll = new JScrollPane(this.tree);
-        JButton shutdownButton = new JButton("shutdown");
-        JButton addHostButton = new JButton("add host");
+        JButton shutdownButton = new JButton(SHUTDOWN);
+        JButton addHostButton = new JButton(ADD_HOST);
         shutdownButton.addActionListener(this);
         addHostButton.addActionListener(this);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -75,33 +82,36 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
     public void actionPerformed(ActionEvent event) {
 
         this.popupMenu.setVisible(false);
-        if (event.getActionCommand().equals("add host")) {
+        if (event.getActionCommand().equals(ADD_HOST)) {
             if (this.addHostField.getText() != null && this.addHostField.getText().length() > 0)
                 this.villeinGui.getXmppVillein().requestSubscription(this.addHostField.getText());
-        } else if (event.getActionCommand().equals("unsubscribe")) {
+        } else if (event.getActionCommand().equals(UNSUBSCRIBE)) {
             if (this.popupTreeObject instanceof HostStruct) {
                 String jid = ((HostStruct) this.popupTreeObject).getFullJid();
                 this.villeinGui.getXmppVillein().requestUnsubscription(jid, true);
                 this.popupTreeObject = null;
             }
-        } else if (event.getActionCommand().equals("terminate vm")) {
+        } else if (event.getActionCommand().equals(TERMINATE_VM)) {
             if (this.popupTreeObject instanceof VmStruct) {
-                this.villeinGui.getXmppVillein().terminateVirtualMachine((VmStruct) this.popupTreeObject);
+                VmStruct vmStruct = (VmStruct) this.popupTreeObject;
+                this.villeinGui.getXmppVillein().terminateVirtualMachine(vmStruct);
+                this.villeinGui.removeVmFrame(vmStruct);
             }
-        } else if (event.getActionCommand().equals("open vm controls")) {
+        } else if (event.getActionCommand().equals(VM_CONTROL)) {
+            VmStruct vmStruct = (VmStruct) this.popupTreeObject;
+            VmFrame vmFrame = this.villeinGui.getVmFrame(vmStruct.getFullJid());
+            if (vmFrame == null) {
+                this.villeinGui.addVmFrame(vmStruct);
+            } else {
+                vmFrame.setVisible(true);
+            }
 
-                if (this.popupTreeObject instanceof VmStruct) {
-                    VmStruct vmStruct = (VmStruct)this.popupTreeObject;
-                    VmFrame vmFrame = this.villeinGui.getVmFrame(vmStruct.getFullJid());
-                    if(vmFrame == null) {
-                        this.villeinGui.addVmFrame(vmStruct);
-                    } else {
-                        vmFrame.setVisible(true);
-                    }
-
-                }
-            
+        } else if (event.getActionCommand().equals(DISCOVER_FEATURES)) {
+            FarmStruct farmStruct = (FarmStruct) this.popupTreeObject;
+            FarmFrame farmFrame = new FarmFrame(farmStruct, this.villeinGui);
+            farmFrame.setVisible(true);
         } else if (event.getActionCommand().equals(LinkedProcess.JAVASCRIPT)) {
+
             if (this.popupTreeObject instanceof FarmStruct) {
                 String farmJid = ((FarmStruct) this.popupTreeObject).getFullJid();
                 this.villeinGui.getXmppVillein().spawnVirtualMachine(farmJid, LinkedProcess.JAVASCRIPT);
@@ -111,7 +121,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                 String farmJid = ((FarmStruct) this.popupTreeObject).getFullJid();
                 this.villeinGui.getXmppVillein().spawnVirtualMachine(farmJid, LinkedProcess.PYTHON);
             }
-        } else if (event.getActionCommand().equals("shutdown")) {
+        } else if (event.getActionCommand().equals(SHUTDOWN)) {
 
             this.villeinGui.getXmppVillein().shutDown();
             this.villeinGui.loadLoginFrame();
@@ -173,7 +183,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         }
         for (int i = 0; i < root.getChildCount(); i++) {
             DefaultMutableTreeNode node = getNode((DefaultMutableTreeNode) root.getChildAt(i), jid);
-            if(node != null)
+            if (node != null)
                 return node;
         }
         return null;
@@ -249,7 +259,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                         VmStruct vmStruct = (VmStruct) struct;
                         DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(struct);
                         DefaultMutableTreeNode temp;
-                        
+
                         if (vmStruct.getPresence() != null) {
                             temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", vmStruct.getPresence().getType().toString()));
                             model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
@@ -281,7 +291,6 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         int y = event.getY();
 
 
-
         int selectedRow = tree.getRowForLocation(x, y);
         if (selectedRow != -1) {
 
@@ -293,7 +302,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                 this.popupMenu.removeAll();
                 if (this.popupTreeObject instanceof HostStruct) {
                     JLabel menuLabel = new JLabel("Host");
-                    JMenuItem unsubscribeItem = new JMenuItem("unsubscribe");
+                    JMenuItem unsubscribeItem = new JMenuItem(UNSUBSCRIBE);
                     menuLabel.setHorizontalTextPosition(JLabel.CENTER);
                     popupMenu.add(menuLabel);
                     popupMenu.addSeparator();
@@ -301,10 +310,28 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                     unsubscribeItem.addActionListener(this);
                     popupMenu.setLocation(x + villeinGui.getX(), y + villeinGui.getY());
                     popupMenu.show(event.getComponent(), event.getX(), event.getY());
+                } else if (this.popupTreeObject instanceof FarmStruct) {
+                    JLabel menuLabel = new JLabel("Farm");
+                    JMenuItem discoItem = new JMenuItem(DISCOVER_FEATURES);
+                    JMenu spawnMenu = new JMenu(SPAWN_VM);
+                    JMenuItem javaScriptItem = new JMenuItem(LinkedProcess.JAVASCRIPT);
+                    JMenuItem pythonScriptItem = new JMenuItem(LinkedProcess.PYTHON);
+                    spawnMenu.add(javaScriptItem);
+                    spawnMenu.add(pythonScriptItem);
+                    menuLabel.setHorizontalTextPosition(JLabel.CENTER);
+                    popupMenu.add(menuLabel);
+                    popupMenu.addSeparator();
+                    popupMenu.add(discoItem);
+                    popupMenu.add(spawnMenu);
+                    discoItem.addActionListener(this);
+                    javaScriptItem.addActionListener(this);
+                    pythonScriptItem.addActionListener(this);
+                    popupMenu.setLocation(x + villeinGui.getX(), y + villeinGui.getY());
+                    popupMenu.show(event.getComponent(), event.getX(), event.getY());
                 } else if (this.popupTreeObject instanceof VmStruct) {
                     JLabel menuLabel = new JLabel("Virtual Machine");
-                    JMenuItem terminateVmItem = new JMenuItem("terminate vm");
-                    JMenuItem openVmControl = new JMenuItem("open vm controls");
+                    JMenuItem terminateVmItem = new JMenuItem(TERMINATE_VM);
+                    JMenuItem openVmControl = new JMenuItem(VM_CONTROL);
                     menuLabel.setHorizontalTextPosition(JLabel.CENTER);
                     popupMenu.add(menuLabel);
                     popupMenu.addSeparator();
@@ -314,28 +341,13 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                     openVmControl.addActionListener(this);
                     popupMenu.setLocation(x + villeinGui.getX(), y + villeinGui.getY());
                     popupMenu.show(event.getComponent(), event.getX(), event.getY());
-                } else if (this.popupTreeObject instanceof FarmStruct) {
-                    JLabel menuLabel = new JLabel("Farm");
-                    JMenu spawnItem = new JMenu("spawn vm");
-                    JMenuItem javaScriptItem = new JMenuItem(LinkedProcess.JAVASCRIPT);
-                    JMenuItem pythonScriptItem = new JMenuItem(LinkedProcess.PYTHON);
-                    spawnItem.add(javaScriptItem);
-                    spawnItem.add(pythonScriptItem);
-                    menuLabel.setHorizontalTextPosition(JLabel.CENTER);
-                    popupMenu.add(menuLabel);
-                    popupMenu.addSeparator();
-                    popupMenu.add(spawnItem);
-                    javaScriptItem.addActionListener(this);
-                    pythonScriptItem.addActionListener(this);
-                    popupMenu.setLocation(x + villeinGui.getX(), y + villeinGui.getY());
-                    popupMenu.show(event.getComponent(), event.getX(), event.getY());
                 }
 
             } else if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
                 if (this.popupTreeObject instanceof VmStruct) {
-                    VmStruct vmStruct = (VmStruct)this.popupTreeObject;
+                    VmStruct vmStruct = (VmStruct) this.popupTreeObject;
                     VmFrame vmFrame = this.villeinGui.getVmFrame(vmStruct.getFullJid());
-                    if(vmFrame == null) {
+                    if (vmFrame == null) {
                         this.villeinGui.addVmFrame(vmStruct);
                     } else {
                         vmFrame.setVisible(true);

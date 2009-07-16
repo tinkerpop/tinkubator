@@ -7,15 +7,9 @@ import gov.lanl.cnls.linkedprocess.xmpp.vm.AbortJob;
 import gov.lanl.cnls.linkedprocess.xmpp.vm.SubmitJob;
 import org.jivesoftware.smack.packet.Packet;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
@@ -37,6 +31,8 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
 
     protected static final String ADD_JOB = "add job";
     protected static final String REMOVE_JOB = "remove job";
+    protected static final String TERMINATE_VM = "terminate vm";
+    protected static final String CLOSE = "close";
 
 
     public VmFrame(VmStruct vmStruct, VilleinGui villeinGui) {
@@ -64,6 +60,19 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
         jobListPanel.add(listScrollPane, BorderLayout.CENTER);
         jobListPanel.add(jobListButtonPanel, BorderLayout.SOUTH);
 
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.setBorder(new LineBorder(ImageHolder.GRAY_COLOR, 2));
+        JMenu menu = new JMenu("Control");
+        JMenuItem terminateItem = new JMenuItem(TERMINATE_VM);
+        menu.add(terminateItem);
+        JMenuItem closeItem = new JMenuItem(CLOSE);
+        menu.add(new JSeparator());
+        menu.add(closeItem);
+        menu.setBorder(new LineBorder(ImageHolder.GRAY_COLOR, 2));
+        menuBar.add(menu);
+        this.setJMenuBar(menuBar);
+        terminateItem.addActionListener(this);
+        closeItem.addActionListener(this);
 
         this.splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         JPanel mainPanel = new JPanel();
@@ -139,6 +148,11 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
                 this.jobList.setSelectedIndex(selectedIndex);
             }
 
+        } else if(event.getActionCommand().equals(TERMINATE_VM)) {
+            System.out.println("make this terminate the vm");
+            //todo: read above.
+        } else if(event.getActionCommand().equals(CLOSE)) {
+            this.setVisible(false);
         }
 
     }
