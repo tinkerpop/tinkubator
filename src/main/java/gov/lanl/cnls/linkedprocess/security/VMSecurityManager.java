@@ -15,29 +15,35 @@ import java.util.Set;
 public class VMSecurityManager extends SecurityManager {
 
     public enum PermissionType {
-        permission,
-        createClassLoader,
-        access,
-        exit,
-        exec,
-        link,
-        read,
-        write,
-        delete,
-        connect,
-        listen,
-        accept,
-        multicast,
-        propertiesAccess,
-        propertyAccess,
-        printJobAccess,
-        systemClipboardAccess,
-        awtEventQueueAccess,
-        packageAccess,
-        packageDefinition,
-        setFactory,
-        memberAccess,
-        securityAccess;
+        permission("permission"),
+        createClassLoader("create_class_loader"),
+        access("access"),
+        exit("exit"),
+        exec("exec"),
+        link("link"),
+        read("read"),
+        write("write"),
+        delete("delete"),
+        connect("connect"),
+        listen("listen"),
+        accept("accept"),
+        multicast("multicast"),
+        propertiesAccess("properties_access"),
+        propertyAccess("property_access"),
+        printJobAccess("print_job_access"),
+        systemClipboardAccess("system_clipboard_access"),
+        awtEventQueueAccess("awt_event_queue_access"),
+        packageAccess("package_access"),
+        packageDefinition("package_definition"),
+        setFactory("set_factory"),
+        memberAccess("member_access"),
+        securityAccess("security_access");
+
+        private final String specName;
+
+        private PermissionType(final String specName) {
+            this.specName = specName;
+        }
 
         public boolean isPermitted(final Properties props) {
             return Boolean.valueOf(props.getProperty(getPropertyName()));
@@ -57,6 +63,10 @@ public class VMSecurityManager extends SecurityManager {
 
         public String getPropertyName() {
             return "gov.lanl.cnls.linkedprocess.security." + this;
+        }
+
+        public String getSpecName() {
+            return specName;
         }
     }
 
