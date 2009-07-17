@@ -69,7 +69,7 @@ public class VMSchedulerTest extends TestCase {
     public void testSchedulerStatusAfterShutdown() {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         scheduler.shutDown();
-        assertEquals(LinkedProcess.FarmStatus.TERMINATING, scheduler.getSchedulerStatus());
+        assertEquals(LinkedProcess.FarmStatus.TERMINATED, scheduler.getSchedulerStatus());
     }
 
     public void testVMStatusAfterTermination() throws Exception {
@@ -264,8 +264,8 @@ public class VMSchedulerTest extends TestCase {
         // Shut down scheduler.
         scheduler.shutDown();
         assertEquals(4, farmStatusEvents.size());
-        assertEquals(LinkedProcess.FarmStatus.TERMINATING, farmStatusEvents.get(3));
-        assertEquals(LinkedProcess.FarmStatus.TERMINATING, scheduler.getSchedulerStatus());
+        assertEquals(LinkedProcess.FarmStatus.TERMINATED, farmStatusEvents.get(3));
+        assertEquals(LinkedProcess.FarmStatus.TERMINATED, scheduler.getSchedulerStatus());
         //assertEquals(0, vmStatusEventTypes.size());
 
         // All remaining VMs should have been automatically shut down (in no particular order).

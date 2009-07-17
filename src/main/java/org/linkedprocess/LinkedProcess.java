@@ -44,7 +44,7 @@ public class LinkedProcess {
     }
 
     public enum FarmStatus {
-        ACTIVE("active"), ACTIVE_FULL("full"), TERMINATED("terminated"), STARTING("starting"), TERMINATING("terminating");
+        ACTIVE("active"), ACTIVE_FULL("full"), TERMINATED("terminated");
 
         private final String name;
 
@@ -86,6 +86,7 @@ public class LinkedProcess {
     }
 
     public enum ErrorType {
+        WRONG_FARM_PASSWORD("wrong_farm_password"),
         WRONG_VM_PASSWORD("wrong_vm_password"),
         MALFORMED_PACKET("malformed_packet"), // when a received packet is not as expected
         EVALUATION_ERROR("evaluation_error"),
@@ -149,8 +150,8 @@ public class LinkedProcess {
     // LoP Farm XMPP tag and attribute names
     // tag names
     public static final String SPAWN_VM_TAG = "spawn_vm";
-    public static final String TERMINATE_VM_TAG = "terminate_vm";
     // attribute names
+    public static final String FARM_PASSWORD_ATTRIBUTE = "farm_password";
     public static final String VM_SPECIES_ATTRIBUTE = "vm_species";
     public static final String VM_JID_ATTRIBUTE = "vm_jid";
     public static final String VM_PASSWORD_ATTRIBUTE = "vm_password";
@@ -159,6 +160,7 @@ public class LinkedProcess {
     public static final String SUBMIT_JOB_TAG = "submit_job";
     public static final String JOB_STATUS_TAG = "job_status";
     public static final String ABORT_JOB_TAG = "abort_job";
+    public static final String TERMINATE_VM_TAG = "terminate_vm";
     // attribute names
     public static final String JOB_ID_ATTRIBUTE = "job_id";
     public static final String ERROR_TYPE_ATTRIBUTE = "error_type";

@@ -139,8 +139,6 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                 }
             }
         }
-
-
     }
 
     public void createTree() {
@@ -296,7 +294,6 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         int x = event.getX();
         int y = event.getY();
 
-
         int selectedRow = tree.getRowForLocation(x, y);
         if (selectedRow != -1) {
 
@@ -330,7 +327,6 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
             }
 
         }
-
     }
 
     public void createHostPopupMenu() {

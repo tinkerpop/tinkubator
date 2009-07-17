@@ -30,17 +30,23 @@ public class SpawnVmFarmListener implements PacketListener {
         }
     }
 
-    private void processPacketTemp(Packet spawnVm) {
+    private void processPacketTemp(Packet packet) {
         XmppFarm.LOGGER.info("Arrived " + SpawnVmFarmListener.class.getName());
-        XmppFarm.LOGGER.info(spawnVm.toXML());
+        XmppFarm.LOGGER.info(packet.toXML());
+
+        SpawnVm spawnVm = (SpawnVm) packet;
 
         SpawnVm returnSpawnVm = new SpawnVm();
         returnSpawnVm.setTo(spawnVm.getFrom());
         returnSpawnVm.setPacketID(spawnVm.getPacketID());
-        String vmSpecies = ((SpawnVm) spawnVm).getVmSpecies();
+        String vmSpecies = spawnVm.getVmSpecies();
+        String farmPassword = spawnVm.getFarmPassword();
         if(vmSpecies == null) {
             returnSpawnVm.setErrorType(LinkedProcess.ErrorType.MALFORMED_PACKET);
             returnSpawnVm.setErrorMessage("spawn_vm XML packet is missing the vm_species attribute");
+            returnSpawnVm.setType(IQ.Type.ERROR);
+        } else if(xmppFarm.getFarmPassword() != null && !farmPassword.equals(xmppFarm.getFarmPassword())) {
+            returnSpawnVm.setErrorType(LinkedProcess.ErrorType.WRONG_FARM_PASSWORD);
             returnSpawnVm.setType(IQ.Type.ERROR);
         } else {
             try {

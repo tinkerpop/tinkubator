@@ -297,8 +297,7 @@ public class VMScheduler {
         }
         workersByJID.clear();
 
-//        setSchedulerStatus(LinkedProcess.FarmStatus.TERMINATED);
-        setSchedulerStatus(LinkedProcess.FarmStatus.TERMINATING);
+        setSchedulerStatus(LinkedProcess.FarmStatus.TERMINATED);
     }
 
     /**

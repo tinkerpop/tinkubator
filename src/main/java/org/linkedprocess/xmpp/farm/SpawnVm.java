@@ -11,6 +11,7 @@ import org.linkedprocess.LinkedProcess;
 public class SpawnVm extends FarmIq {
 
     protected String vmSpecies;
+    protected String farmPassword;
 
     public void setVmSpecies(String vmSpecies) {
         this.vmSpecies = vmSpecies;
@@ -18,6 +19,14 @@ public class SpawnVm extends FarmIq {
 
     public String getVmSpecies() {
         return this.vmSpecies;
+    }
+
+    public void setFarmPassword(String farmPassword) {
+        this.farmPassword = farmPassword;
+    }
+
+    public String getFarmPassword() {
+        return this.farmPassword;
     }
 
     public String getChildElementXML() {
@@ -31,6 +40,9 @@ public class SpawnVm extends FarmIq {
         }
         if(this.vmSpecies != null) {
             spawnVmElement.setAttribute(LinkedProcess.VM_SPECIES_ATTRIBUTE, this.vmSpecies);
+        }
+        if(this.farmPassword != null) {
+            spawnVmElement.setAttribute(LinkedProcess.FARM_PASSWORD_ATTRIBUTE, this.farmPassword);
         }
         if(this.errorType != null) {
             spawnVmElement.setAttribute(LinkedProcess.ERROR_TYPE_ATTRIBUTE, this.errorType.toString());
