@@ -44,7 +44,7 @@ public class PresenceSubscriptionListener implements PacketListener {
 
             return;
 
-        } else if(type == Presence.Type.unsubscribe) {
+        } else if(type == Presence.Type.unsubscribe && !packet.getFrom().equals(xmppFarm.getBareJid()) && !packet.getFrom().equals(xmppFarm.getFullJid())) {
             XmppFarm.LOGGER.info("Unsubscribing from " + presence.getFrom());
             Presence unsubscribed = new Presence(Presence.Type.unsubscribed);
             Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
