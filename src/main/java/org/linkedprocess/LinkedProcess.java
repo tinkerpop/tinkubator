@@ -12,7 +12,6 @@ import org.linkedprocess.security.VMSecurityManager;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Properties;
@@ -214,18 +213,30 @@ public class LinkedProcess {
         ScriptEngineManager m = new ScriptEngineManager();
         for (String name : new String[]{JAVASCRIPT, PYTHON, RUBY}) {
             ScriptEngine engine = m.getEngineByName(name);
-            try {
-                engine.eval("1 + 1;");
-                engine.eval("1 ... 1;");
-                engine.eval("0...0;");
-                engine.eval("print \"Hello, World!\"\n");
-                //System.out.println("running eval()s in preLoadingHack");
+            for (String expr : new String[]{
+                    "1 + 1;",
+                    "1 ... 1;",
+                    "0...0;",
+                    "print \"Hello, World!\"\n",
+                    "42"}) {
+                try {
 
-                // Avoid ClassNotFoundException for inner class
-                VMWorker w = new VMWorker(engine, nullHandler);
+                    // Avoid ClassNotFoundException for inner class
+                    if (VMWorker.Status.ACTIVE_INPROGRESS.toString().equals("")) {
 
-            } catch (ScriptException e1) {
-                // Do nothing.
+                    }
+
+                    //VMWorker w = new VMWorker(engine, nullHandler);
+                    //Job j = new Job(null, null, null, "42");
+                    //w.addJob(j);
+                    //w.work(100);
+                    //w.terminate();
+                    
+                    //System.out.println("we made it!: " + expr);
+                    engine.eval(expr);
+                } catch (Exception e) {
+                    // Do nothing.
+                }
             }
         }
     }

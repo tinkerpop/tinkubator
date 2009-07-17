@@ -28,7 +28,8 @@ import java.util.logging.Logger;
 public class VMWorker {
     public static final VMWorker SCHEDULER_TERMINATED_SENTINEL = new VMWorker();
 
-    private enum Status {
+    // Public only for the sake of a security hack.
+    public enum Status {
         ACTIVE_INPROGRESS,
         ACTIVE_SUSPENDED,
         IDLE_WAITING,
