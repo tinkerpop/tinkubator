@@ -106,20 +106,47 @@ public class VMWorker {
     }
 
     /**
-     * @return whether the worker currently has work to do (either a suspended
-     *         job in progress, or pending jobs in the queue)
+     * Cancels a specific job.
+     *
+     * @param jobID the ID of the job to be aborted
+     * @throws org.linkedprocess.os.errors.JobNotFoundException
+     *          if no such job exsts
      */
-    public synchronized boolean canWork() {
+    public synchronized void abortJob(final String jobID) throws JobNotFoundException {
+        LOGGER.info("aborting job " + jobID);
+
         switch (status) {
             case ACTIVE_SUSPENDED:
-                // Still working on the last job.
-                return true;
+                if (latestJob.getJobId().equals(jobID)) {
+                    // Cause the worker thread to cease execution of the current
+                    // job and wait.
+                    status = Status.IDLE_WAITING;
+                    interruptWorkerThread();
+
+                    // Put the current job in the queue to be discovered and
+                    // aborted.
+                    jobQueue.offer(latestJob);
+                }
+                break;
             case IDLE_WAITING:
-                // Are there any pending jobs?
-                return 0 != jobQueue.size();
+                // Nothing to do.
+                break;
             default:
-                throw new IllegalArgumentException("can't check for new work in status: " + status);
+                throw new IllegalStateException("can't abort job with status: " + status);
         }
+
+        // Look for the job in the queue and remove it if present.
+        // FIXME: inefficient
+        for (Job j : jobQueue) {
+            if (j.getJobId().equals(jobID)) {
+                JobResult abortedJob = new JobResult(j);
+                resultHandler.handleResult(abortedJob);
+                jobQueue.remove(j);
+                return;
+            }
+        }
+
+        throw new JobNotFoundException(jobID);
     }
 
     /**
@@ -145,6 +172,81 @@ public class VMWorker {
             default:
                 throw new IllegalStateException("can't add jobs in status: " + status);
         }
+    }
+
+    /**
+     * @return whether the worker currently has work to do (either a suspended
+     *         job in progress, or pending jobs in the queue)
+     */
+    public synchronized boolean canWork() {
+        switch (status) {
+            case ACTIVE_SUSPENDED:
+                // Still working on the last job.
+                return true;
+            case IDLE_WAITING:
+                // Are there any pending jobs?
+                return 0 != jobQueue.size();
+            default:
+                throw new IllegalArgumentException("can't check for new work in status: " + status);
+        }
+    }
+  
+    public synchronized long getTimeLastActive() {
+        return timeLastActive;
+    }
+
+    public synchronized boolean jobExists(final String jobID) {
+        switch (status) {
+            case ACTIVE_SUSPENDED:
+                return jobID.equals(latestJob.getJobId())
+                        || jobQueueContains(jobID);
+            case IDLE_WAITING:
+                return jobQueueContains(jobID);
+            default:
+                throw new IllegalStateException("can't check job status in status: " + status);
+        }
+    }
+
+    /**
+     * Terminates execution of the current job and prevents further jobs.
+     * This method may be called at any time, in any thread.  If it is called
+     * while a job is being executed, the job will continue executing for the
+     * remainder of the window, but it will not complete normally unless it
+     * does so within that window.  Nor will additional jobs be processed.
+     */
+    public synchronized void terminate() {
+        LOGGER.info("terminating VMWorker");
+
+        switch (status) {
+            case ACTIVE_SUSPENDED:
+                // Cause the worker thread to die.
+                status = Status.TERMINATED;
+                interruptWorkerThread();
+
+                // Put the current job back in the queue to be aborted along
+                // with the others.
+                jobQueue.offer(latestJob);
+                break;
+            case IDLE_WAITING:
+                status = Status.TERMINATED;
+                notifyWorkerThread();
+                break;
+            case TERMINATED:
+                // Been there, done that...
+                // ...unless we're here because the worker thread died unexpectedly,
+                // in which case we still need to flush out the queue.
+            default:
+                throw new IllegalStateException("cannot terminate with status: " + status);
+        }
+
+        // Cancel all jobs in the queue.
+        for (Job j : jobQueue) {
+            JobResult abortedJob = new JobResult(j);
+            resultHandler.handleResult(abortedJob);
+        }
+
+        // It is conceivable that we do this twice.
+        jobQueue.clear();
     }
 
     /**
@@ -208,6 +310,7 @@ public class VMWorker {
 
                 if (latestJob.getTimeSpent() >= maxTimeSpentPerJob) {
                     yieldTimeoutResult(latestJob, maxTimeSpentPerJob);
+                    resultHandler.handleResult(latestResult);
                     interruptWorkerThread();
                     status = Status.IDLE_WAITING;
                     resumeWorkerThread();
@@ -229,108 +332,6 @@ public class VMWorker {
             default:
                 throw new IllegalStateException("status should not occur at the end of a work window: " + status);
         }
-    }
-
-    /**
-     * Terminates execution of the current job and prevents further jobs.
-     * This method may be called at any time, in any thread.  If it is called
-     * while a job is being executed, the job will continue executing for the
-     * remainder of the window, but it will not complete normally unless it
-     * does so within that window.  Nor will additional jobs be processed.
-     */
-    public synchronized void terminate() {
-        LOGGER.info("terminating VMWorker");
-
-        switch (status) {
-            case ACTIVE_SUSPENDED:
-                // Cause the worker thread to die.
-                status = Status.TERMINATED;
-                interruptWorkerThread();
-
-                // Put the current job back in the queue to be aborted along
-                // with the others.
-                jobQueue.offer(latestJob);
-                break;
-            case IDLE_WAITING:
-                status = Status.TERMINATED;
-                notifyWorkerThread();
-                break;
-            case TERMINATED:
-                // Been there, done that...
-                // ...unless we're here because the worker thread died unexpectedly,
-                // in which case we still need to flush out the queue.
-            default:
-                throw new IllegalStateException("cannot terminate with status: " + status);
-        }
-
-        // Cancel all jobs in the queue.
-        for (Job j : jobQueue) {
-            JobResult abortedJob = new JobResult(j);
-            resultHandler.handleResult(abortedJob);
-        }
-
-        // It is conceivable that we do this twice.
-        jobQueue.clear();
-    }
-
-    /**
-     * Cancels a specific job.
-     *
-     * @param jobID the ID of the job to be aborted
-     * @throws org.linkedprocess.os.errors.JobNotFoundException
-     *          if no such job exsts
-     */
-    public synchronized void abortJob(final String jobID) throws JobNotFoundException {
-        LOGGER.info("aborting job " + jobID);
-
-        switch (status) {
-            case ACTIVE_SUSPENDED:
-                if (latestJob.getJobId().equals(jobID)) {
-                    // Cause the worker thread to cease execution of the current
-                    // job and wait.
-                    status = Status.IDLE_WAITING;
-                    interruptWorkerThread();
-
-                    // Put the current job in the queue to be discovered and
-                    // aborted.
-                    jobQueue.offer(latestJob);
-                }
-                break;
-            case IDLE_WAITING:
-                // Nothing to do.
-                break;
-            default:
-                throw new IllegalStateException("can't abort job with status: " + status);
-        }
-
-        // Look for the job in the queue and remove it if present.
-        // FIXME: inefficient
-        for (Job j : jobQueue) {
-            if (j.getJobId().equals(jobID)) {
-                JobResult abortedJob = new JobResult(j);
-                resultHandler.handleResult(abortedJob);
-                jobQueue.remove(j);
-                return;
-            }
-        }
-
-        throw new JobNotFoundException(jobID);
-    }
-
-    public synchronized boolean jobExists(final String jobID) {
-        switch (status) {
-            case ACTIVE_SUSPENDED:
-                return jobID.equals(latestJob.getJobId())
-                        || jobQueueContains(jobID);
-            case IDLE_WAITING:
-                return jobQueueContains(jobID);
-            default:
-                throw new IllegalStateException("can't check job status in status: " + status);
-        }
-    }
-
-    public synchronized long getTimeLastActive() {
-        return timeLastActive;
     }
 
     ////////////////////////////////////////////////////////////////////////////
