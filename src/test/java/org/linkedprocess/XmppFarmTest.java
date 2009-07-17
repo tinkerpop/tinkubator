@@ -28,9 +28,9 @@ public class XmppFarmTest extends TestCase {
 
 	private static XmppFarm xmppFarm;
 
-	public static void main(String[] args) throws Exception {
-		new XmppFarm(server1, port, username1, password1);
-    }
+	//public static void main(String[] args) throws Exception {
+	//	new XmppFarm(server1, port, username1, password1);
+    //}
 
     private XMPPConnection mockConnection;
 

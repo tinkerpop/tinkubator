@@ -321,7 +321,7 @@ public class VMScheduler {
 
     ////////////////////////////////////////////////////////////////////////////
 
-    // Note: this method is currently called only each time the schedler is
+    // Note: this method is currently called only each time the scheduler is
     //       accessed to manipulate VMs and jobs.  An idle scheduler may
     //       therefore not shut down idle VMs for some time after the timeout
     //       value.
@@ -375,6 +375,22 @@ public class VMScheduler {
 
             public void putBackWorker(final VMWorker w,
                                       final boolean idle) {
+                // If the worker thread died unexpectedly, terminate the worker.
+                if (VMWorker.Status.TERMINATED == w.status) {
+                    for (String jid : workersByJID.keySet()) {
+                        // This is not efficient, but it shouldn't happen often.
+                        if (workersByJID.get(jid) == w) {
+                            try {
+                                // Note: this will not be called in the main thread which normally terminates VMs.
+                                terminateVirtualMachine(jid);
+                            } catch (VMWorkerNotFoundException e) {
+                                LOGGER.severe("there was an error terminating a failed VM worker: " + e);
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+
                 if (!idle) {
                     enqueueWorker(w);
                 }

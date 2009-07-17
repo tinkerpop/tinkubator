@@ -45,7 +45,9 @@ public class VMWorker {
     private final Thread workerThread;
     private final long maxTimeSpentPerJob;
 
-    private Status status;
+    // Accessible by VMScheduler
+    Status status;
+
     private long timeLastActive;
 
     private Job latestJob;
@@ -222,6 +224,8 @@ public class VMWorker {
                 resumeWorkerThread();
                 // The worker isn't really "idle" if there are jobs in its queue.
                 return 0 == jobQueue.size();
+            case TERMINATED:
+                // This only occurs if the worker thread dies unexpectedly.
             default:
                 throw new IllegalStateException("status should not occur at the end of a work window: " + status);
         }
@@ -252,8 +256,9 @@ public class VMWorker {
                 notifyWorkerThread();
                 break;
             case TERMINATED:
-                // Been there, done that.
-                return;
+                // Been there, done that...
+                // ...unless we're here because the worker thread died unexpectedly,
+                // in which case we still need to flush out the queue.
             default:
                 throw new IllegalStateException("cannot terminate with status: " + status);
         }
@@ -263,6 +268,9 @@ public class VMWorker {
             JobResult abortedJob = new JobResult(j);
             resultHandler.handleResult(abortedJob);
         }
+
+        // It is conceivable that we do this twice.
+        jobQueue.clear();
     }
 
     /**
@@ -430,6 +438,9 @@ public class VMWorker {
                     // TODO: stack trace
                     LOGGER.severe("worker runnable died with error: " + e.toString());
                     e.printStackTrace();
+
+                    // Indicate to the scheduler that this worker has died.
+                    status = Status.TERMINATED;
                 }
             }
         }
