@@ -22,9 +22,6 @@ public class PresenceGuiListener implements PacketListener {
     public void processPacket(Packet packet) {
         Presence presence = ((Presence) packet);
 
-        XmppVillein.LOGGER.info("Presence received from " + presence.getFrom());
-        XmppVillein.LOGGER.info(presence.toXML());
-
         if(presence.getType() == Presence.Type.unavailable || presence.getType() == Presence.Type.unsubscribe || presence.getType() == Presence.Type.unsubscribed) {
             this.villeinGui.updateTree(packet.getFrom(), true);
         } else if(presence.getType() == Presence.Type.error) {

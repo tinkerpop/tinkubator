@@ -33,6 +33,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
     protected JPopupMenu popupMenu;
     protected Object popupTreeObject;
     protected DefaultMutableTreeNode treeRoot;
+    protected String[] supportedVmSpecies = {LinkedProcess.JAVASCRIPT, LinkedProcess.PYTHON, LinkedProcess.RUBY};
 
     protected final static String DISCOVER_FEATURES = "discover features";
     protected final static String TERMINATE_VM = "terminate vm";
@@ -82,6 +83,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
     public void actionPerformed(ActionEvent event) {
 
         this.popupMenu.setVisible(false);
+
         if (event.getActionCommand().equals(ADD_HOST)) {
             if (this.addHostField.getText() != null && this.addHostField.getText().length() > 0)
                 this.villeinGui.getXmppVillein().requestSubscription(this.addHostField.getText());
@@ -98,38 +100,35 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                 this.villeinGui.removeVmFrame(vmStruct);
             }
         } else if (event.getActionCommand().equals(VM_CONTROL)) {
-            VmStruct vmStruct = (VmStruct) this.popupTreeObject;
-            VmFrame vmFrame = this.villeinGui.getVmFrame(vmStruct.getFullJid());
-            if (vmFrame == null) {
-                this.villeinGui.addVmFrame(vmStruct);
-            } else {
-                vmFrame.setVisible(true);
+            if(this.popupTreeObject instanceof VmStruct) {
+                VmStruct vmStruct = (VmStruct) this.popupTreeObject;
+                VmFrame vmFrame = this.villeinGui.getVmFrame(vmStruct.getFullJid());
+                if (vmFrame == null) {
+                    this.villeinGui.addVmFrame(vmStruct);
+                } else {
+                    vmFrame.setVisible(true);
+                }
             }
 
         } else if (event.getActionCommand().equals(DISCOVER_FEATURES)) {
-            FarmStruct farmStruct = (FarmStruct) this.popupTreeObject;
-            FarmFrame farmFrame = new FarmFrame(farmStruct, this.villeinGui);
-            farmFrame.setVisible(true);
-        } else if (event.getActionCommand().equals(LinkedProcess.JAVASCRIPT)) {
-
-            if (this.popupTreeObject instanceof FarmStruct) {
-                String farmJid = ((FarmStruct) this.popupTreeObject).getFullJid();
-                this.villeinGui.getXmppVillein().spawnVirtualMachine(farmJid, LinkedProcess.JAVASCRIPT);
-            }
-        } else if (event.getActionCommand().equals(LinkedProcess.PYTHON)) {
-            if (this.popupTreeObject instanceof FarmStruct) {
-                String farmJid = ((FarmStruct) this.popupTreeObject).getFullJid();
-                this.villeinGui.getXmppVillein().spawnVirtualMachine(farmJid, LinkedProcess.PYTHON);
-            }
-        } else if (event.getActionCommand().equals(LinkedProcess.RUBY)) {
-            if (this.popupTreeObject instanceof FarmStruct) {
-                String farmJid = ((FarmStruct) this.popupTreeObject).getFullJid();
-                this.villeinGui.getXmppVillein().spawnVirtualMachine(farmJid, LinkedProcess.RUBY);
+            if(this.popupTreeObject instanceof FarmStruct) {
+                FarmStruct farmStruct = (FarmStruct) this.popupTreeObject;
+                FarmFrame farmFrame = new FarmFrame(farmStruct, this.villeinGui);
+                farmFrame.setVisible(true);
             }
         } else if (event.getActionCommand().equals(SHUTDOWN)) {
-
             this.villeinGui.getXmppVillein().shutDown();
             this.villeinGui.loadLoginFrame();
+        } else {
+            for (String vmSpecies : this.supportedVmSpecies) {
+                if (event.getActionCommand().equals(vmSpecies)) {
+                    if (this.popupTreeObject instanceof FarmStruct) {
+                        String farmJid = ((FarmStruct) this.popupTreeObject).getFullJid();
+                        this.villeinGui.getXmppVillein().spawnVirtualMachine(farmJid, vmSpecies);
+                        break;
+                    }
+                }
+            }
         }
 
 
@@ -170,14 +169,6 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         }
         model.reload();
     }
-
-    /*private void getAllChildren(DefaultMutableTreeNode node, Set<DefaultMutableTreeNode> children) {
-        for (int i = 0; i < node.getChildCount(); i++) {
-            DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(i);
-            children.add(child);
-            getAllChildren(child, children);
-        }
-    }*/
 
     private DefaultMutableTreeNode getNode(DefaultMutableTreeNode root, String jid) {
         if (root.getUserObject() instanceof Struct) {
@@ -304,52 +295,16 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
             this.popupTreeObject = selectedNode.getUserObject();
 
             if (event.getButton() == MouseEvent.BUTTON3 && event.getClickCount() == 1) {
-                this.popupMenu.removeAll();
                 if (this.popupTreeObject instanceof HostStruct) {
-                    JLabel menuLabel = new JLabel("Host");
-                    JMenuItem unsubscribeItem = new JMenuItem(UNSUBSCRIBE);
-                    menuLabel.setHorizontalTextPosition(JLabel.CENTER);
-                    popupMenu.add(menuLabel);
-                    popupMenu.addSeparator();
-                    popupMenu.add(unsubscribeItem);
-                    unsubscribeItem.addActionListener(this);
-                    popupMenu.setLocation(x + villeinGui.getX(), y + villeinGui.getY());
-                    popupMenu.show(event.getComponent(), event.getX(), event.getY());
+                    this.createHostPopupMenu();
                 } else if (this.popupTreeObject instanceof FarmStruct) {
-                    JLabel menuLabel = new JLabel("Farm");
-                    JMenuItem discoItem = new JMenuItem(DISCOVER_FEATURES);
-                    JMenu spawnMenu = new JMenu(SPAWN_VM);
-                    JMenuItem javaScriptItem = new JMenuItem(LinkedProcess.JAVASCRIPT);
-                    JMenuItem pythonScriptItem = new JMenuItem(LinkedProcess.PYTHON);
-                    JMenuItem rubyScriptItem = new JMenuItem(LinkedProcess.RUBY);
-                    spawnMenu.add(javaScriptItem);
-                    spawnMenu.add(pythonScriptItem);
-                    spawnMenu.add(rubyScriptItem);
-                    menuLabel.setHorizontalTextPosition(JLabel.CENTER);
-                    popupMenu.add(menuLabel);
-                    popupMenu.addSeparator();
-                    popupMenu.add(discoItem);
-                    popupMenu.add(spawnMenu);
-                    discoItem.addActionListener(this);
-                    javaScriptItem.addActionListener(this);
-                    pythonScriptItem.addActionListener(this);
-                    rubyScriptItem.addActionListener(this);
-                    popupMenu.setLocation(x + villeinGui.getX(), y + villeinGui.getY());
-                    popupMenu.show(event.getComponent(), event.getX(), event.getY());
+                    this.createFarmPopupMenu();
                 } else if (this.popupTreeObject instanceof VmStruct) {
-                    JLabel menuLabel = new JLabel("Virtual Machine");
-                    JMenuItem terminateVmItem = new JMenuItem(TERMINATE_VM);
-                    JMenuItem openVmControl = new JMenuItem(VM_CONTROL);
-                    menuLabel.setHorizontalTextPosition(JLabel.CENTER);
-                    popupMenu.add(menuLabel);
-                    popupMenu.addSeparator();
-                    popupMenu.add(openVmControl);
-                    popupMenu.add(terminateVmItem);
-                    terminateVmItem.addActionListener(this);
-                    openVmControl.addActionListener(this);
-                    popupMenu.setLocation(x + villeinGui.getX(), y + villeinGui.getY());
-                    popupMenu.show(event.getComponent(), event.getX(), event.getY());
+                    this.createVmPopupMenu();
                 }
+
+                popupMenu.setLocation(x + villeinGui.getX(), y + villeinGui.getY());
+                popupMenu.show(event.getComponent(), event.getX(), event.getY());
 
             } else if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
                 if (this.popupTreeObject instanceof VmStruct) {
@@ -366,6 +321,51 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
 
         }
 
+    }
+
+    public void createHostPopupMenu() {
+        this.popupMenu = new JPopupMenu();
+        JLabel menuLabel = new JLabel("Host");
+        JMenuItem unsubscribeItem = new JMenuItem(UNSUBSCRIBE);
+        menuLabel.setHorizontalTextPosition(JLabel.CENTER);
+        this.popupMenu.add(menuLabel);
+        this.popupMenu.addSeparator();
+        this.popupMenu.add(unsubscribeItem);
+        unsubscribeItem.addActionListener(this);
+    }
+
+    public void createFarmPopupMenu() {
+        this.popupMenu = new JPopupMenu();
+        JLabel menuLabel = new JLabel("Farm");
+        JMenuItem discoItem = new JMenuItem(DISCOVER_FEATURES);
+        JMenu spawnMenu = new JMenu(SPAWN_VM);
+
+        for (String vmSpecies : this.supportedVmSpecies) {
+            JMenuItem speciesItem = new JMenuItem(vmSpecies);
+            speciesItem.addActionListener(this);
+            spawnMenu.add(speciesItem);
+        }
+
+        menuLabel.setHorizontalTextPosition(JLabel.CENTER);
+        this.popupMenu.add(menuLabel);
+        this.popupMenu.addSeparator();
+        this.popupMenu.add(discoItem);
+        this.popupMenu.add(spawnMenu);
+        discoItem.addActionListener(this);
+    }
+
+    public void createVmPopupMenu() {
+        this.popupMenu = new JPopupMenu();
+        JLabel menuLabel = new JLabel("Virtual Machine");
+        JMenuItem terminateVmItem = new JMenuItem(TERMINATE_VM);
+        JMenuItem openVmControlItem = new JMenuItem(VM_CONTROL);
+        menuLabel.setHorizontalTextPosition(JLabel.CENTER);
+        this.popupMenu.add(menuLabel);
+        this.popupMenu.addSeparator();
+        this.popupMenu.add(openVmControlItem);
+        this.popupMenu.add(terminateVmItem);
+        terminateVmItem.addActionListener(this);
+        openVmControlItem.addActionListener(this);
     }
 
     public void mouseReleased(MouseEvent e) {

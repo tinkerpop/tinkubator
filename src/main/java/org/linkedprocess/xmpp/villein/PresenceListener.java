@@ -1,8 +1,12 @@
 package org.linkedprocess.xmpp.villein;
 
 import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.packet.DiscoverItems;
+import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
 
 /**
@@ -42,7 +46,7 @@ public class PresenceListener implements PacketListener {
             } else {
                 checkStruct.setPresence(presence);
             }
-        } else if (packet.getFrom().contains("LoPFarm")) {
+        } else if (isFarm(packet.getFrom())) {
             Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom(), XmppVillein.StructType.FARM);
             if (checkStruct == null) {
                 FarmStruct farmStruct = new FarmStruct();
@@ -59,6 +63,28 @@ public class PresenceListener implements PacketListener {
             if (checkStruct != null) {
                 checkStruct.setPresence(presence);
             }
+        }
+    }
+
+    protected boolean isFarm(String jid) {
+        ServiceDiscoveryManager discoManager = this.xmppVillein.getDiscoManager();
+        try {
+            DiscoverInfo discoInfo = discoManager.discoverInfo(jid);
+            return discoInfo.containsFeature(LinkedProcess.LOP_FARM_NAMESPACE);
+        } catch(XMPPException e) {
+            XmppVillein.LOGGER.severe("XmppException with DiscoveryManager.");
+            return false;
+        }     
+    }
+
+    protected boolean isVirtualMachine(String jid) {
+        ServiceDiscoveryManager discoManager = this.xmppVillein.getDiscoManager();
+        try {
+            DiscoverInfo discoInfo = discoManager.discoverInfo(jid);
+            return discoInfo.containsFeature(LinkedProcess.LOP_VM_NAMESPACE);
+        } catch(XMPPException e) {
+            XmppVillein.LOGGER.severe("XmppException with DiscoveryManager.");
+            return false;
         }
     }
 }
