@@ -1,12 +1,14 @@
 package org.linkedprocess;
 
-import org.linkedprocess.os.JobResult;
-import org.linkedprocess.security.VMSecurityManager;
-import org.jdom.output.XMLOutputter;
-import org.jdom.output.Format;
-import org.jdom.input.SAXBuilder;
-import org.jdom.JDOMException;
 import org.jdom.Document;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
+import org.linkedprocess.os.JobResult;
+import org.linkedprocess.os.VMScheduler;
+import org.linkedprocess.os.VMWorker;
+import org.linkedprocess.security.VMSecurityManager;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -199,21 +201,29 @@ public class LinkedProcess {
     }
 
     private static void preLoadingHack() {
-
         // Hack to pre-load JobResult so that a VM worker thread doesn't have to
         // load a class (which is in general not allowed) to produce the first
         // result.
         new JobResult(null, (String) null);
 
         // Hack to pre-load Rhino and Jython resource bundles.  This will have to be extended.
+        VMScheduler.VMResultHandler nullHandler = new VMScheduler.VMResultHandler() {
+            public void handleResult(JobResult result) {
+            }
+        };
         ScriptEngineManager m = new ScriptEngineManager();
         for (String name : new String[]{JAVASCRIPT, PYTHON, RUBY}) {
-            ScriptEngine e = m.getEngineByName(name);
+            ScriptEngine engine = m.getEngineByName(name);
             try {
-                e.eval("1 + 1;");
-                e.eval("1 ... 1;");
-                e.eval("0...0;");
-                e.eval("print \"Hello, World!\"\n");
+                engine.eval("1 + 1;");
+                engine.eval("1 ... 1;");
+                engine.eval("0...0;");
+                engine.eval("print \"Hello, World!\"\n");
+                //System.out.println("running eval()s in preLoadingHack");
+
+                // Avoid ClassNotFoundException for inner class
+                VMWorker w = new VMWorker(engine, nullHandler);
+
             } catch (ScriptException e1) {
                 // Do nothing.
             }
