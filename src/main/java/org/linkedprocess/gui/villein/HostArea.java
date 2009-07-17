@@ -20,6 +20,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * User: marko
@@ -34,7 +36,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
     protected JPopupMenu popupMenu;
     protected Object popupTreeObject;
     protected DefaultMutableTreeNode treeRoot;
-    protected String[] supportedVmSpecies = {LinkedProcess.JAVASCRIPT, LinkedProcess.PYTHON, LinkedProcess.RUBY};
+    protected Set<String> supportedVmSpeciesActionCommands = new HashSet<String>();
 
     protected final static String DISCOVER_FEATURES = "discover features";
     protected final static String TERMINATE_VM = "terminate vm";
@@ -127,7 +129,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
             this.villeinGui.getXmppVillein().shutDown();
             this.villeinGui.loadLoginFrame();
         } else {
-            for (String vmSpecies : this.supportedVmSpecies) {
+            for (String vmSpecies : this.supportedVmSpeciesActionCommands) {
                 if (event.getActionCommand().equals(vmSpecies)) {
                     if (this.popupTreeObject instanceof FarmStruct) {
                         String farmJid = ((FarmStruct) this.popupTreeObject).getFullJid();
@@ -191,6 +193,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         }
         return null;
     }
+   
 
     public void updateTree(String jid, boolean remove) {
         DefaultMutableTreeNode node = this.getNode(this.treeRoot, jid);
@@ -305,7 +308,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                 if (this.popupTreeObject instanceof HostStruct) {
                     this.createHostPopupMenu();
                 } else if (this.popupTreeObject instanceof FarmStruct) {
-                    this.createFarmPopupMenu();
+                    this.createFarmPopupMenu((FarmStruct)this.popupTreeObject);
                 } else if (this.popupTreeObject instanceof VmStruct) {
                     this.createVmPopupMenu();
                 }
@@ -345,7 +348,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         probeItem.addActionListener(this);
     }
 
-    public void createFarmPopupMenu() {
+    public void createFarmPopupMenu(FarmStruct farmStruct) {
         this.popupMenu = new JPopupMenu();
         this.popupMenu.setBorder(new BevelBorder(6));
         JLabel menuLabel = new JLabel("Farm");
@@ -353,9 +356,10 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         JMenuItem discoItem = new JMenuItem(DISCOVER_FEATURES);
         JMenu spawnMenu = new JMenu(SPAWN_VM);
 
-        for (String vmSpecies : this.supportedVmSpecies) {
+        for (String vmSpecies : farmStruct.getSupportedVmSpecies()) {
             JMenuItem speciesItem = new JMenuItem(vmSpecies);
             speciesItem.addActionListener(this);
+            this.supportedVmSpeciesActionCommands.add(vmSpecies);
             spawnMenu.add(speciesItem);
         }
 

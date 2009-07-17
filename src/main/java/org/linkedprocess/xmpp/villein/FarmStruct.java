@@ -2,9 +2,7 @@ package org.linkedprocess.xmpp.villein;
 
 import org.linkedprocess.LinkedProcess;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * User: marko
@@ -14,7 +12,7 @@ import java.util.Collection;
 public class FarmStruct extends Struct {
 
     protected Map<String, VmStruct> vmStructs = new HashMap<String, VmStruct>();
-
+    protected Set<String> supportedVmSpecies = new HashSet<String>();
 
     public VmStruct getVmStruct(String vmJid) {
         return vmStructs.get(vmJid);
@@ -31,5 +29,17 @@ public class FarmStruct extends Struct {
 
     public void removeVmStruct(String vmJid) {
         this.vmStructs.remove(vmJid);
+    }
+
+    public Set<String> getSupportedVmSpecies() {
+        return this.supportedVmSpecies;
+    }
+
+    public void addSupportedVmSpecies(String supportedVmSpecies) {
+        this.supportedVmSpecies.add(supportedVmSpecies);
+    }
+
+    public void setSupportedVmSpecies(Set<String> supportedVmSpecies) {
+        this.supportedVmSpecies = supportedVmSpecies;
     }
 }

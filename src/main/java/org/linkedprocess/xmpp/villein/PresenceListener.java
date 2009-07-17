@@ -8,6 +8,13 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
+import org.jdom.Document;
+import org.jdom.Namespace;
+import org.jdom.Element;
+
+import java.util.Set;
+import java.util.List;
+import java.util.HashSet;
 
 /**
  * User: marko
@@ -36,6 +43,8 @@ public class PresenceListener implements PacketListener {
             return;
         }
 
+        DiscoverInfo discoInfo = this.getDiscoInfo(packet.getFrom());
+
         if(LinkedProcess.isBareJid(packet.getFrom())) {
             Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom(), XmppVillein.StructType.HOST);
             if (checkStruct == null) {
@@ -46,12 +55,13 @@ public class PresenceListener implements PacketListener {
             } else {
                 checkStruct.setPresence(presence);
             }
-        } else if (isFarm(packet.getFrom())) {
+        } else if (isFarm(discoInfo)) {
             Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom(), XmppVillein.StructType.FARM);
             if (checkStruct == null) {
                 FarmStruct farmStruct = new FarmStruct();
                 farmStruct.setFullJid(packet.getFrom());
                 farmStruct.setPresence(presence);
+                farmStruct.setSupportedVmSpecies(this.getSupportedVmSpecies(discoInfo));
                 this.xmppVillein.addFarmStruct(farmStruct);
             } else {
                 checkStruct.setPresence(presence);
@@ -66,16 +76,52 @@ public class PresenceListener implements PacketListener {
         }
     }
 
-    protected boolean isFarm(String jid) {
+    protected boolean isFarm(DiscoverInfo discoInfo) {
+        if(discoInfo != null)
+            return discoInfo.containsFeature(LinkedProcess.LOP_FARM_NAMESPACE);
+        else
+            return false;
+    }
+
+    protected Set<String> getSupportedVmSpecies(DiscoverInfo discoInfo) {
+        if(discoInfo != null) {
+            Set<String> supportedVmSpecies = new HashSet<String>();
+            try {
+                Document doc = LinkedProcess.createXMLDocument(discoInfo.toXML());
+                Element queryElement = doc.getRootElement().getChild("query", Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
+                Element xElement = queryElement.getChild("x", Namespace.getNamespace(LinkedProcess.X_NAMESPACE));
+                for(Element field : (List<Element>) xElement.getChildren()) {
+                    if(field.getAttributeValue("var").equals("vm_species")) {
+                        for(Element option : (List<Element>) field.getChildren("option", Namespace.getNamespace(LinkedProcess.X_NAMESPACE))) {
+                            Element value = option.getChild("value", Namespace.getNamespace(LinkedProcess.X_NAMESPACE));
+                            if(value != null) {
+                                String vmSpecies = value.getText();
+                                if(vmSpecies != null && vmSpecies.length() > 0)
+                                    supportedVmSpecies.add(vmSpecies);
+                            }
+                        }
+                    }
+                }
+                return supportedVmSpecies;
+            } catch(Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            return new HashSet<String>();
+        }
+    }
+
+    protected DiscoverInfo getDiscoInfo(String jid) {
         ServiceDiscoveryManager discoManager = this.xmppVillein.getDiscoManager();
         try {
-            DiscoverInfo discoInfo = discoManager.discoverInfo(jid);
-            return discoInfo.containsFeature(LinkedProcess.LOP_FARM_NAMESPACE);
+            return discoManager.discoverInfo(jid);
         } catch(XMPPException e) {
             XmppVillein.LOGGER.severe("XmppException with DiscoveryManager.");
-            return false;
-        }     
+            return null;
+        }
     }
+
 
     protected boolean isVirtualMachine(String jid) {
         ServiceDiscoveryManager discoManager = this.xmppVillein.getDiscoManager();

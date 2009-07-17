@@ -163,10 +163,6 @@ public class XmppFarm extends XmppClient {
 
     }
 
-    public ServiceDiscoveryManager getServiceDiscoveryManager() {
-        return this.discoManager;
-    }
-
     public DataForm getServiceExtension() {
         return this.serviceExtension;
     }
@@ -181,20 +177,19 @@ public class XmppFarm extends XmppClient {
         this.serviceExtension = new DataForm("farm_extended_features");
 
         ScriptEngineManager manager = LinkedProcess.createScriptEngineManager();
+        FormField field = new FormField("vm_species");
+        field.setRequired(true);
+        field.setLabel("supported virtual machine species");
+        field.setType(FormField.TYPE_TEXT_SINGLE);
         List<ScriptEngineFactory> factories = manager.getEngineFactories();
-        for (ScriptEngineFactory factory : factories) {
-            FormField field = new FormField("vm_species");
-            String engName = factory.getEngineName();
-            String engVersion = factory.getEngineVersion();
-            String langName = factory.getLanguageName();
-            String langVersion = factory.getLanguageVersion();
-            field.setType(factory.getNames().get(0));
-            field.addOption(new FormField.Option("species_language", langName));
-            field.addOption(new FormField.Option("species_language_version", langVersion));
-            field.addOption(new FormField.Option("species_engine", engName));
-            field.addOption(new FormField.Option("species_engine_version", engVersion));
-            this.serviceExtension.addField(field);
+        for (ScriptEngineFactory factory : factories) { 
+            //String engName = factory.getEngineName();
+            //String engVersion = factory.getEngineVersion();
+            //String langName = factory.getLanguageName();
+            //String langVersion = factory.getLanguageVersion();
+            field.addOption(new FormField.Option(factory.getNames().get(0)));
         }
+        this.serviceExtension.addField(field);
 
 
         VMSecurityManager man = (VMSecurityManager) System.getSecurityManager();

@@ -130,11 +130,17 @@ public class LinkedProcess {
 
     }
 
+    public static Document createXMLDocument(String xml) throws JDOMException, IOException {
+        SAXBuilder builder = new SAXBuilder();
+        return builder.build(new StringReader(xml));
+    }
+
     public static final String LOP_NAMESPACE = "http://linkedprocess.org/";
     public static final String LOP_FARM_NAMESPACE = LOP_NAMESPACE + "protocol#LoPFarm";
     public static final String LOP_VM_NAMESPACE = LOP_NAMESPACE + "protocol#LoPVM";
     public static final String BLANK_NAMESPACE = "";
     public static final String DISCO_INFO_NAMESPACE = "http://jabber.org/protocol/disco#info";
+    public static final String X_NAMESPACE = "jabber:x:data";
     public static final String DISCO_BOT = "bot";
     public static final String FORWARD_SLASH = "/";
 
