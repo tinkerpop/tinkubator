@@ -5,6 +5,7 @@ import org.linkedprocess.xmpp.villein.VmStruct;
 import org.linkedprocess.xmpp.vm.AbortJob;
 import org.linkedprocess.xmpp.vm.SubmitJob;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.IQ;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -122,10 +123,10 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
     public void handleIncomingSubmitJob(SubmitJob submitJob) {
         String jobId = submitJob.getPacketID();
         if(null == this.jobStatus.get(jobId)) {
-            if(null == submitJob.getErrorType())
-                this.jobStatus.put(jobId, JobStatus.COMPLETED);
-            else
+            if(submitJob.getType() == IQ.Type.ERROR)
                 this.jobStatus.put(jobId, JobStatus.ERROR);
+            else
+                this.jobStatus.put(jobId, JobStatus.COMPLETED);
         }
 
         for(int i=0; i < this.jobList.getModel().getSize(); i++) {

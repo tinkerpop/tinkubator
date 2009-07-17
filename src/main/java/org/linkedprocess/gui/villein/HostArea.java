@@ -121,6 +121,11 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                 String farmJid = ((FarmStruct) this.popupTreeObject).getFullJid();
                 this.villeinGui.getXmppVillein().spawnVirtualMachine(farmJid, LinkedProcess.PYTHON);
             }
+        } else if (event.getActionCommand().equals(LinkedProcess.RUBY)) {
+            if (this.popupTreeObject instanceof FarmStruct) {
+                String farmJid = ((FarmStruct) this.popupTreeObject).getFullJid();
+                this.villeinGui.getXmppVillein().spawnVirtualMachine(farmJid, LinkedProcess.RUBY);
+            }
         } else if (event.getActionCommand().equals(SHUTDOWN)) {
 
             this.villeinGui.getXmppVillein().shutDown();
@@ -316,8 +321,10 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                     JMenu spawnMenu = new JMenu(SPAWN_VM);
                     JMenuItem javaScriptItem = new JMenuItem(LinkedProcess.JAVASCRIPT);
                     JMenuItem pythonScriptItem = new JMenuItem(LinkedProcess.PYTHON);
+                    JMenuItem rubyScriptItem = new JMenuItem(LinkedProcess.RUBY);
                     spawnMenu.add(javaScriptItem);
                     spawnMenu.add(pythonScriptItem);
+                    spawnMenu.add(rubyScriptItem);
                     menuLabel.setHorizontalTextPosition(JLabel.CENTER);
                     popupMenu.add(menuLabel);
                     popupMenu.addSeparator();
@@ -326,6 +333,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                     discoItem.addActionListener(this);
                     javaScriptItem.addActionListener(this);
                     pythonScriptItem.addActionListener(this);
+                    rubyScriptItem.addActionListener(this);
                     popupMenu.setLocation(x + villeinGui.getX(), y + villeinGui.getY());
                     popupMenu.show(event.getComponent(), event.getX(), event.getY());
                 } else if (this.popupTreeObject instanceof VmStruct) {

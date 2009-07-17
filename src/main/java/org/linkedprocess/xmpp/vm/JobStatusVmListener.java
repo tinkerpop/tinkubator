@@ -28,6 +28,7 @@ public class JobStatusVmListener implements PacketListener {
         returnJobStatus.setTo(jobStatus.getFrom());
         returnJobStatus.setPacketID(jobStatus.getPacketID());
         String jobId = ((JobStatus) jobStatus).getJobId();
+        returnJobStatus.setJobId(jobId);
         String vmPassword = ((JobStatus) jobStatus).getVmPassword();
 
         if (null == vmPassword || null == jobId) {
