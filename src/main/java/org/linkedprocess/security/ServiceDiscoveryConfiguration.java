@@ -141,16 +141,24 @@ public class ServiceDiscoveryConfiguration {
 
             switch (type) {
                 case read:
-                    addPermittedPaths(field, readPermissions);
+                    if (null != readPermissions) {
+                        addPermittedPaths(field, readPermissions);
+                    }
                     break;
                 case write:
-                    addPermittedPaths(field, writePermissions);
+                    if (null != writePermissions) {
+                        addPermittedPaths(field, writePermissions);
+                    }
                     break;
                 case exec:
-                    addPermittedPaths(field, execPermissions);
+                    if (null != execPermissions) {
+                        addPermittedPaths(field, execPermissions);
+                    }
                     break;
                 case link:
-                    addPermittedPaths(field, linkPermissions);
+                    if (null != linkPermissions) {
+                        addPermittedPaths(field, linkPermissions);
+                    }
                     break;
                 default:
                     // Other types have no special formatting.

@@ -207,11 +207,12 @@ public class LinkedProcess {
 
         // Hack to pre-load Rhino and Jython resource bundles.  This will have to be extended.
         ScriptEngineManager m = new ScriptEngineManager();
-        for (String name : new String[]{JAVASCRIPT, PYTHON}) {
+        for (String name : new String[]{JAVASCRIPT, PYTHON, RUBY}) {
             ScriptEngine e = m.getEngineByName(name);
             try {
                 e.eval("1 + 1;");
                 e.eval("1 ... 1;");
+                e.eval("0...0;");
                 e.eval("print \"Hello, World!\"\n");
             } catch (ScriptException e1) {
                 // Do nothing.
