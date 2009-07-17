@@ -167,12 +167,18 @@ public abstract class XmppClient {
     }
 
     public void requestSubscription(String jid) {
+        if(jid.equals(this.getFullJid()) || jid.equals(this.getBareJid()))
+            return;
+
         Presence subscribe = new Presence(Presence.Type.subscribe);
         subscribe.setTo(jid);
         this.connection.sendPacket(subscribe);
     }
 
     public void requestUnsubscription(String jid, boolean removeFromRoster) {
+        if(jid.equals(this.getFullJid()) || jid.equals(this.getBareJid()))
+            return;
+        
         Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
         unsubscribe.setTo(jid);
         this.connection.sendPacket(unsubscribe);

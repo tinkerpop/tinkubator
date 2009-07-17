@@ -136,32 +136,38 @@ public class ServiceDiscoveryConfiguration {
     }
 
     public void addFields(final DataForm serviceExtension) {
-        for (VMSecurityManager.PermissionType type : permittedTypes) {
+        for (VMSecurityManager.PermissionType type : VMSecurityManager.PermissionType.values()) {
             FormField field = new FormField(type.getSpecName());
 
             switch (type) {
                 case read:
+                    field.setType(FormField.TYPE_LIST_MULTI);
                     if (null != readPermissions) {
                         addPermittedPaths(field, readPermissions);
                     }
                     break;
                 case write:
+                    field.setType(FormField.TYPE_LIST_MULTI);
                     if (null != writePermissions) {
                         addPermittedPaths(field, writePermissions);
                     }
                     break;
                 case exec:
+                    field.setType(FormField.TYPE_LIST_MULTI);
                     if (null != execPermissions) {
                         addPermittedPaths(field, execPermissions);
                     }
                     break;
                 case link:
+                    field.setType(FormField.TYPE_LIST_MULTI);
                     if (null != linkPermissions) {
                         addPermittedPaths(field, linkPermissions);
                     }
                     break;
                 default:
                     // Other types have no special formatting.
+                    field.setType(FormField.TYPE_BOOLEAN);
+                    field.addValue(permittedTypes.contains(type) ? "1" : "0");
             }
 
             serviceExtension.addField(field);

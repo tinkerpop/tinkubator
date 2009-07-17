@@ -22,6 +22,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.packet.DataForm;
 
 import javax.script.ScriptEngineFactory;
@@ -169,20 +170,20 @@ public class XmppFarm extends XmppClient {
         discoManager.addFeature(LinkedProcess.LOP_FARM_NAMESPACE);
 
 
-        this.serviceExtension = new DataForm("farm_extended_features");
+        this.serviceExtension = new DataForm(Form.TYPE_RESULT);
 
         ScriptEngineManager manager = LinkedProcess.createScriptEngineManager();
         FormField field = new FormField("vm_species");
         field.setRequired(true);
         field.setLabel("supported virtual machine species");
-        field.setType(FormField.TYPE_TEXT_SINGLE);
+        field.setType(FormField.TYPE_LIST_SINGLE);
         List<ScriptEngineFactory> factories = manager.getEngineFactories();
         for (ScriptEngineFactory factory : factories) { 
-            //String engName = factory.getEngineName();
-            //String engVersion = factory.getEngineVersion();
+            String engName = factory.getEngineName();
+            String engVersion = factory.getEngineVersion();
             //String langName = factory.getLanguageName();
             //String langVersion = factory.getLanguageVersion();
-            field.addOption(new FormField.Option(factory.getNames().get(0)));
+            field.addOption(new FormField.Option(engName + ":" + engVersion, factory.getNames().get(0)));
         }
         this.serviceExtension.addField(field);
 
