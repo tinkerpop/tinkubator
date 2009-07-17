@@ -167,8 +167,8 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
             }
 
         } else if(event.getActionCommand().equals(TERMINATE_VM)) {
-            System.out.println("make this terminate the vm");
-            //todo: read above.
+            this.villeinGui.getXmppVillein().terminateVirtualMachine(this.vmStruct);
+            this.villeinGui.removeVmFrame(this.vmStruct);
         } else if(event.getActionCommand().equals(CLOSE)) {
             this.setVisible(false);
         }

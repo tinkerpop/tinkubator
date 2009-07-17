@@ -11,6 +11,7 @@ import org.linkedprocess.xmpp.villein.Struct;
 import org.linkedprocess.xmpp.villein.VmStruct;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -42,6 +43,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
     protected final static String SHUTDOWN = "shutdown";
     protected final static String UNSUBSCRIBE = "unsubscribe";
     protected final static String VM_CONTROL = "vm control";
+    protected final static String PROBE = "probe";
 
     public HostArea(VilleinGui villeinGui) {
         this.villeinGui = villeinGui;
@@ -110,6 +112,11 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                 }
             }
 
+        } else if(event.getActionCommand().equals(PROBE)) {
+            if(this.popupTreeObject instanceof Struct) {
+                Struct struct = (Struct) this.popupTreeObject;
+                this.villeinGui.getXmppVillein().probeJid(struct.getFullJid());
+            }
         } else if (event.getActionCommand().equals(DISCOVER_FEATURES)) {
             if(this.popupTreeObject instanceof FarmStruct) {
                 FarmStruct farmStruct = (FarmStruct) this.popupTreeObject;
@@ -325,18 +332,24 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
 
     public void createHostPopupMenu() {
         this.popupMenu = new JPopupMenu();
+        this.popupMenu.setBorder(new BevelBorder(6));
         JLabel menuLabel = new JLabel("Host");
+        JMenuItem probeItem = new JMenuItem(PROBE);
         JMenuItem unsubscribeItem = new JMenuItem(UNSUBSCRIBE);
         menuLabel.setHorizontalTextPosition(JLabel.CENTER);
         this.popupMenu.add(menuLabel);
         this.popupMenu.addSeparator();
+        this.popupMenu.add(probeItem);
         this.popupMenu.add(unsubscribeItem);
         unsubscribeItem.addActionListener(this);
+        probeItem.addActionListener(this);
     }
 
     public void createFarmPopupMenu() {
         this.popupMenu = new JPopupMenu();
+        this.popupMenu.setBorder(new BevelBorder(6));
         JLabel menuLabel = new JLabel("Farm");
+        JMenuItem probeItem = new JMenuItem(PROBE);
         JMenuItem discoItem = new JMenuItem(DISCOVER_FEATURES);
         JMenu spawnMenu = new JMenu(SPAWN_VM);
 
@@ -349,23 +362,29 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         menuLabel.setHorizontalTextPosition(JLabel.CENTER);
         this.popupMenu.add(menuLabel);
         this.popupMenu.addSeparator();
+        this.popupMenu.add(probeItem);
         this.popupMenu.add(discoItem);
         this.popupMenu.add(spawnMenu);
         discoItem.addActionListener(this);
+        probeItem.addActionListener(this);
     }
 
     public void createVmPopupMenu() {
         this.popupMenu = new JPopupMenu();
+        this.popupMenu.setBorder(new BevelBorder(6));
         JLabel menuLabel = new JLabel("Virtual Machine");
+        JMenuItem probeItem = new JMenuItem(PROBE);
+        JMenuItem vmControlItem = new JMenuItem(VM_CONTROL);
         JMenuItem terminateVmItem = new JMenuItem(TERMINATE_VM);
-        JMenuItem openVmControlItem = new JMenuItem(VM_CONTROL);
         menuLabel.setHorizontalTextPosition(JLabel.CENTER);
         this.popupMenu.add(menuLabel);
         this.popupMenu.addSeparator();
-        this.popupMenu.add(openVmControlItem);
+        this.popupMenu.add(probeItem);
+        this.popupMenu.add(vmControlItem);
         this.popupMenu.add(terminateVmItem);
         terminateVmItem.addActionListener(this);
-        openVmControlItem.addActionListener(this);
+        vmControlItem.addActionListener(this);
+        probeItem.addActionListener(this);
     }
 
     public void mouseReleased(MouseEvent e) {

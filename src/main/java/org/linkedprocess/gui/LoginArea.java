@@ -31,6 +31,8 @@ public abstract class LoginArea extends JPanel implements ActionListener {
     protected Image backgroundImage;
     protected String BORDER_SPACE = "    ";
     protected String propertiesFile;
+    protected final String QUIT = "quit";
+    protected final String LOGIN = "login";
 
     public LoginArea(Image backgroundImage, String propertiesFile) {
         super(new BorderLayout());
@@ -80,8 +82,8 @@ public abstract class LoginArea extends JPanel implements ActionListener {
         mainPanel.add(this.rememberBox);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton loginButton = new JButton("login");
-        JButton quitButton = new JButton ("quit");
+        JButton loginButton = new JButton(LOGIN);
+        JButton quitButton = new JButton (QUIT);
 
         buttonPanel.add(loginButton);
         buttonPanel.add(quitButton);

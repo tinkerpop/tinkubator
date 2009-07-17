@@ -123,7 +123,6 @@ public class JobPane extends JTabbedPane implements ActionListener {
 
     public void actionPerformed(ActionEvent event) {
         if(event.getActionCommand().equals(SUBMIT_JOB)) {
-            //System.out.println(this.getSubmitJob().toXML());
             this.vmFrame.getVilleinGui().getConnection().sendPacket(this.getSubmitJob());
             submitJobButton.setText(ABORT_JOB);
             submitJobButton.setActionCommand(ABORT_JOB);
@@ -132,7 +131,6 @@ public class JobPane extends JTabbedPane implements ActionListener {
         } else if(event.getActionCommand().equals(CLEAR)) {
             this.expressionTextArea.setText("");
         } else if(event.getActionCommand().equals(ABORT_JOB)) {
-            //System.out.println(this.getAbortJob().toXML());
             this.vmFrame.getVilleinGui().getConnection().sendPacket(this.getAbortJob());
             this.expressionTextArea.setEnabled(false);
             this.submitJobButton.setEnabled(false);

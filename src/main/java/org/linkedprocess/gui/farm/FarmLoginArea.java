@@ -37,11 +37,11 @@ public class FarmLoginArea extends LoginArea {
         this.doRememberedProperties();
         
         try {
-            if(event.getActionCommand().equals("login")) {
+            if(event.getActionCommand().equals(LOGIN)) {
                 this.statusLabel.setText("");
                 XmppFarm farm = new XmppFarm(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText());
                 this.farmGui.loadMainFrame(farm);
-            } else if (event.getActionCommand().equals("quit")) {
+            } else if (event.getActionCommand().equals(QUIT)) {
                 System.exit(0);
             }
         } catch(XMPPException e) {

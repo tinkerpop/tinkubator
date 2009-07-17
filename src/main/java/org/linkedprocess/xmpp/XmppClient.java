@@ -187,4 +187,10 @@ public abstract class XmppClient {
         unsubscribed.setTo(jid);
         this.connection.sendPacket(unsubscribed);
     }
+
+    public void probeJid(String jid) {
+        ProbePresence probe = new ProbePresence();
+        probe.setTo(jid);
+        this.connection.sendPacket(probe);
+    }
 }

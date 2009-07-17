@@ -29,11 +29,11 @@ public class VilleinLoginArea extends LoginArea {
         this.doRememberedProperties();
 
         try {
-            if(event.getActionCommand().equals("login")) {
+            if(event.getActionCommand().equals(LOGIN)) {
                 this.statusLabel.setText("");
                 XmppVillein villein = new XmppVillein(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText());
                 this.villeinGui.loadHostArea(villein);
-            } else if (event.getActionCommand().equals("quit")) {
+            } else if (event.getActionCommand().equals(QUIT)) {
                 System.exit(0);
             }
         } catch(XMPPException e) {
