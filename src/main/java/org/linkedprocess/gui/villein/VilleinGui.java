@@ -116,5 +116,4 @@ public class VilleinGui extends JFrame {
     public static void main(String[] args) {
         new VilleinGui();
     }
-
 }

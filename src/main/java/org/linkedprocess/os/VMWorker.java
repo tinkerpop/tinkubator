@@ -5,8 +5,13 @@ import org.linkedprocess.os.errors.JobAlreadyExistsException;
 import org.linkedprocess.os.errors.JobNotFoundException;
 import org.linkedprocess.security.VMSandboxedThread;
 
+import javax.script.Bindings;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
@@ -190,7 +195,24 @@ public class VMWorker {
                 throw new IllegalArgumentException("can't check for new work in status: " + status);
         }
     }
-  
+
+    /**
+     * @param bindingNames a set of names to bind
+     * @return a set of bindings containing the values associated with the given binding names, in this worker's
+     * ScriptEngine, at ScriptContext.ENGINE_SCOPE
+     */
+    public synchronized Map<String, String> getBindings(final Set<String> bindingNames) {
+        Map<String, String> bindings = new HashMap<String, String>();
+        Bindings b = this.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
+        for (String key : bindingNames) {
+            Object value = b.get(key);
+            String strValue = null == value ? null :value.toString();
+            bindings.put(key, strValue);
+        }
+
+        return bindings;
+    }
+
     public synchronized long getTimeLastActive() {
         return timeLastActive;
     }
@@ -205,6 +227,20 @@ public class VMWorker {
             default:
                 throw new IllegalStateException("can't check job status in status: " + status);
         }
+    }
+
+    /**
+     * Binds the given names to the given values in this worker's ScriptEngine, at ScriptContext.ENGINE_SCOPE
+     * @param bindings the bindings to update
+     */
+    public synchronized void setBindings(final Map<String, String> bindings) {
+        Bindings b = this.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
+        for (String key : bindings.keySet()) {
+            b.put(key, bindings.get(key));
+        }
+
+        // TODO: not sure if this is absolutely necessary
+        this.scriptEngine.setBindings(b, ScriptContext.ENGINE_SCOPE);
     }
 
     /**

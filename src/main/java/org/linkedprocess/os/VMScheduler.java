@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -316,6 +317,40 @@ public class VMScheduler {
         while (jobsCompleted < jobsReceived) {
             Thread.sleep(100);
         }
+    }
+
+    /**
+     * @param machineJID  the JID of the virtual machine to query
+     * @param bindingNames the names to bind
+     * @return the bindings of the given variable names in the given virtual machine
+     * @throws VMWorkerNotFoundException if no VM worker with the given JID exists
+     */
+    public synchronized Map<String, String> getBindings(final String machineJID,
+                                                        final Set<String> bindingNames) throws VMWorkerNotFoundException {
+        if (LinkedProcess.FarmStatus.TERMINATED == status) {
+            throw new IllegalStateException("scheduler has been terminated");
+        }
+
+        VMWorker w = getWorkerByJID(machineJID);
+
+        return w.getBindings(bindingNames);
+    }
+
+    /**
+     * Updates the given variable bindings of the given virtual machine
+     * @param machineJID  the JID of the virtual machine to update
+     * @param bindings the key, value bindings to update
+     * @throws VMWorkerNotFoundException if no VM worker with the given JID exists
+     */
+    public synchronized void setBindings(final String machineJID,
+                                         final Map<String, String> bindings) throws VMWorkerNotFoundException {
+        if (LinkedProcess.FarmStatus.TERMINATED == status) {
+            throw new IllegalStateException("scheduler has been terminated");
+        }
+
+        VMWorker w = getWorkerByJID(machineJID);
+
+        w.setBindings(bindings);
     }
 
     ////////////////////////////////////////////////////////////////////////////
