@@ -5,7 +5,7 @@ import org.linkedprocess.xmpp.XMPPConnectionWrapper;
 import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.farm.PresenceSubscriptionListener;
 import org.linkedprocess.xmpp.farm.SpawnVm;
-import org.linkedprocess.xmpp.farm.SpawnVmFarmListener;
+import org.linkedprocess.xmpp.farm.SpawnVmListener;
 import org.linkedprocess.xmpp.vm.TerminateVm;
 import org.linkedprocess.xmpp.vm.TerminateVmListener;
 import org.linkedprocess.xmpp.farm.XmppFarm;
@@ -134,7 +134,7 @@ public class XMPPSpecificationTest {
 		// now we should have 2 PacketListeners to the Farms XMPP connection
 		ArrayList<PacketListener> packetListeners = mockFarmConn.packetListeners;
 		assertEquals(2, packetListeners.size());
-		assertTrue(packetListeners.get(0) instanceof SpawnVmFarmListener);
+		assertTrue(packetListeners.get(0) instanceof SpawnVmListener);
 		assertTrue(packetListeners.get(1) instanceof PresenceSubscriptionListener);
 
 		xmppFarm.shutDown();

@@ -1,9 +1,11 @@
 package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.gui.ImageHolder;
+import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.xmpp.villein.VmStruct;
 import org.linkedprocess.xmpp.vm.AbortJob;
 import org.linkedprocess.xmpp.vm.SubmitJob;
+import org.linkedprocess.xmpp.vm.ManageBindings;
 import org.linkedprocess.LinkedProcess;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
@@ -31,6 +33,8 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
     protected JSplitPane splitPane;
     protected VmStruct vmStruct;
     protected VilleinGui villeinGui;
+    protected BindingsPanel bindingsPanel;
+    protected PacketSnifferPanel packetSnifferPanel;
     protected Map<String, JobStatus> jobStatus = new HashMap<String, JobStatus>();
 
     protected static final String ADD_JOB = "add job";
@@ -84,7 +88,7 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
         this.splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
         JobPane jobPane = new JobPane(this, generatedJobId());
-        BindingsPanel bindingsPanel = new BindingsPanel(this);
+        this.bindingsPanel = new BindingsPanel(this);
 
         listModel.addElement(jobPane);
 
@@ -94,9 +98,12 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
         // select the new job and fire selection event
         this.jobList.setSelectedValue(jobPane, true);
 
+        this.packetSnifferPanel = new PacketSnifferPanel();
+
         JTabbedPane jobBindingsTabbedPane = new JTabbedPane();
         jobBindingsTabbedPane.addTab("jobs", this.splitPane);
-        jobBindingsTabbedPane.addTab("bindings", bindingsPanel);
+        jobBindingsTabbedPane.addTab("bindings", this.bindingsPanel);
+        jobBindingsTabbedPane.addTab("packets", this.packetSnifferPanel);
 
         this.getContentPane().add(jobBindingsTabbedPane);
         this.pack();
@@ -128,7 +135,13 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
         
     }
 
+    public void handleIncomingManageBindings(ManageBindings manageBindings) {
+        this.packetSnifferPanel.addPacket(manageBindings);
+        this.bindingsPanel.handleIncomingManageBindings(manageBindings);
+    }
+
     public void handleIncomingSubmitJob(SubmitJob submitJob) {
+        this.packetSnifferPanel.addPacket(submitJob);
         String jobId = submitJob.getPacketID();
         if(null == this.jobStatus.get(jobId)) {
             if(submitJob.getType() == IQ.Type.ERROR)
@@ -142,10 +155,12 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
             if(jobPane.getJobId().equals(jobId)) {
                 jobPane.handleIncomingSubmitJob(submitJob);
             }
-        }   
+        }
+        jobList.repaint();
     }
 
     public void handleIncomingAbortJob(AbortJob abortJob) {
+        this.packetSnifferPanel.addPacket(abortJob);
         String jobId = abortJob.getJobId();
         this.jobStatus.put(jobId, JobStatus.ABORTED);
         for(int i=0; i < this.jobList.getModel().getSize(); i++) {
@@ -154,6 +169,7 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
                 jobPane.handleIncomingAbortJob(abortJob);
             }
         }
+        jobList.repaint();
     }
 
     public void actionPerformed(ActionEvent event) {
@@ -186,8 +202,6 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
     public VilleinGui getVilleinGui() {
         return this.villeinGui;
     }
-   
-
 
 
     public static void main(String[] args) {

@@ -19,7 +19,16 @@ public class AbortJobListener implements PacketListener {
         this.xmppVirtualMachine = xmppVirtualMachine;
     }
 
-    public void processPacket(Packet abortJob) {
+    public void processPacket(Packet packet) {
+        try {
+            processAbortJobPacket((AbortJob)packet);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void processAbortJobPacket(AbortJob abortJob) {
 
 
         XmppVirtualMachine.LOGGER.fine("Arrived " + AbortJobListener.class.getName());
@@ -28,9 +37,9 @@ public class AbortJobListener implements PacketListener {
         AbortJob returnAbortJob = new AbortJob();
         returnAbortJob.setTo(abortJob.getFrom());
         returnAbortJob.setPacketID(abortJob.getPacketID());
-        String jobId = ((AbortJob) abortJob).getJobId();
+        String jobId = abortJob.getJobId();
         returnAbortJob.setJobId(jobId);
-        String vmPassword = ((AbortJob) abortJob).getVmPassword();
+        String vmPassword = abortJob.getVmPassword();
 
         if(null == vmPassword || null == jobId) {
             returnAbortJob.setErrorType(LinkedProcess.ErrorType.MALFORMED_PACKET);

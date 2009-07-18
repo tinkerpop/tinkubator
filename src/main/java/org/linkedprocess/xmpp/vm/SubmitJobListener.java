@@ -22,38 +22,38 @@ public class SubmitJobListener implements PacketListener {
         this.xmppVirtualMachine = xmppVirtualMachine;
     }
 
-    public void processPacket(Packet evaluate) {
+    public void processPacket(Packet packet) {
 
         try {
-            processPacketTemp(evaluate);
+            processSubmitJobPacket((SubmitJob)packet);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    private void processPacketTemp(Packet evaluate) {
+    private void processSubmitJobPacket(SubmitJob submitJob) {
         XmppVirtualMachine.LOGGER.info("Arrived " + SubmitJobListener.class.getName());
-        XmppVirtualMachine.LOGGER.info(evaluate.toXML());
+        XmppVirtualMachine.LOGGER.info(submitJob.toXML());
 
-        String expression = ((SubmitJob) evaluate).getExpression();
-        String iqId = evaluate.getPacketID();
-        String villeinJid = evaluate.getFrom();
-        String vmPassword = ((SubmitJob)evaluate).getVmPassword();
+        String expression = submitJob.getExpression();
+        String iqId = submitJob.getPacketID();
+        String villeinJid = submitJob.getFrom();
+        String vmPassword = submitJob.getVmPassword();
 
         if(null == vmPassword || null == expression) {
             SubmitJob returnSubmitJob = new SubmitJob();
-            returnSubmitJob.setTo(evaluate.getFrom());
-            returnSubmitJob.setPacketID(evaluate.getPacketID());
+            returnSubmitJob.setTo(villeinJid);
+            returnSubmitJob.setPacketID(iqId);
             returnSubmitJob.setErrorType(LinkedProcess.ErrorType.MALFORMED_PACKET);
             String errorMessage = "";
             if(null == vmPassword) {
-                errorMessage = "evaluate XML packet is missing the vm_password attribute";
+                errorMessage = "submitJob XML packet is missing the vm_password attribute";
             }
             if(null == expression) {
                 if(errorMessage.length() > 0)
                     errorMessage = errorMessage + "\n";
-                errorMessage = errorMessage + "evaluate XML stanza is missing the expression text body";
+                errorMessage = errorMessage + "submitJob XML stanza is missing the expression text body";
             }
             if(errorMessage.length() > 0)
                 returnSubmitJob.setErrorMessage(errorMessage);
@@ -65,8 +65,8 @@ public class SubmitJobListener implements PacketListener {
 
         } else if(!this.xmppVirtualMachine.checkVmPassword(vmPassword)) {
             SubmitJob returnSubmitJob = new SubmitJob();
-            returnSubmitJob.setTo(evaluate.getFrom());
-            returnSubmitJob.setPacketID(evaluate.getPacketID());
+            returnSubmitJob.setTo(villeinJid);
+            returnSubmitJob.setPacketID(iqId);
             returnSubmitJob.setErrorType(LinkedProcess.ErrorType.WRONG_VM_PASSWORD);
             returnSubmitJob.setType(IQ.Type.ERROR);
             xmppVirtualMachine.getConnection().sendPacket(returnSubmitJob);
@@ -80,8 +80,8 @@ public class SubmitJobListener implements PacketListener {
                 xmppVirtualMachine.scheduleJob(job);
             } catch (VMWorkerNotFoundException e) {
                 SubmitJob returnSubmitJob = new SubmitJob();
-                returnSubmitJob.setTo(evaluate.getFrom());
-                returnSubmitJob.setPacketID(evaluate.getPacketID());
+                returnSubmitJob.setTo(villeinJid);
+                returnSubmitJob.setPacketID(iqId);
                 returnSubmitJob.setErrorType(LinkedProcess.ErrorType.INTERNAL_ERROR);
                 returnSubmitJob.setErrorMessage(e.getMessage());
                 returnSubmitJob.setType(IQ.Type.ERROR);
@@ -92,8 +92,8 @@ public class SubmitJobListener implements PacketListener {
 
             } catch (VMWorkerIsFullException e) {
                 SubmitJob returnSubmitJob = new SubmitJob();
-                returnSubmitJob.setTo(evaluate.getFrom());
-                returnSubmitJob.setPacketID(evaluate.getPacketID());
+                returnSubmitJob.setTo(villeinJid);
+                returnSubmitJob.setPacketID(iqId);
                 returnSubmitJob.setErrorType(LinkedProcess.ErrorType.VM_IS_BUSY);
                 returnSubmitJob.setErrorMessage(e.getMessage());
                 returnSubmitJob.setType(IQ.Type.ERROR);
@@ -103,8 +103,8 @@ public class SubmitJobListener implements PacketListener {
                 XmppVirtualMachine.LOGGER.info(returnSubmitJob.toXML());
             } catch (JobAlreadyExistsException e) {
                 SubmitJob returnSubmitJob = new SubmitJob();
-                returnSubmitJob.setTo(evaluate.getFrom());
-                returnSubmitJob.setPacketID(evaluate.getPacketID());
+                returnSubmitJob.setTo(villeinJid);
+                returnSubmitJob.setPacketID(iqId);
                 returnSubmitJob.setErrorType(LinkedProcess.ErrorType.JOB_ALREADY_EXISTS);
                 returnSubmitJob.setErrorMessage(e.getMessage());
                 returnSubmitJob.setType(IQ.Type.ERROR);

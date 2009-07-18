@@ -23,7 +23,7 @@ public class TerminateVmListener implements PacketListener {
     public void processPacket(Packet terminateVm) {
 
         try {
-            processPacketTemp(terminateVm);
+            processTerminateVmPacket((TerminateVm) terminateVm);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -31,7 +31,7 @@ public class TerminateVmListener implements PacketListener {
 
     }
 
-    private void processPacketTemp(Packet terminateVm) {
+    private void processTerminateVmPacket(TerminateVm terminateVm) {
         XmppFarm.LOGGER.info("Arrived " + TerminateVmListener.class.getName());
         XmppFarm.LOGGER.info(terminateVm.toXML());
 
@@ -39,7 +39,7 @@ public class TerminateVmListener implements PacketListener {
         returnTerminateVm.setTo(terminateVm.getFrom());
         returnTerminateVm.setPacketID(terminateVm.getPacketID());
 
-        String vmPassword = ((TerminateVm) terminateVm).getVmPassword();
+        String vmPassword = terminateVm.getVmPassword();
         boolean terminate = false;
         if(null == vmPassword) {
             returnTerminateVm.setErrorType(LinkedProcess.ErrorType.MALFORMED_PACKET);
@@ -59,7 +59,7 @@ public class TerminateVmListener implements PacketListener {
 
         if(terminate) {
             try {
-                this.xmppVirtualMachine.getFarm().getScheduler().terminateVirtualMachine(xmppVirtualMachine.getFullJid());
+                this.xmppVirtualMachine.getFarm().getVmScheduler().terminateVirtualMachine(xmppVirtualMachine.getFullJid());
             } catch(VMWorkerNotFoundException e){
                 this.xmppVirtualMachine.shutDown();
             }

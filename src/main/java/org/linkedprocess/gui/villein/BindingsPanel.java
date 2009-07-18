@@ -108,15 +108,9 @@ public class BindingsPanel extends JPanel implements ActionListener, TableModelL
             }
 
         } else if (event.getActionCommand().equals(GET)) {
-            try {
-                System.out.println(LinkedProcess.createPrettyXML(this.getManageBindings(IQ.Type.GET).toXML()));
-            } catch (Exception e) {
-            }
+           vmFrame.getVilleinGui().getXmppVillein().getConnection().sendPacket(this.getManageBindings(IQ.Type.GET));
         } else if (event.getActionCommand().equals(SET)) {
-            try {
-                System.out.println(LinkedProcess.createPrettyXML(this.getManageBindings(IQ.Type.SET).toXML()));
-            } catch (Exception e) {
-            }
+           vmFrame.getVilleinGui().getXmppVillein().getConnection().sendPacket(this.getManageBindings(IQ.Type.SET));  
         }
     }
 

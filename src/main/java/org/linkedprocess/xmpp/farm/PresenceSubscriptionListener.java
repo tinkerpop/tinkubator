@@ -19,52 +19,60 @@ public class PresenceSubscriptionListener implements PacketListener {
     }
 
     public void processPacket(Packet packet) {
-        Presence presence = ((Presence)packet);
+        try {
+            processPresencePacket((Presence)packet);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void processPresencePacket(Presence presence) {
+
         Presence.Type type = presence.getType();
         if(type == Presence.Type.subscribe) {
             XmppFarm.LOGGER.info("Subscribing to " + presence.getFrom());
             Presence subscribed = new Presence(Presence.Type.subscribed);
             Presence subscribe = new Presence(Presence.Type.subscribe);
-            subscribed.setTo(packet.getFrom());
-            subscribe.setTo(packet.getFrom());
+            subscribed.setTo(presence.getFrom());
+            subscribe.setTo(presence.getFrom());
 
-            Presence available = xmppFarm.createPresence(xmppFarm.getScheduler().getSchedulerStatus());
-            available.setTo(packet.getFrom());
-            available.setPacketID(packet.getPacketID());
+            Presence available = xmppFarm.createPresence(xmppFarm.getVmScheduler().getSchedulerStatus());
+            available.setTo(presence.getFrom());
+            available.setPacketID(presence.getPacketID());
 
             xmppFarm.getConnection().sendPacket(subscribed);
             xmppFarm.getConnection().sendPacket(subscribe);
             xmppFarm.getConnection().sendPacket(available);
 
             try {
-                xmppFarm.getRoster().createEntry(packet.getFrom(), packet.getFrom(), null);
+                xmppFarm.getRoster().createEntry(presence.getFrom(), presence.getFrom(), null);
             } catch(XMPPException e) {
                 XmppFarm.LOGGER.severe(e.getMessage());
             }
 
             return;
 
-        } else if(type == Presence.Type.unsubscribe && !packet.getFrom().equals(xmppFarm.getBareJid()) && !packet.getFrom().equals(xmppFarm.getFullJid())) {
+        } else if(type == Presence.Type.unsubscribe && !presence.getFrom().equals(xmppFarm.getBareJid()) && !presence.getFrom().equals(xmppFarm.getFullJid())) {
             XmppFarm.LOGGER.info("Unsubscribing from " + presence.getFrom());
             Presence unsubscribed = new Presence(Presence.Type.unsubscribed);
             Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
-            unsubscribed.setTo(packet.getFrom());
-            unsubscribe.setTo(packet.getFrom());
+            unsubscribed.setTo(presence.getFrom());
+            unsubscribe.setTo(presence.getFrom());
 
-            Presence unavailable = xmppFarm.createPresence(xmppFarm.getScheduler().getSchedulerStatus());
-            unavailable.setTo(packet.getFrom());
+            Presence unavailable = xmppFarm.createPresence(xmppFarm.getVmScheduler().getSchedulerStatus());
+            unavailable.setTo(presence.getFrom());
 
             xmppFarm.getConnection().sendPacket(unsubscribed);
             xmppFarm.getConnection().sendPacket(unsubscribe);
             xmppFarm.getConnection().sendPacket(unavailable);
 
             try {
-                xmppFarm.getRoster().removeEntry(xmppFarm.getRoster().getEntry(packet.getFrom()));
+                xmppFarm.getRoster().removeEntry(xmppFarm.getRoster().getEntry(presence.getFrom()));
             } catch(XMPPException e) {
                 XmppFarm.LOGGER.severe(e.getMessage());
             }
             return;
         }
-        XmppFarm.LOGGER.info("This shouldn't have happened.");  // TODO: make this an exception or something -- however, this has yet to happen. Perhaps just remove.
+        XmppFarm.LOGGER.severe("This shouldn't have happened.");  // TODO: make this an exception or something -- however, this has yet to happen. Perhaps just remove.
     }
 }

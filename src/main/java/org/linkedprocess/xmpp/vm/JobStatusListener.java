@@ -19,7 +19,15 @@ public class JobStatusListener implements PacketListener {
         this.xmppVirtualMachine = xmppVirtualMachine;
     }
 
-    public void processPacket(Packet jobStatus) {
+    public void processPacket(Packet packet) {
+        try {
+            processJobStatusPacket((JobStatus)packet);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void processJobStatusPacket(JobStatus jobStatus) {
 
         XmppVirtualMachine.LOGGER.fine("Arrived " + JobStatusListener.class.getName());
         XmppVirtualMachine.LOGGER.fine(jobStatus.toXML());
@@ -27,9 +35,9 @@ public class JobStatusListener implements PacketListener {
         JobStatus returnJobStatus = new JobStatus();
         returnJobStatus.setTo(jobStatus.getFrom());
         returnJobStatus.setPacketID(jobStatus.getPacketID());
-        String jobId = ((JobStatus) jobStatus).getJobId();
+        String jobId = jobStatus.getJobId();
         returnJobStatus.setJobId(jobId);
-        String vmPassword = ((JobStatus) jobStatus).getVmPassword();
+        String vmPassword = jobStatus.getVmPassword();
 
         if (null == vmPassword || null == jobId) {
             returnJobStatus.setErrorType(LinkedProcess.ErrorType.MALFORMED_PACKET);

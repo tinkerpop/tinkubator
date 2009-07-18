@@ -9,16 +9,15 @@ import org.linkedprocess.os.errors.JobAlreadyExistsException;
 import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.farm.XmppFarm;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.filter.IQTypeFilter;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.*;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 
 import java.util.logging.Logger;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * User: marko
@@ -49,6 +48,7 @@ public class XmppVirtualMachine extends XmppClient {
         pm.addIQProvider(LinkedProcess.JOB_STATUS_TAG, LinkedProcess.LOP_VM_NAMESPACE, new JobStatusProvider());
         pm.addIQProvider(LinkedProcess.ABORT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE, new AbortJobProvider());
         pm.addIQProvider(LinkedProcess.TERMINATE_VM_TAG, LinkedProcess.LOP_VM_NAMESPACE, new TerminateVmProvider());
+        pm.addIQProvider(LinkedProcess.MANAGE_BINDINGS_TAG, LinkedProcess.LOP_VM_NAMESPACE, new ManageBindingsProvider());
 
         try {
             this.logon(server, port, username, password);
@@ -63,11 +63,13 @@ public class XmppVirtualMachine extends XmppClient {
         PacketFilter statusFilter = new AndFilter(new PacketTypeFilter(JobStatus.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter abandonFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter terminateFilter = new AndFilter(new PacketTypeFilter(TerminateVm.class), new IQTypeFilter(IQ.Type.GET));
+        PacketFilter bindingsFilter = new AndFilter(new PacketTypeFilter(ManageBindings.class), new OrFilter(new IQTypeFilter(IQ.Type.GET), new IQTypeFilter(IQ.Type.SET)));
 
         this.addPacketListener(new SubmitJobListener(this), submitFilter);
         this.addPacketListener(new JobStatusListener(this), statusFilter);
         this.addPacketListener(new AbortJobListener(this), abandonFilter);
         this.addPacketListener(new TerminateVmListener(this), terminateFilter);
+        this.addPacketListener(new ManageBindingsListener(this), bindingsFilter);
 
     }
 
@@ -96,15 +98,23 @@ public class XmppVirtualMachine extends XmppClient {
     }
 
     public void abortJob(String jobId) throws VMWorkerNotFoundException, JobNotFoundException {
-        this.farm.getScheduler().abortJob(this.getFullJid(), jobId);
+        this.farm.getVmScheduler().abortJob(this.getFullJid(), jobId);
     }
 
     public LinkedProcess.JobStatus getJobStatus(String jobId) throws VMWorkerNotFoundException, JobNotFoundException {
-        return this.farm.getScheduler().getJobStatus(this.getFullJid(), jobId);
+        return this.farm.getVmScheduler().getJobStatus(this.getFullJid(), jobId);
     }
 
     public void scheduleJob(Job job) throws VMWorkerNotFoundException, VMWorkerIsFullException, JobAlreadyExistsException {
-        this.farm.getScheduler().scheduleJob(this.getFullJid(), job);
+        this.farm.getVmScheduler().scheduleJob(this.getFullJid(), job);
+    }
+
+    public void setBindings(Map<String, String> bindings) throws VMWorkerNotFoundException {
+        this.farm.getVmScheduler().setBindings(this.getFullJid(), bindings);
+    }
+
+    public Map<String, String> getBindings(Set<String> names) throws VMWorkerNotFoundException {
+        return this.farm.getVmScheduler().getBindings(this.getFullJid(), names);
     }
 
     protected void initiateFeatures() {
@@ -141,7 +151,7 @@ public class XmppVirtualMachine extends XmppClient {
     }
 
     public LinkedProcess.VmStatus getVmStatus() {
-        return this.farm.getScheduler().getVirtualMachineStatus(this.getFullJid());
+        return this.farm.getVmScheduler().getVirtualMachineStatus(this.getFullJid());
     }
 
 }

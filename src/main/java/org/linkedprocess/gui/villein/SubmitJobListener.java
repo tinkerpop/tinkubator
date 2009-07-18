@@ -22,6 +22,7 @@ public class SubmitJobListener implements PacketListener {
         SubmitJob submitJob = (SubmitJob)packet;
 
         VmFrame vmFrame = this.villeinGui.getVmFrame(submitJob.getFrom());
+         
         if(vmFrame != null) {
             vmFrame.handleIncomingSubmitJob(submitJob);
         } else {

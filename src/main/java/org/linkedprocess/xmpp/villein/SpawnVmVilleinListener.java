@@ -4,6 +4,7 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
 import org.linkedprocess.xmpp.farm.SpawnVm;
+import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 /**
  * User: marko
@@ -19,8 +20,16 @@ public class SpawnVmVilleinListener implements PacketListener {
     }
 
     public void processPacket(Packet packet) {
-        SpawnVm spawnVm = (SpawnVm)packet;
+        try {
+            processSpawnVmPacket((SpawnVm)packet);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+
+    public void processSpawnVmPacket(SpawnVm spawnVm) {
+        
         String farmJid = spawnVm.getFrom();
         if(spawnVm.getType() == IQ.Type.RESULT) {
             VmStruct vmStruct = new VmStruct();

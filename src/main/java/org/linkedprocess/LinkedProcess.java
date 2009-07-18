@@ -110,6 +110,14 @@ public class LinkedProcess {
         }
     }
 
+    public static String getBareClassName(Class aClass) {
+        String name = aClass.getName();
+        if(name.contains(".")) {
+            name = name.substring(name.lastIndexOf(".")+1);
+        }
+        return name;
+    }
+
     public static String generateResource(String fullJid) {
         return fullJid.substring(fullJid.indexOf("/") + 1);
     }
@@ -125,8 +133,7 @@ public class LinkedProcess {
     public static String createPrettyXML(String xml) throws JDOMException, IOException {
         SAXBuilder builder = new SAXBuilder();
         Document doc = builder.build(new StringReader(xml));
-        XMLOutputter output = new XMLOutputter();
-        output.setFormat(Format.getPrettyFormat());
+        XMLOutputter output = new XMLOutputter(Format.getPrettyFormat());
         return output.outputString(doc);
 
     }

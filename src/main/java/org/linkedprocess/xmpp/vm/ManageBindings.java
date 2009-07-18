@@ -13,7 +13,7 @@ import java.util.HashMap;
  * Date: Jul 17, 2009
  * Time: 6:37:57 PM
  */
-public class ManageBindings extends LopIq {
+public class ManageBindings extends VirtualMachineIq {
 
     protected Map<String, String> bindings = new HashMap<String, String>();
 
@@ -27,6 +27,10 @@ public class ManageBindings extends LopIq {
 
     public Map<String, String> getBindings() {
         return this.bindings;
+    }
+
+    public void setBindings(Map<String, String> bindings) {
+        this.bindings = bindings;
     }
 
     public String getChildElementXML() {
@@ -51,7 +55,10 @@ public class ManageBindings extends LopIq {
             for(String binding : this.bindings.keySet()) {
                 Element b = new Element(LinkedProcess.BINDING_TAG, LinkedProcess.LOP_VM_NAMESPACE);
                 b.setAttribute(LinkedProcess.NAME_ATTRIBUTE, binding);
-                b.setAttribute(LinkedProcess.VALUE_ATTRIBUTE, this.bindings.get(binding));
+                if(this.bindings.get(binding) != null)
+                    b.setAttribute(LinkedProcess.VALUE_ATTRIBUTE, this.bindings.get(binding));
+                else
+                    b.setAttribute(LinkedProcess.VALUE_ATTRIBUTE, "null");
                 manageBindingsElement.addContent(b);
             }
         }

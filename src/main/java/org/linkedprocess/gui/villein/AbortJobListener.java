@@ -10,11 +10,11 @@ import org.jivesoftware.smack.PacketListener;
  * Date: Jul 16, 2009
  * Time: 4:53:39 PM
  */
-public class AbortJobGuiListener implements PacketListener {
+public class AbortJobListener implements PacketListener {
 
     protected VilleinGui villeinGui;
 
-    public AbortJobGuiListener(VilleinGui villeinGui) {
+    public AbortJobListener(VilleinGui villeinGui) {
         this.villeinGui = villeinGui;
     }
 

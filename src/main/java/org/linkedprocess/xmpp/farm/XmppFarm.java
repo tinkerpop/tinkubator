@@ -8,7 +8,6 @@ import org.linkedprocess.os.errors.VMSchedulerIsFullException;
 import org.linkedprocess.os.errors.VMWorkerNotFoundException;
 import org.linkedprocess.security.ServiceDiscoveryConfiguration;
 import org.linkedprocess.security.VMSecurityManager;
-import org.linkedprocess.security.PathPermissions;
 import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 import org.jivesoftware.smack.Roster;
@@ -52,7 +51,7 @@ public class XmppFarm extends XmppClient {
     protected String farmPassword;
 
     protected final Map<String, XmppVirtualMachine> machines;
-    protected final VMScheduler scheduler;
+    protected final VMScheduler vmScheduler;
     protected DataForm serviceExtension;
 
     public XmppFarm(final String server, final int port, final String username, final String password) throws XMPPException {
@@ -75,13 +74,13 @@ public class XmppFarm extends XmppClient {
         //this.printClientStatistics();
 
         this.roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
-        this.scheduler = new VMScheduler(new VMJobResultHandler(this), new StatusEventHandler(this));
+        this.vmScheduler = new VMScheduler(new VMJobResultHandler(this), new StatusEventHandler(this));
         this.machines = new HashMap<String, XmppVirtualMachine>();
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter subscribeFilter = new AndFilter(new PacketTypeFilter(Presence.class), new PresenceSubscriptionFilter());
 
-        this.addPacketListener(new SpawnVmFarmListener(this), spawnFilter);
+        this.addPacketListener(new SpawnVmListener(this), spawnFilter);
         this.addPacketListener(new PresenceSubscriptionListener(this), subscribeFilter);
     }
     
@@ -103,8 +102,8 @@ public class XmppFarm extends XmppClient {
         }
     }
 
-    public VMScheduler getScheduler() {
-        return this.scheduler;
+    public VMScheduler getVmScheduler() {
+        return this.vmScheduler;
     }
 
     public XmppVirtualMachine spawnVirtualMachine(String spawningAppJid, String vmSpecies) throws VMAlreadyExistsException, VMSchedulerIsFullException, UnsupportedScriptEngineException {
@@ -113,7 +112,7 @@ public class XmppFarm extends XmppClient {
         this.machines.put(vmJid, vm);
         boolean exceptionThrown = true;
         try {
-            this.scheduler.spawnVirtualMachine(vmJid, vmSpecies);
+            this.vmScheduler.spawnVirtualMachine(vmJid, vmSpecies);
             exceptionThrown = false;
 
         } finally {
@@ -142,16 +141,20 @@ public class XmppFarm extends XmppClient {
         }
     }
 
+    public VMScheduler getVMScheduler() {
+        return this.vmScheduler;
+    }
+
     public Collection<XmppVirtualMachine> getVirtualMachines() {
         return this.machines.values();
     }
 
     public void shutDown() {
 
-        this.scheduler.shutDown();
+        this.vmScheduler.shutDown();
         this.connection.sendPacket(this.createPresence(LinkedProcess.FarmStatus.TERMINATED));
         try {
-            this.scheduler.waitUntilFinished();
+            this.vmScheduler.waitUntilFinished();
         } catch (InterruptedException e) {
             LOGGER.severe(e.getMessage());
         }
@@ -197,7 +200,7 @@ public class XmppFarm extends XmppClient {
     }
 
     public void setStatusEventHandler(VMScheduler.LopStatusEventHandler statusHandler) {
-        this.scheduler.setStatusEventHandler(statusHandler);
+        this.vmScheduler.setStatusEventHandler(statusHandler);
     }
 
     public String getFarmPassword() {

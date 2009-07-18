@@ -14,18 +14,18 @@ public class ManageBindingsProvider implements IQProvider {
 
     public IQ parseIQ(XmlPullParser parser) throws Exception {
         ManageBindings manageBindings = new ManageBindings();
-
         String vmPassword = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VM_PASSWORD_ATTRIBUTE);
         if(null != vmPassword) {
             manageBindings.setVmPassword(vmPassword);
         }
 
-        while(parser.next() == XmlPullParser.START_TAG) {
+        while(parser.next() == XmlPullParser.START_TAG && parser.getName().equals(LinkedProcess.BINDING_TAG)) {
             String name = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.NAME_ATTRIBUTE);
             String value = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VALUE_ATTRIBUTE);
-            manageBindings.addBinding(name, value);  
+            manageBindings.addBinding(name, value);
+            parser.next();
         }
-        parser.next();
+        //parser.next();
         return manageBindings;
     }
 }
