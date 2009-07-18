@@ -16,7 +16,7 @@ import java.awt.event.ActionEvent;
  * Date: Jul 12, 2009
  * Time: 10:15:56 AM
  */
-public class JobPane extends JTabbedPane implements ActionListener {
+public class JobPane extends JPanel implements ActionListener {
 
     protected String jobId;
     protected JTextArea expressionTextArea;
@@ -32,29 +32,34 @@ public class JobPane extends JTabbedPane implements ActionListener {
 
 
     public JobPane(VmFrame vmFrame, String jobId) {
+        super(new BorderLayout());
+        this.setOpaque(false);
         this.vmFrame = vmFrame;
-        this.expressionTextArea = new JTextArea(17,32);
-        this.resultTextArea = new JTextArea(17,32);
+        this.expressionTextArea = new JTextArea(5,32);
+        this.resultTextArea = new JTextArea(5,32);
         this.resultTextArea.setEditable(false);
         JScrollPane scrollPane1 = new JScrollPane(this.expressionTextArea);
         JScrollPane scrollPane2 = new JScrollPane(this.resultTextArea); 
+
         this.submitJobButton = new JButton(SUBMIT_JOB);
         this.submitJobButton.addActionListener(this);
         this.clearButton = new JButton(CLEAR);
         this.clearButton.addActionListener(this);
-        JPanel expressionPanel = new JPanel(new BorderLayout());
-        JPanel submitJobPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        expressionPanel.setOpaque(false);
-        submitJobPanel.setOpaque(false);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.setOpaque(false);
         scrollPane1.setOpaque(false);
         scrollPane2.setOpaque(false);
-        submitJobPanel.add(this.submitJobButton);
-        submitJobPanel.add(this.clearButton);
-        expressionPanel.add(scrollPane1, BorderLayout.CENTER);
-        expressionPanel.add(submitJobPanel, BorderLayout.SOUTH);
+        buttonPanel.add(this.submitJobButton);
+        buttonPanel.add(this.clearButton);
 
-        this.addTab("expression", expressionPanel);
-        this.addTab("result", scrollPane2);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitPane.add(scrollPane1);
+        splitPane.add(scrollPane2);
+        splitPane.setDividerLocation(183);
+        splitPane.setOpaque(false);
+        this.add(splitPane, BorderLayout.CENTER);
+        this.add(buttonPanel, BorderLayout.SOUTH);
         this.jobId = jobId;
         this.setBorder(new LineBorder(ImageHolder.GRAY_COLOR, 2));
     }

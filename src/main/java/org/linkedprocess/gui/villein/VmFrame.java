@@ -4,6 +4,7 @@ import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.xmpp.villein.VmStruct;
 import org.linkedprocess.xmpp.vm.AbortJob;
 import org.linkedprocess.xmpp.vm.SubmitJob;
+import org.linkedprocess.LinkedProcess;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
 
@@ -81,19 +82,26 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
         closeItem.addActionListener(this);
 
         this.splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        JPanel mainPanel = new JPanel();
 
         JobPane jobPane = new JobPane(this, generatedJobId());
-        listModel.addElement(jobPane);       
+        BindingsPanel bindingsPanel = new BindingsPanel(this);
+
+        listModel.addElement(jobPane);
+
         this.splitPane.add(jobListPanel);
         this.splitPane.add(jobPane);
-        mainPanel.add(splitPane);
+
+        // select the new job and fire selection event
         this.jobList.setSelectedValue(jobPane, true);
 
+        JTabbedPane jobBindingsTabbedPane = new JTabbedPane();
+        jobBindingsTabbedPane.addTab("jobs", this.splitPane);
+        jobBindingsTabbedPane.addTab("bindings", bindingsPanel);
 
-        this.getContentPane().add(mainPanel);
+        this.getContentPane().add(jobBindingsTabbedPane);
         this.pack();
         this.setResizable(false);
+        this.setSize(557,476);
         this.setVisible(true);
 
 
@@ -182,13 +190,13 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
 
 
 
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         VmStruct vmStruct = new VmStruct();
         vmStruct.setFullJid("linked.process.1@xmpp.linkedprocess.org/LoPVM/12345");
         vmStruct.setVmPassword("PASSWORD");
         vmStruct.setVmSpecies(LinkedProcess.JAVASCRIPT);
         new VmFrame(vmStruct, null);
-    }*/
+    }
 
 }
 

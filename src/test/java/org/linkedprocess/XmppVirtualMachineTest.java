@@ -1,14 +1,12 @@
 package org.linkedprocess;
 
 import org.linkedprocess.xmpp.farm.XmppFarm;
-import org.linkedprocess.xmpp.vm.AbortJob;
-import org.linkedprocess.xmpp.vm.SubmitJob;
-import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
-import org.linkedprocess.xmpp.vm.TerminateVm;
+import org.linkedprocess.xmpp.vm.*;
 import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.jivesoftware.smack.packet.IQ;
 
 /**
  * User: marko
@@ -63,16 +61,28 @@ public class XmppVirtualMachineTest extends TestCase {
     }
 
     @Test
-    public void testEvaluateTag() {
-        SubmitJob eval = new SubmitJob();
-        eval.setVmPassword("pass");
-        eval.setExpression("for(int i=0; i<10; i++) { i; };");
-        String evalString = eval.getChildElementXML();
+    public void testSubmitJobTag() {
+        SubmitJob submitJob = new SubmitJob();
+        submitJob.setVmPassword("pass");
+        submitJob.setExpression("for(int i=0; i<10; i++) { i; };");
+        String evalString = submitJob.getChildElementXML();
         System.out.println(evalString);
         assertTrue(evalString.contains("xmlns=\"" + LinkedProcess.LOP_VM_NAMESPACE));
         // note that XML characters must be handled correctly
         assertTrue(evalString.contains("for(int i=0; i&lt;10; i++) { i; };"));
         assertTrue(evalString.contains("vm_password=\"pass\""));
+    }
+
+    @Test
+    public void testManageBindingsTag() {
+        ManageBindings manageBindings = new ManageBindings();
+        manageBindings.setType(IQ.Type.SET);
+        manageBindings.addBinding("name", "marko");
+        manageBindings.addBinding("age", "29");
+        assertTrue(manageBindings.toXML().contains("<binding name=\"age\" value=\"29\" />"));
+        manageBindings.setType(IQ.Type.GET);
+        assertFalse(manageBindings.toXML().contains("<binding name=\"age\" value=\"29\" />"));
+        assertTrue(manageBindings.toXML().contains("<binding name=\"age\" />"));
     }
 
     @Test

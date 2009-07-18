@@ -3,6 +3,7 @@ package org.linkedprocess.xmpp.vm;
 import org.linkedprocess.xmpp.LopIq;
 import org.linkedprocess.LinkedProcess;
 import org.jdom.Element;
+import org.jivesoftware.smack.packet.IQ;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -14,10 +15,7 @@ import java.util.HashMap;
  */
 public class ManageBindings extends LopIq {
 
-    public enum ManageType {GET, SET}
-
     protected Map<String, String> bindings = new HashMap<String, String>();
-    protected ManageType type;
 
     public void addBinding(String name, String value) {
         this.bindings.put(name, value);
@@ -27,18 +25,13 @@ public class ManageBindings extends LopIq {
         return this.bindings.get(name);
     }
 
-    public void setManageType(ManageType type) {
-        this.type = type;
+    public Map<String, String> getBindings() {
+        return this.bindings;
     }
-
-    public ManageType getManageType() {
-        return this.type;
-    }
-
 
     public String getChildElementXML() {
 
-        Element manageBindingsElement = new Element(LinkedProcess.SUBMIT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE);
+        Element manageBindingsElement = new Element(LinkedProcess.MANAGE_BINDINGS_TAG, LinkedProcess.LOP_VM_NAMESPACE);
 
         if(this.vmPassword != null) {
             manageBindingsElement.setAttribute(LinkedProcess.VM_PASSWORD_ATTRIBUTE, this.vmPassword);
@@ -48,15 +41,15 @@ public class ManageBindings extends LopIq {
             if(this.errorMessage != null) {
                 manageBindingsElement.setText(this.errorMessage);
             }
-        } else if(type == ManageType.GET) {
+        } else if(this.getType() == IQ.Type.GET) {
             for(String binding : this.bindings.keySet()) {
-                Element b = new Element(LinkedProcess.BINDING_TAG);
+                Element b = new Element(LinkedProcess.BINDING_TAG, LinkedProcess.LOP_VM_NAMESPACE);
                 b.setAttribute(LinkedProcess.NAME_ATTRIBUTE, binding);
                 manageBindingsElement.addContent(b);
             }
-        } else if(type == ManageType.SET) {
+        } else if(this.getType() == IQ.Type.SET || this.getType() == IQ.Type.RESULT) {
             for(String binding : this.bindings.keySet()) {
-                Element b = new Element(LinkedProcess.BINDING_TAG);
+                Element b = new Element(LinkedProcess.BINDING_TAG, LinkedProcess.LOP_VM_NAMESPACE);
                 b.setAttribute(LinkedProcess.NAME_ATTRIBUTE, binding);
                 b.setAttribute(LinkedProcess.VALUE_ATTRIBUTE, this.bindings.get(binding));
                 manageBindingsElement.addContent(b);
