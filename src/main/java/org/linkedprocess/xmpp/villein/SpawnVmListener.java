@@ -11,11 +11,11 @@ import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
  * Date: Jul 8, 2009
  * Time: 8:52:55 AM
  */
-public class SpawnVmVilleinListener implements PacketListener {
+public class SpawnVmListener implements PacketListener {
 
     protected XmppVillein xmppVillein;
 
-    public SpawnVmVilleinListener(XmppVillein xmppVillein) {
+    public SpawnVmListener(XmppVillein xmppVillein) {
         this.xmppVillein = xmppVillein;
     }
 

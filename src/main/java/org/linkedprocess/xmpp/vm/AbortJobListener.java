@@ -36,6 +36,7 @@ public class AbortJobListener implements PacketListener {
 
         AbortJob returnAbortJob = new AbortJob();
         returnAbortJob.setTo(abortJob.getFrom());
+        returnAbortJob.setFrom(this.xmppVirtualMachine.getFullJid());
         returnAbortJob.setPacketID(abortJob.getPacketID());
         String jobId = abortJob.getJobId();
         returnAbortJob.setJobId(jobId);

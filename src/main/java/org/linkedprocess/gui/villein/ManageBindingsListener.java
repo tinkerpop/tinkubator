@@ -20,10 +20,10 @@ public class ManageBindingsListener implements PacketListener {
 
     public void processPacket(Packet packet) {
         ManageBindings manageBindings = (ManageBindings)packet;
-        VmFrame vmFrame = this.villeinGui.getVmFrame(manageBindings.getFrom());
+        VmControlFrame vmControlFrame = this.villeinGui.getVmFrame(manageBindings.getFrom());
 
-        if(vmFrame != null) {
-            vmFrame.handleIncomingManageBindings(manageBindings);
+        if(vmControlFrame != null) {
+            vmControlFrame.handleIncomingManageBindings(manageBindings);
         } else {
             XmppVillein.LOGGER.severe("Could not find vmframe for " + manageBindings.toXML());
         }

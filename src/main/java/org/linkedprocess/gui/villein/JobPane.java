@@ -23,7 +23,7 @@ public class JobPane extends JPanel implements ActionListener {
     protected JTextArea resultTextArea;
     protected JButton submitJobButton;
     protected JButton clearButton;
-    protected VmFrame vmFrame;
+    protected VmControlFrame vmControlFrame;
 
     protected static final String SUBMIT_JOB = "submit job";
     protected static final String CLEAR = "clear";
@@ -31,10 +31,10 @@ public class JobPane extends JPanel implements ActionListener {
     protected static final String BLANK_STRING = "";
 
 
-    public JobPane(VmFrame vmFrame, String jobId) {
+    public JobPane(VmControlFrame vmControlFrame, String jobId) {
         super(new BorderLayout());
         this.setOpaque(false);
-        this.vmFrame = vmFrame;
+        this.vmControlFrame = vmControlFrame;
         this.expressionTextArea = new JTextArea(5,32);
         this.resultTextArea = new JTextArea(5,32);
         this.resultTextArea.setEditable(false);
@@ -87,17 +87,19 @@ public class JobPane extends JPanel implements ActionListener {
 
     public SubmitJob getSubmitJob() {
         SubmitJob submitJob = new SubmitJob();
-        submitJob.setTo(this.vmFrame.getVmStruct().getFullJid());
+        submitJob.setTo(this.vmControlFrame.getVmStruct().getFullJid());
+        submitJob.setFrom(this.vmControlFrame.getVilleinGui().getXmppVillein().getFullJid());
         submitJob.setExpression(this.expressionTextArea.getText());
-        submitJob.setVmPassword(this.vmFrame.getVmStruct().getVmPassword());
+        submitJob.setVmPassword(this.vmControlFrame.getVmStruct().getVmPassword());
         submitJob.setPacketID(this.jobId);
         return submitJob;
     }
 
     public AbortJob getAbortJob() {
         AbortJob abortJob = new AbortJob();
-        abortJob.setTo(this.vmFrame.getVmStruct().getFullJid());
-        abortJob.setVmPassword(this.vmFrame.getVmStruct().getVmPassword());
+        abortJob.setTo(this.vmControlFrame.getVmStruct().getFullJid());
+        abortJob.setFrom(this.vmControlFrame.getVilleinGui().getXmppVillein().getFullJid());
+        abortJob.setVmPassword(this.vmControlFrame.getVmStruct().getVmPassword());
         abortJob.setJobId(this.jobId);
         return abortJob;
     }
@@ -128,7 +130,7 @@ public class JobPane extends JPanel implements ActionListener {
 
     public void actionPerformed(ActionEvent event) {
         if(event.getActionCommand().equals(SUBMIT_JOB)) {
-            this.vmFrame.getVilleinGui().getConnection().sendPacket(this.getSubmitJob());
+            this.vmControlFrame.getVilleinGui().getConnection().sendPacket(this.getSubmitJob());
             submitJobButton.setText(ABORT_JOB);
             submitJobButton.setActionCommand(ABORT_JOB);
             clearButton.setEnabled(false);
@@ -136,7 +138,7 @@ public class JobPane extends JPanel implements ActionListener {
         } else if(event.getActionCommand().equals(CLEAR)) {
             this.expressionTextArea.setText("");
         } else if(event.getActionCommand().equals(ABORT_JOB)) {
-            this.vmFrame.getVilleinGui().getConnection().sendPacket(this.getAbortJob());
+            this.vmControlFrame.getVilleinGui().getConnection().sendPacket(this.getAbortJob());
             this.expressionTextArea.setEnabled(false);
             this.submitJobButton.setEnabled(false);
             this.clearButton.setEnabled(false);

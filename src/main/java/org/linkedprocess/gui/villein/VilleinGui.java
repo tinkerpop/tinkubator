@@ -30,7 +30,7 @@ public class VilleinGui extends JFrame {
 
     protected XmppVillein xmppVillein;
     protected HostArea hostArea;
-    protected Map<String, VmFrame> vmFrames = new HashMap<String, VmFrame>();
+    protected Map<String, VmControlFrame> vmFrames = new HashMap<String, VmControlFrame>();
 
     public VilleinGui() {
         super(VilleinGui.FRAME_TITLE);
@@ -78,19 +78,19 @@ public class VilleinGui extends JFrame {
     }
 
     public void addVmFrame(VmStruct vmStruct) {
-        VmFrame vmFrame = new VmFrame(vmStruct, this);
-        this.vmFrames.put(vmStruct.getFullJid(), vmFrame);
+        VmControlFrame vmControlFrame = new VmControlFrame(vmStruct, this);
+        this.vmFrames.put(vmStruct.getFullJid(), vmControlFrame);
     }
 
     public void removeVmFrame(VmStruct vmStruct) {
-        VmFrame vmFrame = this.vmFrames.remove(vmStruct.getFullJid());
-        if(vmFrame != null) {
-            vmFrame.setVisible(false);
-            vmFrame = null;
+        VmControlFrame vmControlFrame = this.vmFrames.remove(vmStruct.getFullJid());
+        if(vmControlFrame != null) {
+            vmControlFrame.setVisible(false);
+            vmControlFrame = null;
         }
     }
 
-    public VmFrame getVmFrame(String vmJid) {
+    public VmControlFrame getVmFrame(String vmJid) {
         return this.vmFrames.get(vmJid);
     }
 

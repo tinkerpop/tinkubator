@@ -1,49 +1,65 @@
 package org.linkedprocess.gui;
 
+import org.jivesoftware.smack.PacketInterceptor;
+import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.xmpp.farm.SpawnVm;
 import org.linkedprocess.LinkedProcess;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import java.util.List;
-import java.util.ArrayList;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: marko
  * Date: Jul 18, 2009
  * Time: 11:20:09 AM
  */
-public class PacketSnifferPanel extends JPanel implements ListSelectionListener, ActionListener {
+public class PacketSnifferPanel extends JPanel implements ListSelectionListener, ActionListener, PacketInterceptor, PacketListener {
 
     protected JTable packetTable;
     protected JTextArea packetTextArea;
+    protected JTextField maxSavedField;
     protected List<Packet> packetList;
+    protected String jid;
 
-    public PacketSnifferPanel() {
+    protected final static String CLEAR = "clear";
+
+    public PacketSnifferPanel(String jid) {
         super(new BorderLayout());
-        DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{"type", "from", "to"});
+        this.jid = jid;
+        DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{"i/o", "type", "from", "to"});
         this.packetTable = new JTable(tableModel);
         this.packetTable.setFillsViewportHeight(true);
 
         this.packetTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.packetTable.getSelectionModel().addListSelectionListener(this);
-        this.packetTable.getColumnModel().getColumn(0).setPreferredWidth(10);
+        this.packetTable.getColumnModel().getColumn(0).setPreferredWidth(25);
         this.packetTable.getColumnModel().getColumn(1).setPreferredWidth(100);
-        this.packetTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+        this.packetTable.getColumnModel().getColumn(2).setPreferredWidth(200);
+        this.packetTable.getColumnModel().getColumn(3).setPreferredWidth(200);
+        this.packetTable.getColumnModel().getColumn(0).setCellRenderer(new PacketSnifferTableCellRenderer());
 
-        this.packetTextArea = new JTextArea(5, 8);
+
+        this.packetTextArea = new JTextArea();
         this.packetTextArea.setEditable(false);
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton clearButton = new JButton("clear");
-        buttonPanel.add(clearButton);
+        JPanel buttonPanel = new JPanel(new BorderLayout());
+        JButton clearButton = new JButton(CLEAR);
+        JPanel leftButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        leftButtonPanel.add(clearButton);
         clearButton.addActionListener(this);
+        this.maxSavedField = new JTextField(4);
+        rightButtonPanel.add(new JLabel("max saved packets"));
+        rightButtonPanel.add(this.maxSavedField);
+        buttonPanel.add(leftButtonPanel, BorderLayout.WEST);
+        buttonPanel.add(rightButtonPanel, BorderLayout.EAST);
 
         JScrollPane scrollPane1 = new JScrollPane(this.packetTable);
         JScrollPane scrollPane2 = new JScrollPane(this.packetTextArea);
@@ -58,46 +74,79 @@ public class PacketSnifferPanel extends JPanel implements ListSelectionListener,
 
     public void addPacket(Packet packet) {
         DefaultTableModel tableModel = (DefaultTableModel) this.packetTable.getModel();
-        tableModel.addRow(new Object[]{LinkedProcess.getBareClassName(packet.getClass()), packet.getFrom(), packet.getTo()});
-        this.packetList.add(packet);
+        int max = Integer.MAX_VALUE;
+        if (this.maxSavedField.getText().length() > 0) {
+            try {
+                max = Integer.parseInt(this.maxSavedField.getText());
+                int rowCount = tableModel.getRowCount();
+                if (rowCount + 1 > max) {
+                    this.clearBottomRows(rowCount + 1 - max);
+                }
+
+            } catch (NumberFormatException e) {
+                this.maxSavedField.setText("");
+            }
+        }
+
+
+
+        if (max > 0) {
+            Integer sentOrRecieved;
+            if(packet.getFrom() != null && packet.getFrom().equals(this.jid)) {
+                sentOrRecieved = 0;
+            } else if(packet.getTo().equals(this.jid)) {
+                sentOrRecieved = 1;
+            } else {
+                sentOrRecieved = 1;
+            }
+            tableModel.addRow(new Object[]{sentOrRecieved, LinkedProcess.getBareClassName(packet.getClass()), packet.getFrom(), packet.getTo()});
+            this.packetList.add(packet);
+        }
 
     }
 
-    public void actionPerformed(ActionEvent event) {
-        if(event.getActionCommand().equals("clear")) {
-            DefaultTableModel tableModel = (DefaultTableModel) this.packetTable.getModel();
-            while(tableModel.getRowCount() > 0) {
+    public void clearAllRows() {
+        DefaultTableModel tableModel = (DefaultTableModel) this.packetTable.getModel();
+        while (tableModel.getRowCount() > 0) {
+            tableModel.removeRow(0);
+        }
+        this.packetList.clear();
+    }
+
+    public void clearBottomRows(int bottomNumber) {
+        DefaultTableModel tableModel = (DefaultTableModel) this.packetTable.getModel();
+        int rowCount = tableModel.getRowCount();
+        for (int i = 0; i < bottomNumber; i++) {
+            if (i < rowCount) {
                 tableModel.removeRow(0);
+                this.packetList.remove(0);
             }
-            this.packetList.clear();
+        }
+    }
+
+    public void actionPerformed(ActionEvent event) {
+        if (event.getActionCommand().equals(CLEAR)) {
+            this.clearAllRows();
             this.packetTextArea.setText("");
         }
     }
 
     public void valueChanged(ListSelectionEvent event) {
-        ListSelectionModel listModel = (ListSelectionModel)event.getSource();
+        ListSelectionModel listModel = (ListSelectionModel) event.getSource();
         try {
-            if(packetTable.getSelectedRow() > -1)
+            if (packetTable.getSelectedRow() > -1)
                 this.packetTextArea.setText(LinkedProcess.createPrettyXML(packetList.get(listModel.getMinSelectionIndex()).toXML()));
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void main(String args[]) {
-        JFrame frame = new JFrame("PacketSniffer");
-        PacketSnifferPanel packetSniffer = new PacketSnifferPanel();
-        SpawnVm spawnVm = new SpawnVm();
-        spawnVm.setTo("jid@jid.com");
-        spawnVm.setFrom("jid@jid.com2");
-
-        //packetSniffer.addPacket(spawnVm);
-        frame.getContentPane().add(packetSniffer);
-        frame.pack();
-        frame.setVisible(true);
-
-
-
-             
+    public void interceptPacket(Packet packet) {
+        this.addPacket(packet);
     }
+
+    public void processPacket(Packet packet) {
+        this.addPacket(packet);
+    }
+
 }

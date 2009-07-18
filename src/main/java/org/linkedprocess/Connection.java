@@ -1,9 +1,6 @@
 package org.linkedprocess;
 
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
@@ -16,10 +13,11 @@ public interface Connection {
 
 	void connect() throws XMPPException;
 
-	void addPacketListener(PacketListener listener,
-			PacketFilter filter);
+	void addPacketListener(PacketListener listener, PacketFilter filter);
 
-	void sendPacket(Packet packet);
+    void addPacketWriterInterceptor(PacketInterceptor interceptor, PacketFilter filter); 
+
+    void sendPacket(Packet packet);
 
 	Roster getRoster();
 

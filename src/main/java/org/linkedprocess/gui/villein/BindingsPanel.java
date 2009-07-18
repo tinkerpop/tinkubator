@@ -21,7 +21,7 @@ import java.awt.event.ActionListener;
 public class BindingsPanel extends JPanel implements ActionListener, TableModelListener {
 
     protected JTable bindingsTable;
-    protected VmFrame vmFrame;
+    protected VmControlFrame vmControlFrame;
     protected int count = 0;
     protected static final String GET = "get";
     protected static final String SET = "set";
@@ -29,9 +29,9 @@ public class BindingsPanel extends JPanel implements ActionListener, TableModelL
     protected static final String REMOVE = "remove";
 
 
-    public BindingsPanel(VmFrame vmFrame) {
+    public BindingsPanel(VmControlFrame vmControlFrame) {
         super(new BorderLayout());
-        this.vmFrame = vmFrame;
+        this.vmControlFrame = vmControlFrame;
         this.setOpaque(false);
         DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{LinkedProcess.NAME_ATTRIBUTE, LinkedProcess.VALUE_ATTRIBUTE});
         tableModel.addTableModelListener(this);
@@ -40,22 +40,27 @@ public class BindingsPanel extends JPanel implements ActionListener, TableModelL
         this.bindingsTable.setFillsViewportHeight(true);
 
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel buttonPanel = new JPanel(new BorderLayout());
+        JPanel leftButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton getButton = new JButton(GET);
         JButton setButton = new JButton(SET);
         JButton addButton = new JButton(ImageHolder.addIcon);
         addButton.setActionCommand(ADD);
         JButton removeButton = new JButton(ImageHolder.removeIcon);
         removeButton.setActionCommand(REMOVE);
-        buttonPanel.add(addButton);
-        buttonPanel.add(removeButton);
-        buttonPanel.add(new JSeparator());
-        buttonPanel.add(getButton);
-        buttonPanel.add(setButton);
+        leftButtonPanel.add(addButton);
+        leftButtonPanel.add(removeButton);
+        rightButtonPanel.add(getButton);
+        rightButtonPanel.add(setButton);
+        buttonPanel.add(leftButtonPanel, BorderLayout.WEST);
+        buttonPanel.add(rightButtonPanel, BorderLayout.EAST);
         addButton.addActionListener(this);
         removeButton.addActionListener(this);
         setButton.addActionListener(this);
         getButton.addActionListener(this);
+        leftButtonPanel.setOpaque(false);
+        rightButtonPanel.setOpaque(false);
         buttonPanel.setOpaque(false);
         scrollPane.setOpaque(false);
 
@@ -108,9 +113,9 @@ public class BindingsPanel extends JPanel implements ActionListener, TableModelL
             }
 
         } else if (event.getActionCommand().equals(GET)) {
-           vmFrame.getVilleinGui().getXmppVillein().getConnection().sendPacket(this.getManageBindings(IQ.Type.GET));
+           vmControlFrame.getVilleinGui().getXmppVillein().getConnection().sendPacket(this.getManageBindings(IQ.Type.GET));
         } else if (event.getActionCommand().equals(SET)) {
-           vmFrame.getVilleinGui().getXmppVillein().getConnection().sendPacket(this.getManageBindings(IQ.Type.SET));  
+           vmControlFrame.getVilleinGui().getXmppVillein().getConnection().sendPacket(this.getManageBindings(IQ.Type.SET));
         }
     }
 
@@ -118,8 +123,9 @@ public class BindingsPanel extends JPanel implements ActionListener, TableModelL
         DefaultTableModel tableModel = (DefaultTableModel) this.bindingsTable.getModel();
         ManageBindings manageBindings = new ManageBindings();
         manageBindings.setType(setOrGet);
-        manageBindings.setTo(this.vmFrame.getVmStruct().getFullJid());
-        manageBindings.setVmPassword(this.vmFrame.getVmStruct().getVmPassword());
+        manageBindings.setTo(this.vmControlFrame.getVmStruct().getFullJid());
+        manageBindings.setFrom(this.vmControlFrame.getVilleinGui().getXmppVillein().getFullJid());
+        manageBindings.setVmPassword(this.vmControlFrame.getVmStruct().getVmPassword());
         for (int row : this.bindingsTable.getSelectedRows()) {
             manageBindings.addBinding((String) tableModel.getValueAt(row, 0), (String) tableModel.getValueAt(row, 1));
         }

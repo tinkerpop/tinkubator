@@ -21,9 +21,9 @@ public class AbortJobListener implements PacketListener {
     public void processPacket(Packet packet) {
         AbortJob abortJob = (AbortJob) packet;
 
-        VmFrame vmFrame = this.villeinGui.getVmFrame(abortJob.getFrom());
-        if (vmFrame != null) {
-            vmFrame.handleIncomingAbortJob(abortJob);
+        VmControlFrame vmControlFrame = this.villeinGui.getVmFrame(abortJob.getFrom());
+        if (vmControlFrame != null) {
+            vmControlFrame.handleIncomingAbortJob(abortJob);
         } else {
             XmppVillein.LOGGER.severe("Could not find vmframe for " + abortJob.toXML());
         }

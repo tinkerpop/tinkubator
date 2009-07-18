@@ -9,6 +9,11 @@ import org.linkedprocess.xmpp.vm.ManageBindings;
 import org.linkedprocess.LinkedProcess;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.filter.OrFilter;
+import org.jivesoftware.smack.filter.FromContainsFilter;
+import org.jivesoftware.smack.filter.ToContainsFilter;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -27,14 +32,13 @@ import java.util.HashMap;
  * Date: Jul 8, 2009
  * Time: 7:12:15 PM
  */
-public class VmFrame extends JFrame implements ListSelectionListener, ActionListener {
+public class VmControlFrame extends JFrame implements ListSelectionListener, ActionListener {
 
     protected JList jobList;
     protected JSplitPane splitPane;
     protected VmStruct vmStruct;
     protected VilleinGui villeinGui;
     protected BindingsPanel bindingsPanel;
-    protected PacketSnifferPanel packetSnifferPanel;
     protected Map<String, JobStatus> jobStatus = new HashMap<String, JobStatus>();
 
     protected static final String ADD_JOB = "add job";
@@ -45,7 +49,7 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
     public enum JobStatus { ABORTED, COMPLETED, ERROR }
 
 
-    public VmFrame(VmStruct vmStruct, VilleinGui villeinGui) {
+    public VmControlFrame(VmStruct vmStruct, VilleinGui villeinGui) {
         super(vmStruct.getFullJid());
         this.vmStruct = vmStruct;
         this.villeinGui = villeinGui;
@@ -98,12 +102,21 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
         // select the new job and fire selection event
         this.jobList.setSelectedValue(jobPane, true);
 
-        this.packetSnifferPanel = new PacketSnifferPanel();
+        PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel(this.villeinGui.getXmppVillein().getFullJid());
+        PacketFilter fromToFilter = new OrFilter(new FromContainsFilter(vmStruct.getFullJid()), new ToContainsFilter(vmStruct.getFullJid()));
+        try {
+            this.villeinGui.getXmppVillein().getConnection().addPacketWriterInterceptor(packetSnifferPanel, fromToFilter);
+            this.villeinGui.getXmppVillein().getConnection().addPacketListener(packetSnifferPanel, fromToFilter);
+        } catch(NullPointerException e) {
+            e.printStackTrace();
+        }
 
         JTabbedPane jobBindingsTabbedPane = new JTabbedPane();
         jobBindingsTabbedPane.addTab("jobs", this.splitPane);
         jobBindingsTabbedPane.addTab("bindings", this.bindingsPanel);
-        jobBindingsTabbedPane.addTab("packets", this.packetSnifferPanel);
+        jobBindingsTabbedPane.addTab("packets", packetSnifferPanel);
+
+
 
         this.getContentPane().add(jobBindingsTabbedPane);
         this.pack();
@@ -136,12 +149,10 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
     }
 
     public void handleIncomingManageBindings(ManageBindings manageBindings) {
-        this.packetSnifferPanel.addPacket(manageBindings);
         this.bindingsPanel.handleIncomingManageBindings(manageBindings);
     }
 
     public void handleIncomingSubmitJob(SubmitJob submitJob) {
-        this.packetSnifferPanel.addPacket(submitJob);
         String jobId = submitJob.getPacketID();
         if(null == this.jobStatus.get(jobId)) {
             if(submitJob.getType() == IQ.Type.ERROR)
@@ -160,7 +171,6 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
     }
 
     public void handleIncomingAbortJob(AbortJob abortJob) {
-        this.packetSnifferPanel.addPacket(abortJob);
         String jobId = abortJob.getJobId();
         this.jobStatus.put(jobId, JobStatus.ABORTED);
         for(int i=0; i < this.jobList.getModel().getSize(); i++) {
@@ -209,7 +219,7 @@ public class VmFrame extends JFrame implements ListSelectionListener, ActionList
         vmStruct.setFullJid("linked.process.1@xmpp.linkedprocess.org/LoPVM/12345");
         vmStruct.setVmPassword("PASSWORD");
         vmStruct.setVmSpecies(LinkedProcess.JAVASCRIPT);
-        new VmFrame(vmStruct, null);
+        new VmControlFrame(vmStruct, null);
     }
 
 }

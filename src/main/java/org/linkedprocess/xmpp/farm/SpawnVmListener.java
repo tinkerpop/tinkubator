@@ -36,6 +36,7 @@ public class SpawnVmListener implements PacketListener {
 
         SpawnVm returnSpawnVm = new SpawnVm();
         returnSpawnVm.setTo(spawnVm.getFrom());
+        returnSpawnVm.setFrom(xmppFarm.getFullJid());
         returnSpawnVm.setPacketID(spawnVm.getPacketID());
         String vmSpecies = spawnVm.getVmSpecies();
         String farmPassword = spawnVm.getFarmPassword();

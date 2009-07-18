@@ -44,6 +44,7 @@ public class SubmitJobListener implements PacketListener {
         if(null == vmPassword || null == expression) {
             SubmitJob returnSubmitJob = new SubmitJob();
             returnSubmitJob.setTo(villeinJid);
+            returnSubmitJob.setFrom(this.xmppVirtualMachine.getFullJid());
             returnSubmitJob.setPacketID(iqId);
             returnSubmitJob.setErrorType(LinkedProcess.ErrorType.MALFORMED_PACKET);
             String errorMessage = "";
@@ -66,6 +67,7 @@ public class SubmitJobListener implements PacketListener {
         } else if(!this.xmppVirtualMachine.checkVmPassword(vmPassword)) {
             SubmitJob returnSubmitJob = new SubmitJob();
             returnSubmitJob.setTo(villeinJid);
+            returnSubmitJob.setFrom(this.xmppVirtualMachine.getFullJid());
             returnSubmitJob.setPacketID(iqId);
             returnSubmitJob.setErrorType(LinkedProcess.ErrorType.WRONG_VM_PASSWORD);
             returnSubmitJob.setType(IQ.Type.ERROR);
@@ -81,6 +83,7 @@ public class SubmitJobListener implements PacketListener {
             } catch (VMWorkerNotFoundException e) {
                 SubmitJob returnSubmitJob = new SubmitJob();
                 returnSubmitJob.setTo(villeinJid);
+                returnSubmitJob.setFrom(this.xmppVirtualMachine.getFullJid());
                 returnSubmitJob.setPacketID(iqId);
                 returnSubmitJob.setErrorType(LinkedProcess.ErrorType.INTERNAL_ERROR);
                 returnSubmitJob.setErrorMessage(e.getMessage());
@@ -93,6 +96,7 @@ public class SubmitJobListener implements PacketListener {
             } catch (VMWorkerIsFullException e) {
                 SubmitJob returnSubmitJob = new SubmitJob();
                 returnSubmitJob.setTo(villeinJid);
+                returnSubmitJob.setFrom(this.xmppVirtualMachine.getFullJid());
                 returnSubmitJob.setPacketID(iqId);
                 returnSubmitJob.setErrorType(LinkedProcess.ErrorType.VM_IS_BUSY);
                 returnSubmitJob.setErrorMessage(e.getMessage());
@@ -104,6 +108,7 @@ public class SubmitJobListener implements PacketListener {
             } catch (JobAlreadyExistsException e) {
                 SubmitJob returnSubmitJob = new SubmitJob();
                 returnSubmitJob.setTo(villeinJid);
+                returnSubmitJob.setFrom(this.xmppVirtualMachine.getFullJid());
                 returnSubmitJob.setPacketID(iqId);
                 returnSubmitJob.setErrorType(LinkedProcess.ErrorType.JOB_ALREADY_EXISTS);
                 returnSubmitJob.setErrorMessage(e.getMessage());

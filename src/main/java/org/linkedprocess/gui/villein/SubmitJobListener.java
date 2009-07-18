@@ -21,10 +21,10 @@ public class SubmitJobListener implements PacketListener {
     public void processPacket(Packet packet) {
         SubmitJob submitJob = (SubmitJob)packet;
 
-        VmFrame vmFrame = this.villeinGui.getVmFrame(submitJob.getFrom());
+        VmControlFrame vmControlFrame = this.villeinGui.getVmFrame(submitJob.getFrom());
          
-        if(vmFrame != null) {
-            vmFrame.handleIncomingSubmitJob(submitJob);
+        if(vmControlFrame != null) {
+            vmControlFrame.handleIncomingSubmitJob(submitJob);
         } else {
             XmppVillein.LOGGER.severe("Could not find vmframe for " + submitJob.toXML());
         }

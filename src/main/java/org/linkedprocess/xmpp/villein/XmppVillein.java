@@ -64,7 +64,7 @@ public class XmppVillein extends XmppClient {
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
         PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
 
-        this.addPacketListener(new SpawnVmVilleinListener(this), spawnFilter);
+        this.addPacketListener(new SpawnVmListener(this), spawnFilter);
         this.addPacketListener(new PresenceListener(this), presenceFilter);
 
         this.hostStructs = new HashMap<String, HostStruct>();

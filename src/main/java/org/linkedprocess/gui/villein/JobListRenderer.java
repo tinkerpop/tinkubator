@@ -12,20 +12,20 @@ import java.awt.*;
  */
 public class JobListRenderer extends DefaultListCellRenderer {
 
-    protected VmFrame vmFrame;
+    protected VmControlFrame vmControlFrame;
 
-    public JobListRenderer(VmFrame vmFrame) {
-        this.vmFrame = vmFrame;
+    public JobListRenderer(VmControlFrame vmControlFrame) {
+        this.vmControlFrame = vmControlFrame;
     }
 
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 		JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
         String jobId = label.getText();
-        VmFrame.JobStatus jobStatus = this.vmFrame.getJobStatus(jobId);
-        if(jobStatus == VmFrame.JobStatus.ABORTED || jobStatus == VmFrame.JobStatus.ERROR) {
+        VmControlFrame.JobStatus jobStatus = this.vmControlFrame.getJobStatus(jobId);
+        if(jobStatus == VmControlFrame.JobStatus.ABORTED || jobStatus == VmControlFrame.JobStatus.ERROR) {
             label.setIcon(ImageHolder.inactiveIcon);
-        } else if(jobStatus == VmFrame.JobStatus.COMPLETED) {
+        } else if(jobStatus == VmControlFrame.JobStatus.COMPLETED) {
             label.setIcon(ImageHolder.activeIcon);         
         }
 

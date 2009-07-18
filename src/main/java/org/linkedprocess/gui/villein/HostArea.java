@@ -106,11 +106,11 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         } else if (event.getActionCommand().equals(VM_CONTROL)) {
             if(this.popupTreeObject instanceof VmStruct) {
                 VmStruct vmStruct = (VmStruct) this.popupTreeObject;
-                VmFrame vmFrame = this.villeinGui.getVmFrame(vmStruct.getFullJid());
-                if (vmFrame == null) {
+                VmControlFrame vmControlFrame = this.villeinGui.getVmFrame(vmStruct.getFullJid());
+                if (vmControlFrame == null) {
                     this.villeinGui.addVmFrame(vmStruct);
                 } else {
-                    vmFrame.setVisible(true);
+                    vmControlFrame.setVisible(true);
                 }
             }
 
@@ -316,11 +316,11 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
             } else if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
                 if (this.popupTreeObject instanceof VmStruct) {
                     VmStruct vmStruct = (VmStruct) this.popupTreeObject;
-                    VmFrame vmFrame = this.villeinGui.getVmFrame(vmStruct.getFullJid());
-                    if (vmFrame == null) {
+                    VmControlFrame vmControlFrame = this.villeinGui.getVmFrame(vmStruct.getFullJid());
+                    if (vmControlFrame == null) {
                         this.villeinGui.addVmFrame(vmStruct);
                     } else {
-                        vmFrame.setVisible(true);
+                        vmControlFrame.setVisible(true);
                     }
 
                 }

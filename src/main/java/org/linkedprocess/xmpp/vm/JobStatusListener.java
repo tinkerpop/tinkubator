@@ -34,6 +34,7 @@ public class JobStatusListener implements PacketListener {
 
         JobStatus returnJobStatus = new JobStatus();
         returnJobStatus.setTo(jobStatus.getFrom());
+        returnJobStatus.setFrom(this.xmppVirtualMachine.getFullJid());
         returnJobStatus.setPacketID(jobStatus.getPacketID());
         String jobId = jobStatus.getJobId();
         returnJobStatus.setJobId(jobId);

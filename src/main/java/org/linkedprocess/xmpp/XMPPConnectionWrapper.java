@@ -1,10 +1,6 @@
 package org.linkedprocess.xmpp;
 
-import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
@@ -31,7 +27,12 @@ public class XMPPConnectionWrapper implements Connection {
 
 	}
 
-	@Override
+    @Override
+    public void addPacketWriterInterceptor(PacketInterceptor interceptor, PacketFilter filter) {
+        delegate.addPacketWriterInterceptor(interceptor, filter);
+    }
+
+    @Override
 	public void connect() throws XMPPException {
 		delegate.connect();
 	}

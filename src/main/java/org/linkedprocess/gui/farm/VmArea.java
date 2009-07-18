@@ -2,11 +2,12 @@ package org.linkedprocess.gui.farm;
 
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 import org.linkedprocess.xmpp.villein.HostStruct;
-import org.linkedprocess.gui.ImageHolder;
-import org.linkedprocess.gui.JTreeImage;
-import org.linkedprocess.gui.TreeNodeProperty;
-import org.linkedprocess.gui.TreeRenderer;
+import org.linkedprocess.gui.*;
 import org.linkedprocess.LinkedProcess;
+import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.filter.OrFilter;
+import org.jivesoftware.smack.filter.FromContainsFilter;
+import org.jivesoftware.smack.filter.ToContainsFilter;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -23,7 +24,7 @@ import java.util.HashMap;
  * Date: Jul 7, 2009
  * Time: 5:03:43 PM
  */
-public class MainArea extends JTabbedPane implements ActionListener {
+public class VmArea extends JPanel implements ActionListener {
 
     protected FarmGui farmGui;
     protected JTreeImage tree;
@@ -31,8 +32,11 @@ public class MainArea extends JTabbedPane implements ActionListener {
     protected DefaultMutableTreeNode treeRoot;
     protected Map<String, DefaultMutableTreeNode> treeMap;
 
+    protected final static String SHUTDOWN = "shutdown";
 
-     public MainArea(FarmGui farmGui) {
+
+     public VmArea(FarmGui farmGui) {
+        super(new BorderLayout());
         this.farmGui = farmGui;
         HostStruct hostStruct = new HostStruct();
         hostStruct.setFullJid(LinkedProcess.generateBareJid(farmGui.getXmppFarm().getFullJid()));
@@ -42,43 +46,39 @@ public class MainArea extends JTabbedPane implements ActionListener {
         this.tree.setModel(new DefaultTreeModel(treeRoot));
 
         JScrollPane vmTreeScroll = new JScrollPane(this.tree);
-        JButton shutdownButton = new JButton("shutdown farm");
+        JButton shutdownButton = new JButton(SHUTDOWN);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.add(shutdownButton);
+        buttonPanel.setOpaque(false);
         shutdownButton.addActionListener(this);
         JPanel treePanel = new JPanel(new BorderLayout());
         treePanel.add(vmTreeScroll, BorderLayout.CENTER);
-        treePanel.add(shutdownButton, BorderLayout.SOUTH);
+        treePanel.add(buttonPanel, BorderLayout.SOUTH);
         treePanel.setOpaque(false);
-        treePanel.setBorder(BorderFactory.createLineBorder(ImageHolder.GRAY_COLOR, 2));
 
-        JPanel securityPanel = new JPanel();
-        this.addTab("virtual machines", treePanel);
-        this.addTab("farm security", securityPanel); 
-        /*try {
-            SAXBuilder builder = new SAXBuilder();
-            builder.setValidation(false);
-            builder.setDTDHandler(null);
-            builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            builder.setFeature("http://xml.org/sax/features/resolve-dtd-uris", false);
-            builder.setFeature("http://xml.org/sax/features/use-entity-resolver2", false);
-            builder.setFeature("http://xml.org/sax/features/validation", false);
-            builder.setFeature("http://xml.org/sax/features/namespaces", false);
-            builder.setIgnoringBoundaryWhitespace(true);
-            builder.setIgnoringElementContentWhitespace(true);
-            System.out.println(this.farmGui.getFarmStruct().getServiceExtension().toXML());
-            Document doc = builder.build(new BufferedReader(new StringReader("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + this.farmGui.getFarmStruct().getServiceExtension().toXML())));
-            XMLOutputter out = new XMLOutputter();
-            JPanel featuresPanel = new JPanel();
-            this.farmFeaturesText = new JTextArea(out.outputString(doc));
-            featuresPanel.add(this.farmFeaturesText);
-            this.addTab("farm features", featuresPanel);
-        } catch(Exception e) { e.printStackTrace(); }   */
+        //JPanel securityPanel = new JPanel();
+        PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel(this.farmGui.getXmppFarm().getFullJid());
+        packetSnifferPanel.setSize(10,10);
+        //PacketFilter fromToFilter = new OrFilter(new FromContainsFilter(farmGui.getXmppFarm().getFullJid()), new ToContainsFilter(farmGui.getXmppFarm().getFullJid()));
+        this.farmGui.getXmppFarm().getConnection().addPacketWriterInterceptor(packetSnifferPanel, null);
+        this.farmGui.getXmppFarm().getConnection().addPacketListener(packetSnifferPanel, null);
 
+
+        JTabbedPane tabbedPane = new JTabbedPane();
+
+
+        tabbedPane.addTab("virtual machines", treePanel);
+        //tabbedPane.addTab("farm security", securityPanel);
+        tabbedPane.addTab("packets", packetSnifferPanel);
+
+        this.add(tabbedPane, BorderLayout.CENTER);
+ 
         this.treeMap = new HashMap<String, DefaultMutableTreeNode>();
         this.createTree();
         this.setVisible(true);
     }
 
-       public boolean containsVmNode(XmppVirtualMachine vm) {
+    public boolean containsVmNode(XmppVirtualMachine vm) {
         for(int i=0; i< treeRoot.getChildCount(); i++) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeRoot.getChildAt(i);
             if(node.getUserObject() == vm) {
@@ -113,7 +113,6 @@ public class MainArea extends JTabbedPane implements ActionListener {
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
         DefaultMutableTreeNode farmNode = this.treeMap.get(this.farmGui.getXmppFarm().getFullJid());
         DefaultMutableTreeNode node = this.treeMap.get(vmJid);
-        //System.out.println(node + "---------" + status);
         if(node == null && status != LinkedProcess.VmStatus.NOT_FOUND) {
             try {
                 XmppVirtualMachine xmppVm = this.farmGui.getXmppFarm().getVirtualMachine(vmJid);
@@ -147,7 +146,10 @@ public class MainArea extends JTabbedPane implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent event) {
-        this.farmGui.getXmppFarm().shutDown();
-        this.farmGui.loadLoginFrame();
+        if(event.getActionCommand().equals(SHUTDOWN)) {
+            this.farmGui.getXmppFarm().shutDown();
+            this.farmGui.loadLoginFrame();
+        }
     }
+
 }

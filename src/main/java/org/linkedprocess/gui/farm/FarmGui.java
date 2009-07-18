@@ -28,7 +28,7 @@ public class FarmGui extends JFrame implements ActionListener {
     protected SystemTray systemTray;
     protected TrayIcon systemTrayIcon;
     protected MenuItem show;
-    protected MainArea mainArea;
+    protected VmArea vmArea;
 
 
     public void loadLoginFrame() {
@@ -42,19 +42,20 @@ public class FarmGui extends JFrame implements ActionListener {
     public void loadMainFrame(XmppFarm xmppFarm) {
         this.xmppFarm = xmppFarm;
         this.getContentPane().removeAll();
-        this.mainArea = new MainArea(this);
-        this.getContentPane().add(this.mainArea);
+        this.vmArea = new VmArea(this);
+        this.getContentPane().add(this.vmArea);
         this.setResizable(false);
         this.pack();
+        this.setSize(442,491);
         xmppFarm.setStatusEventHandler(new FarmGuiStatusEventHandler(this));
     }
 
     public void createVirtualMachineTree() {
-        this.mainArea.createTree();
+        this.vmArea.createTree();
     }
 
     public void updateVirtualMachineTree(String vmJid, LinkedProcess.VmStatus status) {
-        this.mainArea.updateTree(vmJid, status);
+        this.vmArea.updateTree(vmJid, status);
     }
 
     public FarmGui() {

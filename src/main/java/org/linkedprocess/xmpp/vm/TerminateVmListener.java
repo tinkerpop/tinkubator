@@ -37,6 +37,7 @@ public class TerminateVmListener implements PacketListener {
 
         TerminateVm returnTerminateVm = new TerminateVm();
         returnTerminateVm.setTo(terminateVm.getFrom());
+        returnTerminateVm.setFrom(this.xmppVirtualMachine.getFullJid());
         returnTerminateVm.setPacketID(terminateVm.getPacketID());
 
         String vmPassword = terminateVm.getVmPassword();

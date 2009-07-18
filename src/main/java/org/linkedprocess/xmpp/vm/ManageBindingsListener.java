@@ -41,6 +41,7 @@ public class ManageBindingsListener implements PacketListener {
         if(null == vmPassword) {
             ManageBindings returnManageBindings = new ManageBindings();
             returnManageBindings.setTo(villeinJid);
+            returnManageBindings.setFrom(this.xmppVirtualMachine.getFullJid());
             returnManageBindings.setPacketID(iqId);
             returnManageBindings.setErrorType(LinkedProcess.ErrorType.MALFORMED_PACKET);
             String errorMessage = "";
@@ -55,6 +56,7 @@ public class ManageBindingsListener implements PacketListener {
         } else if(!this.xmppVirtualMachine.checkVmPassword(vmPassword)) {
             ManageBindings returnManageBindings = new ManageBindings();
             returnManageBindings.setTo(villeinJid);
+            returnManageBindings.setFrom(this.xmppVirtualMachine.getFullJid());
             returnManageBindings.setPacketID(iqId);
             returnManageBindings.setErrorType(LinkedProcess.ErrorType.WRONG_VM_PASSWORD);
             returnManageBindings.setType(IQ.Type.ERROR);
@@ -66,6 +68,7 @@ public class ManageBindingsListener implements PacketListener {
         } else {
             ManageBindings returnManageBindings = new ManageBindings();
             returnManageBindings.setTo(villeinJid);
+            returnManageBindings.setFrom(this.xmppVirtualMachine.getFullJid());
             returnManageBindings.setPacketID(iqId);
 
             try {
