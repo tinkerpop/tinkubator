@@ -12,17 +12,17 @@ import org.jivesoftware.smack.packet.Packet;
  * Date: Jun 25, 2009
  * Time: 1:21:45 PM
  */
-public class AbortJobVmListener implements PacketListener {
+public class AbortJobListener implements PacketListener {
     private XmppVirtualMachine xmppVirtualMachine;
 
-    public AbortJobVmListener(XmppVirtualMachine xmppVirtualMachine) {
+    public AbortJobListener(XmppVirtualMachine xmppVirtualMachine) {
         this.xmppVirtualMachine = xmppVirtualMachine;
     }
 
     public void processPacket(Packet abortJob) {
 
 
-        XmppVirtualMachine.LOGGER.fine("Arrived " + AbortJobVmListener.class.getName());
+        XmppVirtualMachine.LOGGER.fine("Arrived " + AbortJobListener.class.getName());
         XmppVirtualMachine.LOGGER.fine(abortJob.toXML());
 
         AbortJob returnAbortJob = new AbortJob();
@@ -64,7 +64,7 @@ public class AbortJobVmListener implements PacketListener {
             }
         }
 
-        XmppVirtualMachine.LOGGER.fine("Sent " + AbortJobVmListener.class.getName());
+        XmppVirtualMachine.LOGGER.fine("Sent " + AbortJobListener.class.getName());
         XmppVirtualMachine.LOGGER.fine(returnAbortJob.toXML());
         xmppVirtualMachine.getConnection().sendPacket(returnAbortJob);
     }

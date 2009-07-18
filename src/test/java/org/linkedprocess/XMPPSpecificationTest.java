@@ -7,7 +7,7 @@ import org.linkedprocess.xmpp.farm.PresenceSubscriptionListener;
 import org.linkedprocess.xmpp.farm.SpawnVm;
 import org.linkedprocess.xmpp.farm.SpawnVmFarmListener;
 import org.linkedprocess.xmpp.vm.TerminateVm;
-import org.linkedprocess.xmpp.vm.TerminateVmVmListener;
+import org.linkedprocess.xmpp.vm.TerminateVmListener;
 import org.linkedprocess.xmpp.farm.XmppFarm;
 import org.linkedprocess.xmpp.vm.*;
 import static org.easymock.EasyMock.expect;
@@ -185,10 +185,10 @@ public class XMPPSpecificationTest {
 		// now we should have 3 PacketListeners for the VM
 		ArrayList<PacketListener> vm1packetListeners = mockVM1Conn.packetListeners;
 		assertEquals(4, vm1packetListeners.size());
-		assertTrue(vm1packetListeners.get(0) instanceof SubmitJobVmListener);
-		assertTrue(vm1packetListeners.get(1) instanceof JobStatusVmListener);
-		assertTrue(vm1packetListeners.get(2) instanceof AbortJobVmListener);
-		assertTrue(vm1packetListeners.get(3) instanceof TerminateVmVmListener);
+		assertTrue(vm1packetListeners.get(0) instanceof SubmitJobListener);
+		assertTrue(vm1packetListeners.get(1) instanceof JobStatusListener);
+		assertTrue(vm1packetListeners.get(2) instanceof AbortJobListener);
+		assertTrue(vm1packetListeners.get(3) instanceof TerminateVmListener);
 
 		// try one more VM with the same spawn packet as the first!
 		mockFarmConn.clearPackets();

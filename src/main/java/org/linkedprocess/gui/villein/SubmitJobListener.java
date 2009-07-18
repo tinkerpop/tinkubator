@@ -10,11 +10,11 @@ import org.linkedprocess.xmpp.villein.XmppVillein;
  * Date: Jul 12, 2009
  * Time: 7:46:14 PM
  */
-public class SubmitJobGuiListener implements PacketListener {
+public class SubmitJobListener implements PacketListener {
 
     protected VilleinGui villeinGui;
 
-    public SubmitJobGuiListener(VilleinGui villeinGui) {
+    public SubmitJobListener(VilleinGui villeinGui) {
         this.villeinGui = villeinGui;
     }
 

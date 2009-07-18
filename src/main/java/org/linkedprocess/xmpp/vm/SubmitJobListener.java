@@ -14,11 +14,11 @@ import org.jivesoftware.smack.packet.Packet;
  * Date: Jun 23, 2009
  * Time: 2:32:50 PM
  */
-public class SubmitJobVmListener implements PacketListener {
+public class SubmitJobListener implements PacketListener {
 
     private XmppVirtualMachine xmppVirtualMachine;
 
-    public SubmitJobVmListener(XmppVirtualMachine xmppVirtualMachine) {
+    public SubmitJobListener(XmppVirtualMachine xmppVirtualMachine) {
         this.xmppVirtualMachine = xmppVirtualMachine;
     }
 
@@ -33,7 +33,7 @@ public class SubmitJobVmListener implements PacketListener {
     }
 
     private void processPacketTemp(Packet evaluate) {
-        XmppVirtualMachine.LOGGER.info("Arrived " + SubmitJobVmListener.class.getName());
+        XmppVirtualMachine.LOGGER.info("Arrived " + SubmitJobListener.class.getName());
         XmppVirtualMachine.LOGGER.info(evaluate.toXML());
 
         String expression = ((SubmitJob) evaluate).getExpression();
@@ -60,7 +60,7 @@ public class SubmitJobVmListener implements PacketListener {
             returnSubmitJob.setType(IQ.Type.ERROR);
             xmppVirtualMachine.getConnection().sendPacket(returnSubmitJob);
 
-            XmppVirtualMachine.LOGGER.info("Sent " + SubmitJobVmListener.class.getName());
+            XmppVirtualMachine.LOGGER.info("Sent " + SubmitJobListener.class.getName());
             XmppVirtualMachine.LOGGER.info(returnSubmitJob.toXML());
 
         } else if(!this.xmppVirtualMachine.checkVmPassword(vmPassword)) {
@@ -71,7 +71,7 @@ public class SubmitJobVmListener implements PacketListener {
             returnSubmitJob.setType(IQ.Type.ERROR);
             xmppVirtualMachine.getConnection().sendPacket(returnSubmitJob);
 
-            XmppVirtualMachine.LOGGER.info("Sent " + SubmitJobVmListener.class.getName());
+            XmppVirtualMachine.LOGGER.info("Sent " + SubmitJobListener.class.getName());
             XmppVirtualMachine.LOGGER.info(returnSubmitJob.toXML());
 
         } else {
@@ -87,7 +87,7 @@ public class SubmitJobVmListener implements PacketListener {
                 returnSubmitJob.setType(IQ.Type.ERROR);
                 xmppVirtualMachine.getConnection().sendPacket(returnSubmitJob);
 
-                XmppVirtualMachine.LOGGER.info("Sent " + SubmitJobVmListener.class.getName());
+                XmppVirtualMachine.LOGGER.info("Sent " + SubmitJobListener.class.getName());
                 XmppVirtualMachine.LOGGER.info(returnSubmitJob.toXML());
 
             } catch (VMWorkerIsFullException e) {
@@ -99,7 +99,7 @@ public class SubmitJobVmListener implements PacketListener {
                 returnSubmitJob.setType(IQ.Type.ERROR);
                 xmppVirtualMachine.getConnection().sendPacket(returnSubmitJob);
 
-                XmppVirtualMachine.LOGGER.info("Sent " + SubmitJobVmListener.class.getName());
+                XmppVirtualMachine.LOGGER.info("Sent " + SubmitJobListener.class.getName());
                 XmppVirtualMachine.LOGGER.info(returnSubmitJob.toXML());
             } catch (JobAlreadyExistsException e) {
                 SubmitJob returnSubmitJob = new SubmitJob();
@@ -110,7 +110,7 @@ public class SubmitJobVmListener implements PacketListener {
                 returnSubmitJob.setType(IQ.Type.ERROR);
                 xmppVirtualMachine.getConnection().sendPacket(returnSubmitJob);
 
-                XmppVirtualMachine.LOGGER.info("Sent " + SubmitJobVmListener.class.getName());
+                XmppVirtualMachine.LOGGER.info("Sent " + SubmitJobListener.class.getName());
                 XmppVirtualMachine.LOGGER.info(returnSubmitJob.toXML());
             }
         }

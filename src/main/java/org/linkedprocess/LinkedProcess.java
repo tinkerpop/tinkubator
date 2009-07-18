@@ -158,6 +158,7 @@ public class LinkedProcess {
     // Lop VM XMPP tag and attribute names
     // tag names
     public static final String SUBMIT_JOB_TAG = "submit_job";
+    public static final String MANAGE_BINDINGS_TAG = "manage_bindings";
     public static final String JOB_STATUS_TAG = "job_status";
     public static final String ABORT_JOB_TAG = "abort_job";
     public static final String TERMINATE_VM_TAG = "terminate_vm";
@@ -165,6 +166,8 @@ public class LinkedProcess {
     public static final String JOB_ID_ATTRIBUTE = "job_id";
     public static final String ERROR_TYPE_ATTRIBUTE = "error_type";
     public static final String VALUE_ATTRIBUTE = "value";
+    public static final String BINDING_TAG = "binding";
+    public static final String NAME_ATTRIBUTE = "name";
 
     ///////////////////////////////////////////////////////
 

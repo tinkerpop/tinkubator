@@ -64,10 +64,10 @@ public class XmppVirtualMachine extends XmppClient {
         PacketFilter abandonFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter terminateFilter = new AndFilter(new PacketTypeFilter(TerminateVm.class), new IQTypeFilter(IQ.Type.GET));
 
-        this.addPacketListener(new SubmitJobVmListener(this), submitFilter);
-        this.addPacketListener(new JobStatusVmListener(this), statusFilter);
-        this.addPacketListener(new AbortJobVmListener(this), abandonFilter);
-        this.addPacketListener(new TerminateVmVmListener(this), terminateFilter);
+        this.addPacketListener(new SubmitJobListener(this), submitFilter);
+        this.addPacketListener(new JobStatusListener(this), statusFilter);
+        this.addPacketListener(new AbortJobListener(this), abandonFilter);
+        this.addPacketListener(new TerminateVmListener(this), terminateFilter);
 
     }
 

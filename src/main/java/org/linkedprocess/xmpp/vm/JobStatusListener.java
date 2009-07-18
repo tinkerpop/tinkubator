@@ -12,16 +12,16 @@ import org.jivesoftware.smack.packet.Packet;
  * Date: Jun 25, 2009
  * Time: 12:54:11 PM
  */
-public class JobStatusVmListener implements PacketListener {
+public class JobStatusListener implements PacketListener {
     private XmppVirtualMachine xmppVirtualMachine;
 
-    public JobStatusVmListener(XmppVirtualMachine xmppVirtualMachine) {
+    public JobStatusListener(XmppVirtualMachine xmppVirtualMachine) {
         this.xmppVirtualMachine = xmppVirtualMachine;
     }
 
     public void processPacket(Packet jobStatus) {
 
-        XmppVirtualMachine.LOGGER.fine("Arrived " + JobStatusVmListener.class.getName());
+        XmppVirtualMachine.LOGGER.fine("Arrived " + JobStatusListener.class.getName());
         XmppVirtualMachine.LOGGER.fine(jobStatus.toXML());
 
         JobStatus returnJobStatus = new JobStatus();
@@ -63,7 +63,7 @@ public class JobStatusVmListener implements PacketListener {
             }
         }
 
-        XmppVirtualMachine.LOGGER.fine("Sent " + JobStatusVmListener.class.getName());
+        XmppVirtualMachine.LOGGER.fine("Sent " + JobStatusListener.class.getName());
         XmppVirtualMachine.LOGGER.fine(returnJobStatus.toXML());
         xmppVirtualMachine.getConnection().sendPacket(returnJobStatus);
 

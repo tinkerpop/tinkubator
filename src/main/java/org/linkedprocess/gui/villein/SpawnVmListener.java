@@ -10,11 +10,11 @@ import org.linkedprocess.xmpp.farm.SpawnVm;
  * Date: Jul 16, 2009
  * Time: 10:06:21 PM
  */
-public class SpawnVmGuiListener implements PacketListener {
+public class SpawnVmListener implements PacketListener {
     // TODO: IS THIS CLASS REALLY NEEDED?
     protected VilleinGui villeinGui;
 
-    public SpawnVmGuiListener(VilleinGui villeinGui) {
+    public SpawnVmListener(VilleinGui villeinGui) {
         this.villeinGui = villeinGui;
     }
 

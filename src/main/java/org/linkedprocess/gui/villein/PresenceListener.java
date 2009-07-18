@@ -9,11 +9,11 @@ import org.jivesoftware.smack.packet.Presence;
  * Date: Jul 9, 2009
  * Time: 4:19:23 PM
  */
-public class PresenceGuiListener implements PacketListener {
+public class PresenceListener implements PacketListener {
 
     VilleinGui villeinGui;
 
-    public PresenceGuiListener(VilleinGui villeinGui) {
+    public PresenceListener(VilleinGui villeinGui) {
         this.villeinGui = villeinGui;
     }
 

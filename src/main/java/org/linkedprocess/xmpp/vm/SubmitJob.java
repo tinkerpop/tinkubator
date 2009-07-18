@@ -23,20 +23,20 @@ public class SubmitJob extends VirtualMachineIq {
 
     public String getChildElementXML() {
 
-        Element evaluateElement = new Element(LinkedProcess.SUBMIT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE);
+        Element submitJobElement = new Element(LinkedProcess.SUBMIT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE);
 
         if(this.vmPassword != null) {
-            evaluateElement.setAttribute(LinkedProcess.VM_PASSWORD_ATTRIBUTE, this.vmPassword);
+            submitJobElement.setAttribute(LinkedProcess.VM_PASSWORD_ATTRIBUTE, this.vmPassword);
         }
         if(this.errorType != null) {
-            evaluateElement.setAttribute(LinkedProcess.ERROR_TYPE_ATTRIBUTE, this.errorType.toString());
+            submitJobElement.setAttribute(LinkedProcess.ERROR_TYPE_ATTRIBUTE, this.errorType.toString());
             if(this.errorMessage != null) {
-                evaluateElement.setText(this.errorMessage);
+                submitJobElement.setText(this.errorMessage);
             }
         } else if(this.expression != null) {
-                evaluateElement.setText(this.expression);
+                submitJobElement.setText(this.expression);
         }
         
-        return LinkedProcess.xmlOut.outputString(evaluateElement);
+        return LinkedProcess.xmlOut.outputString(submitJobElement);
     }
 }
