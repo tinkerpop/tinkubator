@@ -1,3 +1,5 @@
-class HostStruct
-  #Code here
+module Lop
+  class HostStruct
+    #Code here
+  end
 end
