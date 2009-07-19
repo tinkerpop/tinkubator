@@ -86,7 +86,6 @@ public class XmppFarm extends XmppClient {
     
     public void logon(String server, int port, String username, String password) throws XMPPException {
         super.logon(server, port, username, password, RESOURCE_PREFIX);
-        connection.sendPacket(this.createPresence(LinkedProcess.FarmStatus.ACTIVE));
     }
 
     public Presence createPresence(final LinkedProcess.FarmStatus status) {
@@ -152,13 +151,12 @@ public class XmppFarm extends XmppClient {
     public void shutDown() {
 
         this.vmScheduler.shutDown();
-        this.connection.sendPacket(this.createPresence(LinkedProcess.FarmStatus.TERMINATED));
         try {
             this.vmScheduler.waitUntilFinished();
         } catch (InterruptedException e) {
             LOGGER.severe(e.getMessage());
         }
-        super.shutDown();
+        super.shutDown(this.createPresence(LinkedProcess.FarmStatus.TERMINATED));
 
     }
 

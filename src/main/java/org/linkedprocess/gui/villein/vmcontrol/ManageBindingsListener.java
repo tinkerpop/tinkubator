@@ -1,9 +1,11 @@
-package org.linkedprocess.gui.villein;
+package org.linkedprocess.gui.villein.vmcontrol;
 
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.xmpp.vm.ManageBindings;
 import org.linkedprocess.xmpp.villein.XmppVillein;
+import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
+import org.linkedprocess.gui.villein.VilleinGui;
 
 /**
  * User: marko

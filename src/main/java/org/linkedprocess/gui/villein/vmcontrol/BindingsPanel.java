@@ -1,8 +1,9 @@
-package org.linkedprocess.gui.villein;
+package org.linkedprocess.gui.villein.vmcontrol;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.gui.ImageHolder;
+import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
 import org.linkedprocess.xmpp.vm.ManageBindings;
 
 import javax.swing.*;

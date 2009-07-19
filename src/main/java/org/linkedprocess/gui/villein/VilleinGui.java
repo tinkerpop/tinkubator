@@ -1,6 +1,10 @@
 package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.Connection;
+import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
+import org.linkedprocess.gui.villein.vmcontrol.AbortJobListener;
+import org.linkedprocess.gui.villein.vmcontrol.ManageBindingsListener;
+import org.linkedprocess.gui.villein.vmcontrol.SubmitJobListener;
 import org.linkedprocess.xmpp.villein.VmStruct;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.linkedprocess.xmpp.vm.SubmitJob;
@@ -113,7 +117,7 @@ public class VilleinGui extends JFrame {
 
     public void shutDown() {
         if (this.xmppVillein != null)
-            this.xmppVillein.shutDown();
+            this.xmppVillein.shutDown(null);
         System.exit(0);
     }
 

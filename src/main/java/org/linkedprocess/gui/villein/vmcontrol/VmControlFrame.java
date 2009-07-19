@@ -1,7 +1,11 @@
-package org.linkedprocess.gui.villein;
+package org.linkedprocess.gui.villein.vmcontrol;
 
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.PacketSnifferPanel;
+import org.linkedprocess.gui.villein.VilleinGui;
+import org.linkedprocess.gui.villein.vmcontrol.BindingsPanel;
+import org.linkedprocess.gui.villein.vmcontrol.JobListRenderer;
+import org.linkedprocess.gui.villein.vmcontrol.JobPane;
 import org.linkedprocess.xmpp.villein.VmStruct;
 import org.linkedprocess.xmpp.vm.AbortJob;
 import org.linkedprocess.xmpp.vm.SubmitJob;
@@ -9,7 +13,6 @@ import org.linkedprocess.xmpp.vm.ManageBindings;
 import org.linkedprocess.LinkedProcess;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.OrFilter;
 import org.jivesoftware.smack.filter.FromContainsFilter;

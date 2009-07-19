@@ -37,11 +37,13 @@ public abstract class XmppClient {
 
         // if connection is still active, disconnect it.
         if (null != connection && connection.isConnected()) {
-            this.logout();
+            this.logout(null);
         }
 
         // logging into an XMPP server requires a username and password
         ConnectionConfiguration connConfig = new ConnectionConfiguration(server, port);
+        connConfig.setRosterLoadedAtLogin(false);
+        connConfig.setSendPresence(false);
         this.connection = new XMPPConnectionWrapper(connConfig);
         this.connection.connect();
 
@@ -72,9 +74,12 @@ public abstract class XmppClient {
         this.connection.addPacketListener(listener, filter);
     }
     
-    public void logout() {
+    public void logout(Presence logoutPresence) {
         LOGGER.info("Disconnecting from " + connection.getHost());
-        connection.disconnect();
+        if(logoutPresence == null)
+            connection.disconnect();
+        else
+            connection.disconnect(logoutPresence);
     }
 
     public void printClientStatistics() {
@@ -100,11 +105,11 @@ public abstract class XmppClient {
         return this.connection;
     }
 
-    public void shutDown() {
+    public void shutDown(Presence logoutPresence) {
         LOGGER.info("Requesting shutdown");
         shutdownRequested = true;
         //this is in order to wait until we are logged out
-        logout();
+        logout(logoutPresence);
     }
 
     public String getUsername() {

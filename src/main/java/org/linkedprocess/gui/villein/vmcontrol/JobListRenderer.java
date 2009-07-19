@@ -1,6 +1,7 @@
-package org.linkedprocess.gui.villein;
+package org.linkedprocess.gui.villein.vmcontrol;
 
 import org.linkedprocess.gui.ImageHolder;
+import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
 
 import javax.swing.*;
 import java.awt.*;

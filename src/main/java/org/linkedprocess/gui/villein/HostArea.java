@@ -2,6 +2,7 @@ package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.gui.*;
+import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
 import org.linkedprocess.xmpp.villein.FarmStruct;
 import org.linkedprocess.xmpp.villein.HostStruct;
 import org.linkedprocess.xmpp.villein.Struct;
@@ -113,7 +114,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                 farmFrame.setVisible(true);
             }
         } else if (event.getActionCommand().equals(SHUTDOWN)) {
-            this.villeinGui.getXmppVillein().shutDown();
+            this.villeinGui.getXmppVillein().shutDown(null);
             this.villeinGui.loadLoginFrame();
         } else {
             for (String vmSpecies : this.supportedVmSpeciesActionCommands) {

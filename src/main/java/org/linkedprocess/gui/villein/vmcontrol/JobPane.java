@@ -1,8 +1,9 @@
-package org.linkedprocess.gui.villein;
+package org.linkedprocess.gui.villein.vmcontrol;
 
 import org.linkedprocess.xmpp.vm.SubmitJob;
 import org.linkedprocess.xmpp.vm.AbortJob;
 import org.linkedprocess.gui.ImageHolder;
+import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
