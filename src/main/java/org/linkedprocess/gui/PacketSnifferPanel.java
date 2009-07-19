@@ -135,7 +135,7 @@ public class PacketSnifferPanel extends JPanel implements ListSelectionListener,
         ListSelectionModel listModel = (ListSelectionModel) event.getSource();
         try {
             if (packetTable.getSelectedRow() > -1)
-                this.packetTextArea.setText(LinkedProcess.createPrettyXML(packetList.get(listModel.getMinSelectionIndex()).toXML()));
+                this.packetTextArea.setText(LinkedProcess.createPrettyXML(packetList.get(listModel.getMinSelectionIndex()).toXML()).replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>","").trim());
         } catch (Exception e) {
             e.printStackTrace();
         }
