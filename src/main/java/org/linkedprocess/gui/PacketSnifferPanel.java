@@ -97,7 +97,7 @@ public class PacketSnifferPanel extends JPanel implements ListSelectionListener,
             } else if(packet.getTo().equals(this.jid)) {
                 sentOrRecieved = 1;
             } else {
-                sentOrRecieved = 1;
+                sentOrRecieved = 0;
             }
             tableModel.addRow(new Object[]{sentOrRecieved, LinkedProcess.getBareClassName(packet.getClass()), packet.getFrom(), packet.getTo()});
             this.packetList.add(packet);
