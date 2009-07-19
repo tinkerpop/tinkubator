@@ -35,9 +35,9 @@ public class PacketSnifferPanel extends JPanel implements ListSelectionListener,
         this.jid = jid;
         DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{"i/o", "type", "from", "to"});
         this.packetTable = new JTable(tableModel) {
-        public boolean isCellEditable(int rowIndex, int vColIndex) {
-            return false;
-        }
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return false;
+            }
         };
 
         this.packetTable.setFillsViewportHeight(true);
@@ -49,8 +49,6 @@ public class PacketSnifferPanel extends JPanel implements ListSelectionListener,
         this.packetTable.getColumnModel().getColumn(2).setPreferredWidth(200);
         this.packetTable.getColumnModel().getColumn(3).setPreferredWidth(200);
         this.packetTable.getColumnModel().getColumn(0).setCellRenderer(new PacketSnifferTableCellRenderer());
-        //packetTable.isEditing()
-
 
         this.packetTextArea = new JTextArea();
         this.packetTextArea.setEditable(false);
@@ -95,12 +93,11 @@ public class PacketSnifferPanel extends JPanel implements ListSelectionListener,
         }
 
 
-
         if (max > 0) {
             Integer sentOrRecieved;
-            if(packet.getFrom() != null && packet.getFrom().equals(this.jid)) {
+            if (packet.getFrom() != null && packet.getFrom().equals(this.jid)) {
                 sentOrRecieved = 0;
-            } else if(packet.getTo().equals(this.jid)) {
+            } else if (packet.getTo() != null && packet.getTo().equals(this.jid)) {
                 sentOrRecieved = 1;
             } else {
                 sentOrRecieved = 0;
@@ -141,7 +138,7 @@ public class PacketSnifferPanel extends JPanel implements ListSelectionListener,
         ListSelectionModel listModel = (ListSelectionModel) event.getSource();
         try {
             if (packetTable.getSelectedRow() > -1)
-                this.packetTextArea.setText(LinkedProcess.createPrettyXML(packetList.get(listModel.getMinSelectionIndex()).toXML()).replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>","").trim());
+                this.packetTextArea.setText(LinkedProcess.createPrettyXML(packetList.get(listModel.getMinSelectionIndex()).toXML()).replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "").trim());
         } catch (Exception e) {
             e.printStackTrace();
         }

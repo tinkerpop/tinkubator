@@ -1,10 +1,7 @@
 package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.gui.ImageHolder;
-import org.linkedprocess.gui.JTreeImage;
-import org.linkedprocess.gui.TreeNodeProperty;
-import org.linkedprocess.gui.TreeRenderer;
+import org.linkedprocess.gui.*;
 import org.linkedprocess.xmpp.villein.FarmStruct;
 import org.linkedprocess.xmpp.villein.HostStruct;
 import org.linkedprocess.xmpp.villein.Struct;
@@ -32,7 +29,6 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
 
     protected VilleinGui villeinGui;
     protected JTreeImage tree;
-    protected JTextField addHostField;
     protected JPopupMenu popupMenu;
     protected Object popupTreeObject;
     protected DefaultMutableTreeNode treeRoot;
@@ -43,11 +39,11 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
     protected final static String SPAWN_VM = "spawn vm";
     protected final static String ADD_HOST = "add host";
     protected final static String SHUTDOWN = "shutdown";
-    protected final static String UNSUBSCRIBE = "unsubscribe";
     protected final static String VM_CONTROL = "vm control";
     protected final static String PROBE = "probe";
 
     public HostArea(VilleinGui villeinGui) {
+        super(new BorderLayout());
         this.villeinGui = villeinGui;
         HostStruct hostStruct = new HostStruct();
         hostStruct.setFullJid(LinkedProcess.generateBareJid(this.villeinGui.getXmppVillein().getFullJid()));
@@ -57,28 +53,28 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         this.tree.setModel(new DefaultTreeModel(treeRoot));
         this.tree.addMouseListener(this);
         this.tree.setRootVisible(false);
+        this.tree.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
         this.popupMenu = new JPopupMenu();
         this.popupMenu.setBorder(BorderFactory.createLineBorder(ImageHolder.GRAY_COLOR, 2));
 
-        JScrollPane vmTreeScroll = new JScrollPane(this.tree);
+        //JScrollPane vmTreeScroll = new JScrollPane(this.tree);
         JButton shutdownButton = new JButton(SHUTDOWN);
-        JButton addHostButton = new JButton(ADD_HOST);
         shutdownButton.addActionListener(this);
-        addHostButton.addActionListener(this);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        this.addHostField = new JTextField(15);
-        buttonPanel.add(this.addHostField);
-        buttonPanel.add(addHostButton);
         buttonPanel.add(shutdownButton);
-
         shutdownButton.addActionListener(this);
         JPanel treePanel = new JPanel(new BorderLayout());
-        treePanel.add(vmTreeScroll, BorderLayout.CENTER);
+        treePanel.add(this.tree, BorderLayout.CENTER);
         treePanel.add(buttonPanel, BorderLayout.SOUTH);
         treePanel.setOpaque(false);
-        treePanel.setBorder(BorderFactory.createLineBorder(ImageHolder.GRAY_COLOR, 2));
 
-        this.add(treePanel);
+        RosterPanel rosterPanel = new RosterPanel(this.villeinGui.getXmppVillein().getRoster());
+
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.addTab("hosts", treePanel);
+        tabbedPane.addTab("roster", rosterPanel);
+
+        this.add(tabbedPane, BorderLayout.CENTER);
 
         this.villeinGui.getXmppVillein().createHostStructsFromRoster();
         this.createTree();
@@ -88,16 +84,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
 
         this.popupMenu.setVisible(false);
 
-        if (event.getActionCommand().equals(ADD_HOST)) {
-            if (this.addHostField.getText() != null && this.addHostField.getText().length() > 0)
-                this.villeinGui.getXmppVillein().requestSubscription(this.addHostField.getText());
-        } else if (event.getActionCommand().equals(UNSUBSCRIBE)) {
-            if (this.popupTreeObject instanceof HostStruct) {
-                String jid = ((HostStruct) this.popupTreeObject).getFullJid();
-                this.villeinGui.getXmppVillein().requestUnsubscription(jid, true);
-                this.popupTreeObject = null;
-            }
-        } else if (event.getActionCommand().equals(TERMINATE_VM)) {
+        if (event.getActionCommand().equals(TERMINATE_VM)) {
             if (this.popupTreeObject instanceof VmStruct) {
                 VmStruct vmStruct = (VmStruct) this.popupTreeObject;
                 this.villeinGui.getXmppVillein().terminateVirtualMachine(vmStruct);
@@ -334,13 +321,10 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         this.popupMenu.setBorder(new BevelBorder(6));
         JLabel menuLabel = new JLabel("Host");
         JMenuItem probeItem = new JMenuItem(PROBE);
-        JMenuItem unsubscribeItem = new JMenuItem(UNSUBSCRIBE);
         menuLabel.setHorizontalTextPosition(JLabel.CENTER);
         this.popupMenu.add(menuLabel);
         this.popupMenu.addSeparator();
         this.popupMenu.add(probeItem);
-        this.popupMenu.add(unsubscribeItem);
-        unsubscribeItem.addActionListener(this);
         probeItem.addActionListener(this);
     }
 

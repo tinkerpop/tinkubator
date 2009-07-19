@@ -73,6 +73,7 @@ public class VilleinGui extends JFrame {
         this.getContentPane().add(hostArea);
         this.setResizable(false);
         this.pack();
+        this.setSize(440,488);
         this.setVisible(true);
 
     }

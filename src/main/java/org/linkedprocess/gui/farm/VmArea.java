@@ -63,13 +63,16 @@ public class VmArea extends JPanel implements ActionListener {
         this.farmGui.getXmppFarm().getConnection().addPacketWriterInterceptor(packetSnifferPanel, null);
         this.farmGui.getXmppFarm().getConnection().addPacketListener(packetSnifferPanel, null);
 
+        RosterPanel rosterPanel = new RosterPanel(this.farmGui.getXmppFarm().getRoster());
 
         JTabbedPane tabbedPane = new JTabbedPane();
 
 
         tabbedPane.addTab("virtual machines", treePanel);
         //tabbedPane.addTab("farm security", securityPanel);
+        tabbedPane.addTab("roster", rosterPanel);
         tabbedPane.addTab("packets", packetSnifferPanel);
+
 
         this.add(tabbedPane, BorderLayout.CENTER);
  
