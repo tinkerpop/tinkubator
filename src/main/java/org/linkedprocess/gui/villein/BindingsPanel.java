@@ -38,6 +38,8 @@ public class BindingsPanel extends JPanel implements ActionListener, TableModelL
         this.bindingsTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(this.bindingsTable);
         this.bindingsTable.setFillsViewportHeight(true);
+        this.bindingsTable.setRowHeight(20);
+        this.bindingsTable.setFont(new Font(null, Font.PLAIN, 13));
 
 
         JPanel buttonPanel = new JPanel(new BorderLayout());

@@ -34,7 +34,12 @@ public class PacketSnifferPanel extends JPanel implements ListSelectionListener,
         super(new BorderLayout());
         this.jid = jid;
         DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{"i/o", "type", "from", "to"});
-        this.packetTable = new JTable(tableModel);
+        this.packetTable = new JTable(tableModel) {
+        public boolean isCellEditable(int rowIndex, int vColIndex) {
+            return false;
+        }
+        };
+
         this.packetTable.setFillsViewportHeight(true);
 
         this.packetTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -44,6 +49,7 @@ public class PacketSnifferPanel extends JPanel implements ListSelectionListener,
         this.packetTable.getColumnModel().getColumn(2).setPreferredWidth(200);
         this.packetTable.getColumnModel().getColumn(3).setPreferredWidth(200);
         this.packetTable.getColumnModel().getColumn(0).setCellRenderer(new PacketSnifferTableCellRenderer());
+        //packetTable.isEditing()
 
 
         this.packetTextArea = new JTextArea();
