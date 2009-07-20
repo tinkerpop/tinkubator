@@ -5,18 +5,20 @@ include Jabber
 
 module Lop
 
-  class XmppVillein < Client
+  class LopVillein < Client
 
     LOP_FARM_NAMESPACE = "http://linkedprocess.org/protocol#LoPFarm"
     LOP_VM_NAMESPACE = "http://linkedprocess.org/protocol#LoPVM"
     SPAWN_VM_TAGNAME = "spawn_vm"
     TERMINATE_VM_TAGNAME = "terminate_vm"
     SUBMIT_JOB_TAGNAME = "submit_job"
+    MANAGE_BINDINGS_TAGNAME = "manage_bindings"
+    BINDING_TAGNAME = "binding"
     VM_SPECIES_ATTRIBUTE = "vm_species"
     VM_PASSWORD_ATTRIBUTE = "vm_password"
     VM_JID_ATTRIBUTE = "vm_jid"
 
-    attr_accessor :virtual_machines
+    attr_accessor :virtual_machines, :jobs, :bindings
 
     def initialize(jid, password)
       super(JID::new(jid))
@@ -24,12 +26,12 @@ module Lop
       self.connect()
       self.auth(password)
       self.virtual_machines = {}
+      self.jobs = {}
+      self.bindings= {}
       send(Presence.new(nil, "LoP rVillein v0.1", 0))
       self.setup_callback()
     end
-
-
-
+    
     def setup_callback()
       self.add_iq_callback do |iq|
         if iq.type != :error
@@ -44,7 +46,15 @@ module Lop
           elsif iq.first_element(TERMINATE_VM_TAGNAME)
             self.virtual_machines.delete(iq.from())
           elsif iq.first_element(SUBMIT_JOB_TAGNAME)
-
+            submit_job = iq.first_element(SUBMIT_JOB_TAGNAME)
+            self.jobs[iq.id] = submit_job.text
+          elsif iq.first_element(MANAGE_BINDINGS_TAGNAME)
+            manage_bindings = iq.first_element(MANAGE_BINDINGS_TAGNAME)
+            manage_bindings.get_elements.each do |binding|
+              binding.each do |key, value|
+                self.bindings[key] = value
+              end
+            end
           end
         end
       end
@@ -81,15 +91,44 @@ module Lop
       iq
     end
 
+    def create_manage_bindings(vm_struct, bindings, type)
+      iq = Iq.new(:get, vm_struct.full_jid)
+      iq.delete_namespace()
+      iq.set_type(type)
+      manage_bindings = IqQuery.new(MANAGE_BINDINGS_TAGNAME)
+      manage_bindings.add_namespace(LOP_VM_NAMESPACE)
+      manage_bindings.add_attribute(REXML::Attribute.new(VM_PASSWORD_ATTRIBUTE, vm_struct.vm_password));
+      bindings.each do |name, value|
+        if(type == :get)
+          manage_bindings.add_element(BINDING_TAGNAME, {'name'=>name})
+        else
+          manage_bindings.add_element(BINDING_TAGNAME, {'name'=>name, 'value'=>value})
+        end
+      end
+      iq.add(manage_bindings)
+      iq
+    end
+
 
     #Jabber::debug = true
 
     farm_struct = Lop::FarmStruct.new()
     farm_struct.full_jid = JID::new("linked.process.1@xmpp42.linkedprocess.org/LoPFarm/6TVDEIET");
-    xmpp = XmppVillein.new("linked.process.2@xmpp42.linkedprocess.org", "linked23")
+    xmpp = LopVillein.new("linked.process.2@xmpp42.linkedprocess.org", "linked23")
     spawn_vm_packet = xmpp.create_spawn_vm(farm_struct, "jruby");
+    spawn_vm_packet.id = "1234"
+    print(spawn_vm_packet)
+    print("\n\n")
+    vm_struct = Lop::VmStruct.new()
+    vm_struct.vm_password = "password"
+    vm_struct.full_jid = "test@test"
+    bindings = { "age"=>"23", "name"=>"marko" }
+    print(xmpp.create_manage_bindings(vm_struct, bindings, :set))
+
 
     xmpp.send(spawn_vm_packet)
+
+
     while xmpp.processing > 0 do
       print(xmpp.processing)
       print("\n")
@@ -97,7 +136,12 @@ module Lop
       print("\n")
       print(xmpp.virtual_machines.inspect)
       xmpp.virtual_machines.each do |key, value|
-        xmpp.send(xmpp.create_terminate_vm(xmpp.virtual_machines[key]))
+        #xmpp.send(xmpp.create_terminate_vm(xmpp.virtual_machines[key]))
+        xmpp.send(xmpp.create_submit_job(xmpp.virtual_machines[key], "1000+248744"));
+      end
+      xmpp.jobs.each do |key, value|
+        print("\n I am here")
+        print(xmpp.jobs[key].inspect)
       end
     end
     xmpp.close()
