@@ -109,31 +109,41 @@ public class LinkedProcess {
             return name;
         }
 
-        public static ErrorType getErrorType(String errorType) {
-            if (errorType.equals(ErrorType.WRONG_FARM_PASSWORD.toString()))
-                return ErrorType.WRONG_FARM_PASSWORD;
-            else if (errorType.equals(ErrorType.WRONG_VM_PASSWORD.toString()))
-                return ErrorType.WRONG_VM_PASSWORD;
-            else if (errorType.equals(ErrorType.MALFORMED_PACKET.toString()))
-                return ErrorType.MALFORMED_PACKET;
-            else if (errorType.equals(ErrorType.INTERNAL_ERROR.toString()))
-                return ErrorType.INTERNAL_ERROR;
-            else if (errorType.equals(ErrorType.JOB_ABORTED.toString()))
-                return ErrorType.JOB_ABORTED;
-            else if (errorType.equals(ErrorType.JOB_ALREADY_EXISTS.toString()))
-                return ErrorType.JOB_ALREADY_EXISTS;
-            else if (errorType.equals(ErrorType.JOB_NOT_FOUND.toString()))
-                return ErrorType.JOB_NOT_FOUND;
-            else if (errorType.equals(ErrorType.JOB_TIMED_OUT.toString()))
-                return ErrorType.JOB_TIMED_OUT;
-            else if (errorType.equals(ErrorType.SPECIES_NOT_SUPPORTED.toString()))
-                return ErrorType.SPECIES_NOT_SUPPORTED;
-            else if (errorType.equals(ErrorType.FARM_IS_BUSY.toString()))
-                return ErrorType.FARM_IS_BUSY;
-            else if (errorType.equals(ErrorType.VM_IS_BUSY.toString()))
-                return ErrorType.VM_IS_BUSY;
-            else
-                return null;
+
+        public static ErrorType getErrorType(final String name) {
+            for (ErrorType t : ErrorType.values()) {
+                if (t.name.equals(name)) {
+                    return t;
+                }
+            }
+            
+            return null;
+            /*
+        if (errorType.equals(ErrorType.WRONG_FARM_PASSWORD.toString()))
+            return ErrorType.WRONG_FARM_PASSWORD;
+        else if (errorType.equals(ErrorType.WRONG_VM_PASSWORD.toString()))
+            return ErrorType.WRONG_VM_PASSWORD;
+        else if (errorType.equals(ErrorType.MALFORMED_PACKET.toString()))
+            return ErrorType.MALFORMED_PACKET;
+        else if (errorType.equals(ErrorType.INTERNAL_ERROR.toString()))
+            return ErrorType.INTERNAL_ERROR;
+        else if (errorType.equals(ErrorType.JOB_ABORTED.toString()))
+            return ErrorType.JOB_ABORTED;
+        else if (errorType.equals(ErrorType.JOB_ALREADY_EXISTS.toString()))
+            return ErrorType.JOB_ALREADY_EXISTS;
+        else if (errorType.equals(ErrorType.JOB_NOT_FOUND.toString()))
+            return ErrorType.JOB_NOT_FOUND;
+        else if (errorType.equals(ErrorType.JOB_TIMED_OUT.toString()))
+            return ErrorType.JOB_TIMED_OUT;
+        else if (errorType.equals(ErrorType.SPECIES_NOT_SUPPORTED.toString()))
+            return ErrorType.SPECIES_NOT_SUPPORTED;
+        else if (errorType.equals(ErrorType.FARM_IS_BUSY.toString()))
+            return ErrorType.FARM_IS_BUSY;
+        else if (errorType.equals(ErrorType.VM_IS_BUSY.toString()))
+            return ErrorType.VM_IS_BUSY;
+        else
+            return null;
+            */
         }
     }
 
@@ -264,6 +274,7 @@ public class LinkedProcess {
                     "1 ... 1;",
                     "0...0;",
                     "print \"Hello, World!\"\n",
+                    "function write(var s) {result = s;}",
                     "42"}) {
                 try {
 
