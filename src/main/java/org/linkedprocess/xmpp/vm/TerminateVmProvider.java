@@ -23,6 +23,10 @@ public class TerminateVmProvider implements IQProvider {
         if(null != vmPassword) {
             terminateVm.setVmPassword(vmPassword);
         }
+        String errorType = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.ERROR_TYPE_ATTRIBUTE);
+        if(null != errorType) {
+            terminateVm.setErrorType(LinkedProcess.ErrorType.getErrorType(errorType));
+        }
 
         parser.next();
         return terminateVm;

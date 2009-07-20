@@ -81,9 +81,9 @@ public class JobResult {
     }
 
     public SubmitJob generateReturnEvalulate() {
-        SubmitJob returnEval = new SubmitJob();
-        returnEval.setTo(job.getAppJid());
-        returnEval.setPacketID(job.getJobId());
+        SubmitJob returnSubmitJob = new SubmitJob();
+        returnSubmitJob.setTo(job.getAppJid());
+        returnSubmitJob.setPacketID(job.getJobId());
         String msg = "";
         if (exception != null) {
             msg = exception.getMessage();
@@ -91,32 +91,32 @@ public class JobResult {
 
         switch (type) {
             case ABORTED:
-                returnEval.setType(IQ.Type.ERROR);
-                returnEval.setErrorType(LinkedProcess.ErrorType.JOB_ABORTED);
+                returnSubmitJob.setType(IQ.Type.ERROR);
+                returnSubmitJob.setErrorType(LinkedProcess.ErrorType.JOB_ABORTED);
                 if (null != msg) {
-                    returnEval.setExpression(null);
-                    returnEval.setErrorMessage(msg);
+                    returnSubmitJob.setExpression(null);
+                    returnSubmitJob.setErrorMessage(msg);
                 }
                 break;
             case ERROR:
-                returnEval.setType(IQ.Type.ERROR);
-                returnEval.setErrorType(LinkedProcess.ErrorType.EVALUATION_ERROR);
+                returnSubmitJob.setType(IQ.Type.ERROR);
+                returnSubmitJob.setErrorType(LinkedProcess.ErrorType.EVALUATION_ERROR);
                 if (null != msg) {
-                    returnEval.setExpression(null);
-                    returnEval.setErrorMessage(msg);
+                    returnSubmitJob.setExpression(null);
+                    returnSubmitJob.setErrorMessage(msg);
                 }
                 break;
             case NORMAL_RESULT:
-                returnEval.setType(IQ.Type.RESULT);
-                returnEval.setExpression(expression);
+                returnSubmitJob.setType(IQ.Type.RESULT);
+                returnSubmitJob.setExpression(expression);
                 break;
             case TIMED_OUT:
-                returnEval.setType(IQ.Type.ERROR);
-                returnEval.setErrorType(LinkedProcess.ErrorType.JOB_TIMED_OUT);
-                returnEval.setExpression(null);
-                returnEval.setErrorMessage("execution of job timed out after " + job.getTimeSpent() + "ms of execution");
+                returnSubmitJob.setType(IQ.Type.ERROR);
+                returnSubmitJob.setErrorType(LinkedProcess.ErrorType.JOB_TIMED_OUT);
+                returnSubmitJob.setExpression(null);
+                returnSubmitJob.setErrorMessage("execution of job timed out after " + job.getTimeSpent() + "ms of execution");
         }
 
-        return returnEval;
+        return returnSubmitJob;
     }
 }
