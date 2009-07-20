@@ -1,5 +1,8 @@
+require '../xmpp-rb/struct'
+require '../xmpp-rb/farm_struct'
+
 module Lop
-  class HostStruct
-    #Code here
+  class HostStruct < Struct
+ 
   end
 end

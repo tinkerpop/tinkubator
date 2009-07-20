@@ -1,9 +1,13 @@
-require 'struct'
+require '../xmpp-rb/struct'
 
 module Lop
 
   class FarmStruct < Struct
-    #Code here
+    attr_accessor :virtual_machines
+
+    def initialize()
+      self.virtual_machines = {}
+    end
   end
 
 end
