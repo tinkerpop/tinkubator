@@ -325,7 +325,7 @@ public class VMScheduler {
      * @return the bindings of the given variable names in the given virtual machine
      * @throws VMWorkerNotFoundException if no VM worker with the given JID exists
      */
-    public synchronized Map<String, String> getBindings(final String machineJID,
+    public synchronized VMBindings getBindings(final String machineJID,
                                                         final Set<String> bindingNames) throws VMWorkerNotFoundException {
         if (LinkedProcess.FarmStatus.TERMINATED == status) {
             throw new IllegalStateException("scheduler has been terminated");
@@ -344,7 +344,7 @@ public class VMScheduler {
      * @throws VMWorkerNotFoundException if no VM worker with the given JID exists
      */
     public synchronized void setBindings(final String machineJID,
-                                         final Map<String, String> bindings) throws VMWorkerNotFoundException {
+                                         final VMBindings bindings) throws VMWorkerNotFoundException {
         if (LinkedProcess.FarmStatus.TERMINATED == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }

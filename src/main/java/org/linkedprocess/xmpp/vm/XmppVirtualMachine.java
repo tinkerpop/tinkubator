@@ -1,23 +1,27 @@
 package org.linkedprocess.xmpp.vm;
 
-import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.Job;
-import org.linkedprocess.os.errors.JobNotFoundException;
-import org.linkedprocess.os.errors.VMWorkerIsFullException;
-import org.linkedprocess.os.errors.VMWorkerNotFoundException;
-import org.linkedprocess.os.errors.JobAlreadyExistsException;
-import org.linkedprocess.xmpp.XmppClient;
-import org.linkedprocess.xmpp.farm.XmppFarm;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.*;
+import org.jivesoftware.smack.filter.AndFilter;
+import org.jivesoftware.smack.filter.IQTypeFilter;
+import org.jivesoftware.smack.filter.OrFilter;
+import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.os.Job;
+import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.os.errors.JobAlreadyExistsException;
+import org.linkedprocess.os.errors.JobNotFoundException;
+import org.linkedprocess.os.errors.VMWorkerIsFullException;
+import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.xmpp.XmppClient;
+import org.linkedprocess.xmpp.farm.XmppFarm;
 
-import java.util.logging.Logger;
-import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * User: marko
@@ -107,11 +111,11 @@ public class XmppVirtualMachine extends XmppClient {
         this.farm.getVmScheduler().scheduleJob(this.getFullJid(), job);
     }
 
-    public void setBindings(Map<String, String> bindings) throws VMWorkerNotFoundException {
+    public void setBindings(VMBindings bindings) throws VMWorkerNotFoundException {
         this.farm.getVmScheduler().setBindings(this.getFullJid(), bindings);
     }
 
-    public Map<String, String> getBindings(Set<String> names) throws VMWorkerNotFoundException {
+    public VMBindings getBindings(Set<String> names) throws VMWorkerNotFoundException {
         return this.farm.getVmScheduler().getBindings(this.getFullJid(), names);
     }
 

@@ -184,6 +184,7 @@ public class LinkedProcess {
     public static final String JOB_ID_ATTRIBUTE = "job_id";
     public static final String ERROR_TYPE_ATTRIBUTE = "error_type";
     public static final String VALUE_ATTRIBUTE = "value";
+    public static final String DATATYPE_ATTRIBUTE = "datatype";
     public static final String BINDING_TAG = "binding";
     public static final String NAME_ATTRIBUTE = "name";
 

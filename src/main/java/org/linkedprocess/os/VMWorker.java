@@ -9,8 +9,6 @@ import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
@@ -208,13 +206,11 @@ public class VMWorker {
      * @return a set of bindings containing the values associated with the given binding names, in this worker's
      *         ScriptEngine, at ScriptContext.ENGINE_SCOPE
      */
-    public synchronized Map<String, String> getBindings(final Set<String> bindingNames) {
-        Map<String, String> bindings = new HashMap<String, String>();
+    public synchronized VMBindings getBindings(final Set<String> bindingNames) {
+        VMBindings bindings = new VMBindings();
         Bindings b = this.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
         for (String key : bindingNames) {
-            Object value = b.get(key);
-            String strValue = null == value ? null : value.toString();
-            bindings.put(key, strValue);
+            bindings.put(key, b.get(key));
         }
 
         return bindings;
@@ -241,11 +237,9 @@ public class VMWorker {
      *
      * @param bindings the bindings to update
      */
-    public synchronized void setBindings(final Map<String, String> bindings) {
+    public synchronized void setBindings(final VMBindings bindings) {
         Bindings b = this.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
-        for (String key : bindings.keySet()) {
-            b.put(key, bindings.get(key));
-        }
+        b.putAll(bindings);
 
         // TODO: not sure if this is absolutely necessary
         this.scriptEngine.setBindings(b, ScriptContext.ENGINE_SCOPE);

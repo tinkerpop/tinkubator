@@ -30,7 +30,6 @@ public class FarmGui extends JFrame implements ActionListener {
     protected MenuItem show;
     protected VmArea vmArea;
 
-
     public void loadLoginFrame() {
         this.getContentPane().removeAll();
         this.getContentPane().add(new FarmLoginArea(this));
@@ -46,7 +45,7 @@ public class FarmGui extends JFrame implements ActionListener {
         this.getContentPane().add(this.vmArea);
         this.setResizable(false);
         this.pack();
-        this.setSize(442,491);
+        this.setSize(442, 491);
         xmppFarm.setStatusEventHandler(new FarmGuiStatusEventHandler(this));
     }
 
@@ -107,7 +106,6 @@ public class FarmGui extends JFrame implements ActionListener {
         } else if (event.getActionCommand().equals(FarmGui.QUIT_MANAGER)) {
             this.shutDown();
         }
-
     }
 
     public static void main(String[] args) {
