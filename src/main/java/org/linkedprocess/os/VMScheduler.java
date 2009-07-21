@@ -320,7 +320,7 @@ public class VMScheduler {
     }
 
     /**
-     * @param machineJID  the JID of the virtual machine to query
+     * @param machineJID   the JID of the virtual machine to query
      * @param bindingNames the names to bind
      * @return the bindings of the given variable names in the given virtual machine
      * @throws VMWorkerNotFoundException if no VM worker with the given JID exists
@@ -338,8 +338,9 @@ public class VMScheduler {
 
     /**
      * Updates the given variable bindings of the given virtual machine
-     * @param machineJID  the JID of the virtual machine to update
-     * @param bindings the key, value bindings to update
+     *
+     * @param machineJID the JID of the virtual machine to update
+     * @param bindings   the key, value bindings to update
      * @throws VMWorkerNotFoundException if no VM worker with the given JID exists
      */
     public synchronized void setBindings(final String machineJID,

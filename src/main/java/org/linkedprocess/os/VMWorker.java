@@ -357,8 +357,9 @@ public class VMWorker {
                     yieldTimeoutResult(latestJob, maxTimeSpentPerJob);
                     resultHandler.handleResult(latestResult);
                     status = Status.IDLE_WAITING;
-                    interruptWorkerThread();
-                    resumeWorkerThread();
+                    resetWorkerThread();
+                    //interruptWorkerThread();
+                    //resumeWorkerThread();
                     return 0 == jobQueue.size();
                 } else {
                     status = Status.ACTIVE_SUSPENDED;
