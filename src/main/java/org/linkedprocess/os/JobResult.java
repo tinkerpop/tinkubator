@@ -21,7 +21,7 @@ public class JobResult {
     private final Job job;
     private final ResultType type;
     private final String expression;
-    private final Exception exception;
+    private final Throwable exception;
     private final long timeout;
 
     public JobResult(final Job job,
@@ -35,7 +35,7 @@ public class JobResult {
     }
 
     public JobResult(final Job job,
-                     final Exception exception) {
+                     final Throwable exception) {
         this.job = job;
         this.expression = null;
         //this.expression = exception.getMessage();
@@ -76,7 +76,7 @@ public class JobResult {
         return expression;
     }
 
-    public Exception getException() {
+    public Throwable getException() {
         return exception;
     }
 

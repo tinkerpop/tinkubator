@@ -11,6 +11,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -47,7 +48,7 @@ public class VMWorker {
     private final BlockingQueue<Job> jobQueue;
     private final VMScheduler.VMResultHandler resultHandler;
     private final ScriptEngine scriptEngine;
-    private final Thread workerThread;
+    private Thread workerThread;
     private final long maxTimeSpentPerJob;
 
     // Accessible by VMScheduler
@@ -100,11 +101,7 @@ public class VMWorker {
                 LinkedProcess.MESSAGE_QUEUE_CAPACITY));
         jobQueue = new LinkedBlockingQueue<Job>(capacity);
 
-        workerThread = new VMSandboxedThread(new WorkerRunnable(), nextThreadName());
-        // Worker threads have less priority than sequencer threads, which have
-        // less priority than the scheduler's thread.
-        workerThread.setPriority(Thread.currentThread().getPriority() - 2);
-        workerThread.start();
+        workerThread = createWorkerThread();
 
         status = Status.IDLE_WAITING;
         setTimeLastActive();
@@ -119,6 +116,8 @@ public class VMWorker {
      */
     public synchronized void abortJob(final String jobID) throws JobNotFoundException {
         LOGGER.info("aborting job " + jobID);
+        //System.out.println("0 ########## state = " + workerThread.getState() + "(alive: " + workerThread.isAlive()
+        //        + ", interrupted: " + workerThread.isInterrupted() + ")");
 
         switch (status) {
             case ACTIVE_SUSPENDED:
@@ -126,14 +125,19 @@ public class VMWorker {
                     // Cause the worker thread to cease execution of the current
                     // job and wait.
                     status = Status.IDLE_WAITING;
-                    Job latestJob0 = latestJob;
-                    latestJob = null;
-                    resumeWorkerThread();
-                    interruptWorkerThread();
 
                     // Put the current job in the queue to be discovered and
                     // aborted.
-                    jobQueue.offer(latestJob0);
+                    jobQueue.offer(latestJob);
+                    latestJob = null;
+
+                    resetWorkerThread();
+                    //resumeWorkerThread();
+                    //System.out.println("1 ########## state = " + workerThread.getState() + "(alive: " + workerThread.isAlive()
+                    //        + ", interrupted: " + workerThread.isInterrupted() + ")");
+                    //interruptWorkerThread();
+                    //System.out.println("2 ########## state = " + workerThread.getState() + "(alive: " + workerThread.isAlive()
+                    //        + ", interrupted: " + workerThread.isInterrupted() + ")");
                 }
                 break;
             case IDLE_WAITING:
@@ -202,14 +206,14 @@ public class VMWorker {
     /**
      * @param bindingNames a set of names to bind
      * @return a set of bindings containing the values associated with the given binding names, in this worker's
-     * ScriptEngine, at ScriptContext.ENGINE_SCOPE
+     *         ScriptEngine, at ScriptContext.ENGINE_SCOPE
      */
     public synchronized Map<String, String> getBindings(final Set<String> bindingNames) {
         Map<String, String> bindings = new HashMap<String, String>();
         Bindings b = this.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
         for (String key : bindingNames) {
             Object value = b.get(key);
-            String strValue = null == value ? null :value.toString();
+            String strValue = null == value ? null : value.toString();
             bindings.put(key, strValue);
         }
 
@@ -234,6 +238,7 @@ public class VMWorker {
 
     /**
      * Binds the given names to the given values in this worker's ScriptEngine, at ScriptContext.ENGINE_SCOPE
+     *
      * @param bindings the bindings to update
      */
     public synchronized void setBindings(final Map<String, String> bindings) {
@@ -260,7 +265,8 @@ public class VMWorker {
             case ACTIVE_SUSPENDED:
                 // Cause the worker thread to die.
                 status = Status.TERMINATED;
-                interruptWorkerThread();
+                //interruptWorkerThread();
+                terminateWorkerThread();
 
                 // Put the current job back in the queue to be aborted along
                 // with the others.
@@ -401,7 +407,26 @@ public class VMWorker {
         workerThread.resume();
     }
 
+    @SuppressWarnings({"deprecation"})
+    private void terminateWorkerThread() {
+        workerThread.stop();
+    }
+
+    private void resetWorkerThread() {
+        terminateWorkerThread();
+        workerThread = createWorkerThread();
+    }
+
     ////////////////////////////////////////////////////////////////////////////
+
+    private Thread createWorkerThread() {
+        Thread t = new VMSandboxedThread(new WorkerRunnable(), nextThreadName());
+        // Worker threads have less priority than sequencer threads, which have
+        // less priority than the scheduler's thread.
+        t.setPriority(Thread.currentThread().getPriority() - 2);
+        t.start();
+        return t;
+    }
 
     private boolean jobQueueContains(final String jobID) {
         for (Job j : jobQueue) {
@@ -432,11 +457,31 @@ public class VMWorker {
             yieldResult(request, returnvalue);
         } catch (ScriptException e) {
             yieldError(request, e);
+        } catch (MissingResourceException e) {
+            // These are associated with previous SecurityExceptions.
+            // TODO: it would be better to avoid them than handle them...
+            yieldError(request, e);
+        } catch (RuntimeException e) {
+            // If the error can be traced back to a security exception, handle
+            // the error result using that exception rather than the top-level
+            // exception.
+            Throwable c = e;
+            while (null != c) {
+                if (c instanceof SecurityException) {
+                    yieldError(request, c);
+                    return;
+                } else {
+                    c = c.getCause();
+                }
+            }
+
+            // If the exception is something else (e.g. ThreadDeath), let it through unmolested.
+            throw e;
         }
     }
 
     private void yieldError(final Job job,
-                            final ScriptException exception) {
+                            final Throwable exception) {
         latestResult = new JobResult(job, exception);
     }
 
@@ -474,6 +519,10 @@ public class VMWorker {
                 } catch (SecurityException e) {
                     // TODO
                     e.printStackTrace();
+                } catch (ThreadDeath e) {
+                    // This should only happen when the worker thread is explicitly stopped.  Die peacefully.
+                    LOGGER.info("worker runnable has been stopped");
+                    return;
                 } catch (Exception e) {
                     // TODO: stack trace
                     LOGGER.severe("worker runnable died with error: " + e.toString());
