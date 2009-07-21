@@ -1,4 +1,6 @@
-class LinkedProcess
+module Lop
+
+  class LinkedProcess
     LOP_FARM_NAMESPACE = "http://linkedprocess.org/protocol#LoPFarm"
     LOP_VM_NAMESPACE = "http://linkedprocess.org/protocol#LoPVM"
     DISCO_INFO_NAMESPACE = "http://jabber.org/protocol/disco#info"
@@ -17,7 +19,10 @@ class LinkedProcess
     VM_SPECIES_ATTRIBUTE = "vm_species"
     VM_PASSWORD_ATTRIBUTE = "vm_password"
     VM_JID_ATTRIBUTE = "vm_jid"
+    ERROR_TYPE_ATTRIBUTE = "error_type"
     ####
     JID_ATTRIBUTE = "jid"
     VAR_ATTRIBUTE = "var"
+  end
+
 end

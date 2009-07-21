@@ -3,7 +3,7 @@ package org.linkedprocess.gui.villein.vmcontrol;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.gui.villein.VilleinGui;
-import org.linkedprocess.gui.villein.vmcontrol.BindingsPanel;
+import org.linkedprocess.gui.villein.vmcontrol.ManageBindingsPanel;
 import org.linkedprocess.gui.villein.vmcontrol.JobListRenderer;
 import org.linkedprocess.gui.villein.vmcontrol.JobPane;
 import org.linkedprocess.xmpp.villein.VmStruct;
@@ -41,7 +41,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
     protected JSplitPane splitPane;
     protected VmStruct vmStruct;
     protected VilleinGui villeinGui;
-    protected BindingsPanel bindingsPanel;
+    protected ManageBindingsPanel manageBindingsPanel;
     protected Map<String, JobStatus> jobStatus = new HashMap<String, JobStatus>();
 
     protected static final String ADD_JOB = "add job";
@@ -95,7 +95,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         this.splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
         JobPane jobPane = new JobPane(this, generatedJobId());
-        this.bindingsPanel = new BindingsPanel(this);
+        this.manageBindingsPanel = new ManageBindingsPanel(this);
 
         listModel.addElement(jobPane);
 
@@ -116,7 +116,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
 
         JTabbedPane jobBindingsTabbedPane = new JTabbedPane();
         jobBindingsTabbedPane.addTab("jobs", this.splitPane);
-        jobBindingsTabbedPane.addTab("bindings", this.bindingsPanel);
+        jobBindingsTabbedPane.addTab("bindings", this.manageBindingsPanel);
         jobBindingsTabbedPane.addTab("packets", packetSnifferPanel);
 
 
@@ -152,7 +152,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
     }
 
     public void handleIncomingManageBindings(ManageBindings manageBindings) {
-        this.bindingsPanel.handleIncomingManageBindings(manageBindings);
+        this.manageBindingsPanel.handleIncomingManageBindings(manageBindings);
     }
 
     public void handleIncomingSubmitJob(SubmitJob submitJob) {

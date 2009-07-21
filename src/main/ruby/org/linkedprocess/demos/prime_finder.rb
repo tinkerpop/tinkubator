@@ -7,9 +7,9 @@ class PrimeFinder < LopVillein
   attr_accessor  :job_ids
 
   def initialize(jid, password)
-    super(jid, password)
+    super(jid, password, 5222, false)
     self.send(PacketMaker::create_roster_query())
-    self.job_ids = []
+    @job_ids = []
   end
 
   def spawn_vms(max_vms)
@@ -48,8 +48,8 @@ class PrimeFinder < LopVillein
       expression = "find_primes(" + current_start_int.to_s + "," + current_end_int.to_s + ").inspect"
       job_id = "job-" + job_number.to_s
       self.send(PacketMaker::create_submit_job(vm_struct, expression, job_id))
-      job_ids.push(job_id)
-      print("\n\tJOB " + job_id + " DISTRIBUTED: determine primes for " + current_start_int.to_s + " to " + current_end_int.to_s)
+      @job_ids.push(job_id)
+      print("\n\tJOB " + job_id + " DISTRIBUTED: determine primes for " + current_start_int.to_s + " to " + current_end_int.to_s + " [" + vm_struct.full_jid.to_s + "]")
       job_number = job_number+1
       current_start_int = current_end_int + 1
     end
@@ -62,7 +62,7 @@ class PrimeFinder < LopVillein
         primes.push(integer)
       end
     end
-    primes
+    return primes
   end
 
   def find_primes_string()
@@ -73,48 +73,61 @@ class PrimeFinder < LopVillein
         primes.push(integer)
       end
     end
-    primes
+    return primes
   end"
   end
 
-  def organize_results()
-    # TODO: MAKE THIS GET THE RESULTS BACK AND SORT THEM
+  def organize_job_results()
+    self.wait_for_job_results(@job_ids)
+    jobs = self.get_job_results(@job_ids)
+    primes = []
+    for job in jobs
+      if(job.error_type == nil)
+        job.result.scan(/\d+/).each do |prime|
+          primes.push(prime.to_i)
+        end
+      end
+    end
+    return primes.sort
   end
   ### MAIN METHOD ###
 
- # Jabber.debug = true
+  #Jabber.debug = true
 
   start_int = 1;
-  end_int = 100;
+  end_int = 10;
+
+  desired_machines = 2
 
   prime_finder = PrimeFinder::new("linked.process.2@xmpp42.linkedprocess.org", "linked23")
-  prime_finder.wait_for_farm_number(1)
+  prime_finder.wait_for_farm_number(desired_machines)
 
   start_time = Time::new()
-  number_vms = prime_finder.spawn_vms(10);
-  print("\nSPAWNED VIRTUAL MACHINES: " + number_vms.to_s)
+  number_vms = prime_finder.spawn_vms(desired_machines);
   prime_finder.wait_for_vm_number(number_vms)
+  print("\nSPAWNED VIRTUAL MACHINES: " + number_vms.to_s)
 
   prime_finder.distribute_find_primes_function()
   prime_finder.distribute_jobs(start_int, end_int)
 
   print("\nRETRIEVING JOBS: " + prime_finder.job_ids.inspect.to_s)
-  prime_finder.wait_for_job_results(prime_finder.job_ids)
+
+  print("\n\nPRIMES RESULT: " + prime_finder.organize_job_results().inspect)
 
 
-  print "\n\nPRIMES RESULT: " + prime_finder.get_job_results(prime_finder.job_ids).inspect.to_s
   end_time = Time::new()
   print("\nTOTAL RUNNING TIME IN SECONDS: " + (end_time.to_f - start_time.to_f).to_s)
 
   prime_finder.terminate_virtual_machines()
   prime_finder.close()
 
+
+
+
   start_time = Time::new()
   print("\n\nCALCULATING PRIMES ON LOCAL MACHINE: " + start_int.to_s + " to " + end_int.to_s)
   print("\nPRIME RESULTS: " + prime_finder.find_primes(start_int, end_int).inspect.to_s)
   end_time = Time::new()
   print("\nTOTAL RUNNING TIME IN SECONDS: " + (end_time.to_f - start_time.to_f).to_s)
-
-
 
 end

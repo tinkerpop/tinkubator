@@ -26,9 +26,19 @@ public class ManageBindingsProvider implements IQProvider {
         while(parser.next() == XmlPullParser.START_TAG && parser.getName().equals(LinkedProcess.BINDING_TAG)) {
             String name = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.NAME_ATTRIBUTE);
             String value = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VALUE_ATTRIBUTE);
-            manageBindings.addBinding(name, value);
+            String datatype = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.DATATYPE_ATTRIBUTE);
+
+            try {
+                manageBindings.addBinding(name, value, datatype);
+            } catch(IllegalArgumentException e) {
+                if(manageBindings.getBadDatatypeMessage() == null)
+                    manageBindings.setBadDatatypeMessage("No such datatype " + datatype);
+                else
+                    manageBindings.setBadDatatypeMessage(manageBindings.getBadDatatypeMessage() + "\nNo such datatype " + datatype);
+            }
             parser.next();
         }
+
         //parser.next();
         return manageBindings;
     }

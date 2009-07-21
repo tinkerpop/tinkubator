@@ -2,6 +2,7 @@ package org.linkedprocess;
 
 import org.linkedprocess.xmpp.farm.XmppFarm;
 import org.linkedprocess.xmpp.vm.*;
+import org.linkedprocess.os.VMBindings;
 import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;
@@ -77,11 +78,11 @@ public class XmppVirtualMachineTest extends TestCase {
     public void testManageBindingsTag() {
         ManageBindings manageBindings = new ManageBindings();
         manageBindings.setType(IQ.Type.SET);
-        manageBindings.addBinding("name", "marko");
-        manageBindings.addBinding("age", "29");
-        assertTrue(manageBindings.toXML().contains("<binding name=\"age\" value=\"29\" />"));
+        manageBindings.addBinding("name", "marko", VMBindings.XMLSchemaDatatype.STRING.getURI());
+        manageBindings.addBinding("age", "29", VMBindings.XMLSchemaDatatype.INTEGER.getURI());
+        assertTrue(manageBindings.toXML().contains("<binding name=\"age\" value=\"29\" datatype=\"http://www.w3.org/2001/XMLSchema#integer\" />"));
         manageBindings.setType(IQ.Type.GET);
-        assertFalse(manageBindings.toXML().contains("<binding name=\"age\" value=\"29\" />"));
+        assertFalse(manageBindings.toXML().contains("<binding name=\"age\" value=\"29\" datatype=\"http://www.w3.org/2001/XMLSchema#integer\"/>"));
         assertTrue(manageBindings.toXML().contains("<binding name=\"age\" />"));
     }
 

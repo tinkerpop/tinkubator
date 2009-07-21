@@ -44,14 +44,27 @@ public class ManageBindingsListener implements PacketListener {
             returnManageBindings.setFrom(this.xmppVirtualMachine.getFullJid());
             returnManageBindings.setPacketID(iqId);
             returnManageBindings.setErrorType(LinkedProcess.ErrorType.MALFORMED_PACKET);
-            String errorMessage = "";
-            errorMessage = "manage_bindings XML packet is missing the vm_password attribute";
+            String errorMessage = "manage_bindings XML packet is missing the vm_password attribute";
             returnManageBindings.setErrorMessage(errorMessage);
             returnManageBindings.setType(IQ.Type.ERROR);
             xmppVirtualMachine.getConnection().sendPacket(returnManageBindings);
 
             XmppVirtualMachine.LOGGER.info("Sent " + ManageBindingsListener.class.getName());
             XmppVirtualMachine.LOGGER.info(returnManageBindings.toXML());
+
+        } else if(null != manageBindings.getBadDatatypeMessage()) {
+            ManageBindings returnManageBindings = new ManageBindings();
+            returnManageBindings.setTo(villeinJid);
+            returnManageBindings.setFrom(this.xmppVirtualMachine.getFullJid());
+            returnManageBindings.setPacketID(iqId);
+            returnManageBindings.setErrorType(LinkedProcess.ErrorType.UNKNOWN_DATATYPE);
+            returnManageBindings.setErrorMessage(manageBindings.getBadDatatypeMessage());
+            returnManageBindings.setType(IQ.Type.ERROR);
+            xmppVirtualMachine.getConnection().sendPacket(returnManageBindings);
+
+            XmppVirtualMachine.LOGGER.info("Sent " + ManageBindingsListener.class.getName());
+            XmppVirtualMachine.LOGGER.info(returnManageBindings.toXML());
+
 
         } else if(!this.xmppVirtualMachine.checkVmPassword(vmPassword)) {
             ManageBindings returnManageBindings = new ManageBindings();

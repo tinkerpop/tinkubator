@@ -97,6 +97,7 @@ public class LinkedProcess {
         JOB_TIMED_OUT("job_timed_out"),
         SPECIES_NOT_SUPPORTED("species_not_supported"), // UnsupportedScriptEngineException
         FARM_IS_BUSY("farm_is_busy"), // VMSchedulerIsFullException
+        UNKNOWN_DATATYPE("unknown_datatype"),
         VM_IS_BUSY("vm_is_busy"); // VMWorkerIsFullException
 
         private final String name;
@@ -248,7 +249,7 @@ public class LinkedProcess {
                     "1 + 1;",
                     "1 ... 1;",
                     "0...0;",
-                    "print \"Hello, World!\"\n",
+                    "print \"\"\n",
                     "function write(var s) {result = s;}",
                     "42"}) {
                 try {

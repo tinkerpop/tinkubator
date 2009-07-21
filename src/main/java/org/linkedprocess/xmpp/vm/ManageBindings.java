@@ -4,6 +4,7 @@ import org.jdom.Element;
 import org.jivesoftware.smack.packet.IQ;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.os.TypedValue;
 
 /**
  * User: marko
@@ -13,12 +14,27 @@ import org.linkedprocess.os.VMBindings;
 public class ManageBindings extends VirtualMachineIq {
 
     protected VMBindings bindings = new VMBindings();
+    protected String badDatatypeMessage;
 
-    public void addBinding(String name, String value) {
-        this.bindings.put(name, value);
+    public String getBadDatatypeMessage() {
+        return badDatatypeMessage;
     }
 
-    public VMBindings.TypedValue getBinding(String name) {
+    public void setBadDatatypeMessage(String badDatatypeMessage) {
+        this.badDatatypeMessage = badDatatypeMessage;
+    }
+
+    public void addBinding(String name, String value, String datatype) {
+        if(value == null && datatype == null) {
+            this.bindings.putTyped(name, null);
+        }
+        else {
+            TypedValue typeValue = new TypedValue(VMBindings.XMLSchemaDatatype.valueByURI(datatype), value);
+            this.bindings.putTyped(name, typeValue);
+        }
+    }
+
+    public TypedValue getBinding(String name) {
         return this.bindings.getTyped(name);
     }
 
@@ -52,12 +68,10 @@ public class ManageBindings extends VirtualMachineIq {
             for (String key : this.bindings.keySet()) {
                 Element b = new Element(LinkedProcess.BINDING_TAG, LinkedProcess.LOP_VM_NAMESPACE);
                 b.setAttribute(LinkedProcess.NAME_ATTRIBUTE, key);
-                VMBindings.TypedValue value = this.bindings.getTyped(key);
+                TypedValue value = this.bindings.getTyped(key);
                 if (null != value) {
                     b.setAttribute(LinkedProcess.VALUE_ATTRIBUTE, value.getValue());
-                    b.setAttribute(LinkedProcess.DATATYPE_ATTRIBUTE, value.getType().getURI());
-                } else {
-                    b.setAttribute(LinkedProcess.VALUE_ATTRIBUTE, "null");
+                    b.setAttribute(LinkedProcess.DATATYPE_ATTRIBUTE, value.getDatatype().getURI());
                 }
                 manageBindingsElement.addContent(b);
             }

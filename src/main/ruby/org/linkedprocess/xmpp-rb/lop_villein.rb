@@ -5,7 +5,7 @@ require '../xmpp-rb/struct'
 require '../xmpp-rb/host_struct'
 require '../xmpp-rb/farm_struct'
 require '../xmpp-rb/vm_struct'
-require '../xmpp-rb/job_struct'
+require '../xmpp-rb/job'
 
 include Jabber
 
@@ -13,22 +13,22 @@ module Lop
 
   class LopVillein < Client
 
-    PACKET_LOGGER = false
 
     attr_accessor :farms, :full_jid
 
-    def initialize(jid, password, port=5222)
+    def initialize(jid, password, port=5222, log_packets=false)
       super(JID::new(jid))
-      self.full_jid = JID::new(jid)
+      @logger = log_packets
+      @full_jid = JID::new(jid)
       self.connect(self.full_jid.domain(), port)
       self.auth(password)
-      self.farms = {}
-      send(Presence::new(nil, "LoP rVillein v0.1", 0))
+      @farms = {}
+      self.send(Presence::new(nil, "LoP Prime Finder v0.1", 0))
       self.setup_lop_callback()
       self.setup_presence_callback()
       self.setup_roster_callback()
       self.setup_disco_callback()
-      if (PACKET_LOGGER)
+      if (@logger)
         self.setup_packet_logger_callback()
       end
     end
@@ -46,8 +46,7 @@ module Lop
 
     def setup_packet_logger_callback()
       self.add_stanza_callback do |stanza|
-        print("\nLOGGER: ")
-        print(stanza)
+        print("\nLOGGER: " + stanza.to_s)
       end
     end
 
@@ -71,7 +70,7 @@ module Lop
 
     def setup_roster_callback()
       self.add_iq_callback do |iq|
-        if iq.type != :error
+        if iq.type == :result
           if iq.first_element(LinkedProcess::QUERY_TAGNAME) && iq.first_element(LinkedProcess::QUERY_TAGNAME).namespace == LinkedProcess::IQ_ROSTER_NAMESPACE
             iq.first_element(LinkedProcess::QUERY_TAGNAME).get_elements(LinkedProcess::ITEM_TAGNAME).each do |item|
               host_struct = HostStruct::new()
@@ -86,9 +85,9 @@ module Lop
     def setup_lop_callback()
       self.add_iq_callback do |iq|
         # HANDLE INCOMING SPAWN_VM PACKET
-        if iq.first_element(LinkedProcess::SPAWN_VM_TAGNAME)
+        if iq.first_element(LinkedProcess::SPAWN_VM_TAGNAME) && iq.type == :result
           spawn_vm = iq.first_element(LinkedProcess::SPAWN_VM_TAGNAME)
-          farm_struct = self.farms[iq.from()]
+          farm_struct = @farms[iq.from()]
           if (farm_struct != nil)
             vm_struct = Lop::VmStruct.new()
             vm_struct.vm_password = spawn_vm.attributes[LinkedProcess::VM_PASSWORD_ATTRIBUTE]
@@ -96,19 +95,16 @@ module Lop
             vm_struct.full_jid = JID::new(spawn_vm.attributes[LinkedProcess::VM_JID_ATTRIBUTE])
             farm_struct.virtual_machines[vm_struct.full_jid] = vm_struct
           end
-          # HANDLE INCOMING TERMINATE_VM PACKET
+        # HANDLE INCOMING TERMINATE_VM PACKET
         elsif iq.first_element(LinkedProcess::TERMINATE_VM_TAGNAME)
-          self.farms.each do |farm_jid, farm_struct|
+          @farms.each do |farm_jid, farm_struct|
             farm_struct.virtual_machines.delete(iq.from())
           end
-          # HANDLE INCOMING SUBMIT_JOB PACKET
+        # HANDLE INCOMING SUBMIT_JOB PACKET
         elsif iq.first_element(LinkedProcess::SUBMIT_JOB_TAGNAME)
-          submit_job = iq.first_element(LinkedProcess::SUBMIT_JOB_TAGNAME)
-          vm_struct = self.get_vm_struct(iq.from())
-          if (vm_struct)
-            vm_struct.jobs[iq.id] = submit_job.text
-          end
-        elsif iq.first_element(LinkedProcess::MANAGE_BINDINGS_TAGNAME)
+          self.handle_incoming_submit_job(iq)
+        # HANDLE INCOMING MANAGE BINDINGS PACKET
+        elsif iq.first_element(LinkedProcess::MANAGE_BINDINGS_TAGNAME) && iq.type == :result
           manage_bindings = iq.first_element(LinkedProcess::MANAGE_BINDINGS_TAGNAME)
           vm_struct = self.get_vm_struct(iq.from())
           if (vm_struct)
@@ -122,14 +118,40 @@ module Lop
       end
     end
 
+    def handle_incoming_submit_job(iq)
+      submit_job = iq.first_element(LinkedProcess::SUBMIT_JOB_TAGNAME)
+      vm_struct = self.get_vm_struct(iq.from())
+      if (vm_struct)
+        job = vm_struct.jobs[iq.id]
+        if(job == nil)     
+          job = Job::new()
+          job.job_id = iq.id
+          vm_struct.jobs[iq.id] = job
+        end
+        if(iq.type == :error)
+            job.error_type = submit_job.attributes[LinkedProcess::ERROR_TYPE_ATTRIBUTE]
+            job.error_message = submit_job.text
+          elsif(iq.type == :result)
+            job.result = submit_job.text
+        end
+       end
+    end
+
     public # DECLARATION OF PUBLIC METHODS
     def shutdown
       self.close()
     end
 
+    def get_farm_struct(jid)
+      return @farms[jid]
+    end
+
+    def get_farm_structs(jid)
+      return @farms.values
+    end
 
     def get_vm_struct(jid)
-      self.farms.each do |farm_jid, farm_struct|
+      @farms.each do |farm_jid, farm_struct|
         farm_struct.virtual_machines.each do | vm_jid, vm_struct |
           if vm_jid == jid
             return vm_struct
@@ -140,12 +162,12 @@ module Lop
 
     def get_vm_structs()
       vm_structs = []
-      self.farms.each do |farm_jid, farm_struct|
+      @farms.each do |farm_jid, farm_struct|
         farm_struct.virtual_machines.each do | vm_jid, vm_struct |
           vm_structs.push(vm_struct)
         end
       end
-      vm_structs
+      return vm_structs
     end
 
     def jobs_done(job_ids)
@@ -202,7 +224,9 @@ module Lop
       end
     end
 
-
+    def setup_packet_logger(log_packets)
+      @logger = log_packets
+    end
 
   end
 end

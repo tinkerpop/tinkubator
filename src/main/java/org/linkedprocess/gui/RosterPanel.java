@@ -3,7 +3,6 @@ package org.linkedprocess.gui;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.XMPPException;
-import org.linkedprocess.LinkedProcess;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -12,7 +11,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.util.Collection;
 
 /**
  * User: marko
@@ -149,7 +147,7 @@ public class RosterPanel extends JPanel implements ActionListener, ListSelection
         this.roster.reload();
         DefaultTableModel tableModel = (DefaultTableModel) this.rosterTable.getModel();
         for(RosterEntry entry : this.roster.getEntries()) {
-            //System.out.println(entry.getType() + entry.getUser() +entry.getName());
+            //System.out.println(entry.getDatatype() + entry.getUser() +entry.getName());
             tableModel.addRow(new Object[]{entry.getUser(), entry.getName()});
         }
     }

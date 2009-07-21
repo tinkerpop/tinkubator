@@ -2,6 +2,8 @@ package org.linkedprocess.gui.villein.vmcontrol;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.os.TypedValue;
+import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
 import org.linkedprocess.xmpp.vm.ManageBindings;
@@ -19,9 +21,10 @@ import java.awt.event.ActionListener;
  * Date: Jul 17, 2009
  * Time: 11:57:06 PM
  */
-public class BindingsPanel extends JPanel implements ActionListener, TableModelListener {
+public class ManageBindingsPanel extends JPanel implements ActionListener, TableModelListener {
 
     protected JTable bindingsTable;
+    protected JComboBox xmlSchemaBox;
     protected VmControlFrame vmControlFrame;
     protected int count = 0;
     protected static final String GET = "get";
@@ -30,17 +33,24 @@ public class BindingsPanel extends JPanel implements ActionListener, TableModelL
     protected static final String REMOVE = "remove";
 
 
-    public BindingsPanel(VmControlFrame vmControlFrame) {
+    public ManageBindingsPanel(VmControlFrame vmControlFrame) {
         super(new BorderLayout());
         this.vmControlFrame = vmControlFrame;
         this.setOpaque(false);
-        DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{LinkedProcess.NAME_ATTRIBUTE, LinkedProcess.VALUE_ATTRIBUTE});
+        DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{LinkedProcess.NAME_ATTRIBUTE, LinkedProcess.VALUE_ATTRIBUTE, LinkedProcess.DATATYPE_ATTRIBUTE});
         tableModel.addTableModelListener(this);
         this.bindingsTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(this.bindingsTable);
         this.bindingsTable.setFillsViewportHeight(true);
         this.bindingsTable.setRowHeight(20);
         this.bindingsTable.setFont(new Font(null, Font.PLAIN, 13));
+        this.xmlSchemaBox = new JComboBox();
+        for(VMBindings.XMLSchemaDatatype dataType : VMBindings.XMLSchemaDatatype.values()) {
+            this.xmlSchemaBox.addItem(dataType.abbreviate());
+        }
+
+
+        this.bindingsTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(this.xmlSchemaBox));
 
 
         JPanel buttonPanel = new JPanel(new BorderLayout());
@@ -73,7 +83,7 @@ public class BindingsPanel extends JPanel implements ActionListener, TableModelL
         this.add(scrollPane, BorderLayout.CENTER);
         this.add(buttonPanel, BorderLayout.SOUTH);
 
-
+        
     }
 
     public void tableChanged(TableModelEvent event) {
@@ -97,7 +107,7 @@ public class BindingsPanel extends JPanel implements ActionListener, TableModelL
     public void actionPerformed(ActionEvent event) {
         DefaultTableModel tableModel = (DefaultTableModel) this.bindingsTable.getModel();
         if (event.getActionCommand().equals(ADD)) {
-            tableModel.addRow(new Object[]{LinkedProcess.NAME_ATTRIBUTE + "-" + this.count, LinkedProcess.VALUE_ATTRIBUTE + "-" + this.count});
+            tableModel.addRow(new Object[]{LinkedProcess.NAME_ATTRIBUTE + this.count, LinkedProcess.VALUE_ATTRIBUTE + this.count, ""});
             count++;
         } else if (event.getActionCommand().equals(REMOVE)) {
             if (this.bindingsTable.getSelectedRow() > -1) {
@@ -130,7 +140,14 @@ public class BindingsPanel extends JPanel implements ActionListener, TableModelL
         manageBindings.setFrom(this.vmControlFrame.getVilleinGui().getXmppVillein().getFullJid());
         manageBindings.setVmPassword(this.vmControlFrame.getVmStruct().getVmPassword());
         for (int row : this.bindingsTable.getSelectedRows()) {
-            manageBindings.addBinding((String) tableModel.getValueAt(row, 0), (String) tableModel.getValueAt(row, 1));
+            if(setOrGet == IQ.Type.SET)
+                if(tableModel.getValueAt(row, 2) == null || ((String)tableModel.getValueAt(row, 2)).length() == 0)
+                    JOptionPane.showMessageDialog(null, "select a datatype for the binding", "datatype error", JOptionPane.ERROR_MESSAGE);
+                else
+                    manageBindings.addBinding((String) tableModel.getValueAt(row, 0), (String) tableModel.getValueAt(row, 1), VMBindings.XMLSchemaDatatype.expandDatatypeAbbreviation((String) tableModel.getValueAt(row, 2)));
+            else
+                manageBindings.addBinding((String) tableModel.getValueAt(row, 0), null, null);
+
         }
         return manageBindings;
     }
@@ -141,7 +158,9 @@ public class BindingsPanel extends JPanel implements ActionListener, TableModelL
             for (String name : manageBindings.getBindings().keySet()) {
                 for (int i = 0; i < tableModel.getRowCount(); i++) {
                     if (tableModel.getValueAt(i, 0).equals(name)) {
-                        tableModel.setValueAt(manageBindings.getBinding(name), i, 1);
+                        TypedValue typedValue = manageBindings.getBinding(name);
+                        tableModel.setValueAt(typedValue.getValue(), i, 1);
+                        tableModel.setValueAt(typedValue.getDatatype().abbreviate(), i, 2);
                     }
                 }
             }

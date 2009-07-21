@@ -6,7 +6,7 @@ module Lop
     attr_accessor :virtual_machines
 
     def initialize()
-      self.virtual_machines = {}
+      @virtual_machines = {}
     end
   end
 

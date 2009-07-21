@@ -1,7 +1,5 @@
 package org.linkedprocess.os;
 
-import org.openrdf.model.vocabulary.XMLSchema;
-
 import javax.script.Bindings;
 import java.util.HashMap;
 
@@ -14,11 +12,15 @@ public class VMBindings extends HashMap<String, Object> implements Bindings {
     private static final String XSD_NAMESPACE = "http://www.w3.org/2001/XMLSchema#";
 
     public enum XMLSchemaDatatype {
+
         INTEGER(XSD_NAMESPACE + "integer", Integer.class),
-        STRING(XSD_NAMESPACE + "string", String.class);
+        STRING(XSD_NAMESPACE + "string", String.class),
+        DOUBLE(XSD_NAMESPACE + "double", Double.class);
+
 
         private final String uri;
         private final Class javaClass;
+
 
         private XMLSchemaDatatype(final String uri,
                                   final Class javaClass) {
@@ -49,6 +51,14 @@ public class VMBindings extends HashMap<String, Object> implements Bindings {
         public String getURI() {
             return uri;
         }
+
+        public static String expandDatatypeAbbreviation(String abbreviatedDatatype) {
+            return XSD_NAMESPACE + abbreviatedDatatype.substring(4);
+        }
+
+        public String abbreviate() {
+            return "xsd:" + uri.substring(uri.indexOf("#")+1);
+        }
         
         public Object createValue(final String v) {
             switch (this) {
@@ -56,36 +66,11 @@ public class VMBindings extends HashMap<String, Object> implements Bindings {
                     return new Integer(v);
                 case STRING:
                     return v;
+                case DOUBLE:
+                    return new Double(v);
                 default:
                     throw new RuntimeException("no object constructor for data type: " + this);
             }
-        }
-    }
-
-    public class TypedValue {
-        private final XMLSchemaDatatype type;
-        private final String value;
-
-        public XMLSchemaDatatype getType() {
-            return type;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public TypedValue(final XMLSchemaDatatype type,
-                          final String value) {
-            this.type = type;
-            this.value = value;
-        }
-
-        public TypedValue(final Object value) {
-            // Note: class inheritance is not taken into account
-            type = XMLSchemaDatatype.valueByClass(value.getClass());
-
-            // Note: toString() is assumed to be an appropriate serializer for all types.
-            this.value = value.toString();
         }
     }
 
@@ -100,7 +85,11 @@ public class VMBindings extends HashMap<String, Object> implements Bindings {
 
     public Object putTyped(final String key,
                            final TypedValue value) {
-        Object v = value.getType().createValue(value.getValue());
-        return put(key, v);
+        if(null != value) {
+            Object v = value.getDatatype().createValue(value.getValue());
+            return put(key, v);
+        } else {
+            return put(key, null);
+        }   
     }
 }

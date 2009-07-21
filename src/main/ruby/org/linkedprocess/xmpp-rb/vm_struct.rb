@@ -6,8 +6,8 @@ module Lop
     attr_accessor :vm_password, :vm_species, :jobs, :bindings, :farm
 
     def initialize
-      self.jobs = {}
-      self.bindings = {}
+      @jobs = {}
+      @bindings = {}
     end
   end
 
