@@ -27,7 +27,13 @@ public class SubmitJobProvider implements IQProvider {
 
         int v = parser.next();
         if(v == XmlPullParser.TEXT) {
-            submitJob.setExpression(parser.getText());
+            String textBody =  parser.getText();
+            if(textBody != null) {
+                if(null != submitJob.getErrorType())
+                    submitJob.setErrorMessage(textBody);
+                else
+                    submitJob.setExpression(textBody);
+            }
             parser.next();
         }
         return submitJob;

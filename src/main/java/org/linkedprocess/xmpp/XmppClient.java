@@ -69,10 +69,6 @@ public abstract class XmppClient {
 
         this.roster = this.connection.getRoster();
     }
-
-    public void addPacketListener(PacketListener listener, PacketFilter filter) {
-        this.connection.addPacketListener(listener, filter);
-    }
     
     public void logout(Presence logoutPresence) {
         LOGGER.info("Disconnecting from " + connection.getHost());
@@ -134,6 +130,14 @@ public abstract class XmppClient {
 
     public long getRunningTime() {
         return System.currentTimeMillis() - this.startTime;
+    }
+
+    public float getRunningTimeInSecods() {
+        return this.getRunningTime() / 1000.0f;
+    }
+
+    public float getRunningTimeInMinutes() {
+        return this.getRunningTime() / 6000.0f;        
     }
 
     public static String generateRandomID() {

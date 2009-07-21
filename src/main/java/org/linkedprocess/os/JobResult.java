@@ -82,6 +82,7 @@ public class JobResult {
 
     public SubmitJob generateReturnEvalulate() {
         SubmitJob returnSubmitJob = new SubmitJob();
+        returnSubmitJob.setFrom(job.getVMJID());
         returnSubmitJob.setTo(job.getAppJid());
         returnSubmitJob.setPacketID(job.getJobId());
         String msg = "";
