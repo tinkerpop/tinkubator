@@ -33,6 +33,10 @@ public class VMSchedulerTest extends TestCase {
     private Random random = new Random();
 
     public void setUp() {
+        // Note: calling a LinkedProcess method simply ensures that its static initializer (part of whose job is
+        //       to pre-load classes for scheduler threads) has already executed.
+
+        LinkedProcess.getProperties();
         resultsByID.clear();
         farmStatusEvents.clear();
         vmStatusEventTypes.clear();
@@ -173,18 +177,33 @@ public class VMSchedulerTest extends TestCase {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
-        Job job1 = randomInfiniteJob(vm1);
+        Job job1;
+
+        // Add a job and immediately abort it
+        job1 = randomInfiniteJob(vm1);
         scheduler.scheduleJob(vm1, job1);
         scheduler.abortJob(vm1, job1.getJobId());
-        scheduler.waitUntilFinished();
+         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
-        assertCancelledResult(job1);
+        assertAbortedResult(job1);
+
+        // Add a job and wait until it is in progress before aborting it.
+        job1 = randomInfiniteJob(vm1);
+        scheduler.scheduleJob(vm1, job1);
+        Object o = "";
+        synchronized (o) {
+            o.wait(100);
+        }
+        scheduler.abortJob(vm1, job1.getJobId());
+        scheduler.waitUntilFinished();
+        assertEquals(2, resultsByID.size());
+        assertAbortedResult(job1);
 
         // Make sure other jobs can still complete normally.
         Job job2 = this.randomShortRunningJob(vm1);
         scheduler.scheduleJob(vm1, job2);
         scheduler.waitUntilFinished();
-        assertEquals(2, resultsByID.size());
+        assertEquals(3, resultsByID.size());
         assertNormalResult(job2);
 
         scheduler.shutDown();
@@ -411,7 +430,7 @@ public class VMSchedulerTest extends TestCase {
         assertNull(result.getExpression());
     }
 
-    private void assertCancelledResult(final Job job) {
+    private void assertAbortedResult(final Job job) {
         JobResult result = resultsByID.get(job.getJobId());
         assertEquals(JobResult.ResultType.ABORTED, result.getType());
         assertNull(result.getException());

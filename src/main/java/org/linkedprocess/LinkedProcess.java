@@ -239,7 +239,8 @@ public class LinkedProcess {
             public void handleResult(JobResult result) {
             }
         };
-        ScriptEngineManager m = new ScriptEngineManager();
+        ClassLoader loader = new ScriptEngineClassLoader();
+        ScriptEngineManager m = new ScriptEngineManager(loader);
         for (String name : new String[]{JAVASCRIPT, PYTHON, RUBY}) {
             ScriptEngine engine = m.getEngineByName(name);
             for (String expr : new String[]{
@@ -253,7 +254,7 @@ public class LinkedProcess {
 
                     // Avoid ClassNotFoundException for inner class
                     if (VMWorker.Status.ACTIVE_INPROGRESS.toString().equals("")) {
-
+                        // Do nothing.  The point was to load VMWorker.Status.
                     }
 
                     //VMWorker w = new VMWorker(engine, nullHandler);
@@ -262,7 +263,6 @@ public class LinkedProcess {
                     //w.work(100);
                     //w.terminate();
 
-                    //System.out.println("we made it!: " + expr);
                     engine.eval(expr);
                 } catch (Exception e) {
                     // Do nothing.

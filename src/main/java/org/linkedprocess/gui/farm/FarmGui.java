@@ -86,7 +86,6 @@ public class FarmGui extends JFrame implements ActionListener {
         this.loadLoginFrame();
     }
 
-
     public XmppFarm getXmppFarm() {
         return this.xmppFarm;
     }

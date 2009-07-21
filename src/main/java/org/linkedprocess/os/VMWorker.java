@@ -126,11 +126,14 @@ public class VMWorker {
                     // Cause the worker thread to cease execution of the current
                     // job and wait.
                     status = Status.IDLE_WAITING;
+                    Job latestJob0 = latestJob;
+                    latestJob = null;
+                    resumeWorkerThread();
                     interruptWorkerThread();
 
                     // Put the current job in the queue to be discovered and
                     // aborted.
-                    jobQueue.offer(latestJob);
+                    jobQueue.offer(latestJob0);
                 }
                 break;
             case IDLE_WAITING:
@@ -347,8 +350,8 @@ public class VMWorker {
                 if (latestJob.getTimeSpent() >= maxTimeSpentPerJob) {
                     yieldTimeoutResult(latestJob, maxTimeSpentPerJob);
                     resultHandler.handleResult(latestResult);
-                    interruptWorkerThread();
                     status = Status.IDLE_WAITING;
+                    interruptWorkerThread();
                     resumeWorkerThread();
                     return 0 == jobQueue.size();
                 } else {
