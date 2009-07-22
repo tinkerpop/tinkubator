@@ -75,7 +75,7 @@ public class XmppVirtualMachineTest extends TestCase {
     }
 
     @Test
-    public void testManageBindingsTag() {
+    public void testManageBindingsTag() throws Exception {
         ManageBindings manageBindings = new ManageBindings();
         manageBindings.setType(IQ.Type.SET);
         manageBindings.addBinding("name", "marko", VMBindings.XMLSchemaDatatype.STRING.getURI());

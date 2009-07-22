@@ -5,6 +5,7 @@ import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.os.TypedValue;
 import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.os.errors.InvalidValueException;
 import org.linkedprocess.xmpp.vm.ManageBindings;
 
 import javax.swing.*;
@@ -176,13 +177,18 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
                             tableModel.setValueAt("", row, 2);
                             tableModel.setValueAt(true, row, 3);
                         }
-                    } catch (IllegalArgumentException e) {
+                    } catch (InvalidValueException e) {
                         JOptionPane.showMessageDialog(null, "illegal argument for the specified datatype", "illegal type conversion error", JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
                 }
             else {
-                manageBindings.addBinding((String) tableModel.getValueAt(row, 0), null, null);
+                try {
+                    manageBindings.addBinding((String) tableModel.getValueAt(row, 0), null, null);
+                } catch (InvalidValueException e) {
+                    // This won't happen because this is a GET
+                    System.exit(1);
+                }
             }
 
         }

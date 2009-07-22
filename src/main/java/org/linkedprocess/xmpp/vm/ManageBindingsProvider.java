@@ -1,9 +1,13 @@
 package org.linkedprocess.xmpp.vm;
 
-import org.jivesoftware.smack.provider.IQProvider;
 import org.jivesoftware.smack.packet.IQ;
-import org.xmlpull.v1.XmlPullParser;
+import org.jivesoftware.smack.provider.IQProvider;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.os.errors.InvalidValueException;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 
 /**
  * User: marko
@@ -12,29 +16,37 @@ import org.linkedprocess.LinkedProcess;
  */
 public class ManageBindingsProvider implements IQProvider {
 
-    public IQ parseIQ(XmlPullParser parser) throws Exception {
+    public IQ parseIQ(XmlPullParser parser) throws IOException, XmlPullParserException {
         ManageBindings manageBindings = new ManageBindings();
         String vmPassword = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VM_PASSWORD_ATTRIBUTE);
-        if(null != vmPassword) {
+        if (null != vmPassword) {
             manageBindings.setVmPassword(vmPassword);
         }
         String errorType = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.ERROR_TYPE_ATTRIBUTE);
-        if(null != errorType) {
+        if (null != errorType) {
             manageBindings.setErrorType(LinkedProcess.ErrorType.getErrorType(errorType));
         }
 
-        while(parser.next() == XmlPullParser.START_TAG && parser.getName().equals(LinkedProcess.BINDING_TAG)) {
+        while (parser.next() == XmlPullParser.START_TAG && parser.getName().equals(LinkedProcess.BINDING_TAG)) {
             String name = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.NAME_ATTRIBUTE);
             String value = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VALUE_ATTRIBUTE);
             String datatype = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.DATATYPE_ATTRIBUTE);
 
             try {
                 manageBindings.addBinding(name, value, datatype);
-            } catch(IllegalArgumentException e) {
-                if(manageBindings.getBadDatatypeMessage() == null)
+            } catch (InvalidValueException e) {
+                String msg = "Invalid value for datatype " + datatype + ": " + value;
+                if (null == manageBindings.getInvalidValueMessage()) {
+                    manageBindings.setInvalidValueMessage(msg);
+                } else {
+                    manageBindings.setInvalidValueMessage(manageBindings.getInvalidValueMessage() + "\n" + msg);
+                }
+            } catch (IllegalArgumentException e) {
+                if (manageBindings.getBadDatatypeMessage() == null) {
                     manageBindings.setBadDatatypeMessage("No such datatype " + datatype);
-                else
+                } else {
                     manageBindings.setBadDatatypeMessage(manageBindings.getBadDatatypeMessage() + "\nNo such datatype " + datatype);
+                }
             }
             parser.next();
         }

@@ -22,7 +22,7 @@ public class ManageBindingsListener implements PacketListener {
     public void processPacket(Packet packet) {
 
         try {
-            processManageBindingsPacket((ManageBindings)packet);
+            processManageBindingsPacket((ManageBindings) packet);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -38,7 +38,7 @@ public class ManageBindingsListener implements PacketListener {
         String villeinJid = manageBindings.getFrom();
         String vmPassword = manageBindings.getVmPassword();
 
-        if(null == vmPassword) {
+        if (null == vmPassword) {
             ManageBindings returnManageBindings = new ManageBindings();
             returnManageBindings.setTo(villeinJid);
             returnManageBindings.setFrom(this.xmppVirtualMachine.getFullJid());
@@ -52,7 +52,7 @@ public class ManageBindingsListener implements PacketListener {
             XmppVirtualMachine.LOGGER.info("Sent " + ManageBindingsListener.class.getName());
             XmppVirtualMachine.LOGGER.info(returnManageBindings.toXML());
 
-        } else if(null != manageBindings.getBadDatatypeMessage()) {
+        } else if (null != manageBindings.getBadDatatypeMessage()) {
             ManageBindings returnManageBindings = new ManageBindings();
             returnManageBindings.setTo(villeinJid);
             returnManageBindings.setFrom(this.xmppVirtualMachine.getFullJid());
@@ -64,9 +64,19 @@ public class ManageBindingsListener implements PacketListener {
 
             XmppVirtualMachine.LOGGER.info("Sent " + ManageBindingsListener.class.getName());
             XmppVirtualMachine.LOGGER.info(returnManageBindings.toXML());
+        } else if (null != manageBindings.getInvalidValueMessage()) {
+            ManageBindings returnManageBindings = new ManageBindings();
+            returnManageBindings.setTo(villeinJid);
+            returnManageBindings.setFrom(this.xmppVirtualMachine.getFullJid());
+            returnManageBindings.setPacketID(iqId);
+            returnManageBindings.setErrorType(LinkedProcess.ErrorType.INVALID_VALUE);
+            returnManageBindings.setErrorMessage(manageBindings.getInvalidValueMessage());
+            returnManageBindings.setType(IQ.Type.ERROR);
+            xmppVirtualMachine.getConnection().sendPacket(returnManageBindings);
 
-
-        } else if(!this.xmppVirtualMachine.checkVmPassword(vmPassword)) {
+            XmppVirtualMachine.LOGGER.info("Sent " + ManageBindingsListener.class.getName());
+            XmppVirtualMachine.LOGGER.info(returnManageBindings.toXML());
+        } else if (!this.xmppVirtualMachine.checkVmPassword(vmPassword)) {
             ManageBindings returnManageBindings = new ManageBindings();
             returnManageBindings.setTo(villeinJid);
             returnManageBindings.setFrom(this.xmppVirtualMachine.getFullJid());
@@ -86,12 +96,12 @@ public class ManageBindingsListener implements PacketListener {
 
             try {
                 returnManageBindings.setType(IQ.Type.RESULT);
-                if(manageBindings.getType() == IQ.Type.GET) {
+                if (manageBindings.getType() == IQ.Type.GET) {
                     returnManageBindings.setBindings(this.xmppVirtualMachine.getBindings(manageBindings.getBindings().keySet()));
-                } else if(manageBindings.getType() == IQ.Type.SET) {
+                } else if (manageBindings.getType() == IQ.Type.SET) {
                     this.xmppVirtualMachine.setBindings(manageBindings.getBindings());
                 }
-            } catch(VMWorkerNotFoundException e) {
+            } catch (VMWorkerNotFoundException e) {
                 returnManageBindings.setErrorType(LinkedProcess.ErrorType.INTERNAL_ERROR);
                 returnManageBindings.setType(IQ.Type.ERROR);
             }

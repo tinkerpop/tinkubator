@@ -90,13 +90,14 @@ public class LinkedProcess {
         WRONG_VM_PASSWORD("wrong_vm_password"),
         MALFORMED_PACKET("malformed_packet"), // when a received packet is not as expected
         EVALUATION_ERROR("evaluation_error"),
+        FARM_IS_BUSY("farm_is_busy"), // VMSchedulerIsFullException
         INTERNAL_ERROR("internal_error"), // VMAlreadyExistsException, VMWorkerNotFoundException
+        INVALID_VALUE("invalid_value"), // InvalidValueException
         JOB_ABORTED("job_aborted"),
         JOB_ALREADY_EXISTS("job_already_exists"),
         JOB_NOT_FOUND("job_not_found"), // JobNotFoundException
         JOB_TIMED_OUT("job_timed_out"),
         SPECIES_NOT_SUPPORTED("species_not_supported"), // UnsupportedScriptEngineException
-        FARM_IS_BUSY("farm_is_busy"), // VMSchedulerIsFullException
         UNKNOWN_DATATYPE("unknown_datatype"),
         VM_IS_BUSY("vm_is_busy"); // VMWorkerIsFullException
 

@@ -1,5 +1,7 @@
 package org.linkedprocess.os;
 
+import org.linkedprocess.os.errors.InvalidValueException;
+
 import javax.script.Bindings;
 import java.util.HashMap;
 
@@ -83,10 +85,15 @@ public class VMBindings extends HashMap<String, Object> implements Bindings {
     }
 
     public Object putTyped(final String key,
-                           final TypedValue value) {
+                           final TypedValue value) throws InvalidValueException {
         if (null != value) {
-            Object v = value.getDatatype().createValue(value.getValue());
-            return put(key, v);
+            try {
+                Object v = value.getDatatype().createValue(value.getValue());
+                return put(key, v);
+            } catch (NumberFormatException e) {
+                throw new InvalidValueException("bad value for datatype <"
+                        + value.getDatatype().getURI() + ">: " + value.getValue());
+            }
         } else {
             return put(key, null);
         }

@@ -5,6 +5,7 @@ import org.jivesoftware.smack.packet.IQ;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.os.TypedValue;
+import org.linkedprocess.os.errors.InvalidValueException;
 
 /**
  * User: marko
@@ -16,15 +17,25 @@ public class ManageBindings extends VirtualMachineIq {
     protected VMBindings bindings = new VMBindings();
     protected String badDatatypeMessage;
 
+    public String getInvalidValueMessage() {
+        return invalidValueMessage;
+    }
+
+    public void setInvalidValueMessage(final String invalidValueMessage) {
+        this.invalidValueMessage = invalidValueMessage;
+    }
+
+    protected String invalidValueMessage;
+
     public String getBadDatatypeMessage() {
         return badDatatypeMessage;
     }
 
-    public void setBadDatatypeMessage(String badDatatypeMessage) {
+    public void setBadDatatypeMessage(final String badDatatypeMessage) {
         this.badDatatypeMessage = badDatatypeMessage;
     }
 
-    public void addBinding(String name, String value, String datatype) {
+    public void addBinding(String name, String value, String datatype) throws InvalidValueException {
         if(value == null && datatype == null) {
             this.bindings.putTyped(name, null);
         }
