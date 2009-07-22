@@ -138,6 +138,7 @@ public class ServiceDiscoveryConfiguration {
     public void addFields(final DataForm serviceExtension) {
         for (VMSecurityManager.PermissionType type : VMSecurityManager.PermissionType.values()) {
             FormField field = new FormField(type.getSpecName());
+            field.setLabel(type.getLabel());
 
             switch (type) {
                 case read:
