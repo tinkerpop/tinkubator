@@ -163,19 +163,21 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
         manageBindings.setFrom(this.vmControlFrame.getVilleinGui().getXmppVillein().getFullJid());
         manageBindings.setVmPassword(this.vmControlFrame.getVmStruct().getVmPassword());
         for (int row : this.bindingsTable.getSelectedRows()) {
+            String name = (String) tableModel.getValueAt(row, 0);
+            String value = (String) tableModel.getValueAt(row, 1);
+            boolean isNull = (Boolean) tableModel.getValueAt(row, 3);
+             
             if (setOrGet == IQ.Type.SET)
-                if ((tableModel.getValueAt(row, 2) == null || ((String) tableModel.getValueAt(row, 2)).length() == 0) && !(Boolean)tableModel.getValueAt(row, 3))
+                if ((tableModel.getValueAt(row, 2) == null || ((String) tableModel.getValueAt(row, 2)).length() == 0) && !isNull)
                     JOptionPane.showMessageDialog(null, "select a datatype for the binding", "datatype error", JOptionPane.ERROR_MESSAGE);
                 else {
                     try {
-                        if (!(Boolean) tableModel.getValueAt(row, 3)) {
-                            manageBindings.addBinding((String) tableModel.getValueAt(row, 0), (String) tableModel.getValueAt(row, 1), VMBindings.XMLSchemaDatatype.expandDatatypeAbbreviation((String) tableModel.getValueAt(row, 2)));
+                        if (!isNull) {
+                            String datatype = VMBindings.XMLSchemaDatatype.expandDatatypeAbbreviation((String) tableModel.getValueAt(row, 2));                            
+                            manageBindings.addBinding(name, value, datatype);
                         }
                         else {
-                            manageBindings.addBinding((String) tableModel.getValueAt(row, 0), null, null);
-                            tableModel.setValueAt("", row, 1);
-                            tableModel.setValueAt("", row, 2);
-                            tableModel.setValueAt(true, row, 3);
+                            manageBindings.addBinding(name, null, null);
                         }
                     } catch (InvalidValueException e) {
                         JOptionPane.showMessageDialog(null, "illegal argument for the specified datatype", "illegal type conversion error", JOptionPane.ERROR_MESSAGE);
@@ -184,7 +186,7 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
                 }
             else {
                 try {
-                    manageBindings.addBinding((String) tableModel.getValueAt(row, 0), null, null);
+                    manageBindings.addBinding(name, null, null);
                 } catch (InvalidValueException e) {
                     // This won't happen because this is a GET
                     System.exit(1);

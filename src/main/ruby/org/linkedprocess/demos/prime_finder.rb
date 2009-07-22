@@ -95,9 +95,9 @@ class PrimeFinder < LopVillein
   #Jabber.debug = true
 
   start_int = 1;
-  end_int = 10;
+  end_int = 1000;
 
-  desired_machines = 2
+  desired_machines = 4
 
   prime_finder = PrimeFinder::new("linked.process.2@xmpp42.linkedprocess.org", "linked23")
   prime_finder.wait_for_farm_number(desired_machines)
