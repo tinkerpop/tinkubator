@@ -2,10 +2,9 @@ package org.linkedprocess.gui.villein.vmcontrol;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.os.TypedValue;
 import org.linkedprocess.os.VMBindings;
-import org.linkedprocess.gui.ImageHolder;
-import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
 import org.linkedprocess.xmpp.vm.ManageBindings;
 
 import javax.swing.*;
@@ -24,34 +23,43 @@ import java.awt.event.ActionListener;
 public class ManageBindingsPanel extends JPanel implements ActionListener, TableModelListener {
 
     protected JTable bindingsTable;
-    protected JComboBox xmlSchemaBox;
     protected VmControlFrame vmControlFrame;
     protected int count = 0;
     protected static final String GET = "get";
     protected static final String SET = "set";
     protected static final String ADD = "add";
     protected static final String REMOVE = "remove";
+    protected static final String NULL = "null";
 
 
     public ManageBindingsPanel(VmControlFrame vmControlFrame) {
         super(new BorderLayout());
         this.vmControlFrame = vmControlFrame;
         this.setOpaque(false);
-        DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{LinkedProcess.NAME_ATTRIBUTE, LinkedProcess.VALUE_ATTRIBUTE, LinkedProcess.DATATYPE_ATTRIBUTE});
+        DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{LinkedProcess.NAME_ATTRIBUTE, LinkedProcess.VALUE_ATTRIBUTE, LinkedProcess.DATATYPE_ATTRIBUTE, "null"});
         tableModel.addTableModelListener(this);
         this.bindingsTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(this.bindingsTable);
         this.bindingsTable.setFillsViewportHeight(true);
         this.bindingsTable.setRowHeight(20);
         this.bindingsTable.setFont(new Font(null, Font.PLAIN, 13));
-        this.xmlSchemaBox = new JComboBox();
-        for(VMBindings.XMLSchemaDatatype dataType : VMBindings.XMLSchemaDatatype.values()) {
-            this.xmlSchemaBox.addItem(dataType.abbreviate());
+        this.bindingsTable.getColumnModel().getColumn(0).setPreferredWidth(180);
+        this.bindingsTable.getColumnModel().getColumn(1).setPreferredWidth(220);
+        this.bindingsTable.getColumnModel().getColumn(2).setPreferredWidth(75);
+        this.bindingsTable.getColumnModel().getColumn(3).setPreferredWidth(30);
+
+        JComboBox xmlSchemaBox = new JComboBox();
+        for (VMBindings.XMLSchemaDatatype dataType : VMBindings.XMLSchemaDatatype.values()) {
+            xmlSchemaBox.addItem(dataType.abbreviate());
         }
+        JCheckBox nullCheckBox = new JCheckBox();
+        nullCheckBox.setActionCommand(NULL);
+        nullCheckBox.addActionListener(this);
 
-
-        this.bindingsTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(this.xmlSchemaBox));
-
+        this.bindingsTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(xmlSchemaBox));
+        this.bindingsTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(nullCheckBox));
+        //this.bindingsTable.getColumnModel().getColumn(2).setCellRenderer(new DefaultTableCellRenderer());
+        //this.bindingsTable.getColumnModel().getColumn(3).setCellRenderer(new DefaultTableCellRenderer());
 
         JPanel buttonPanel = new JPanel(new BorderLayout());
         JPanel leftButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -83,7 +91,7 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
         this.add(scrollPane, BorderLayout.CENTER);
         this.add(buttonPanel, BorderLayout.SOUTH);
 
-        
+
     }
 
     public void tableChanged(TableModelEvent event) {
@@ -107,7 +115,7 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
     public void actionPerformed(ActionEvent event) {
         DefaultTableModel tableModel = (DefaultTableModel) this.bindingsTable.getModel();
         if (event.getActionCommand().equals(ADD)) {
-            tableModel.addRow(new Object[]{LinkedProcess.NAME_ATTRIBUTE + this.count, LinkedProcess.VALUE_ATTRIBUTE + this.count, ""});
+            tableModel.addRow(new Object[]{LinkedProcess.NAME_ATTRIBUTE + this.count, LinkedProcess.VALUE_ATTRIBUTE + this.count, "xsd:string", false});
             count++;
         } else if (event.getActionCommand().equals(REMOVE)) {
             if (this.bindingsTable.getSelectedRow() > -1) {
@@ -126,9 +134,23 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
             }
 
         } else if (event.getActionCommand().equals(GET)) {
-           vmControlFrame.getVilleinGui().getXmppVillein().getConnection().sendPacket(this.getManageBindings(IQ.Type.GET));
+            ManageBindings manageBindings = this.getManageBindings(IQ.Type.GET);
+            if(manageBindings != null)
+                vmControlFrame.getVilleinGui().getXmppVillein().getConnection().sendPacket(manageBindings);
         } else if (event.getActionCommand().equals(SET)) {
-           vmControlFrame.getVilleinGui().getXmppVillein().getConnection().sendPacket(this.getManageBindings(IQ.Type.SET));
+            ManageBindings manageBindings = this.getManageBindings(IQ.Type.SET);
+            if(manageBindings != null)
+                vmControlFrame.getVilleinGui().getXmppVillein().getConnection().sendPacket(manageBindings);
+        } else if (event.getActionCommand().equals(NULL)) {
+            int row = this.bindingsTable.getSelectedRow();
+            if((Boolean)tableModel.getValueAt(row,3)) {
+                tableModel.setValueAt("", row, 1);
+                tableModel.setValueAt("", row, 2);
+                tableModel.setValueAt(true, row, 3);
+            } else {
+                tableModel.setValueAt(false, row, 3);
+            }
+
         }
     }
 
@@ -140,13 +162,28 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
         manageBindings.setFrom(this.vmControlFrame.getVilleinGui().getXmppVillein().getFullJid());
         manageBindings.setVmPassword(this.vmControlFrame.getVmStruct().getVmPassword());
         for (int row : this.bindingsTable.getSelectedRows()) {
-            if(setOrGet == IQ.Type.SET)
-                if(tableModel.getValueAt(row, 2) == null || ((String)tableModel.getValueAt(row, 2)).length() == 0)
+            if (setOrGet == IQ.Type.SET)
+                if ((tableModel.getValueAt(row, 2) == null || ((String) tableModel.getValueAt(row, 2)).length() == 0) && !(Boolean)tableModel.getValueAt(row, 3))
                     JOptionPane.showMessageDialog(null, "select a datatype for the binding", "datatype error", JOptionPane.ERROR_MESSAGE);
-                else
-                    manageBindings.addBinding((String) tableModel.getValueAt(row, 0), (String) tableModel.getValueAt(row, 1), VMBindings.XMLSchemaDatatype.expandDatatypeAbbreviation((String) tableModel.getValueAt(row, 2)));
-            else
+                else {
+                    try {
+                        if (!(Boolean) tableModel.getValueAt(row, 3)) {
+                            manageBindings.addBinding((String) tableModel.getValueAt(row, 0), (String) tableModel.getValueAt(row, 1), VMBindings.XMLSchemaDatatype.expandDatatypeAbbreviation((String) tableModel.getValueAt(row, 2)));
+                        }
+                        else {
+                            manageBindings.addBinding((String) tableModel.getValueAt(row, 0), null, null);
+                            tableModel.setValueAt("", row, 1);
+                            tableModel.setValueAt("", row, 2);
+                            tableModel.setValueAt(true, row, 3);
+                        }
+                    } catch (IllegalArgumentException e) {
+                        JOptionPane.showMessageDialog(null, "illegal argument for the specified datatype", "illegal type conversion error", JOptionPane.ERROR_MESSAGE);
+                        return null;
+                    }
+                }
+            else {
                 manageBindings.addBinding((String) tableModel.getValueAt(row, 0), null, null);
+            }
 
         }
         return manageBindings;
@@ -159,8 +196,16 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
                 for (int i = 0; i < tableModel.getRowCount(); i++) {
                     if (tableModel.getValueAt(i, 0).equals(name)) {
                         TypedValue typedValue = manageBindings.getBinding(name);
-                        tableModel.setValueAt(typedValue.getValue(), i, 1);
-                        tableModel.setValueAt(typedValue.getDatatype().abbreviate(), i, 2);
+                        if (null == typedValue) {
+                            tableModel.setValueAt("", i, 1);
+                            tableModel.setValueAt("", i, 2);
+                            tableModel.setValueAt(true, i, 3);
+                        } else {
+                            tableModel.setValueAt(typedValue.getValue(), i, 1);
+                            tableModel.setValueAt(typedValue.getDatatype().abbreviate(), i, 2);
+                            tableModel.setValueAt(false, i, 3);
+                        }
+
                     }
                 }
             }
