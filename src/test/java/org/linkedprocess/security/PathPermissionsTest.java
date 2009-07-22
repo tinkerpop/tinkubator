@@ -8,6 +8,7 @@ import junit.framework.TestCase;
  * Time: 3:31:20 PM
  */
 public class PathPermissionsTest extends TestCase {
+    
     public void testDefaultToDeny() {
         PathPermissions p = new PathPermissions();
 

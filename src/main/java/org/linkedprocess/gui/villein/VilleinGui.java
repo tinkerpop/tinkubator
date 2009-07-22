@@ -64,7 +64,6 @@ public class VilleinGui extends JFrame {
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
         PacketFilter bindingsFilter = new AndFilter(new PacketTypeFilter(ManageBindings.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
 
-
         this.xmppVillein.getConnection().addPacketListener(new PresenceListener(this), presenceFilter);
         this.xmppVillein.getConnection().addPacketListener(new SubmitJobListener(this), submitFilter);
         this.xmppVillein.getConnection().addPacketListener(new AbortJobListener(this), abortFilter);

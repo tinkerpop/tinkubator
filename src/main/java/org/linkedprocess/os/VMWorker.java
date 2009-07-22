@@ -180,7 +180,7 @@ public class VMWorker {
                 }
                 return jobQueue.offer(job);
             default:
-                throw new IllegalStateException("can't add jobs in status: " + status);
+                throw new IllegalStateException("can't add jobs with status: " + status);
         }
     }
 
@@ -197,7 +197,7 @@ public class VMWorker {
                 // Are there any pending jobs?
                 return 0 != jobQueue.size();
             default:
-                throw new IllegalArgumentException("can't check for new work in status: " + status);
+                throw new IllegalArgumentException("can't check for new work with status: " + status);
         }
     }
 
@@ -228,7 +228,7 @@ public class VMWorker {
             case IDLE_WAITING:
                 return jobQueueContains(jobID);
             default:
-                throw new IllegalStateException("can't check job status in status: " + status);
+                throw new IllegalStateException("can't check job status with status: " + status);
         }
     }
 
@@ -315,7 +315,7 @@ public class VMWorker {
                 notifyWorkerThread();
                 break;
             default:
-                throw new IllegalStateException("can't begin new work in status: " + status);
+                throw new IllegalStateException("can't begin new work with status: " + status);
         }
 
         // Break out when the time slice has expired or the monitor has been notified.
@@ -385,13 +385,6 @@ public class VMWorker {
         }
     }
 
-    /**
-     * Causes the worker runnable to abandon execution of a script.
-     */
-    private void interruptWorkerThread() {
-        workerThread.interrupt();
-    }
-
     @SuppressWarnings({"deprecation"})
     private void suspendWorkerThread() {
         workerThread.suspend();
@@ -412,8 +405,6 @@ public class VMWorker {
         workerThread = createWorkerThread();
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-
     private Thread createWorkerThread() {
         Thread t = new VMSandboxedThread(new WorkerRunnable(), nextThreadName());
         // Worker threads have less priority than sequencer threads, which have
@@ -422,6 +413,8 @@ public class VMWorker {
         t.start();
         return t;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
 
     private boolean jobQueueContains(final String jobID) {
         for (Job j : jobQueue) {

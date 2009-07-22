@@ -17,7 +17,6 @@ public class VMBindings extends HashMap<String, Object> implements Bindings {
         STRING(XSD_NAMESPACE + "string", String.class),
         DOUBLE(XSD_NAMESPACE + "double", Double.class);
 
-
         private final String uri;
         private final Class javaClass;
 
@@ -57,9 +56,9 @@ public class VMBindings extends HashMap<String, Object> implements Bindings {
         }
 
         public String abbreviate() {
-            return "xsd:" + uri.substring(uri.indexOf("#")+1);
+            return "xsd:" + uri.substring(uri.indexOf("#") + 1);
         }
-        
+
         public Object createValue(final String v) {
             switch (this) {
                 case INTEGER:
@@ -85,11 +84,11 @@ public class VMBindings extends HashMap<String, Object> implements Bindings {
 
     public Object putTyped(final String key,
                            final TypedValue value) {
-        if(null != value) {
+        if (null != value) {
             Object v = value.getDatatype().createValue(value.getValue());
             return put(key, v);
         } else {
             return put(key, null);
-        }   
+        }
     }
 }

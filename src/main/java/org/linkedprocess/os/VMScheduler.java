@@ -387,15 +387,6 @@ public class VMScheduler {
         }
     }
 
-    /*
-    private VMResultHandler createResultHandler() {
-        return new VMResultHandler() {
-            public void handleResult(final JobResult result) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-        };
-    }      */
-
     private VMSequencerHelper createSequencerHelper() {
         return new VMSequencerHelper() {
             public VMWorker getWorker() {

@@ -177,13 +177,13 @@ public class VMSchedulerTest extends TestCase {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
-        Job job1;
+        Job job1, job2;
 
         // Add a job and immediately abort it
         job1 = randomInfiniteJob(vm1);
         scheduler.scheduleJob(vm1, job1);
         scheduler.abortJob(vm1, job1.getJobId());
-         scheduler.waitUntilFinished();
+        scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
         assertAbortedResult(job1);
 
@@ -200,11 +200,26 @@ public class VMSchedulerTest extends TestCase {
         assertAbortedResult(job1);
 
         // Make sure other jobs can still complete normally.
-        Job job2 = this.randomShortRunningJob(vm1);
+        job2 = this.randomShortRunningJob(vm1);
         scheduler.scheduleJob(vm1, job2);
         scheduler.waitUntilFinished();
         assertEquals(3, resultsByID.size());
         assertNormalResult(job2);
+
+        // Add two jobs, then abort them
+        job1 = randomInfiniteJob(vm1);
+        job2 = randomInfiniteJob(vm1);
+        scheduler.scheduleJob(vm1, job1);
+        scheduler.scheduleJob(vm1, job2);
+        synchronized (o) {
+            o.wait(100);
+        }
+        scheduler.abortJob(vm1, job1.getJobId());
+        scheduler.abortJob(vm1, job2.getJobId());
+        scheduler.waitUntilFinished();
+        assertEquals(5, resultsByID.size());
+        assertAbortedResult(job1);
+        assertAbortedResult(job2);        
 
         scheduler.shutDown();
     }
