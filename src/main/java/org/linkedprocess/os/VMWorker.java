@@ -202,6 +202,17 @@ public class VMWorker {
     }
 
     /**
+     *
+     * @return the set of all bindings in this worker's ScriptEngine, at ScriptContext.ENGINE_SCOPE
+     */
+    public synchronized VMBindings getAllBindings() {
+        VMBindings bindings = new VMBindings();
+        Bindings b = this.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
+        bindings.putAll(b);
+        return bindings;
+    }
+
+    /**
      * @param bindingNames a set of names to bind
      * @return a set of bindings containing the values associated with the given binding names, in this worker's
      *         ScriptEngine, at ScriptContext.ENGINE_SCOPE
