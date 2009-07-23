@@ -14,16 +14,15 @@ public class TerminateVm extends VirtualMachineIq {
 
         Element terminateVmElement = new Element(LinkedProcess.TERMINATE_VM_TAG, LinkedProcess.LOP_VM_NAMESPACE);
 
-        if(this.vmPassword != null) {
+        if (this.vmPassword != null) {
             terminateVmElement.setAttribute(LinkedProcess.VM_PASSWORD_ATTRIBUTE, this.vmPassword);
-        }       
-        if(this.errorType != null) {
-            terminateVmElement.setAttribute(LinkedProcess.ERROR_TYPE_ATTRIBUTE, this.errorType.toString());
+        }
+        /*if(this.lopErrorType != null) {
+            terminateVmElement.setAttribute(LinkedProcess.ERROR_TYPE_ATTRIBUTE, this.lopErrorType.toString());
             if(this.errorMessage != null) {
                 terminateVmElement.setText(this.errorMessage);
             }
-        }
-
+        }*/
 
         return LinkedProcess.xmlOut.outputString(terminateVmElement);
     }

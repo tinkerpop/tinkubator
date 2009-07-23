@@ -1,16 +1,17 @@
 package org.linkedprocess.xmpp;
 
+import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.Connection;
 import org.linkedprocess.LinkedProcess;
 
 import java.util.Iterator;
 import java.util.Random;
 import java.util.logging.Logger;
-
-import org.jivesoftware.smack.*;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
 
 
 public abstract class XmppClient {
@@ -50,7 +51,7 @@ public abstract class XmppClient {
         LOGGER.info("Connected to " + connection.getHost());
         connection.login(username, password, resource + LinkedProcess.FORWARD_SLASH + XmppClient.generateRandomID());
         LOGGER.info("Logged in as " + connection.getUser());
-  
+
         Thread shutdownHook = new Thread(new Runnable() {
             public void run() {
                 try {
@@ -69,10 +70,10 @@ public abstract class XmppClient {
 
         this.roster = this.connection.getRoster();
     }
-    
+
     public void logout(Presence logoutPresence) {
         LOGGER.info("Disconnecting from " + connection.getHost());
-        if(logoutPresence == null)
+        if (logoutPresence == null)
             connection.disconnect();
         else
             connection.disconnect(logoutPresence);
@@ -137,19 +138,19 @@ public abstract class XmppClient {
     }
 
     public float getRunningTimeInMinutes() {
-        return this.getRunningTime() / 6000.0f;        
+        return this.getRunningTime() / 6000.0f;
     }
 
     public static String generateRandomID() {
         // e.g. from gtalk 6D56433B
         Random random = new Random();
         StringBuilder b = new StringBuilder();
-        for(int i=0; i<8; i++) {
+        for (int i = 0; i < 8; i++) {
             int x = random.nextInt(36);
-            if(x < 10)
+            if (x < 10)
                 b.append(x);
             else
-                b.append(((char)(x+55)));
+                b.append(((char) (x + 55)));
 
         }
         return b.toString();
@@ -166,7 +167,7 @@ public abstract class XmppClient {
     protected void initiateFeatures() {
         XMPPConnection delegate = connection.getDelegate();
         LOGGER.fine(delegate.toString());
-		discoManager = ServiceDiscoveryManager.getInstanceFor(delegate);
+        discoManager = ServiceDiscoveryManager.getInstanceFor(delegate);
         Iterator<String> features = discoManager.getFeatures();
         while (features.hasNext()) {
             String feature = features.next();
@@ -176,7 +177,7 @@ public abstract class XmppClient {
     }
 
     public void requestSubscription(String jid) {
-        if(jid.equals(this.getFullJid()) || jid.equals(this.getBareJid()))
+        if (jid.equals(this.getFullJid()) || jid.equals(this.getBareJid()))
             return;
 
         Presence subscribe = new Presence(Presence.Type.subscribe);
@@ -185,16 +186,16 @@ public abstract class XmppClient {
     }
 
     public void requestUnsubscription(String jid, boolean removeFromRoster) {
-        if(jid.equals(this.getFullJid()) || jid.equals(this.getBareJid()))
+        if (jid.equals(this.getFullJid()) || jid.equals(this.getBareJid()))
             return;
-        
+
         Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
         unsubscribe.setTo(jid);
         this.connection.sendPacket(unsubscribe);
-        if(removeFromRoster) {
+        if (removeFromRoster) {
             try {
                 this.roster.removeEntry(this.roster.getEntry(jid));
-            } catch(XMPPException e) {
+            } catch (XMPPException e) {
                 LOGGER.severe(e.getMessage());
             }
         }

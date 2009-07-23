@@ -7,38 +7,38 @@ import org.jivesoftware.smack.packet.Presence;
 
 public interface Connection {
 
-	XMPPConnection getDelegate();
+    XMPPConnection getDelegate();
 
-	boolean isConnected();
+    boolean isConnected();
 
-	void connect() throws XMPPException;
+    void connect() throws XMPPException;
 
-	void addPacketListener(PacketListener listener, PacketFilter filter);
+    void addPacketListener(PacketListener listener, PacketFilter filter);
 
-    void addPacketWriterInterceptor(PacketInterceptor interceptor, PacketFilter filter); 
+    void addPacketWriterInterceptor(PacketInterceptor interceptor, PacketFilter filter);
 
     void sendPacket(Packet packet);
 
-	Roster getRoster();
+    Roster getRoster();
 
-	boolean isAnonymous();
+    boolean isAnonymous();
 
-	boolean isAuthenticated();
+    boolean isAuthenticated();
 
-	boolean isSecureConnection();
+    boolean isSecureConnection();
 
-	boolean isUsingCompression();
+    boolean isUsingCompression();
 
-	boolean isUsingTLS();
+    boolean isUsingTLS();
 
-	String getHost();
+    String getHost();
 
-	void disconnect(Presence presence);
+    void disconnect(Presence presence);
 
-	void disconnect();
+    void disconnect();
 
-	String getUser();
+    String getUser();
 
-	void login(String username, String password, String string) throws XMPPException;
+    void login(String username, String password, String string) throws XMPPException;
 
 }

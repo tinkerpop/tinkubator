@@ -2,8 +2,8 @@ package org.linkedprocess.xmpp.vm;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
-import org.xmlpull.v1.XmlPullParser;
 import org.linkedprocess.LinkedProcess;
+import org.xmlpull.v1.XmlPullParser;
 
 /**
  * User: marko
@@ -16,23 +16,23 @@ public class SubmitJobProvider implements IQProvider {
         SubmitJob submitJob = new SubmitJob();
 
         String vmPassword = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VM_PASSWORD_ATTRIBUTE);
-        if(null != vmPassword) {
+        if (null != vmPassword) {
             submitJob.setVmPassword(vmPassword);
         }
 
-        String errorType = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.ERROR_TYPE_ATTRIBUTE);
+        /*String errorType = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.ERROR_TYPE_ATTRIBUTE);
         if(null != errorType) {
-            submitJob.setErrorType(LinkedProcess.ErrorType.getErrorType(errorType));
-        }
+            submitJob.setErrorType(LinkedProcess.LopErrorType.getErrorType(errorType));
+        }*/
 
         int v = parser.next();
-        if(v == XmlPullParser.TEXT) {
-            String textBody =  parser.getText();
-            if(textBody != null) {
-                if(null != submitJob.getErrorType())
+        if (v == XmlPullParser.TEXT) {
+            String textBody = parser.getText();
+            if (textBody != null) {
+                /*if(null != submitJob.getErrorType())
                     submitJob.setErrorMessage(textBody);
-                else
-                    submitJob.setExpression(textBody);
+                else*/
+                submitJob.setExpression(textBody);
             }
             parser.next();
         }

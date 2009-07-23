@@ -30,7 +30,7 @@ public class JTreeImage extends JTree {
     }
 
     public Dimension getPreferredSize() {
-      return new Dimension(this.backgroundImage.getWidth(null), this.backgroundImage.getHeight(null));
+        return new Dimension(this.backgroundImage.getWidth(null), this.backgroundImage.getHeight(null));
     }
 
 

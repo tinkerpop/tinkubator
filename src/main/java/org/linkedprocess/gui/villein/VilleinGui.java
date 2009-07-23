@@ -1,25 +1,21 @@
 package org.linkedprocess.gui.villein;
 
+import org.jivesoftware.smack.filter.*;
+import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Presence;
 import org.linkedprocess.Connection;
-import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
 import org.linkedprocess.gui.villein.vmcontrol.AbortJobListener;
 import org.linkedprocess.gui.villein.vmcontrol.ManageBindingsListener;
 import org.linkedprocess.gui.villein.vmcontrol.SubmitJobListener;
+import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
+import org.linkedprocess.xmpp.farm.SpawnVm;
 import org.linkedprocess.xmpp.villein.VmStruct;
 import org.linkedprocess.xmpp.villein.XmppVillein;
-import org.linkedprocess.xmpp.vm.SubmitJob;
 import org.linkedprocess.xmpp.vm.AbortJob;
 import org.linkedprocess.xmpp.vm.ManageBindings;
-import org.linkedprocess.xmpp.farm.SpawnVm;
-import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.filter.IQTypeFilter;
-import org.jivesoftware.smack.filter.OrFilter;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
-import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Presence;
+import org.linkedprocess.xmpp.vm.SubmitJob;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,7 +72,7 @@ public class VilleinGui extends JFrame {
         this.getContentPane().add(hostArea);
         this.setResizable(false);
         this.pack();
-        this.setSize(440,488);
+        this.setSize(440, 488);
         this.setVisible(true);
 
     }
@@ -88,7 +84,7 @@ public class VilleinGui extends JFrame {
 
     public void removeVmFrame(VmStruct vmStruct) {
         VmControlFrame vmControlFrame = this.vmFrames.remove(vmStruct.getFullJid());
-        if(vmControlFrame != null) {
+        if (vmControlFrame != null) {
             vmControlFrame.setVisible(false);
             vmControlFrame = null;
         }

@@ -1,13 +1,13 @@
 package org.linkedprocess;
 
-import org.linkedprocess.xmpp.farm.XmppFarm;
-import org.linkedprocess.xmpp.vm.*;
-import org.linkedprocess.os.VMBindings;
 import junit.framework.TestCase;
+import org.jivesoftware.smack.packet.IQ;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.jivesoftware.smack.packet.IQ;
+import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.xmpp.farm.XmppFarm;
+import org.linkedprocess.xmpp.vm.*;
 
 /**
  * User: marko

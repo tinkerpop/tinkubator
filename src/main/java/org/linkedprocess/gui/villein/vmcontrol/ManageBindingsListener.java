@@ -2,10 +2,9 @@ package org.linkedprocess.gui.villein.vmcontrol;
 
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.xmpp.vm.ManageBindings;
-import org.linkedprocess.xmpp.villein.XmppVillein;
-import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
 import org.linkedprocess.gui.villein.VilleinGui;
+import org.linkedprocess.xmpp.villein.XmppVillein;
+import org.linkedprocess.xmpp.vm.ManageBindings;
 
 /**
  * User: marko
@@ -21,10 +20,10 @@ public class ManageBindingsListener implements PacketListener {
     }
 
     public void processPacket(Packet packet) {
-        ManageBindings manageBindings = (ManageBindings)packet;
+        ManageBindings manageBindings = (ManageBindings) packet;
         VmControlFrame vmControlFrame = this.villeinGui.getVmFrame(manageBindings.getFrom());
 
-        if(vmControlFrame != null) {
+        if (vmControlFrame != null) {
             vmControlFrame.handleIncomingManageBindings(manageBindings);
         } else {
             XmppVillein.LOGGER.severe("Could not find vmframe for " + manageBindings.toXML());

@@ -16,6 +16,6 @@ public abstract class VirtualMachineIq extends LopIq {
     }
 
     public String getJobId() {
-       return this.jobId;
+        return this.jobId;
     }
 }

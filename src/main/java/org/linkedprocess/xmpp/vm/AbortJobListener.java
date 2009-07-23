@@ -1,32 +1,32 @@
 package org.linkedprocess.xmpp.vm;
 
-import org.linkedprocess.os.errors.JobNotFoundException;
-import org.linkedprocess.os.errors.VMWorkerNotFoundException;
-import org.linkedprocess.LinkedProcess;
-import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.XMPPError;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.os.errors.JobNotFoundException;
+import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.xmpp.ErrorIq;
+import org.linkedprocess.xmpp.LopListener;
 
 /**
  * User: marko
  * Date: Jun 25, 2009
  * Time: 1:21:45 PM
  */
-public class AbortJobListener implements PacketListener {
-    private XmppVirtualMachine xmppVirtualMachine;
+public class AbortJobListener extends LopListener {
 
     public AbortJobListener(XmppVirtualMachine xmppVirtualMachine) {
-        this.xmppVirtualMachine = xmppVirtualMachine;
+        super(xmppVirtualMachine);
     }
 
     public void processPacket(Packet packet) {
         try {
-            processAbortJobPacket((AbortJob)packet);
+            processAbortJobPacket((AbortJob) packet);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
     public void processAbortJobPacket(AbortJob abortJob) {
 
@@ -34,48 +34,47 @@ public class AbortJobListener implements PacketListener {
         XmppVirtualMachine.LOGGER.fine("Arrived " + AbortJobListener.class.getName());
         XmppVirtualMachine.LOGGER.fine(abortJob.toXML());
 
-        AbortJob returnAbortJob = new AbortJob();
-        returnAbortJob.setTo(abortJob.getFrom());
-        returnAbortJob.setFrom(this.xmppVirtualMachine.getFullJid());
-        returnAbortJob.setPacketID(abortJob.getPacketID());
+
         String jobId = abortJob.getJobId();
-        returnAbortJob.setJobId(jobId);
         String vmPassword = abortJob.getVmPassword();
 
-        if(null == vmPassword || null == jobId) {
-            returnAbortJob.setErrorType(LinkedProcess.ErrorType.MALFORMED_PACKET);
+        if (null == vmPassword || null == jobId) {
             String errorMessage = "";
-            if(null == vmPassword) {
+            if (null == vmPassword) {
                 errorMessage = "abort_job XML packet is missing the vm_password attribute";
             }
-            if(null == jobId) {
-                if(errorMessage.length() > 0)
+            if (null == jobId) {
+                if (errorMessage.length() > 0)
                     errorMessage = errorMessage + "\n";
                 errorMessage = errorMessage + "abort_job XML packet is missing the job_id attribute";
             }
-            if(errorMessage.length() > 0)
-                returnAbortJob.setErrorMessage(errorMessage);
-            returnAbortJob.setType(IQ.Type.ERROR);
-        } else if(!this.xmppVirtualMachine.checkVmPassword(vmPassword)) {
-            returnAbortJob.setErrorType(LinkedProcess.ErrorType.WRONG_VM_PASSWORD);
-            returnAbortJob.setType(IQ.Type.ERROR);
+            if (errorMessage.length() == 0)
+                errorMessage = null;
+            this.sendErrorPacket(ErrorIq.ClientType.VM, this.xmppClient.getFullJid(), abortJob.getFrom(), abortJob.getPacketID(), XMPPError.Type.MODIFY, XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, errorMessage);
+        } else if (!((XmppVirtualMachine) this.xmppClient).checkVmPassword(vmPassword)) {
+            this.sendErrorPacket(ErrorIq.ClientType.VM, this.xmppClient.getFullJid(), abortJob.getFrom(), abortJob.getPacketID(), XMPPError.Type.AUTH, XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null);
+
         } else {
             try {
-                this.xmppVirtualMachine.abortJob(jobId);
+                ((XmppVirtualMachine) this.xmppClient).abortJob(jobId);
+
+                AbortJob returnAbortJob = new AbortJob();
                 returnAbortJob.setType(IQ.Type.RESULT);
+                returnAbortJob.setTo(abortJob.getFrom());
+                returnAbortJob.setFrom(this.xmppClient.getFullJid());
+                returnAbortJob.setPacketID(abortJob.getPacketID());
+
+                XmppVirtualMachine.LOGGER.fine("Sent " + AbortJobListener.class.getName());
+                XmppVirtualMachine.LOGGER.fine(returnAbortJob.toXML());
+                xmppClient.getConnection().sendPacket(returnAbortJob);
+
             } catch (VMWorkerNotFoundException e) {
-                returnAbortJob.setErrorType(LinkedProcess.ErrorType.INTERNAL_ERROR);
-                returnAbortJob.setErrorMessage(e.getMessage());
-                returnAbortJob.setType(IQ.Type.ERROR);
+                this.sendErrorPacket(ErrorIq.ClientType.VM, this.xmppClient.getFullJid(), abortJob.getFrom(), abortJob.getPacketID(), XMPPError.Type.CANCEL, XMPPError.Condition.interna_server_error, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage());
             } catch (JobNotFoundException e) {
-                returnAbortJob.setErrorType(LinkedProcess.ErrorType.JOB_NOT_FOUND);
-                returnAbortJob.setErrorMessage(e.getMessage());
-                returnAbortJob.setType(IQ.Type.ERROR);
+                this.sendErrorPacket(ErrorIq.ClientType.VM, this.xmppClient.getFullJid(), abortJob.getFrom(), abortJob.getPacketID(), XMPPError.Type.MODIFY, XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.JOB_NOT_FOUND, e.getMessage());
             }
         }
 
-        XmppVirtualMachine.LOGGER.fine("Sent " + AbortJobListener.class.getName());
-        XmppVirtualMachine.LOGGER.fine(returnAbortJob.toXML());
-        xmppVirtualMachine.getConnection().sendPacket(returnAbortJob);
+
     }
 }

@@ -1,11 +1,7 @@
 package org.linkedprocess.xmpp.vm;
 
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.filter.IQTypeFilter;
-import org.jivesoftware.smack.filter.OrFilter;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.*;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -126,7 +122,7 @@ public class XmppVirtualMachine extends XmppClient {
         discoManager.addFeature(LinkedProcess.LOP_VM_NAMESPACE);
     }
 
-    public void terminateSelf() throws VMWorkerNotFoundException  {
+    public void terminateSelf() throws VMWorkerNotFoundException {
         this.farm.terminateVirtualMachine(this.getFullJid());
     }
 
@@ -138,8 +134,8 @@ public class XmppVirtualMachine extends XmppClient {
         return this.vmPassword;
     }
 
-    public String getVmSpecies()  {
-        return this.vmSpecies;     
+    public String getVmSpecies() {
+        return this.vmSpecies;
     }
 
     public String getVilleinJid() {

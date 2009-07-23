@@ -51,7 +51,7 @@ public class VMSecurityManager extends SecurityManager {
         public String getLabel() {
             return label;
         }
-        
+
         public boolean isPermitted(final Properties props) {
             return Boolean.valueOf(props.getProperty(getPropertyName()));
         }
@@ -118,7 +118,7 @@ public class VMSecurityManager extends SecurityManager {
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    
+
     public Set<PermissionType> getPermittedTypes() {
         return permittedTypes;
     }

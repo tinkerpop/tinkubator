@@ -1,8 +1,10 @@
 package org.linkedprocess.os;
 
-import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.xmpp.vm.SubmitJob;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.XMPPError;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.ErrorIq;
+import org.linkedprocess.xmpp.vm.SubmitJob;
 
 import java.util.logging.Logger;
 
@@ -80,44 +82,54 @@ public class JobResult {
         return exception;
     }
 
-    public SubmitJob generateReturnEvalulate() {
-        SubmitJob returnSubmitJob = new SubmitJob();
-        returnSubmitJob.setFrom(job.getVMJID());
-        returnSubmitJob.setTo(job.getAppJid());
-        returnSubmitJob.setPacketID(job.getJobId());
-        String msg = "";
-        if (exception != null) {
-            msg = exception.getMessage();
-        }
+    public IQ generateReturnEvalulate() {
 
         switch (type) {
             case ABORTED:
-                returnSubmitJob.setType(IQ.Type.ERROR);
-                returnSubmitJob.setErrorType(LinkedProcess.ErrorType.JOB_ABORTED);
-                if (null != msg) {
-                    returnSubmitJob.setExpression(null);
-                    returnSubmitJob.setErrorMessage(msg);
-                }
-                break;
+                ErrorIq errorIq = new ErrorIq();
+                errorIq.setTo(this.job.getVilleinJid());
+                errorIq.setFrom(this.job.getVmJid());
+                errorIq.setPacketID(job.getJobId());
+                errorIq.setType(IQ.Type.ERROR);
+                errorIq.setXmppErrorType(XMPPError.Type.CANCEL);
+                errorIq.setLopErrorType(LinkedProcess.LopErrorType.JOB_ABORTED);
+                errorIq.setErrorMessage(exception.getMessage());
+                errorIq.setCondition(XMPPError.Condition.not_allowed);
+                errorIq.setClientType(ErrorIq.ClientType.VM);
+                return errorIq;
             case ERROR:
-                returnSubmitJob.setType(IQ.Type.ERROR);
-                returnSubmitJob.setErrorType(LinkedProcess.ErrorType.EVALUATION_ERROR);
-                if (null != msg) {
-                    returnSubmitJob.setExpression(null);
-                    returnSubmitJob.setErrorMessage(msg);
-                }
-                break;
+                errorIq = new ErrorIq();
+                errorIq.setTo(this.job.getVilleinJid());
+                errorIq.setFrom(this.job.getVmJid());
+                errorIq.setPacketID(job.getJobId());
+                errorIq.setType(IQ.Type.ERROR);
+                errorIq.setXmppErrorType(XMPPError.Type.MODIFY);
+                errorIq.setLopErrorType(LinkedProcess.LopErrorType.EVALUATION_ERROR);
+                errorIq.setErrorMessage(exception.getMessage());
+                errorIq.setCondition(XMPPError.Condition.bad_request);
+                errorIq.setClientType(ErrorIq.ClientType.VM);
+                return errorIq;
             case NORMAL_RESULT:
+                SubmitJob returnSubmitJob = new SubmitJob();
+                returnSubmitJob.setFrom(job.getVmJid());
+                returnSubmitJob.setTo(job.getVilleinJid());
+                returnSubmitJob.setPacketID(job.getJobId());
                 returnSubmitJob.setType(IQ.Type.RESULT);
                 returnSubmitJob.setExpression(expression);
-                break;
+                return returnSubmitJob;
             case TIMED_OUT:
-                returnSubmitJob.setType(IQ.Type.ERROR);
-                returnSubmitJob.setErrorType(LinkedProcess.ErrorType.JOB_TIMED_OUT);
-                returnSubmitJob.setExpression(null);
-                returnSubmitJob.setErrorMessage("execution of job timed out after " + job.getTimeSpent() + "ms of execution");
+                errorIq = new ErrorIq();
+                errorIq.setTo(this.job.getVilleinJid());
+                errorIq.setFrom(this.job.getVmJid());
+                errorIq.setPacketID(job.getJobId());
+                errorIq.setType(IQ.Type.ERROR);
+                errorIq.setXmppErrorType(XMPPError.Type.CANCEL);
+                errorIq.setLopErrorType(LinkedProcess.LopErrorType.JOB_TIMED_OUT);
+                errorIq.setErrorMessage("execution of job timed out after " + job.getTimeSpent() + "ms of execution");
+                errorIq.setCondition(XMPPError.Condition.request_timeout);
+                errorIq.setClientType(ErrorIq.ClientType.VM);
+                return errorIq;
         }
-
-        return returnSubmitJob;
+        return null;
     }
 }

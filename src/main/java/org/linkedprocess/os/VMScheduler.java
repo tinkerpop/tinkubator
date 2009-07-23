@@ -1,22 +1,11 @@
 package org.linkedprocess.os;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.errors.JobAlreadyExistsException;
-import org.linkedprocess.os.errors.JobNotFoundException;
-import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
-import org.linkedprocess.os.errors.VMAlreadyExistsException;
-import org.linkedprocess.os.errors.VMSchedulerIsFullException;
-import org.linkedprocess.os.errors.VMWorkerIsFullException;
-import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.os.errors.*;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**

@@ -1,6 +1,6 @@
 package org.linkedprocess.gui;
 
-import javax.swing.ImageIcon;
+import javax.swing.*;
 import java.awt.*;
 
 /**

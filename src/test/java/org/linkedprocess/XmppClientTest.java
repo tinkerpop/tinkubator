@@ -3,8 +3,8 @@ package org.linkedprocess;
 import junit.framework.TestCase;
 import org.linkedprocess.xmpp.XmppClient;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * User: marko
@@ -27,7 +27,7 @@ public class XmppClientTest extends TestCase {
     public void testRandomIDGenerator() {
         // 1,000,000 random IDs are generated without conflict.
         Set<String> uniques = new HashSet<String>();
-        for(int i=0; i<100000; i++) {
+        for (int i = 0; i < 100000; i++) {
             //System.out.println(XmppClient.generateRandomID());
             uniques.add(XmppClient.generateRandomID());
         }

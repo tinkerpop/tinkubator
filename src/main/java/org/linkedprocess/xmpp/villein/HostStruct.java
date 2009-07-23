@@ -1,10 +1,8 @@
 package org.linkedprocess.xmpp.villein;
 
-import org.jivesoftware.smack.packet.Presence;
-
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Collection;
 
 /**
  * User: marko

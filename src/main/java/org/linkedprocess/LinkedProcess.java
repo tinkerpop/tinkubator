@@ -85,7 +85,7 @@ public class LinkedProcess {
         }
     }
 
-    public enum ErrorType {
+    public enum LopErrorType {
         WRONG_FARM_PASSWORD("wrong_farm_password"),
         WRONG_VM_PASSWORD("wrong_vm_password"),
         MALFORMED_PACKET("malformed_packet"), // when a received packet is not as expected
@@ -103,17 +103,17 @@ public class LinkedProcess {
 
         private final String name;
 
-        private ErrorType(final String name) {
+        private LopErrorType(final String name) {
             this.name = name;
         }
 
         public String toString() {
-            return name;
+            return this.name;
         }
 
 
-        public static ErrorType getErrorType(final String name) {
-            for (ErrorType t : ErrorType.values()) {
+        public static LopErrorType getErrorType(final String name) {
+            for (LopErrorType t : LopErrorType.values()) {
                 if (t.name.equals(name)) {
                     return t;
                 }
@@ -157,11 +157,15 @@ public class LinkedProcess {
     }
 
     public static final String LOP_NAMESPACE = "http://linkedprocess.org/";
-    public static final String LOP_FARM_NAMESPACE = LOP_NAMESPACE + "protocol#LoPFarm";
-    public static final String LOP_VM_NAMESPACE = LOP_NAMESPACE + "protocol#LoPVM";
+    public static final String LOP_FARM_NAMESPACE = LOP_NAMESPACE + "protocol/LoPFarm";
+    public static final String LOP_VM_NAMESPACE = LOP_NAMESPACE + "protocol/LoPVM";
     public static final String BLANK_NAMESPACE = "";
     public static final String DISCO_INFO_NAMESPACE = "http://jabber.org/protocol/disco#info";
     public static final String X_NAMESPACE = "jabber:x:data";
+    public static final String JABBER_CLIENT_NAMESPACE = "jabber:client";
+    public static final String XMPP_STANZAS_NAMESPACE = "urn:ietf:params:xml:ns:xmpp-stanzas";
+    public static final String XMPP_STREAMS_NAMESPACE = "urn:ietf:params:xml:ns:xmpp-streams";
+    public static final String XML_LANG_NAMESPACE = "xml:lang";
     public static final String DISCO_BOT = "bot";
     public static final String FORWARD_SLASH = "/";
 
@@ -189,6 +193,11 @@ public class LinkedProcess {
     public static final String DATATYPE_ATTRIBUTE = "datatype";
     public static final String BINDING_TAG = "binding";
     public static final String NAME_ATTRIBUTE = "name";
+    // IQ tags and attributes
+    // tag names
+    public static final String ERROR_TAG = "error";
+    public static final String TEXT_TAG = "text";
+    public static final String TYPE_ATTRIBUTE = "type";
 
     ///////////////////////////////////////////////////////
 

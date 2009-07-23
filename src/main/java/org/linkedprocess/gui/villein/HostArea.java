@@ -18,8 +18,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * User: marko
@@ -92,7 +92,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                 this.villeinGui.removeVmFrame(vmStruct);
             }
         } else if (event.getActionCommand().equals(VM_CONTROL)) {
-            if(this.popupTreeObject instanceof VmStruct) {
+            if (this.popupTreeObject instanceof VmStruct) {
                 VmStruct vmStruct = (VmStruct) this.popupTreeObject;
                 VmControlFrame vmControlFrame = this.villeinGui.getVmFrame(vmStruct.getFullJid());
                 if (vmControlFrame == null) {
@@ -102,13 +102,13 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                 }
             }
 
-        } else if(event.getActionCommand().equals(PROBE)) {
-            if(this.popupTreeObject instanceof Struct) {
+        } else if (event.getActionCommand().equals(PROBE)) {
+            if (this.popupTreeObject instanceof Struct) {
                 Struct struct = (Struct) this.popupTreeObject;
                 this.villeinGui.getXmppVillein().probeJid(struct.getFullJid());
             }
         } else if (event.getActionCommand().equals(DISCOVER_FEATURES)) {
-            if(this.popupTreeObject instanceof FarmStruct) {
+            if (this.popupTreeObject instanceof FarmStruct) {
                 FarmStruct farmStruct = (FarmStruct) this.popupTreeObject;
                 FarmFrame farmFrame = new FarmFrame(farmStruct, this.villeinGui);
                 farmFrame.setVisible(true);
@@ -179,7 +179,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         }
         return null;
     }
-   
+
 
     public void updateTree(String jid, boolean remove) {
         DefaultMutableTreeNode node = this.getNode(this.treeRoot, jid);
@@ -293,7 +293,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                 if (this.popupTreeObject instanceof HostStruct) {
                     this.createHostPopupMenu();
                 } else if (this.popupTreeObject instanceof FarmStruct) {
-                    this.createFarmPopupMenu((FarmStruct)this.popupTreeObject);
+                    this.createFarmPopupMenu((FarmStruct) this.popupTreeObject);
                 } else if (this.popupTreeObject instanceof VmStruct) {
                     this.createVmPopupMenu();
                 }

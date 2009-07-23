@@ -1,15 +1,12 @@
 package org.linkedprocess.gui.villein;
 
-import org.linkedprocess.xmpp.villein.FarmStruct;
-import org.linkedprocess.LinkedProcess;
-
-import javax.swing.*;
-
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
-import org.jivesoftware.smack.XMPPException;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.villein.FarmStruct;
 
-import java.awt.*;
+import javax.swing.*;
 
 /**
  * User: marko
@@ -25,12 +22,12 @@ public class FarmFrame extends JFrame {
         super(farmStruct.getFullJid());
         this.farmStruct = farmStruct;
         this.villeinGui = villeinGui;
-        JTextArea discoTextArea = new JTextArea(25,35);
+        JTextArea discoTextArea = new JTextArea(25, 35);
         discoTextArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(discoTextArea);
         try {
             discoTextArea.setText(LinkedProcess.createPrettyXML(this.getFarmSecurity()));
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

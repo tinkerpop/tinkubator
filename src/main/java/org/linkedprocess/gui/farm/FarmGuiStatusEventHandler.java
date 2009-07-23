@@ -1,7 +1,7 @@
 package org.linkedprocess.gui.farm;
 
-import org.linkedprocess.xmpp.farm.StatusEventHandler;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.farm.StatusEventHandler;
 
 /**
  * User: marko

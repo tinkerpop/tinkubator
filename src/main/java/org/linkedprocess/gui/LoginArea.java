@@ -1,19 +1,13 @@
 package org.linkedprocess.gui;
 
-import org.linkedprocess.gui.ImageHolder;
-import org.linkedprocess.xmpp.villein.XmppVillein;
-
 import javax.swing.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.awt.*;
-import java.util.Properties;
+import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.File;
-
-import org.jivesoftware.smack.XMPPException;
+import java.util.Properties;
 
 /**
  * User: marko
@@ -54,12 +48,12 @@ public abstract class LoginArea extends JPanel implements ActionListener {
             this.passwordField.setText(props.getProperty("password"));
             this.serverField.setText(props.getProperty("server"));
             this.portField.setText(props.getProperty("port"));
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.out.println("Could not load " + this.propertiesFile + " file.");
 
         }
 
-        JPanel mainPanel = new JPanel(new GridLayout(6,2,0,0));
+        JPanel mainPanel = new JPanel(new GridLayout(6, 2, 0, 0));
 
         mainPanel.add(new JLabel());
         this.statusLabel = new JLabel();
@@ -83,7 +77,7 @@ public abstract class LoginArea extends JPanel implements ActionListener {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton loginButton = new JButton(LOGIN);
-        JButton quitButton = new JButton (QUIT);
+        JButton quitButton = new JButton(QUIT);
 
         buttonPanel.add(loginButton);
         buttonPanel.add(quitButton);
@@ -106,7 +100,7 @@ public abstract class LoginArea extends JPanel implements ActionListener {
     }
 
     public void doRememberedProperties() {
-         if(this.rememberBox.isSelected()) {
+        if (this.rememberBox.isSelected()) {
             Properties props = new Properties();
             props.put("username", this.usernameField.getText());
             props.put("password", this.passwordField.getText());
@@ -115,14 +109,14 @@ public abstract class LoginArea extends JPanel implements ActionListener {
 
             try {
                 props.store(new FileOutputStream(this.propertiesFile), "remembered properties.");
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
             new File(this.propertiesFile).delete();
         }
     }
-    
+
     public void paintComponent(Graphics g) {
         g.drawImage(backgroundImage, 0, 0, null);
         super.paintComponent(g);

@@ -8,31 +8,31 @@ package org.linkedprocess.os;
 public class Job {
     private final String jobId;
     private final String vmJid;
-    private final String appJid;
+    private final String villeinJid;
     private final String expression;
     private long timeSpent;
 
     public Job(final String vmJid,
-               final String appJid,
+               final String villeinJid,
                final String jobId,
                final String expression) {
         this.vmJid = vmJid;
-        this.appJid = appJid;
+        this.villeinJid = villeinJid;
         this.jobId = jobId;
         this.expression = expression;
 
         timeSpent = 0;
     }
 
-    public String getAppJid() {
-        return appJid;
+    public String getVilleinJid() {
+        return villeinJid;
     }
 
     public String getJobId() {
         return jobId;
     }
 
-    public String getVMJID() {
+    public String getVmJid() {
         return vmJid;
     }
 
@@ -52,7 +52,7 @@ public class Job {
         return "Job("
                 + "jobID:'" + jobId + "'"
                 + ", vmJID:'" + vmJid + "'"
-                + ", appJID:'" + appJid + "'"
+                + ", appJID:'" + villeinJid + "'"
                 + ", expression:'" + expression + "')";
 
     }

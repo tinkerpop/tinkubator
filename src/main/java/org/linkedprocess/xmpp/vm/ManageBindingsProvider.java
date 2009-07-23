@@ -22,10 +22,11 @@ public class ManageBindingsProvider implements IQProvider {
         if (null != vmPassword) {
             manageBindings.setVmPassword(vmPassword);
         }
-        String errorType = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.ERROR_TYPE_ATTRIBUTE);
+
+        /*String errorType = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.ERROR_TYPE_ATTRIBUTE);
         if (null != errorType) {
-            manageBindings.setErrorType(LinkedProcess.ErrorType.getErrorType(errorType));
-        }
+            manageBindings.setErrorType(LinkedProcess.LopErrorType.getErrorType(errorType));
+        }*/
 
         while (parser.next() == XmlPullParser.START_TAG && parser.getName().equals(LinkedProcess.BINDING_TAG)) {
             String name = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.NAME_ATTRIBUTE);

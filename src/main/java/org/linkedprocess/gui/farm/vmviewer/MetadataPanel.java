@@ -1,12 +1,12 @@
 package org.linkedprocess.gui.farm.vmviewer;
 
-import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 import org.linkedprocess.gui.ImageHolder;
+import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * User: marko
@@ -58,13 +58,12 @@ public class MetadataPanel extends JPanel implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent event) {
-        if(event.getActionCommand().equals(REFRESH)) {
+        if (event.getActionCommand().equals(REFRESH)) {
             this.timeLabel.setText(this.xmppVm.getRunningTimeInSecods() + " seconds");
             this.statusLabel.setText(this.xmppVm.getVmStatus().toString());
         }
     }
 
-    
 
     public void paintComponent(Graphics g) {
         g.drawImage(ImageHolder.farmBackground.getImage(), 0, 0, null);

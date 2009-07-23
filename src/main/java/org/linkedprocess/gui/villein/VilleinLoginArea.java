@@ -1,13 +1,12 @@
 package org.linkedprocess.gui.villein;
 
+import org.jivesoftware.smack.XMPPException;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.LoginArea;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 
-import java.awt.event.ActionEvent;
 import java.awt.*;
-
-import org.jivesoftware.smack.XMPPException;
+import java.awt.event.ActionEvent;
 
 /**
  * User: marko
@@ -29,14 +28,14 @@ public class VilleinLoginArea extends LoginArea {
         this.doRememberedProperties();
 
         try {
-            if(event.getActionCommand().equals(LOGIN)) {
+            if (event.getActionCommand().equals(LOGIN)) {
                 this.statusLabel.setText("");
                 XmppVillein villein = new XmppVillein(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText());
                 this.villeinGui.loadHostArea(villein);
             } else if (event.getActionCommand().equals(QUIT)) {
                 System.exit(0);
             }
-        } catch(XMPPException e) {
+        } catch (XMPPException e) {
             this.statusLabel.setText("Could not login.");
         }
     }

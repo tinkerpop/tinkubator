@@ -7,12 +7,12 @@ import java.util.logging.Logger;
 
 /**
  * User: marko
-* Date: Jul 21, 2009
-* Time: 3:55:37 PM
-*/
+ * Date: Jul 21, 2009
+ * Time: 3:55:37 PM
+ */
 public class TypedValue {
     private static final Logger LOGGER = LinkedProcess.getLogger(TypedValue.class);
-    
+
     private final VMBindings.XMLSchemaDatatype datatype;
     private final String value;
 

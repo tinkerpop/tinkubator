@@ -1,8 +1,8 @@
 package org.linkedprocess.security;
 
-import org.linkedprocess.LinkedProcess;
 import junit.framework.TestCase;
 import org.jdom.output.XMLOutputter;
+import org.linkedprocess.LinkedProcess;
 
 import java.util.Properties;
 
@@ -12,7 +12,7 @@ import java.util.Properties;
  * Time: 4:55:42 PM
  */
 public class ServiceDiscoveryConfigurationTest extends TestCase {
-    
+
     public void testAll() throws Exception {
         Properties p = new Properties();
         p.load(VMSecurityManager.class.getResourceAsStream(LinkedProcess.SECURITYDEFAULT_PROPERTIES));

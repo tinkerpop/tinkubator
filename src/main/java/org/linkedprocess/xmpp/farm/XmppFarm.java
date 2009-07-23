@@ -13,6 +13,7 @@ import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DataForm;
+
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.VMScheduler;
 import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
@@ -20,10 +21,11 @@ import org.linkedprocess.os.errors.VMAlreadyExistsException;
 import org.linkedprocess.os.errors.VMSchedulerIsFullException;
 import org.linkedprocess.os.errors.VMWorkerNotFoundException;
 import org.linkedprocess.security.ServiceDiscoveryConfiguration;
-import org.linkedprocess.security.SystemInfo;
 import org.linkedprocess.security.VMSecurityManager;
+import org.linkedprocess.security.SystemInfo;
 import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
+
 
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
@@ -84,7 +86,7 @@ public class XmppFarm extends XmppClient {
         this.connection.addPacketListener(new SpawnVmListener(this), spawnFilter);
         this.connection.addPacketListener(new PresenceSubscriptionListener(this), subscribeFilter);
     }
-    
+
     public void logon(String server, int port, String username, String password) throws XMPPException {
         super.logon(server, port, username, password, RESOURCE_PREFIX);
     }
@@ -180,7 +182,7 @@ public class XmppFarm extends XmppClient {
         field.setLabel("supported virtual machine species");
         field.setType(FormField.TYPE_LIST_SINGLE);
         List<ScriptEngineFactory> factories = manager.getEngineFactories();
-        for (ScriptEngineFactory factory : factories) { 
+        for (ScriptEngineFactory factory : factories) {
             String engName = factory.getEngineName();
             String engVersion = factory.getEngineVersion();
             //String langName = factory.getLanguageName();

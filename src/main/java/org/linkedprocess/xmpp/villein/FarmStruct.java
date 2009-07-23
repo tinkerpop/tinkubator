@@ -1,7 +1,5 @@
 package org.linkedprocess.xmpp.villein;
 
-import org.linkedprocess.LinkedProcess;
-
 import java.util.*;
 
 /**

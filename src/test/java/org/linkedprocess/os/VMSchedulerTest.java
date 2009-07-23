@@ -1,19 +1,13 @@
 package org.linkedprocess.os;
 
+import junit.framework.TestCase;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.errors.JobAlreadyExistsException;
 import org.linkedprocess.os.errors.JobNotFoundException;
 import org.linkedprocess.os.errors.VMAlreadyExistsException;
 import org.linkedprocess.os.errors.VMWorkerNotFoundException;
-import junit.framework.TestCase;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Author: josh
@@ -219,7 +213,7 @@ public class VMSchedulerTest extends TestCase {
         scheduler.waitUntilFinished();
         assertEquals(5, resultsByID.size());
         assertAbortedResult(job1);
-        assertAbortedResult(job2);        
+        assertAbortedResult(job2);
 
         scheduler.shutDown();
     }

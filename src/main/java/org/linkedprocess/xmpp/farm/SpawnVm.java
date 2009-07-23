@@ -32,24 +32,24 @@ public class SpawnVm extends FarmIq {
     public String getChildElementXML() {
 
         Element spawnVmElement = new Element(LinkedProcess.SPAWN_VM_TAG, LinkedProcess.LOP_FARM_NAMESPACE);
-        if(this.vmJid != null) {
+        if (this.vmJid != null) {
             spawnVmElement.setAttribute(LinkedProcess.VM_JID_ATTRIBUTE, this.vmJid);
         }
-        if(this.vmPassword != null) {
+        if (this.vmPassword != null) {
             spawnVmElement.setAttribute(LinkedProcess.VM_PASSWORD_ATTRIBUTE, this.vmPassword);
         }
-        if(this.vmSpecies != null) {
+        if (this.vmSpecies != null) {
             spawnVmElement.setAttribute(LinkedProcess.VM_SPECIES_ATTRIBUTE, this.vmSpecies);
         }
-        if(this.farmPassword != null) {
+        if (this.farmPassword != null) {
             spawnVmElement.setAttribute(LinkedProcess.FARM_PASSWORD_ATTRIBUTE, this.farmPassword);
         }
-        if(this.errorType != null) {
-            spawnVmElement.setAttribute(LinkedProcess.ERROR_TYPE_ATTRIBUTE, this.errorType.toString());
+        /*if(this.lopErrorType != null) {
+            spawnVmElement.setAttribute(LinkedProcess.ERROR_TYPE_ATTRIBUTE, this.lopErrorType.toString());
             if(this.errorMessage != null) {
                 spawnVmElement.setText(this.errorMessage);
             }
-        }
+        }*/
 
         return LinkedProcess.xmlOut.outputString(spawnVmElement);
     }

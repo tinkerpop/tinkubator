@@ -1,14 +1,11 @@
 package org.linkedprocess.gui.farm;
 
-import org.linkedprocess.xmpp.farm.XmppFarm;
-import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.gui.ImageHolder;
+import org.linkedprocess.xmpp.farm.XmppFarm;
 
-import javax.swing.JFrame;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

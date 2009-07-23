@@ -13,12 +13,12 @@ public class PresenceSubscriptionFilter implements PacketFilter {
 
     public boolean accept(Packet packet) {
         try {
-            if(!packet.toXML().trim().startsWith("<presence")) {
+            if (!packet.toXML().trim().startsWith("<presence")) {
                 return false;
             }
-            Presence presence = (Presence)packet;
+            Presence presence = (Presence) packet;
             Presence.Type type = presence.getType();
-            if(type == Presence.Type.subscribe || type == Presence.Type.unsubscribe)
+            if (type == Presence.Type.subscribe || type == Presence.Type.unsubscribe)
                 return true;
             else
                 return false;

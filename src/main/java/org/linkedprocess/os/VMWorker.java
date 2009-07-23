@@ -202,7 +202,6 @@ public class VMWorker {
     }
 
     /**
-     *
      * @return the set of all bindings in this worker's ScriptEngine, at ScriptContext.ENGINE_SCOPE
      */
     public synchronized VMBindings getAllBindings() {

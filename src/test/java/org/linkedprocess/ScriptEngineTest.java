@@ -3,14 +3,10 @@ package org.linkedprocess;
 import com.sun.phobos.script.javascript.RhinoScriptEngine;
 import com.sun.script.jruby.JRubyScriptEngine;
 import com.sun.script.jython.JythonScriptEngine;
-import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
 import junit.framework.TestCase;
+import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
 
-import javax.script.Bindings;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineFactory;
-import javax.script.ScriptEngineManager;
+import javax.script.*;
 import java.util.List;
 
 /**

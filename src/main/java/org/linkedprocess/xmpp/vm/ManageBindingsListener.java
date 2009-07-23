@@ -1,22 +1,22 @@
 package org.linkedprocess.xmpp.vm;
 
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.xmpp.ErrorIq;
+import org.linkedprocess.xmpp.LopListener;
 
 /**
  * User: marko
  * Date: Jul 17, 2009
  * Time: 6:51:27 PM
  */
-public class ManageBindingsListener implements PacketListener {
-
-    private XmppVirtualMachine xmppVirtualMachine;
+public class ManageBindingsListener extends LopListener {
 
     public ManageBindingsListener(XmppVirtualMachine xmppVirtualMachine) {
-        this.xmppVirtualMachine = xmppVirtualMachine;
+        super(xmppVirtualMachine);
     }
 
     public void processPacket(Packet packet) {
@@ -34,81 +34,35 @@ public class ManageBindingsListener implements PacketListener {
         XmppVirtualMachine.LOGGER.info("Arrived " + ManageBindingsListener.class.getName());
         XmppVirtualMachine.LOGGER.info(manageBindings.toXML());
 
-        String iqId = manageBindings.getPacketID();
-        String villeinJid = manageBindings.getFrom();
         String vmPassword = manageBindings.getVmPassword();
 
         if (null == vmPassword) {
-            ManageBindings returnManageBindings = new ManageBindings();
-            returnManageBindings.setTo(villeinJid);
-            returnManageBindings.setFrom(this.xmppVirtualMachine.getFullJid());
-            returnManageBindings.setPacketID(iqId);
-            returnManageBindings.setErrorType(LinkedProcess.ErrorType.MALFORMED_PACKET);
-            String errorMessage = "manage_bindings XML packet is missing the vm_password attribute";
-            returnManageBindings.setErrorMessage(errorMessage);
-            returnManageBindings.setType(IQ.Type.ERROR);
-            xmppVirtualMachine.getConnection().sendPacket(returnManageBindings);
-
-            XmppVirtualMachine.LOGGER.info("Sent " + ManageBindingsListener.class.getName());
-            XmppVirtualMachine.LOGGER.info(returnManageBindings.toXML());
-
+            this.sendErrorPacket(ErrorIq.ClientType.VM, xmppClient.getFullJid(), manageBindings.getFrom(), manageBindings.getPacketID(), XMPPError.Type.MODIFY, XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "manage_bindings XML packet is missing the vm_password attribute");
         } else if (null != manageBindings.getBadDatatypeMessage()) {
-            ManageBindings returnManageBindings = new ManageBindings();
-            returnManageBindings.setTo(villeinJid);
-            returnManageBindings.setFrom(this.xmppVirtualMachine.getFullJid());
-            returnManageBindings.setPacketID(iqId);
-            returnManageBindings.setErrorType(LinkedProcess.ErrorType.UNKNOWN_DATATYPE);
-            returnManageBindings.setErrorMessage(manageBindings.getBadDatatypeMessage());
-            returnManageBindings.setType(IQ.Type.ERROR);
-            xmppVirtualMachine.getConnection().sendPacket(returnManageBindings);
-
-            XmppVirtualMachine.LOGGER.info("Sent " + ManageBindingsListener.class.getName());
-            XmppVirtualMachine.LOGGER.info(returnManageBindings.toXML());
+            this.sendErrorPacket(ErrorIq.ClientType.VM, xmppClient.getFullJid(), manageBindings.getFrom(), manageBindings.getPacketID(), XMPPError.Type.CANCEL, XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.UNKNOWN_DATATYPE, manageBindings.getBadDatatypeMessage());
         } else if (null != manageBindings.getInvalidValueMessage()) {
-            ManageBindings returnManageBindings = new ManageBindings();
-            returnManageBindings.setTo(villeinJid);
-            returnManageBindings.setFrom(this.xmppVirtualMachine.getFullJid());
-            returnManageBindings.setPacketID(iqId);
-            returnManageBindings.setErrorType(LinkedProcess.ErrorType.INVALID_VALUE);
-            returnManageBindings.setErrorMessage(manageBindings.getInvalidValueMessage());
-            returnManageBindings.setType(IQ.Type.ERROR);
-            xmppVirtualMachine.getConnection().sendPacket(returnManageBindings);
-
-            XmppVirtualMachine.LOGGER.info("Sent " + ManageBindingsListener.class.getName());
-            XmppVirtualMachine.LOGGER.info(returnManageBindings.toXML());
-        } else if (!this.xmppVirtualMachine.checkVmPassword(vmPassword)) {
-            ManageBindings returnManageBindings = new ManageBindings();
-            returnManageBindings.setTo(villeinJid);
-            returnManageBindings.setFrom(this.xmppVirtualMachine.getFullJid());
-            returnManageBindings.setPacketID(iqId);
-            returnManageBindings.setErrorType(LinkedProcess.ErrorType.WRONG_VM_PASSWORD);
-            returnManageBindings.setType(IQ.Type.ERROR);
-            xmppVirtualMachine.getConnection().sendPacket(returnManageBindings);
-
-            XmppVirtualMachine.LOGGER.info("Sent " + ManageBindingsListener.class.getName());
-            XmppVirtualMachine.LOGGER.info(returnManageBindings.toXML());
-
+            this.sendErrorPacket(ErrorIq.ClientType.VM, xmppClient.getFullJid(), manageBindings.getFrom(), manageBindings.getPacketID(), XMPPError.Type.CANCEL, XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.INVALID_VALUE, manageBindings.getInvalidValueMessage());
+        } else if (!((XmppVirtualMachine) this.xmppClient).checkVmPassword(vmPassword)) {
+            this.sendErrorPacket(ErrorIq.ClientType.VM, xmppClient.getFullJid(), manageBindings.getFrom(), manageBindings.getPacketID(), XMPPError.Type.AUTH, XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null);
         } else {
-            ManageBindings returnManageBindings = new ManageBindings();
-            returnManageBindings.setTo(villeinJid);
-            returnManageBindings.setFrom(this.xmppVirtualMachine.getFullJid());
-            returnManageBindings.setPacketID(iqId);
-
             try {
+                ManageBindings returnManageBindings = new ManageBindings();
+                returnManageBindings.setTo(manageBindings.getFrom());
+                returnManageBindings.setFrom(this.xmppClient.getFullJid());
+                returnManageBindings.setPacketID(manageBindings.getPacketID());
                 returnManageBindings.setType(IQ.Type.RESULT);
                 if (manageBindings.getType() == IQ.Type.GET) {
-                    returnManageBindings.setBindings(this.xmppVirtualMachine.getBindings(manageBindings.getBindings().keySet()));
+                    returnManageBindings.setBindings(((XmppVirtualMachine) this.xmppClient).getBindings(manageBindings.getBindings().keySet()));
                 } else if (manageBindings.getType() == IQ.Type.SET) {
-                    this.xmppVirtualMachine.setBindings(manageBindings.getBindings());
+                    ((XmppVirtualMachine) this.xmppClient).setBindings(manageBindings.getBindings());
                 }
-            } catch (VMWorkerNotFoundException e) {
-                returnManageBindings.setErrorType(LinkedProcess.ErrorType.INTERNAL_ERROR);
-                returnManageBindings.setType(IQ.Type.ERROR);
-            }
+                this.xmppClient.getConnection().sendPacket(returnManageBindings);
+                XmppVirtualMachine.LOGGER.info("Sent " + ManageBindingsListener.class.getName());
+                XmppVirtualMachine.LOGGER.info(returnManageBindings.toXML());
 
-            xmppVirtualMachine.getConnection().sendPacket(returnManageBindings);
-            XmppVirtualMachine.LOGGER.info("Sent " + ManageBindingsListener.class.getName());
-            XmppVirtualMachine.LOGGER.info(returnManageBindings.toXML());
+            } catch (VMWorkerNotFoundException e) {
+                this.sendErrorPacket(ErrorIq.ClientType.VM, this.xmppClient.getFullJid(), manageBindings.getFrom(), manageBindings.getPacketID(), XMPPError.Type.CANCEL, XMPPError.Condition.interna_server_error, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage());
+            }
         }
 
     }

@@ -1,20 +1,19 @@
 package org.linkedprocess.xmpp.villein;
 
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.Namespace;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
-import org.jdom.Document;
-import org.jdom.Namespace;
-import org.jdom.Element;
 
-import java.util.Set;
-import java.util.List;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * User: marko
@@ -36,7 +35,7 @@ public class PresenceListener implements PacketListener {
         XmppVillein.LOGGER.info(presence.toXML());
 
 
-        if(presence.getType() == Presence.Type.unavailable ||
+        if (presence.getType() == Presence.Type.unavailable ||
                 presence.getType() == Presence.Type.unsubscribe ||
                 presence.getType() == Presence.Type.unsubscribed) {
             this.xmppVillein.removeStruct(packet.getFrom());
@@ -45,7 +44,7 @@ public class PresenceListener implements PacketListener {
 
         DiscoverInfo discoInfo = this.getDiscoInfo(packet.getFrom());
 
-        if(LinkedProcess.isBareJid(packet.getFrom())) {
+        if (LinkedProcess.isBareJid(packet.getFrom())) {
             Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom(), XmppVillein.StructType.HOST);
             if (checkStruct == null) {
                 HostStruct hostStruct = new HostStruct();
@@ -77,33 +76,33 @@ public class PresenceListener implements PacketListener {
     }
 
     protected boolean isFarm(DiscoverInfo discoInfo) {
-        if(discoInfo != null)
+        if (discoInfo != null)
             return discoInfo.containsFeature(LinkedProcess.LOP_FARM_NAMESPACE);
         else
             return false;
     }
 
     protected Set<String> getSupportedVmSpecies(DiscoverInfo discoInfo) {
-        if(discoInfo != null) {
+        if (discoInfo != null) {
             Set<String> supportedVmSpecies = new HashSet<String>();
             try {
                 Document doc = LinkedProcess.createXMLDocument(discoInfo.toXML());
                 Element queryElement = doc.getRootElement().getChild("query", Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
                 Element xElement = queryElement.getChild("x", Namespace.getNamespace(LinkedProcess.X_NAMESPACE));
-                for(Element field : (List<Element>) xElement.getChildren()) {
-                    if(field.getAttributeValue("var").equals("vm_species")) {
-                        for(Element option : (List<Element>) field.getChildren("option", Namespace.getNamespace(LinkedProcess.X_NAMESPACE))) {
+                for (Element field : (List<Element>) xElement.getChildren()) {
+                    if (field.getAttributeValue("var").equals("vm_species")) {
+                        for (Element option : (List<Element>) field.getChildren("option", Namespace.getNamespace(LinkedProcess.X_NAMESPACE))) {
                             Element value = option.getChild("value", Namespace.getNamespace(LinkedProcess.X_NAMESPACE));
-                            if(value != null) {
+                            if (value != null) {
                                 String vmSpecies = value.getText();
-                                if(vmSpecies != null && vmSpecies.length() > 0)
+                                if (vmSpecies != null && vmSpecies.length() > 0)
                                     supportedVmSpecies.add(vmSpecies);
                             }
                         }
                     }
                 }
                 return supportedVmSpecies;
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
@@ -116,7 +115,7 @@ public class PresenceListener implements PacketListener {
         ServiceDiscoveryManager discoManager = this.xmppVillein.getDiscoManager();
         try {
             return discoManager.discoverInfo(jid);
-        } catch(XMPPException e) {
+        } catch (XMPPException e) {
             XmppVillein.LOGGER.severe("XmppException with DiscoveryManager.");
             return null;
         }
@@ -128,7 +127,7 @@ public class PresenceListener implements PacketListener {
         try {
             DiscoverInfo discoInfo = discoManager.discoverInfo(jid);
             return discoInfo.containsFeature(LinkedProcess.LOP_VM_NAMESPACE);
-        } catch(XMPPException e) {
+        } catch (XMPPException e) {
             XmppVillein.LOGGER.severe("XmppException with DiscoveryManager.");
             return false;
         }

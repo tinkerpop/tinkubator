@@ -45,7 +45,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
         this.tree.setCellRenderer(new TreeRenderer());
         this.tree.setModel(new DefaultTreeModel(treeRoot));
         this.tree.addMouseListener(this);
-        
+
         JScrollPane vmTreeScroll = new JScrollPane(this.tree);
         JButton shutdownButton = new JButton(SHUTDOWN);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -185,7 +185,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
     }
 
     public void mouseReleased(MouseEvent e) {
-   
+
     }
 
     public void mouseEntered(MouseEvent e) {

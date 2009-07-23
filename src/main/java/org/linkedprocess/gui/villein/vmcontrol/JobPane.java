@@ -1,16 +1,14 @@
 package org.linkedprocess.gui.villein.vmcontrol;
 
-import org.linkedprocess.xmpp.vm.SubmitJob;
-import org.linkedprocess.xmpp.vm.AbortJob;
 import org.linkedprocess.gui.ImageHolder;
-import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
+import org.linkedprocess.xmpp.vm.AbortJob;
+import org.linkedprocess.xmpp.vm.SubmitJob;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * User: marko
@@ -36,11 +34,11 @@ public class JobPane extends JPanel implements ActionListener {
         super(new BorderLayout());
         this.setOpaque(false);
         this.vmControlFrame = vmControlFrame;
-        this.expressionTextArea = new JTextArea(5,32);
-        this.resultTextArea = new JTextArea(5,32);
+        this.expressionTextArea = new JTextArea(5, 32);
+        this.resultTextArea = new JTextArea(5, 32);
         this.resultTextArea.setEditable(false);
         JScrollPane scrollPane1 = new JScrollPane(this.expressionTextArea);
-        JScrollPane scrollPane2 = new JScrollPane(this.resultTextArea); 
+        JScrollPane scrollPane2 = new JScrollPane(this.resultTextArea);
 
         this.submitJobButton = new JButton(SUBMIT_JOB);
         this.submitJobButton.addActionListener(this);
@@ -66,7 +64,7 @@ public class JobPane extends JPanel implements ActionListener {
     }
 
     public String getJobId() {
-        return this.jobId;    
+        return this.jobId;
     }
 
     public void setJobId(String jobId) {
@@ -106,7 +104,7 @@ public class JobPane extends JPanel implements ActionListener {
     }
 
     public void handleIncomingSubmitJob(SubmitJob submitJob) {
-        if(submitJob.getErrorType() == null) {
+        if (submitJob.getErrorType() == null) {
             this.resultTextArea.setText(submitJob.getExpression());
             this.submitJobButton.setEnabled(false);
         } else {
@@ -116,7 +114,7 @@ public class JobPane extends JPanel implements ActionListener {
     }
 
     public void handleIncomingAbortJob(AbortJob abortJob) {
-        if(abortJob.getErrorType() == null) {
+        if (abortJob.getErrorType() == null) {
             this.resultTextArea.setText("job aborted.");
         } else {
             this.resultTextArea.setText(abortJob.getErrorType().toString() +
@@ -130,15 +128,15 @@ public class JobPane extends JPanel implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent event) {
-        if(event.getActionCommand().equals(SUBMIT_JOB)) {
+        if (event.getActionCommand().equals(SUBMIT_JOB)) {
             this.vmControlFrame.getVilleinGui().getConnection().sendPacket(this.getSubmitJob());
             submitJobButton.setText(ABORT_JOB);
             submitJobButton.setActionCommand(ABORT_JOB);
             clearButton.setEnabled(false);
             expressionTextArea.setEnabled(false);
-        } else if(event.getActionCommand().equals(CLEAR)) {
+        } else if (event.getActionCommand().equals(CLEAR)) {
             this.expressionTextArea.setText("");
-        } else if(event.getActionCommand().equals(ABORT_JOB)) {
+        } else if (event.getActionCommand().equals(ABORT_JOB)) {
             this.vmControlFrame.getVilleinGui().getConnection().sendPacket(this.getAbortJob());
             this.expressionTextArea.setEnabled(false);
             this.submitJobButton.setEnabled(false);

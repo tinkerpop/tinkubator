@@ -136,15 +136,15 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
 
         } else if (event.getActionCommand().equals(GET)) {
             ManageBindings manageBindings = this.getManageBindings(IQ.Type.GET);
-            if(manageBindings != null)
+            if (manageBindings != null)
                 vmControlFrame.getVilleinGui().getXmppVillein().getConnection().sendPacket(manageBindings);
         } else if (event.getActionCommand().equals(SET)) {
             ManageBindings manageBindings = this.getManageBindings(IQ.Type.SET);
-            if(manageBindings != null)
+            if (manageBindings != null)
                 vmControlFrame.getVilleinGui().getXmppVillein().getConnection().sendPacket(manageBindings);
         } else if (event.getActionCommand().equals(NULL)) {
             int row = this.bindingsTable.getSelectedRow();
-            if((Boolean)tableModel.getValueAt(row,3)) {
+            if ((Boolean) tableModel.getValueAt(row, 3)) {
                 tableModel.setValueAt("", row, 1);
                 tableModel.setValueAt("", row, 2);
                 tableModel.setValueAt(true, row, 3);
@@ -166,17 +166,16 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
             String name = (String) tableModel.getValueAt(row, 0);
             String value = (String) tableModel.getValueAt(row, 1);
             boolean isNull = (Boolean) tableModel.getValueAt(row, 3);
-             
+
             if (setOrGet == IQ.Type.SET)
                 if ((tableModel.getValueAt(row, 2) == null || ((String) tableModel.getValueAt(row, 2)).length() == 0) && !isNull)
                     JOptionPane.showMessageDialog(null, "select a datatype for the binding", "datatype error", JOptionPane.ERROR_MESSAGE);
                 else {
                     try {
                         if (!isNull) {
-                            String datatype = VMBindings.XMLSchemaDatatype.expandDatatypeAbbreviation((String) tableModel.getValueAt(row, 2));                            
+                            String datatype = VMBindings.XMLSchemaDatatype.expandDatatypeAbbreviation((String) tableModel.getValueAt(row, 2));
                             manageBindings.addBinding(name, value, datatype);
-                        }
-                        else {
+                        } else {
                             manageBindings.addBinding(name, null, null);
                         }
                     } catch (InvalidValueException e) {

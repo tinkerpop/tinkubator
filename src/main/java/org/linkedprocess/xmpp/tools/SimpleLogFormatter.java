@@ -5,12 +5,12 @@ import java.util.logging.LogRecord;
 
 public class SimpleLogFormatter extends Formatter {
 
-	@Override
-	public String format(LogRecord record) {
+    @Override
+    public String format(LogRecord record) {
         return record.getLevel() + ": "
-            + record.getSourceClassName() + "."
-            + record.getSourceMethodName() + ": "
-            + record.getMessage() + "\n";
-      }
+                + record.getSourceClassName() + "."
+                + record.getSourceMethodName() + ": "
+                + record.getMessage() + "\n";
+    }
 
 }

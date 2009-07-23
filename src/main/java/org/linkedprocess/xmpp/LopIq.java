@@ -1,14 +1,7 @@
 package org.linkedprocess.xmpp;
 
-import org.linkedprocess.LinkedProcess;
 import org.jivesoftware.smack.packet.IQ;
-import org.jdom.output.XMLOutputter;
-import org.jdom.Document;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-
-import java.io.StringReader;
-import java.io.IOException;
+import org.linkedprocess.LinkedProcess;
 
 /**
  * User: marko
@@ -17,16 +10,16 @@ import java.io.IOException;
  */
 public abstract class LopIq extends IQ {
 
-    protected LinkedProcess.ErrorType errorType;
+    protected LinkedProcess.LopErrorType lopErrorType;
     protected String errorMessage;
     protected String vmPassword;
 
-    public void setErrorType(LinkedProcess.ErrorType errorType) {
-        this.errorType = errorType;
+    public void setErrorType(LinkedProcess.LopErrorType lopErrorType) {
+        this.lopErrorType = lopErrorType;
     }
 
-    public LinkedProcess.ErrorType getErrorType() {
-        return this.errorType;
+    public LinkedProcess.LopErrorType getErrorType() {
+        return this.lopErrorType;
     }
 
     public void setErrorMessage(String errorMessage) {

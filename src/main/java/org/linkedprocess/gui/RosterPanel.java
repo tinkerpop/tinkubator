@@ -9,8 +9,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * User: marko
@@ -83,7 +83,7 @@ public class RosterPanel extends JPanel implements ActionListener, ListSelection
         c.gridy = 3;
         JButton updateButton = new JButton(UPDATE);
         updateButton.addActionListener(this);
-        metadataPanel.add(updateButton,c);
+        metadataPanel.add(updateButton, c);
 
         JScrollPane scrollPane2 = new JScrollPane(metadataPanel);
 
@@ -115,9 +115,9 @@ public class RosterPanel extends JPanel implements ActionListener, ListSelection
         DefaultTableModel tableModel = (DefaultTableModel) this.rosterTable.getModel();
         try {
             int row = listModel.getMinSelectionIndex();
-            if(row > -1) {
+            if (row > -1) {
                 RosterEntry entry = this.roster.getEntry(tableModel.getValueAt(row, 0).toString());
-                if(null != entry) {
+                if (null != entry) {
                     this.jidLabel.setText(BUFFER_SPACE + entry.getUser());
                     this.nameTextField.setEnabled(true);
                     this.nameTextField.setText(entry.getName());
@@ -137,7 +137,7 @@ public class RosterPanel extends JPanel implements ActionListener, ListSelection
 
     public void clearAllRows() {
         DefaultTableModel tableModel = (DefaultTableModel) this.rosterTable.getModel();
-        while(tableModel.getRowCount() > 0) {
+        while (tableModel.getRowCount() > 0) {
             tableModel.removeRow(0);
         }
     }
@@ -146,48 +146,48 @@ public class RosterPanel extends JPanel implements ActionListener, ListSelection
         this.clearAllRows();
         this.roster.reload();
         DefaultTableModel tableModel = (DefaultTableModel) this.rosterTable.getModel();
-        for(RosterEntry entry : this.roster.getEntries()) {
+        for (RosterEntry entry : this.roster.getEntries()) {
             //System.out.println(entry.getDatatype() + entry.getUser() +entry.getName());
             tableModel.addRow(new Object[]{entry.getUser(), entry.getName()});
         }
     }
 
     public void actionPerformed(ActionEvent event) {
-        if(event.getActionCommand().equals(ADD)) {
+        if (event.getActionCommand().equals(ADD)) {
             DefaultTableModel tableModel = (DefaultTableModel) this.rosterTable.getModel();
             String value = JOptionPane.showInputDialog(null, "enter host jid", "add host", JOptionPane.QUESTION_MESSAGE);
-            if(value != null && value.length() > 0) {
+            if (value != null && value.length() > 0) {
                 try {
                     this.roster.createEntry(value, null, null);
                     tableModel.addRow(new Object[]{value, null});
-                } catch(XMPPException e) {
+                } catch (XMPPException e) {
                     e.printStackTrace();
                 }
             }
 
-        } else if(event.getActionCommand().equals(REMOVE)) {
+        } else if (event.getActionCommand().equals(REMOVE)) {
             int row = this.rosterTable.getSelectedRow();
-            if(row > -1) {
+            if (row > -1) {
                 DefaultTableModel tableModel = (DefaultTableModel) this.rosterTable.getModel();
                 RosterEntry entry = this.roster.getEntry(tableModel.getValueAt(row, 0).toString());
-                if(null != entry) {
+                if (null != entry) {
                     try {
                         this.roster.removeEntry(entry);
                         tableModel.removeRow(row);
                     }
-                    catch(XMPPException e) {
+                    catch (XMPPException e) {
                         e.printStackTrace();
                     }
                 }
 
             }
-        } else if(event.getActionCommand().equals(UPDATE)) {
+        } else if (event.getActionCommand().equals(UPDATE)) {
             int row = this.rosterTable.getSelectedRow();
-            if(row > -1) {
+            if (row > -1) {
                 DefaultTableModel tableModel = (DefaultTableModel) this.rosterTable.getModel();
                 RosterEntry entry = this.roster.getEntry(tableModel.getValueAt(row, 0).toString());
                 String name = this.nameTextField.getText();
-                if(null != name && name.length() > 0) {
+                if (null != name && name.length() > 0) {
                     entry.setName(name);
                     tableModel.setValueAt(name, row, 1);
                 }

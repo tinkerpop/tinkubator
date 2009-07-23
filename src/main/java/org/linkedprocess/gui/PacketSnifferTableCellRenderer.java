@@ -1,10 +1,8 @@
 package org.linkedprocess.gui;
 
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
-import java.io.File;
 
 /**
  * User: marko
@@ -16,7 +14,7 @@ public class PacketSnifferTableCellRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        if((Integer)table.getValueAt(row,0) == 0)
+        if ((Integer) table.getValueAt(row, 0) == 0)
             this.setIcon(ImageHolder.letterIcon);
         else
             this.setIcon(ImageHolder.mailboxIcon);
@@ -24,6 +22,6 @@ public class PacketSnifferTableCellRenderer extends DefaultTableCellRenderer {
         this.setText("");
 
         return this;
-     }
+    }
 
 }

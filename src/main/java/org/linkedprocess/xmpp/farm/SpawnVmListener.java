@@ -1,30 +1,30 @@
 package org.linkedprocess.xmpp.farm;
 
+import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.XMPPError;
+import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
 import org.linkedprocess.os.errors.VMAlreadyExistsException;
 import org.linkedprocess.os.errors.VMSchedulerIsFullException;
-import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.ErrorIq;
+import org.linkedprocess.xmpp.LopListener;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Packet;
 
 /**
  * User: marko
  * Date: Jun 25, 2009
  * Time: 11:23:49 AM
  */
-public class SpawnVmListener implements PacketListener {
-
-    private XmppFarm xmppFarm;
+public class SpawnVmListener extends LopListener {
 
     public SpawnVmListener(XmppFarm xmppFarm) {
-        this.xmppFarm = xmppFarm;
+        super(xmppFarm);
     }
 
     public void processPacket(Packet packet) {
         try {
-            processSpawnVmPacket((SpawnVm)packet);
+            processSpawnVmPacket((SpawnVm) packet);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -34,44 +34,41 @@ public class SpawnVmListener implements PacketListener {
         XmppFarm.LOGGER.info("Arrived " + SpawnVmListener.class.getName());
         XmppFarm.LOGGER.info(spawnVm.toXML());
 
-        SpawnVm returnSpawnVm = new SpawnVm();
-        returnSpawnVm.setTo(spawnVm.getFrom());
-        returnSpawnVm.setFrom(xmppFarm.getFullJid());
-        returnSpawnVm.setPacketID(spawnVm.getPacketID());
         String vmSpecies = spawnVm.getVmSpecies();
         String farmPassword = spawnVm.getFarmPassword();
-        if(vmSpecies == null) {
-            returnSpawnVm.setErrorType(LinkedProcess.ErrorType.MALFORMED_PACKET);
-            returnSpawnVm.setErrorMessage("spawn_vm XML packet is missing the vm_species attribute");
-            returnSpawnVm.setType(IQ.Type.ERROR);
-        } else if(xmppFarm.getFarmPassword() != null && !farmPassword.equals(xmppFarm.getFarmPassword())) {
-            returnSpawnVm.setErrorType(LinkedProcess.ErrorType.WRONG_FARM_PASSWORD);
-            returnSpawnVm.setType(IQ.Type.ERROR);
+        if (vmSpecies == null) {
+            this.sendErrorPacket(ErrorIq.ClientType.FARM, xmppClient.getFullJid(), spawnVm.getFrom(), spawnVm.getPacketID(), XMPPError.Type.MODIFY, XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "spawn_vm XML packet is missing the vm_species attribute");
+        } else
+        if (((XmppFarm) xmppClient).getFarmPassword() != null && !farmPassword.equals(((XmppFarm) xmppClient).getFarmPassword())) {
+            this.sendErrorPacket(ErrorIq.ClientType.FARM, xmppClient.getFullJid(), spawnVm.getFrom(), spawnVm.getPacketID(), XMPPError.Type.AUTH, XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_FARM_PASSWORD, null);
         } else {
             try {
-                XmppVirtualMachine vm = xmppFarm.spawnVirtualMachine(spawnVm.getFrom(), vmSpecies);
+                XmppVirtualMachine vm = ((XmppFarm) xmppClient).spawnVirtualMachine(spawnVm.getFrom(), vmSpecies);
+                SpawnVm returnSpawnVm = new SpawnVm();
+                returnSpawnVm.setTo(spawnVm.getFrom());
+                returnSpawnVm.setFrom(xmppClient.getFullJid());
+                returnSpawnVm.setPacketID(spawnVm.getPacketID());
                 returnSpawnVm.setVmJid(vm.getFullJid());
                 returnSpawnVm.setVmPassword(vm.getVmPassword());
                 returnSpawnVm.setVmSpecies(vmSpecies);
                 returnSpawnVm.setType(IQ.Type.RESULT);
+
+                XmppFarm.LOGGER.info("Sent " + SpawnVmListener.class.getName());
+                XmppFarm.LOGGER.info(returnSpawnVm.toXML());
+                this.xmppClient.getConnection().sendPacket(returnSpawnVm);
+
             } catch (VMAlreadyExistsException e) {
-                returnSpawnVm.setErrorType(LinkedProcess.ErrorType.INTERNAL_ERROR);
-                returnSpawnVm.setErrorMessage(e.getMessage());
-                returnSpawnVm.setType(IQ.Type.ERROR);
+                this.sendErrorPacket(ErrorIq.ClientType.FARM, xmppClient.getFullJid(), spawnVm.getFrom(), spawnVm.getPacketID(), XMPPError.Type.CANCEL, XMPPError.Condition.conflict, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage());
             } catch (VMSchedulerIsFullException e) {
-                returnSpawnVm.setErrorType(LinkedProcess.ErrorType.FARM_IS_BUSY);
-                returnSpawnVm.setErrorMessage(e.getMessage());
-                returnSpawnVm.setType(IQ.Type.ERROR);
+                this.sendErrorPacket(ErrorIq.ClientType.FARM, xmppClient.getFullJid(), spawnVm.getFrom(), spawnVm.getPacketID(), XMPPError.Type.WAIT, XMPPError.Condition.service_unavailable, LinkedProcess.LopErrorType.FARM_IS_BUSY, e.getMessage());
             } catch (UnsupportedScriptEngineException e) {
-                returnSpawnVm.setErrorType(LinkedProcess.ErrorType.SPECIES_NOT_SUPPORTED);
-                returnSpawnVm.setErrorMessage(e.getMessage());
-                returnSpawnVm.setType(IQ.Type.ERROR);
+                this.sendErrorPacket(ErrorIq.ClientType.FARM, xmppClient.getFullJid(), spawnVm.getFrom(), spawnVm.getPacketID(), XMPPError.Type.MODIFY, XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.SPECIES_NOT_SUPPORTED, e.getMessage());
             }
         }
 
-        XmppFarm.LOGGER.info("Sent " + SpawnVmListener.class.getName());
-        XmppFarm.LOGGER.info(returnSpawnVm.toXML());
-        xmppFarm.getConnection().sendPacket(returnSpawnVm);
+
     }
+
+
 }
 

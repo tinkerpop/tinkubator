@@ -20,10 +20,10 @@ public class PresenceListener implements PacketListener {
     public void processPacket(Packet packet) {
         Presence presence = ((Presence) packet);
 
-        if(presence.getType() == Presence.Type.unavailable || presence.getType() == Presence.Type.unsubscribe || presence.getType() == Presence.Type.unsubscribed) {
+        if (presence.getType() == Presence.Type.unavailable || presence.getType() == Presence.Type.unsubscribe || presence.getType() == Presence.Type.unsubscribed) {
             this.villeinGui.updateHostAreaTree(packet.getFrom(), true);
-        } else if(presence.getType() == Presence.Type.error) {
-            if(presence.getError().getCode() == 404) {
+        } else if (presence.getType() == Presence.Type.error) {
+            if (presence.getError().getCode() == 404) {
                 this.villeinGui.updateHostAreaTree(packet.getFrom(), true);
             }
         } else {
