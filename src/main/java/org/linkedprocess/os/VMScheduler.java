@@ -235,8 +235,7 @@ public class VMScheduler {
     }
 
     /**
-     *
-     * @param machineJID   the JID of the virtual machine to query
+     * @param machineJID the JID of the virtual machine to query
      * @return the set of all variable bindings in the given virtual machine
      * @throws VMWorkerNotFoundException if no VM worker with the given JID exists
      */
@@ -257,7 +256,7 @@ public class VMScheduler {
      * @throws VMWorkerNotFoundException if no VM worker with the given JID exists
      */
     public synchronized VMBindings getBindings(final String machineJID,
-                                                        final Set<String> bindingNames) throws VMWorkerNotFoundException {
+                                               final Set<String> bindingNames) throws VMWorkerNotFoundException {
         if (LinkedProcess.FarmStatus.TERMINATED == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }

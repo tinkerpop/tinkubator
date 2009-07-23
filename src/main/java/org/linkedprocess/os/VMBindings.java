@@ -1,6 +1,7 @@
 package org.linkedprocess.os;
 
 import org.linkedprocess.os.errors.InvalidValueException;
+import org.linkedprocess.os.errors.NoSuchDatatypeException;
 
 import javax.script.Bindings;
 import java.util.HashMap;
@@ -15,9 +16,10 @@ public class VMBindings extends HashMap<String, Object> implements Bindings {
 
     public enum XMLSchemaDatatype {
 
+        DOUBLE(XSD_NAMESPACE + "double", Double.class),
         INTEGER(XSD_NAMESPACE + "integer", Integer.class),
-        STRING(XSD_NAMESPACE + "string", String.class),
-        DOUBLE(XSD_NAMESPACE + "double", Double.class);
+        LONG(XSD_NAMESPACE + "long", Long.class),
+        STRING(XSD_NAMESPACE + "string", String.class);
 
         private final String uri;
         private final Class javaClass;
@@ -29,14 +31,14 @@ public class VMBindings extends HashMap<String, Object> implements Bindings {
             this.javaClass = javaClass;
         }
 
-        public static XMLSchemaDatatype valueByClass(final Class javaClass) {
+        public static XMLSchemaDatatype valueByClass(final Class javaClass) throws NoSuchDatatypeException {
             for (XMLSchemaDatatype d : values()) {
                 if (d.javaClass.equals(javaClass)) {
                     return d;
                 }
             }
 
-            throw new IllegalArgumentException("no datatype for class: " + javaClass);
+            throw new NoSuchDatatypeException("no datatype for class: " + javaClass);
         }
 
         public static XMLSchemaDatatype valueByURI(final String uri) {
@@ -63,12 +65,14 @@ public class VMBindings extends HashMap<String, Object> implements Bindings {
 
         public Object createValue(final String v) {
             switch (this) {
-                case INTEGER:
-                    return new Integer(v);
-                case STRING:
-                    return v;
                 case DOUBLE:
                     return new Double(v);
+                case INTEGER:
+                    return new Integer(v);
+                case LONG:
+                    return new Long(v);
+                case STRING:
+                    return v;
                 default:
                     throw new RuntimeException("no object constructor for data type: " + this);
             }
