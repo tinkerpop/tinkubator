@@ -288,4 +288,11 @@ public class LinkedProcess {
 //        return new ScriptEngineManager();
         return new ScriptEngineManager(loader);
     }
+
+    public static void main(final String[] args) throws Exception {
+        Properties props = System.getProperties();
+        for (Object key : props.keySet()) {
+            System.out.println("" + key + " --> " + props.get(key));
+        }
+    }
 }

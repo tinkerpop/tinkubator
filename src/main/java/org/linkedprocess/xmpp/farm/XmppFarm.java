@@ -1,15 +1,5 @@
 package org.linkedprocess.xmpp.farm;
 
-import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.VMScheduler;
-import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
-import org.linkedprocess.os.errors.VMAlreadyExistsException;
-import org.linkedprocess.os.errors.VMSchedulerIsFullException;
-import org.linkedprocess.os.errors.VMWorkerNotFoundException;
-import org.linkedprocess.security.ServiceDiscoveryConfiguration;
-import org.linkedprocess.security.VMSecurityManager;
-import org.linkedprocess.xmpp.XmppClient;
-import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
@@ -19,10 +9,21 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.packet.DataForm;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.os.VMScheduler;
+import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
+import org.linkedprocess.os.errors.VMAlreadyExistsException;
+import org.linkedprocess.os.errors.VMSchedulerIsFullException;
+import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.security.ServiceDiscoveryConfiguration;
+import org.linkedprocess.security.SystemInfo;
+import org.linkedprocess.security.VMSecurityManager;
+import org.linkedprocess.xmpp.XmppClient;
+import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
@@ -188,10 +189,13 @@ public class XmppFarm extends XmppClient {
         }
         this.serviceExtension.addField(field);
 
-
+        // Add security-related fields
         VMSecurityManager man = (VMSecurityManager) System.getSecurityManager();
         ServiceDiscoveryConfiguration conf = new ServiceDiscoveryConfiguration(man);
         conf.addFields(this.serviceExtension);
+
+        // Add system info
+        SystemInfo.addFields(this.serviceExtension);
 
         discoManager.setExtendedInfo(this.serviceExtension);
 
