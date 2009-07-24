@@ -159,11 +159,6 @@ public class LinkedProcess {
         return builder.build(new StringReader(xml));
     }
 
-    public static String createXMLString(String text) {
-        Text textBody = new Text(text);
-        return LinkedProcess.xmlOut.outputString(textBody);
-    }
-
     private static final String LOP_NAMESPACE = "http://linkedprocess.org/2009/06/";
     public static final String LOP_FARM_NAMESPACE = LOP_NAMESPACE + "LoPFarm#";
     public static final String LOP_VM_NAMESPACE = LOP_NAMESPACE + "LoPVM#";
