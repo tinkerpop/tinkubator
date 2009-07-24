@@ -1,11 +1,14 @@
 package org.linkedprocess.security;
 
+import org.linkedprocess.LinkedProcess;
+
 import java.io.FileDescriptor;
 import java.net.InetAddress;
 import java.security.Permission;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * Author: josh
@@ -13,7 +16,8 @@ import java.util.Set;
  * Time: 11:39:50 AM
  */
 public class VMSecurityManager extends SecurityManager {
-
+    private static final Logger LOGGER = LinkedProcess.getLogger(VMSecurityManager.class);
+    
     public enum PermissionType {
         permission("permission", "exercise a permission"),
         createClassLoader("create_class_loader", "create a Java class loader"),
@@ -96,14 +100,17 @@ public class VMSecurityManager extends SecurityManager {
     }
 
     private void permissionDenied() {
+        LOGGER.info("denying permission");
         throw new SecurityException("operation is not allowed in VM worker threads");
     }
 
     private void permissionDenied(final PermissionType type) {
+        LOGGER.info("denying permission '" + type.getSpecName() + "'");
         throw new SecurityException("operation type is not allowed in VM worker threads: " + type);
     }
 
     private void permissionDenied(final PermissionType type, final String resource) {
+        LOGGER.info("denying permission '" + type.getSpecName() + "' to resource '" + resource + "'");
         throw new SecurityException("permission '" + type + "' is not granted for resource: " + resource);
     }
 
@@ -130,7 +137,7 @@ public class VMSecurityManager extends SecurityManager {
         for (Object key : props.keySet()) {
             if (key instanceof String
                     && ((String) key).startsWith(prefix)) {
-                String value = props.get(key).toString();
+                String value = props.get(key).toString().trim();
                 if (value.length() > 0) {
                     p.addPermitRule(value);
                 }
