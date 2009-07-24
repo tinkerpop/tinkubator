@@ -27,6 +27,7 @@ public class VmViewerFrame extends JFrame {
         xmppVm.getConnection().addPacketListener(packetSnifferPanel, null);
 
         tabbedPane.addTab("virtual machine", new MetadataPanel(this.xmppVm));
+        tabbedPane.addTab("bindings", new ViewBindingsPanel(this.xmppVm));
         tabbedPane.addTab("packets", packetSnifferPanel);
         this.getContentPane().add(tabbedPane);
         this.setResizable(false);
