@@ -104,7 +104,7 @@ public class ScriptEngineTest extends TestCase {
         assertNotNull(engine);
         assertEquals("42", engine.eval("42").toString());
 
-        //assertEquals(null, engine.eval("require 'net/http'").toString());
+        assertEquals("true", engine.eval("require 'net/http'").toString());
 
         //JRubyScriptEngineFactory jf;
         //JRubyScriptEngine je = new JRubyScriptEngine();

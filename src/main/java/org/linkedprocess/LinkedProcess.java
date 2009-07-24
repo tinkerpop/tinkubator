@@ -267,6 +267,8 @@ public class LinkedProcess {
                     "1 ... 1;",
                     "0...0;",
                     "print \"\"\n",
+                    "require 'net/http'",
+                    "require 'net/protocol'",
                     "function write(var s) {result = s;}",
                     "42"}) {
                 try {

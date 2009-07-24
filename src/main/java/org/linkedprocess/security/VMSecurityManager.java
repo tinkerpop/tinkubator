@@ -104,7 +104,7 @@ public class VMSecurityManager extends SecurityManager {
     }
 
     private void permissionDenied(final PermissionType type, final String resource) {
-        throw new SecurityException("permission '" + type + "' is not granted to resource: " + resource);
+        throw new SecurityException("permission '" + type + "' is not granted for resource: " + resource);
     }
 
     private void checkPermissionType(final PermissionType type) {
@@ -115,6 +115,29 @@ public class VMSecurityManager extends SecurityManager {
 
     public VMSecurityManager(final Properties props) {
         permittedTypes = PermissionType.createSet(props);
+
+        readPermissions = readPermittedPaths(props, PermissionType.read);
+        writePermissions = readPermittedPaths(props, PermissionType.write);
+        execPermissions = readPermittedPaths(props, PermissionType.exec);
+        linkPermissions = readPermittedPaths(props, PermissionType.link);
+    }
+
+    private PathPermissions readPermittedPaths(final Properties props,
+                                               final PermissionType type) {
+        PathPermissions p = new PathPermissions();
+        String prefix = type.getPropertyName() + ".permitted";
+
+        for (Object key : props.keySet()) {
+            if (key instanceof String
+                    && ((String) key).startsWith(prefix)) {
+                String value = props.get(key).toString();
+                if (value.length() > 0) {
+                    p.addPermitRule(value);
+                }
+            }
+        }
+
+        return p;
     }
 
     ////////////////////////////////////////////////////////////////////////////
