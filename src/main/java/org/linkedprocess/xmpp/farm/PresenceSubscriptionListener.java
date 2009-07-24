@@ -10,7 +10,7 @@ import org.linkedprocess.xmpp.LopListener;
  * Date: Jun 26, 2009
  * Time: 10:04:14 AM
  */
-public class PresenceSubscriptionListener extends LopListener {
+public class PresenceSubscriptionListener extends LopFarmListener {
 
 
     public PresenceSubscriptionListener(XmppFarm xmppFarm) {
@@ -35,16 +35,16 @@ public class PresenceSubscriptionListener extends LopListener {
             subscribed.setTo(presence.getFrom());
             subscribe.setTo(presence.getFrom());
 
-            Presence available = ((XmppFarm) this.xmppClient).createPresence(((XmppFarm) this.xmppClient).getVmScheduler().getSchedulerStatus());
+            Presence available = this.getXmppFarm().createPresence(this.getXmppFarm().getVmScheduler().getSchedulerStatus());
             available.setTo(presence.getFrom());
             available.setPacketID(presence.getPacketID());
 
-            this.xmppClient.getConnection().sendPacket(subscribed);
-            this.xmppClient.getConnection().sendPacket(subscribe);
-            this.xmppClient.getConnection().sendPacket(available);
+            this.getXmppFarm().getConnection().sendPacket(subscribed);
+            this.getXmppFarm().getConnection().sendPacket(subscribe);
+            this.getXmppFarm().getConnection().sendPacket(available);
 
             try {
-                this.xmppClient.getRoster().createEntry(presence.getFrom(), presence.getFrom(), null);
+                this.getXmppFarm().getRoster().createEntry(presence.getFrom(), presence.getFrom(), null);
             } catch (XMPPException e) {
                 XmppFarm.LOGGER.severe(e.getMessage());
             }
@@ -52,22 +52,22 @@ public class PresenceSubscriptionListener extends LopListener {
             return;
 
         } else
-        if (type == Presence.Type.unsubscribe && !presence.getFrom().equals(this.xmppClient.getBareJid()) && !presence.getFrom().equals(this.xmppClient.getFullJid())) {
+        if (type == Presence.Type.unsubscribe && !presence.getFrom().equals(this.getXmppFarm().getBareJid()) && !presence.getFrom().equals(this.getXmppFarm().getFullJid())) {
             XmppFarm.LOGGER.info("Unsubscribing from " + presence.getFrom());
             Presence unsubscribed = new Presence(Presence.Type.unsubscribed);
             Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
             unsubscribed.setTo(presence.getFrom());
             unsubscribe.setTo(presence.getFrom());
 
-            Presence unavailable = ((XmppFarm) this.xmppClient).createPresence(((XmppFarm) this.xmppClient).getVmScheduler().getSchedulerStatus());
+            Presence unavailable = this.getXmppFarm().createPresence(this.getXmppFarm().getVmScheduler().getSchedulerStatus());
             unavailable.setTo(presence.getFrom());
 
-            this.xmppClient.getConnection().sendPacket(unsubscribed);
-            this.xmppClient.getConnection().sendPacket(unsubscribe);
-            this.xmppClient.getConnection().sendPacket(unavailable);
+            this.getXmppFarm().getConnection().sendPacket(unsubscribed);
+            this.getXmppFarm().getConnection().sendPacket(unsubscribe);
+            this.getXmppFarm().getConnection().sendPacket(unavailable);
 
             try {
-                this.xmppClient.getRoster().removeEntry(this.xmppClient.getRoster().getEntry(presence.getFrom()));
+                this.getXmppFarm().getRoster().removeEntry(this.getXmppFarm().getRoster().getEntry(presence.getFrom()));
             } catch (XMPPException e) {
                 XmppFarm.LOGGER.severe(e.getMessage());
             }

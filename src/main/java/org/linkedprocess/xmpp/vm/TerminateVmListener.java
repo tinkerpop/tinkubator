@@ -44,10 +44,10 @@ public class TerminateVmListener extends LopVmListener {
 
         if (null == vmPassword) {
             returnTerminateVm.setType(IQ.Type.ERROR);
-            returnTerminateVm.setError(new LopXmppError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "terminate_vm XML packet is missing the vm_password attribute"));
+            returnTerminateVm.setError(new LopXmppError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "terminate_vm XML packet is missing the vm_password attribute", LOP_CLIENT_TYPE));
         } else if (!((XmppVirtualMachine) this.xmppClient).checkVmPassword(vmPassword)) {
             returnTerminateVm.setType(IQ.Type.ERROR);
-            returnTerminateVm.setError(new LopXmppError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null));
+            returnTerminateVm.setError(new LopXmppError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE));
         } else {
             terminate = true;
             returnTerminateVm.setType(IQ.Type.RESULT);

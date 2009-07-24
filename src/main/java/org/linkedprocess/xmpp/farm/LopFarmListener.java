@@ -1,6 +1,7 @@
 package org.linkedprocess.xmpp.farm;
 
 import org.linkedprocess.xmpp.LopListener;
+import org.linkedprocess.LinkedProcess;
 
 /**
  * User: marko
@@ -8,6 +9,8 @@ import org.linkedprocess.xmpp.LopListener;
  * Time: 10:50:06 AM
  */
 public abstract class LopFarmListener extends LopListener {
+
+    public static final LinkedProcess.ClientType LOP_CLIENT_TYPE = LinkedProcess.ClientType.FARM;
 
     public LopFarmListener(XmppFarm xmppFarm) {
         super(xmppFarm);

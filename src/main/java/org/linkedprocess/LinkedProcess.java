@@ -29,6 +29,8 @@ public class LinkedProcess {
             PYTHON = "jython",
             RUBY = "jruby";
 
+    public enum ClientType { VM, FARM, VILLEIN }
+    
     // TODO: how about a "queued" status for jobs?
     public enum JobStatus {
         IN_PROGRESS("in_progress");
@@ -162,9 +164,9 @@ public class LinkedProcess {
         return LinkedProcess.xmlOut.outputString(textBody);
     }
 
-    public static final String LOP_NAMESPACE = "http://linkedprocess.org/";
-    public static final String LOP_FARM_NAMESPACE = LOP_NAMESPACE + "protocol/LoPFarm";
-    public static final String LOP_VM_NAMESPACE = LOP_NAMESPACE + "protocol/LoPVM";
+    private static final String LOP_NAMESPACE = "http://linkedprocess.org/2009/06/";
+    public static final String LOP_FARM_NAMESPACE = LOP_NAMESPACE + "LoPFarm#";
+    public static final String LOP_VM_NAMESPACE = LOP_NAMESPACE + "LoPVM#";
     public static final String BLANK_NAMESPACE = "";
     public static final String DISCO_INFO_NAMESPACE = "http://jabber.org/protocol/disco#info";
     public static final String X_NAMESPACE = "jabber:x:data";
@@ -194,7 +196,6 @@ public class LinkedProcess {
     public static final String TERMINATE_VM_TAG = "terminate_vm";
     // attribute names
     public static final String JOB_ID_ATTRIBUTE = "job_id";
-    public static final String ERROR_TYPE_ATTRIBUTE = "error_type";
     public static final String VALUE_ATTRIBUTE = "value";
     public static final String DATATYPE_ATTRIBUTE = "datatype";
     public static final String BINDING_TAG = "binding";

@@ -15,7 +15,9 @@ import java.util.Map;
  */
 public class LopXmppError extends XMPPError {
 
-    LinkedProcess.LopErrorType lopErrorType;
+    protected LinkedProcess.LopErrorType lopErrorType;
+    protected LinkedProcess.ClientType clientType;
+
     public static final Map<Condition, Integer> conditionCodeMap = new HashMap<Condition, Integer>();
     public static final Map<Condition, XMPPError.Type> conditionErrorMap = new HashMap<Condition, XMPPError.Type>();
 
@@ -74,9 +76,10 @@ public class LopXmppError extends XMPPError {
     }
 
 
-    public LopXmppError(XMPPError.Condition condition, LinkedProcess.LopErrorType lopErrorType, String errorMessage) {
+    public LopXmppError(XMPPError.Condition condition, LinkedProcess.LopErrorType lopErrorType, String errorMessage, LinkedProcess.ClientType clientType) {
         super(LopXmppError.conditionCodeMap.get(condition), LopXmppError.conditionErrorMap.get(condition), condition.toString().toLowerCase(), errorMessage, null);
         this.lopErrorType = lopErrorType;
+        this.clientType = clientType;
     }
 
     public String toXML() {
@@ -84,12 +87,12 @@ public class LopXmppError extends XMPPError {
         errorElement.setAttribute(LinkedProcess.CODE_ATTRIBUTE, "" + this.getCode());
         errorElement.setAttribute(LinkedProcess.TYPE_ATTRIBUTE, this.getType().toString().toLowerCase());
         Element conditionElement = new Element(this.getCondition(), Namespace.getNamespace(LinkedProcess.XMPP_STANZAS_NAMESPACE));
-        Element lopElement = new Element(lopErrorType.toString(), Namespace.getNamespace(LinkedProcess.LOP_NAMESPACE));
+        Element lopElement = new Element(lopErrorType.toString(), this.clientType == LinkedProcess.ClientType.FARM ? Namespace.getNamespace(LinkedProcess.LOP_FARM_NAMESPACE) : Namespace.getNamespace(LinkedProcess.LOP_VM_NAMESPACE));
         errorElement.addContent(conditionElement);
         errorElement.addContent(lopElement);
         if (this.getMessage() != null) {
             Element textElement = new Element(LinkedProcess.TEXT_TAG, Namespace.getNamespace(LinkedProcess.XMPP_STANZAS_NAMESPACE));
-            textElement.setText(this.getMessage().replaceAll(">", "").replaceAll("<", ""));
+            textElement.setText(this.getMessage().replaceAll("<", "").replaceAll(">", ""));
             errorElement.addContent(textElement);
         }
         return LinkedProcess.xmlOut.outputString(errorElement);
