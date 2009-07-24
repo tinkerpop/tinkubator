@@ -37,7 +37,7 @@ public class SpawnVmListener implements PacketListener {
             vmStruct.setVmSpecies(spawnVm.getVmSpecies());
             xmppVillein.addVmStruct(farmJid, vmStruct);
         } else {
-            XmppVillein.LOGGER.severe("Error: " + spawnVm.getErrorMessage());
+            XmppVillein.LOGGER.severe("Error: " + spawnVm.getError().toXML());
         }
     }
 }

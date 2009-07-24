@@ -58,7 +58,6 @@ public class XmppVillein extends XmppClient {
         pm.addIQProvider(LinkedProcess.JOB_STATUS_TAG, LinkedProcess.LOP_VM_NAMESPACE, new JobStatusProvider());
         pm.addIQProvider(LinkedProcess.ABORT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE, new AbortJobProvider());
         pm.addIQProvider(LinkedProcess.MANAGE_BINDINGS_TAG, LinkedProcess.LOP_VM_NAMESPACE, new ManageBindingsProvider());
-        pm.addIQProvider(LinkedProcess.ERROR_TAG, LinkedProcess.XMPP_STANZAS_NAMESPACE, new ErrorProvider());
 
         this.logon(server, port, username, password, RESOURCE_PREFIX);
         this.initiateFeatures();

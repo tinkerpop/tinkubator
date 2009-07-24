@@ -17,12 +17,6 @@ public class TerminateVm extends VirtualMachineIq {
         if (this.vmPassword != null) {
             terminateVmElement.setAttribute(LinkedProcess.VM_PASSWORD_ATTRIBUTE, this.vmPassword);
         }
-        /*if(this.lopErrorType != null) {
-            terminateVmElement.setAttribute(LinkedProcess.ERROR_TYPE_ATTRIBUTE, this.lopErrorType.toString());
-            if(this.errorMessage != null) {
-                terminateVmElement.setText(this.errorMessage);
-            }
-        }*/
 
         return LinkedProcess.xmlOut.outputString(terminateVmElement);
     }

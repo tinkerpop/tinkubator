@@ -1,5 +1,6 @@
 package org.linkedprocess.gui.villein.vmcontrol;
 
+import org.jivesoftware.smack.packet.PacketExtension;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.xmpp.vm.AbortJob;
 import org.linkedprocess.xmpp.vm.SubmitJob;
@@ -104,21 +105,49 @@ public class JobPane extends JPanel implements ActionListener {
     }
 
     public void handleIncomingSubmitJob(SubmitJob submitJob) {
-        if (submitJob.getErrorType() == null) {
+        if (submitJob.getError() == null) {
             this.resultTextArea.setText(submitJob.getExpression());
             this.submitJobButton.setEnabled(false);
         } else {
-            this.resultTextArea.setText(submitJob.getErrorType().toString() +
-                    "\n" + submitJob.getErrorMessage());
+            StringBuffer errorMessage = new StringBuffer();
+            if (submitJob.getError().getType() != null) {
+                errorMessage.append(submitJob.getError().getType().toString().toLowerCase() + "\n");
+            }
+            if (submitJob.getError().getCondition() != null) {
+                errorMessage.append(submitJob.getError().getCondition() + "\n");
+            }
+            if (submitJob.getError().getExtensions() != null) {
+                for (PacketExtension extension : submitJob.getError().getExtensions()) {
+                    errorMessage.append(extension.getElementName() + "\n");
+                }
+            }
+            if (submitJob.getError().getMessage() != null) {
+                errorMessage.append(submitJob.getError().getMessage());
+            }
+            this.resultTextArea.setText(errorMessage.toString().trim());
         }
     }
 
     public void handleIncomingAbortJob(AbortJob abortJob) {
-        if (abortJob.getErrorType() == null) {
-            this.resultTextArea.setText("job aborted.");
+        if (abortJob.getError() == null) {
+            this.resultTextArea.setText("job aborted");
         } else {
-            this.resultTextArea.setText(abortJob.getErrorType().toString() +
-                    "\n" + abortJob.getErrorMessage());
+            StringBuffer errorMessage = new StringBuffer();
+            if (abortJob.getError().getType() != null) {
+                errorMessage.append(abortJob.getError().getType().toString().toLowerCase() + "\n");
+            }
+            if (abortJob.getError().getCondition() != null) {
+                errorMessage.append(abortJob.getError().getCondition() + "\n");
+            }
+            if (abortJob.getError().getExtensions() != null) {
+                for (PacketExtension extension : abortJob.getError().getExtensions()) {
+                    errorMessage.append(extension.getElementName() + "\n");
+                }
+            }
+            if (abortJob.getError().getMessage() != null) {
+                errorMessage.append(abortJob.getError().getMessage());
+            }
+            this.resultTextArea.setText(errorMessage.toString().trim());
         }
     }
 

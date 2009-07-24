@@ -44,12 +44,6 @@ public class SpawnVm extends FarmIq {
         if (this.farmPassword != null) {
             spawnVmElement.setAttribute(LinkedProcess.FARM_PASSWORD_ATTRIBUTE, this.farmPassword);
         }
-        /*if(this.lopErrorType != null) {
-            spawnVmElement.setAttribute(LinkedProcess.ERROR_TYPE_ATTRIBUTE, this.lopErrorType.toString());
-            if(this.errorMessage != null) {
-                spawnVmElement.setText(this.errorMessage);
-            }
-        }*/
 
         return LinkedProcess.xmlOut.outputString(spawnVmElement);
     }

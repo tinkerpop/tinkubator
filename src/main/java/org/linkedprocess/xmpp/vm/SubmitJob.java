@@ -33,15 +33,6 @@ public class SubmitJob extends VirtualMachineIq {
             submitJobElement.setText(this.expression);
         }
 
-        /*if(this.lopErrorType != null) {
-            submitJobElement.setAttribute(LinkedProcess.ERROR_TYPE_ATTRIBUTE, this.lopErrorType.toString());
-            if(this.errorMessage != null) {
-                submitJobElement.setText(this.errorMessage);
-            }
-        } else if(this.expression != null) {
-                submitJobElement.setText(this.expression);
-        }*/
-
         return LinkedProcess.xmlOut.outputString(submitJobElement);
     }
 }

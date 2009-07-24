@@ -20,18 +20,10 @@ public class SubmitJobProvider implements IQProvider {
             submitJob.setVmPassword(vmPassword);
         }
 
-        /*String errorType = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.ERROR_TYPE_ATTRIBUTE);
-        if(null != errorType) {
-            submitJob.setErrorType(LinkedProcess.LopErrorType.getErrorType(errorType));
-        }*/
-
         int v = parser.next();
         if (v == XmlPullParser.TEXT) {
             String textBody = parser.getText();
             if (textBody != null) {
-                /*if(null != submitJob.getErrorType())
-                    submitJob.setErrorMessage(textBody);
-                else*/
                 submitJob.setExpression(textBody);
             }
             parser.next();

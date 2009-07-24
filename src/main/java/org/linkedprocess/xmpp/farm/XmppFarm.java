@@ -13,7 +13,6 @@ import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DataForm;
-
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.VMScheduler;
 import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
@@ -21,11 +20,10 @@ import org.linkedprocess.os.errors.VMAlreadyExistsException;
 import org.linkedprocess.os.errors.VMSchedulerIsFullException;
 import org.linkedprocess.os.errors.VMWorkerNotFoundException;
 import org.linkedprocess.security.ServiceDiscoveryConfiguration;
-import org.linkedprocess.security.VMSecurityManager;
 import org.linkedprocess.security.SystemInfo;
+import org.linkedprocess.security.VMSecurityManager;
 import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
-
 
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;

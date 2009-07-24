@@ -2,6 +2,7 @@ package org.linkedprocess;
 
 import org.jdom.Document;
 import org.jdom.JDOMException;
+import org.jdom.Text;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
@@ -156,6 +157,11 @@ public class LinkedProcess {
         return builder.build(new StringReader(xml));
     }
 
+    public static String createXMLString(String text) {
+        Text textBody = new Text(text);
+        return LinkedProcess.xmlOut.outputString(textBody);
+    }
+
     public static final String LOP_NAMESPACE = "http://linkedprocess.org/";
     public static final String LOP_FARM_NAMESPACE = LOP_NAMESPACE + "protocol/LoPFarm";
     public static final String LOP_VM_NAMESPACE = LOP_NAMESPACE + "protocol/LoPVM";
@@ -198,6 +204,7 @@ public class LinkedProcess {
     public static final String ERROR_TAG = "error";
     public static final String TEXT_TAG = "text";
     public static final String TYPE_ATTRIBUTE = "type";
+    public static final String CODE_ATTRIBUTE = "code";
 
     ///////////////////////////////////////////////////////
 
@@ -253,7 +260,7 @@ public class LinkedProcess {
         };
         ClassLoader loader = new ScriptEngineClassLoader();
         ScriptEngineManager m = new ScriptEngineManager(loader);
-        for (String name : new String[]{JAVASCRIPT, PYTHON, RUBY}) {
+        for (String name : new String[]{JAVASCRIPT, PYTHON}) {
             ScriptEngine engine = m.getEngineByName(name);
             for (String expr : new String[]{
                     "1 + 1;",

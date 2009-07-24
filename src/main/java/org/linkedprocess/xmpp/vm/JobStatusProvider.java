@@ -22,10 +22,6 @@ public class JobStatusProvider implements IQProvider {
         if (null != vmPassword) {
             jobStatus.setVmPassword(vmPassword);
         }
-        /*String errorType = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.ERROR_TYPE_ATTRIBUTE);
-        if(null != errorType) {
-            jobStatus.setErrorType(LinkedProcess.LopErrorType.getErrorType(errorType));
-        }*/
         parser.next();
         return jobStatus;
     }

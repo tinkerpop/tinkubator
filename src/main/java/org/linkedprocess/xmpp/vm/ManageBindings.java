@@ -16,6 +16,7 @@ public class ManageBindings extends VirtualMachineIq {
 
     protected VMBindings bindings = new VMBindings();
     protected String badDatatypeMessage;
+    protected String invalidValueMessage;
 
     public String getInvalidValueMessage() {
         return invalidValueMessage;
@@ -24,8 +25,6 @@ public class ManageBindings extends VirtualMachineIq {
     public void setInvalidValueMessage(final String invalidValueMessage) {
         this.invalidValueMessage = invalidValueMessage;
     }
-
-    protected String invalidValueMessage;
 
     public String getBadDatatypeMessage() {
         return badDatatypeMessage;
@@ -63,12 +62,7 @@ public class ManageBindings extends VirtualMachineIq {
         if (this.vmPassword != null) {
             manageBindingsElement.setAttribute(LinkedProcess.VM_PASSWORD_ATTRIBUTE, this.vmPassword);
         }
-        /*if (this.lopErrorType != null) {
-            manageBindingsElement.setAttribute(LinkedProcess.ERROR_TYPE_ATTRIBUTE, this.lopErrorType.toString());
-            if (this.errorMessage != null) {
-                manageBindingsElement.setText(this.errorMessage);
-            }
-        } else*/
+
         if (this.getType() == IQ.Type.GET) {
             for (String key : this.bindings.keySet()) {
                 Element b = new Element(LinkedProcess.BINDING_TAG, LinkedProcess.LOP_VM_NAMESPACE);
