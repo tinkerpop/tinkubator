@@ -256,7 +256,7 @@ public class LinkedProcess {
         };
         ClassLoader loader = new ScriptEngineClassLoader();
         ScriptEngineManager m = new ScriptEngineManager(loader);
-        for (String name : new String[]{JAVASCRIPT, PYTHON}) {
+        for (String name : new String[]{JAVASCRIPT, PYTHON, RUBY}) {
             ScriptEngine engine = m.getEngineByName(name);
             for (String expr : new String[]{
                     "1 + 1;",

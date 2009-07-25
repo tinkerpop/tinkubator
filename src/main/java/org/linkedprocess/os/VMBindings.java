@@ -16,6 +16,7 @@ public class VMBindings extends HashMap<String, Object> implements Bindings {
 
     public enum XMLSchemaDatatype {
 
+        BOOLEAN(XSD_NAMESPACE + "boolean", Boolean.class),
         DOUBLE(XSD_NAMESPACE + "double", Double.class),
         INTEGER(XSD_NAMESPACE + "integer", Integer.class),
         LONG(XSD_NAMESPACE + "long", Long.class),
@@ -65,12 +66,14 @@ public class VMBindings extends HashMap<String, Object> implements Bindings {
 
         public Object createValue(final String v) {
             switch (this) {
+                case BOOLEAN:
+                    return Boolean.valueOf(v);
                 case DOUBLE:
-                    return new Double(v);
+                    return Double.valueOf(v);
                 case INTEGER:
-                    return new Integer(v);
+                    return Integer.valueOf(v);
                 case LONG:
-                    return new Long(v);
+                    return Long.valueOf(v);
                 case STRING:
                     return v;
                 default:
