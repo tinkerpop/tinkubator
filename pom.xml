@@ -117,7 +117,7 @@
             <version>xxx</version>
         </dependency>
         <dependency>
-            <groupId>org.jruby</groupId>
+            <groupId>org</groupId>
             <artifactId>jruby</artifactId>
             <version>1.3.1-lop</version>
         </dependency>
@@ -243,6 +243,20 @@
             <url>http://fortytwo.net/maven2</url>
         </repository>
     </repositories>
+    <developers>
+    	<developer>
+    		<name>Marko A. Rodriguez</name>
+    		<email>okrammarko@gmail.com</email>
+    	</developer>
+    	<developer>
+    		<name>Joshua Shinavier</name>
+    		<email>parcour@gmail.com</email>
+    	</developer>
+    	<developer>
+    		<name>Peter Neubauer</name>
+    		<email>peter@neubauer.se</email>
+    	</developer>
+    </developers>
 
     <build>
         <directory>${basedir}/target</directory>
