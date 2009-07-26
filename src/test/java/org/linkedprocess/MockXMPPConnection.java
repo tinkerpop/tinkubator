@@ -122,8 +122,8 @@ public class MockXMPPConnection extends XMPPConnectionWrapper {
 
     @Override
     public void sendPacket(Packet packet) {
+    	logger.info(id + ": adding " + packet.toXML());
         sentPackets.add(packet);
-        logger.fine(id + ": adding " + packet.toXML());
 
     }
 

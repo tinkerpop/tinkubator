@@ -43,14 +43,14 @@ public class XmppVirtualMachineTest extends TestCase {
 
     }
 
-    /*@Test
+    @Test
     public void testLoginOPS4J() throws Exception {
         xmppVirtualMachine = new XmppVirtualMachine(OPS4J_SERVER, PORT, USERNAME, PASSWORD, null, null, LinkedProcess.JAVASCRIPT, "pass");
         Connection connection = xmppVirtualMachine.getConnection();
         assertTrue(connection.isConnected());
         xmppVirtualMachine.shutDown();
 
-    }*/
+    }
 
     @Test
     public void testLoginGTalk() throws Exception {

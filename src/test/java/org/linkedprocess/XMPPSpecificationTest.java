@@ -67,7 +67,7 @@ public class XMPPSpecificationTest {
 
         xmppFarm = new XmppFarm(server, port, username1, password1);
         ArrayList<Packet> sentPackets = mockFarmConn.sentPackets;
-        assertEquals(2, sentPackets.size());
+        assertEquals(1, sentPackets.size());
         // get rid of the startup stuff
         mockFarmConn.clearPackets();
         ArrayList<PacketListener> packetListeners = mockFarmConn.packetListeners;
@@ -106,22 +106,13 @@ public class XMPPSpecificationTest {
 
         // two presence packets should have been sent upon connecting
         ArrayList<Packet> sentPackets = mockFarmConn.sentPackets;
-        assertEquals(2, sentPackets.size());
+        assertEquals(1, sentPackets.size());
         // Farm started
         assertEquals(Presence.Type.available, ((Presence) sentPackets.get(0))
                 .getType());
-        //assertEquals(XmppFarm.STATUS_MESSAGE_STARTING, ((Presence) sentPackets
-        //		.get(0)).getStatus());
         assertEquals(LinkedProcess.HIGHEST_PRIORITY, ((Presence) sentPackets
                 .get(0)).getPriority());
-        // scheduler started
-        assertEquals(Presence.Type.available, ((Presence) sentPackets.get(1))
-                .getType());
-        assertEquals(XmppFarm.STATUS_MESSAGE_ACTIVE, ((Presence) sentPackets
-                .get(1)).getStatus());
-        assertEquals(LinkedProcess.HIGHEST_PRIORITY, ((Presence) sentPackets
-                .get(1)).getPriority());
-
+        
         // now we should have 2 PacketListeners to the Farms XMPP connection
         ArrayList<PacketListener> packetListeners = mockFarmConn.packetListeners;
         assertEquals(2, packetListeners.size());
@@ -129,21 +120,11 @@ public class XMPPSpecificationTest {
         assertTrue(packetListeners.get(1) instanceof PresenceSubscriptionListener);
 
         xmppFarm.shutDown();
-        assertEquals(4, sentPackets.size());
+        assertEquals(2, sentPackets.size());
 
-        // scheduler shut down
-        assertEquals(Presence.Type.unavailable, ((Presence) sentPackets.get(2))
+        assertEquals(Presence.Type.unavailable, ((Presence) sentPackets.get(1))
                 .getType());
-        //assertEquals(XmppFarm.STATUS_MESSAGE_TERMINATING,
-        //		((Presence) sentPackets.get(2)).getStatus());
-        assertEquals(LinkedProcess.HIGHEST_PRIORITY, ((Presence) sentPackets
-                .get(2)).getPriority());
-        // The Farm terminated
-        assertEquals(Presence.Type.unavailable, ((Presence) sentPackets.get(3))
-                .getType());
-        assertEquals(null, ((Presence) sentPackets.get(3)).getStatus());
-
-    }
+       }
 
     @Test
     public void sendingASpawnPacketShouldStartASeparateVM() throws Exception {
