@@ -37,7 +37,8 @@ public class FarmLoginArea extends LoginArea {
                 System.exit(0);
             }
         } catch (XMPPException e) {
-            this.statusLabel.setText("Could not login.");
+            this.statusLabel.setText("Could not login: "+ e.getMessage());
+            e.printStackTrace();
         }
     }
 
