@@ -156,11 +156,12 @@ public class XMPPSpecificationTest {
                 mockFarmConn.getUser().equals(mockVM1Conn.getUser()));
         // now we should have 3 PacketListeners for the VM
         ArrayList<PacketListener> vm1packetListeners = mockVM1Conn.packetListeners;
-        assertEquals(4, vm1packetListeners.size());
+        assertEquals(5, vm1packetListeners.size());
         assertTrue(vm1packetListeners.get(0) instanceof SubmitJobListener);
         assertTrue(vm1packetListeners.get(1) instanceof JobStatusListener);
         assertTrue(vm1packetListeners.get(2) instanceof AbortJobListener);
         assertTrue(vm1packetListeners.get(3) instanceof TerminateVmListener);
+        assertTrue(vm1packetListeners.get(4) instanceof ManageBindingsListener);
 
         // try one more VM with the same spawn packet as the first!
         mockFarmConn.clearPackets();
@@ -176,13 +177,14 @@ public class XMPPSpecificationTest {
         xmppFarm.shutDown();
         sentPacketsVM1 = mockVM1Conn.sentPackets;
         System.out.println(sentPackets);
-        assertEquals("We were expecting one TERMINATING and one UNAVAILABE", 2,
+        assertEquals("We were expecting one UNAVAILABE", 1,
                 sentPackets.size());
         assertEquals(Presence.Type.unavailable, ((Presence) sentPackets.get(0))
                 .getType());
-        assertEquals(1, sentPacketsVM1.size());
-        assertEquals(Presence.Type.unavailable, ((Presence) sentPacketsVM1
-                .get(0)).getType());
+        //VM is not longer sending an unavailable ...
+//        assertEquals(1, sentPacketsVM1.size());
+//        assertEquals(Presence.Type.unavailable, ((Presence) sentPacketsVM1
+//                .get(0)).getType());
     }
 
     @Test
@@ -356,9 +358,9 @@ public class XMPPSpecificationTest {
         mockVM1Conn.packetListeners.get(3).processPacket(terminate);
 
         ArrayList<Packet> sentPackets = mockVM1Conn.sentPackets;
-        assertEquals("we should get two presence pac kets back", 2, sentPackets
+        assertEquals("we should get one result back", 1, sentPackets
                 .size());
-
+        assertEquals(IQ.Type.RESULT, ((IQ) sentPackets.get(0)).getType());
         // check right shutdown messages
         xmppFarm.shutDown();
     }
