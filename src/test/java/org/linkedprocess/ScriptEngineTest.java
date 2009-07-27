@@ -108,7 +108,6 @@ public class ScriptEngineTest extends TestCase {
 
         //JRubyScriptEngineFactory jf;
         //JRubyScriptEngine je = new JRubyScriptEngine();
-
     }
 
     public void testGroovy() throws Exception {

@@ -6,7 +6,6 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.linkedprocess.os.JobResult;
-import org.linkedprocess.os.VMScheduler;
 import org.linkedprocess.os.VMWorker;
 import org.linkedprocess.security.VMSecurityManager;
 
@@ -224,6 +223,9 @@ public class LinkedProcess {
     public static final String SECURITYDEFAULT_PROPERTIES = "security-default.properties";
     public static final XMLOutputter xmlOut = new XMLOutputter();
 
+    // Singleton ScriptEngineManager, subject to the pre-loading hack.
+    private static ScriptEngineManager createScriptEngineManager;
+
     static {
         LOGGER = getLogger(LinkedProcess.class);
         try {
@@ -246,19 +248,16 @@ public class LinkedProcess {
     }
 
     private static void preLoadingHack() {
+        LOGGER.info("pre-loading script engines");
+
         // Hack to pre-load JobResult so that a VM worker thread doesn't have to
         // load a class (which is in general not allowed) to produce the first
         // result.
         new JobResult(null, (String) null);
 
         // Hack to pre-load Rhino and Jython resource bundles.  This will have to be extended.
-        VMScheduler.VMResultHandler nullHandler = new VMScheduler.VMResultHandler() {
-            public void handleResult(JobResult result) {
-            }
-        };
-        ClassLoader loader = new ScriptEngineClassLoader();
-        ScriptEngineManager m = new ScriptEngineManager(loader);
-        for (String name : new String[]{JAVASCRIPT, PYTHON, RUBY}) {
+        ScriptEngineManager m = createScriptEngineManager();
+        for (String name : new String[]{JAVASCRIPT, PYTHON, RUBY, GROOVY}) {
             ScriptEngine engine = m.getEngineByName(name);
             for (String expr : new String[]{
                     "1 + 1;",
@@ -299,10 +298,12 @@ public class LinkedProcess {
     }
 
     public static ScriptEngineManager createScriptEngineManager() {
-        ClassLoader loader = new ScriptEngineClassLoader();
+        if (null == createScriptEngineManager) {
+            ClassLoader loader = new ScriptEngineClassLoader();
+            createScriptEngineManager = new ScriptEngineManager(loader);
+        }
 
-//        return new ScriptEngineManager();
-        return new ScriptEngineManager(loader);
+        return createScriptEngineManager;
     }
 
     public static void main(final String[] args) throws Exception {
