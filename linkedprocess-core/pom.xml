@@ -2,12 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>gov.lanl.cnls</groupId>
-    <artifactId>linkedprocess</artifactId>
+    <groupId>org.linkedprocess</groupId>
+    <artifactId>linkedprocess-core</artifactId>
     <version>alpha1</version>
     <packaging>jar</packaging>
-    <name>Linked Process</name>
-    <description>Web-Scale Distributed Computing</description>
+    <name>Linked Process core</name>
+
+    <parent>
+        <groupId>org.linkedprocess</groupId>
+        <artifactId>linkedprocess</artifactId>
+        <version>alpha1</version>
+    </parent>
 
     <properties>
         <powermock.version>1.2.5</powermock.version>
@@ -253,20 +258,6 @@
             <url>http://fortytwo.net/maven2</url>
         </repository>
     </repositories>
-    <developers>
-        <developer>
-            <name>Marko A. Rodriguez</name>
-            <email>okrammarko@gmail.com</email>
-        </developer>
-        <developer>
-            <name>Joshua Shinavier</name>
-            <email>parcour@gmail.com</email>
-        </developer>
-        <developer>
-            <name>Peter Neubauer</name>
-            <email>peter@neubauer.se</email>
-        </developer>
-    </developers>
 
     <build>
         <directory>${basedir}/target</directory>
