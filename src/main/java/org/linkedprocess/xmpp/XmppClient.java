@@ -98,6 +98,10 @@ public abstract class XmppClient {
         return LinkedProcess.generateBareJid(fullJid);
     }
 
+    public String getResource() {
+        return getFullJid().replace(this.getBareJid() + "/", "");
+    }
+
     public Connection getConnection() {
         return this.connection;
     }

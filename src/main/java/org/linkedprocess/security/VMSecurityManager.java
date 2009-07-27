@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  */
 public class VMSecurityManager extends SecurityManager {
     private static final Logger LOGGER = LinkedProcess.getLogger(VMSecurityManager.class);
-    
+
     public enum PermissionType {
         permission("permission", "exercise a permission"),
         createClassLoader("create_class_loader", "create a Java class loader"),

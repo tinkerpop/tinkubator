@@ -61,7 +61,7 @@ public class RosterPanel extends JPanel implements ActionListener, ListSelection
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 0;
-        c.weighty = 0.1;
+        c.weighty = 0.2;
         metadataPanel.add(new JLabel("jid: "), c);
         c.gridx = 1;
         c.gridy = 0;
@@ -79,18 +79,19 @@ public class RosterPanel extends JPanel implements ActionListener, ListSelection
         c.gridy = 2;
         metadataPanel.add(this.subscriptionLabel, c);
         c.gridx = 0;
-        c.weighty = 0.3;
+        c.weighty = 0.4;
         c.gridy = 3;
         JButton updateButton = new JButton(UPDATE);
         updateButton.addActionListener(this);
         metadataPanel.add(updateButton, c);
 
-        JScrollPane scrollPane2 = new JScrollPane(metadataPanel);
+        JPanel metaPanelContainerPanel = new JPanel(new BorderLayout());
+        metaPanelContainerPanel.add(metadataPanel, BorderLayout.SOUTH);
+        JScrollPane scrollPane2 = new JScrollPane(metaPanelContainerPanel);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        splitPane.add(scrollPane1);
-        splitPane.add(scrollPane2);
-        splitPane.setDividerLocation(250);
+        JPanel splitPanel = new JPanel(new BorderLayout());
+        splitPanel.add(scrollPane1, BorderLayout.CENTER);
+        splitPanel.add(scrollPane2, BorderLayout.SOUTH);
 
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -103,7 +104,7 @@ public class RosterPanel extends JPanel implements ActionListener, ListSelection
         buttonPanel.add(addButton);
         buttonPanel.add(removeButton);
 
-        this.add(splitPane, BorderLayout.CENTER);
+        this.add(splitPanel, BorderLayout.CENTER);
         this.add(buttonPanel, BorderLayout.SOUTH);
 
         this.populateRosterTable();

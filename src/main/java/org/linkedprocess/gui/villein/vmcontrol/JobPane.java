@@ -174,7 +174,7 @@ public class JobPane extends JPanel implements ActionListener {
     }
 
     public void paintComponent(Graphics g) {
-        g.drawImage(ImageHolder.cowBackground.getImage(), 0, 0, null);
+        //g.drawImage(ImageHolder.cowBackground.getImage(), 0, 0, null);
         super.paintComponent(g);
     }
 

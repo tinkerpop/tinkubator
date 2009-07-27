@@ -5,7 +5,6 @@ import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.LoginArea;
 import org.linkedprocess.xmpp.farm.XmppFarm;
 
-import java.awt.*;
 import java.awt.event.ActionEvent;
 
 /**
@@ -37,13 +36,8 @@ public class FarmLoginArea extends LoginArea {
                 System.exit(0);
             }
         } catch (XMPPException e) {
-            this.statusLabel.setText("Could not login: "+ e.getMessage());
+            this.statusLabel.setText("Could not login: " + e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    public void paintComponent(Graphics g) {
-        g.drawImage(backgroundImage, 0, 0, null);
-        super.paintComponent(g);
     }
 }

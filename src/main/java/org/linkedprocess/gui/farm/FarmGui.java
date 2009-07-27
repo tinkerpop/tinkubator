@@ -40,9 +40,9 @@ public class FarmGui extends JFrame implements ActionListener {
         this.getContentPane().removeAll();
         this.vmArea = new VmArea(this);
         this.getContentPane().add(this.vmArea);
-        this.setResizable(false);
+        this.setResizable(true);
         this.pack();
-        this.setSize(442, 491);
+        //this.setSize(442, 491);
         xmppFarm.setStatusEventHandler(new FarmGuiStatusEventHandler(this));
     }
 

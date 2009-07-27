@@ -70,7 +70,7 @@ public class PacketSnifferPanel extends JPanel implements ListSelectionListener,
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.add(scrollPane1);
         splitPane.add(scrollPane2);
-        splitPane.setDividerLocation(180);
+        splitPane.setDividerLocation(250);
         this.packetList = new ArrayList<Packet>();
         this.add(splitPane, BorderLayout.CENTER);
         this.add(buttonPanel, BorderLayout.SOUTH);

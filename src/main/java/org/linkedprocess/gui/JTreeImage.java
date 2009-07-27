@@ -16,26 +16,24 @@ public class JTreeImage extends JTree {
 
     public JTreeImage(MutableTreeNode node, ImageIcon backgroundImage) {
         super(node);
-        this.backgroundImage = backgroundImage.getImage();
-        Dimension size = new Dimension(this.backgroundImage.getWidth(null), this.backgroundImage.getHeight(null));
-        this.setPreferredSize(size);
-        this.setMinimumSize(size);
-        this.setMaximumSize(size);
-        this.setSize(size);
+        //this.backgroundImage = backgroundImage.getImage();
+        //Dimension size = new Dimension(this.backgroundImage.getWidth(null), this.backgroundImage.getHeight(null));
+        //this.setPreferredSize(size);
+        //this.setMinimumSize(size);
+        //this.setMaximumSize(size);
+        //this.setSize(size);
         this.setLayout(null);
         this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        this.setShowsRootHandles(false);
-        this.setOpaque(false);
+        this.setShowsRootHandles(true);
         this.setAutoscrolls(true);
     }
 
-    public Dimension getPreferredSize() {
+    /*public Dimension getPreferredSize() {
         return new Dimension(this.backgroundImage.getWidth(null), this.backgroundImage.getHeight(null));
-    }
+    }*/
 
-
-    public void paintComponent(Graphics g) {
-        g.drawImage(this.backgroundImage, 0, 0, null);
+    /*public void paintComponent(Graphics g) {
+        //g.drawImage(this.backgroundImage, 0, 0, null);
         super.paintComponent(g);
-    }
+    }*/
 }

@@ -50,12 +50,12 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
         JButton shutdownButton = new JButton(SHUTDOWN);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         buttonPanel.add(shutdownButton);
-        buttonPanel.setOpaque(false);
+        //buttonPanel.setOpaque(false);
         shutdownButton.addActionListener(this);
         JPanel treePanel = new JPanel(new BorderLayout());
         treePanel.add(vmTreeScroll, BorderLayout.CENTER);
         treePanel.add(buttonPanel, BorderLayout.SOUTH);
-        treePanel.setOpaque(false);
+        //treePanel.setOpaque(false);
 
         //JPanel securityPanel = new JPanel();
         PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel(this.farmGui.getXmppFarm().getFullJid());
@@ -104,8 +104,8 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
             vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("villein_jid", xmppVm.getVilleinJid())));
             vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", xmppVm.getVmStatus().toString())));
             vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", xmppVm.getVmSpecies())));
-            vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", xmppVm.getVmPassword())));
-            vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", xmppVm.getRunningTimeInSecods() + " seconds")));
+            //vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", xmppVm.getVmPassword())));
+            //vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", xmppVm.getRunningTimeInSecods() + " seconds")));
             model.insertNodeInto(vmNode, farmNode, farmNode.getChildCount());
             this.tree.scrollPathToVisible(new TreePath(vmNode.getPath()));
         }
@@ -125,8 +125,8 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
                 vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("villein_jid", xmppVm.getVilleinJid())));
                 vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", xmppVm.getVmStatus().toString())));
                 vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", xmppVm.getVmSpecies())));
-                vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", xmppVm.getVmPassword())));
-                vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", xmppVm.getRunningTimeInSecods() + " seconds")));
+                //vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", xmppVm.getVmPassword())));
+                //vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", xmppVm.getRunningTimeInSecods() + " seconds")));
                 model.insertNodeInto(vmNode, farmNode, farmNode.getChildCount());
                 this.tree.scrollPathToVisible(new TreePath(vmNode.getPath()));
                 this.treeMap.put(vmJid, vmNode);
@@ -141,8 +141,8 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
             node.add(new DefaultMutableTreeNode(new TreeNodeProperty("villein_jid", xmppVm.getVilleinJid())));
             node.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", xmppVm.getVmStatus().toString())));
             node.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", xmppVm.getVmSpecies())));
-            node.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", xmppVm.getVmPassword())));
-            node.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", xmppVm.getRunningTimeInSecods() + " seconds")));
+            //node.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", xmppVm.getVmPassword())));
+            //node.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", xmppVm.getRunningTimeInSecods() + " seconds")));
             model.reload(node);
         } else if (node != null && status == LinkedProcess.VmStatus.NOT_FOUND) {
             node.removeAllChildren();

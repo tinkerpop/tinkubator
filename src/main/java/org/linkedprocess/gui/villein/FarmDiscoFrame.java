@@ -13,12 +13,12 @@ import javax.swing.*;
  * Date: Jul 15, 2009
  * Time: 4:09:34 PM
  */
-public class FarmFrame extends JFrame {
+public class FarmDiscoFrame extends JFrame {
 
     protected FarmStruct farmStruct;
     protected VilleinGui villeinGui;
 
-    public FarmFrame(FarmStruct farmStruct, VilleinGui villeinGui) {
+    public FarmDiscoFrame(FarmStruct farmStruct, VilleinGui villeinGui) {
         super(farmStruct.getFullJid());
         this.farmStruct = farmStruct;
         this.villeinGui = villeinGui;

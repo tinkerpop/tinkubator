@@ -1,45 +1,44 @@
 package org.linkedprocess.gui.farm.vmviewer;
 
-import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
-import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
-import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.os.TypedValue;
+import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.event.TableModelListener;
-import javax.swing.event.TableModelEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * User: marko
  * Date: Jul 24, 2009
  * Time: 4:44:14 PM
  */
-public class ViewBindingsPanel  extends JPanel implements ActionListener {
+public class ViewBindingsPanel extends JPanel implements ActionListener, ListSelectionListener {
 
     protected JTable bindingsTable;
     protected XmppVirtualMachine xmppVirtualMachine;
+    protected JTextArea valueTextArea;
     protected int count = 0;
     protected static final String REFRESH = "refresh";
-    protected static final String NULL = "null";
 
 
     public ViewBindingsPanel(XmppVirtualMachine xmppVirtualMachine) {
         super(new BorderLayout());
         this.xmppVirtualMachine = xmppVirtualMachine;
-        this.setOpaque(false);
         DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{LinkedProcess.NAME_ATTRIBUTE, LinkedProcess.VALUE_ATTRIBUTE, LinkedProcess.DATATYPE_ATTRIBUTE, "null"});
-        this.bindingsTable = new JTable(tableModel)  {
+
+        this.bindingsTable = new JTable(tableModel) {
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return false;
             }
         };
-        JScrollPane scrollPane = new JScrollPane(this.bindingsTable);
+        this.bindingsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.bindingsTable.getSelectionModel().addListSelectionListener(this);
         this.bindingsTable.setFillsViewportHeight(true);
         this.bindingsTable.setRowHeight(20);
         this.bindingsTable.setFont(new Font(null, Font.PLAIN, 13));
@@ -52,12 +51,17 @@ public class ViewBindingsPanel  extends JPanel implements ActionListener {
         JButton refreshButton = new JButton(REFRESH);
         buttonPanel.add(refreshButton);
         refreshButton.addActionListener(this);
-        buttonPanel.setOpaque(false);
-        scrollPane.setOpaque(false);
-        JLabel helpLabel = new JLabel("Manage bindings by highlighting particular rows to set and get.");
-        helpLabel.setOpaque(false);
-        this.add(helpLabel, BorderLayout.NORTH);
-        this.add(scrollPane, BorderLayout.CENTER);
+
+        this.valueTextArea = new JTextArea();
+
+        JScrollPane scrollPane1 = new JScrollPane(this.bindingsTable);
+        JScrollPane scrollPane2 = new JScrollPane(this.valueTextArea);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitPane.setDividerLocation(320);
+        splitPane.add(scrollPane1);
+        splitPane.add(scrollPane2);
+
+        this.add(splitPane, BorderLayout.CENTER);
         this.add(buttonPanel, BorderLayout.SOUTH);
 
     }
@@ -74,22 +78,28 @@ public class ViewBindingsPanel  extends JPanel implements ActionListener {
             VMBindings bindings = this.xmppVirtualMachine.getFarm().getVMScheduler().getAllBindings(this.xmppVirtualMachine.getFullJid());
             DefaultTableModel tableModel = (DefaultTableModel) this.bindingsTable.getModel();
             this.clearAllRows();
-            for(String key : bindings.keySet()) {
+            for (String key : bindings.keySet()) {
                 TypedValue typedValue = bindings.getTyped(key);
-                if(typedValue == null) {
-                    tableModel.addRow(new Object[]{key, "","", true});
+                if (typedValue == null) {
+                    tableModel.addRow(new Object[]{key, "", "", true});
 
                 } else {
                     tableModel.addRow(new Object[]{key, typedValue.getValue(), typedValue.getDatatype().abbreviate(), false});
                 }
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    public void valueChanged(ListSelectionEvent event) {
+        ListSelectionModel listModel = (ListSelectionModel) event.getSource();
+        if (this.bindingsTable.getSelectedRow() > -1)
+            this.valueTextArea.setText(this.bindingsTable.getValueAt(listModel.getMinSelectionIndex(), 1).toString());
+    }
+
     public void actionPerformed(ActionEvent event) {
-        if(event.getActionCommand().equals(REFRESH)) {
+        if (event.getActionCommand().equals(REFRESH)) {
             this.refreshBindings();
         }
 

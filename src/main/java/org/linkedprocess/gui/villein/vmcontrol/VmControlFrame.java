@@ -117,11 +117,9 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         jobBindingsTabbedPane.addTab("bindings", this.manageBindingsPanel);
         jobBindingsTabbedPane.addTab("packets", packetSnifferPanel);
 
-
         this.getContentPane().add(jobBindingsTabbedPane);
         this.pack();
-        this.setResizable(false);
-        this.setSize(557, 476);
+        this.setResizable(true);
         this.setVisible(true);
 
 

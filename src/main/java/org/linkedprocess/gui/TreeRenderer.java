@@ -20,8 +20,8 @@ import java.awt.*;
  */
 public class TreeRenderer extends DefaultTreeCellRenderer {
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-        this.setOpaque(false);
-        this.setBackgroundNonSelectionColor(new Color(0, 0, 0, 0));
+        //this.setOpaque(true);
+        //this.setBackgroundNonSelectionColor(new Color(0, 0, 0, 0));
         //this.setBackgroundSelectionColor(new Color(255,255,255,255));
         //this.setTextNonSelectionColor(new Color(255,255,255,255));
 

@@ -5,7 +5,6 @@ import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.LoginArea;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 
-import java.awt.*;
 import java.awt.event.ActionEvent;
 
 /**
@@ -36,12 +35,7 @@ public class VilleinLoginArea extends LoginArea {
                 System.exit(0);
             }
         } catch (XMPPException e) {
-            this.statusLabel.setText("Could not login.");
+            this.statusLabel.setText("Could not login: " + e.getMessage());
         }
-    }
-
-    public void paintComponent(Graphics g) {
-        g.drawImage(backgroundImage, 0, 0, null);
-        super.paintComponent(g);
     }
 }

@@ -112,7 +112,7 @@ public class XMPPSpecificationTest {
                 .getType());
         assertEquals(LinkedProcess.HIGHEST_PRIORITY, ((Presence) sentPackets
                 .get(0)).getPriority());
-        
+
         // now we should have 2 PacketListeners to the Farms XMPP connection
         ArrayList<PacketListener> packetListeners = mockFarmConn.packetListeners;
         assertEquals(2, packetListeners.size());
@@ -124,7 +124,7 @@ public class XMPPSpecificationTest {
 
         assertEquals(Presence.Type.unavailable, ((Presence) sentPackets.get(1))
                 .getType());
-       }
+    }
 
     @Test
     public void sendingASpawnPacketShouldStartASeparateVM() throws Exception {

@@ -29,8 +29,10 @@ public class LinkedProcess {
             PYTHON = "jython",
             RUBY = "jruby";
 
-    public enum ClientType { VM, FARM, VILLEIN }
-    
+    public enum ClientType {
+        VM, FARM, VILLEIN
+    }
+
     // TODO: how about a "queued" status for jobs?
     public enum JobStatus {
         IN_PROGRESS("in_progress");

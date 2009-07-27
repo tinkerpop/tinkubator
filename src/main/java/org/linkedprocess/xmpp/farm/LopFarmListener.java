@@ -1,7 +1,7 @@
 package org.linkedprocess.xmpp.farm;
 
-import org.linkedprocess.xmpp.LopListener;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.LopListener;
 
 /**
  * User: marko

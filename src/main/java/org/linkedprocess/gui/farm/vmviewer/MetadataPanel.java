@@ -24,6 +24,7 @@ public class MetadataPanel extends JPanel implements ActionListener {
         super(new BorderLayout());
         this.xmppVm = xmppVm;
         JPanel metaPanel = new JPanel(new GridBagLayout());
+        metaPanel.setBackground(Color.WHITE);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         GridBagConstraints c = new GridBagConstraints();
 
@@ -49,12 +50,10 @@ public class MetadataPanel extends JPanel implements ActionListener {
         this.timeLabel = new JLabel(this.xmppVm.getRunningTimeInSecods() + " seconds", ImageHolder.timeIcon, JLabel.LEFT);
         metaPanel.add(this.timeLabel, c);
         this.add(metaPanel, BorderLayout.NORTH);
+        this.setBackground(Color.WHITE);
         this.add(buttonPanel, BorderLayout.SOUTH);
 
-        JScrollPane scrollPane = new JScrollPane(this);
-        scrollPane.setOpaque(true);
-        metaPanel.setOpaque(false);
-        this.setOpaque(false);
+
     }
 
     public void actionPerformed(ActionEvent event) {
@@ -64,9 +63,4 @@ public class MetadataPanel extends JPanel implements ActionListener {
         }
     }
 
-
-    public void paintComponent(Graphics g) {
-        g.drawImage(ImageHolder.farmBackground.getImage(), 0, 0, null);
-        super.paintComponent(g);
-    }
 }

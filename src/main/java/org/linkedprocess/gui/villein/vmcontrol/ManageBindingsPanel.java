@@ -9,6 +9,8 @@ import org.linkedprocess.os.errors.InvalidValueException;
 import org.linkedprocess.xmpp.vm.ManageBindings;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -21,10 +23,11 @@ import java.awt.event.ActionListener;
  * Date: Jul 17, 2009
  * Time: 11:57:06 PM
  */
-public class ManageBindingsPanel extends JPanel implements ActionListener, TableModelListener {
+public class ManageBindingsPanel extends JPanel implements ActionListener, TableModelListener, ListSelectionListener {
 
     protected JTable bindingsTable;
     protected VmControlFrame vmControlFrame;
+    protected JTextArea valueTextArea;
     protected int count = 0;
     protected static final String GET = "get";
     protected static final String SET = "set";
@@ -36,11 +39,12 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
     public ManageBindingsPanel(VmControlFrame vmControlFrame) {
         super(new BorderLayout());
         this.vmControlFrame = vmControlFrame;
-        this.setOpaque(false);
+        //this.setOpaque(false);
         DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{LinkedProcess.NAME_ATTRIBUTE, LinkedProcess.VALUE_ATTRIBUTE, LinkedProcess.DATATYPE_ATTRIBUTE, "null"});
         tableModel.addTableModelListener(this);
         this.bindingsTable = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(this.bindingsTable);
+        this.bindingsTable.getSelectionModel().addListSelectionListener(this);
+        this.bindingsTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         this.bindingsTable.setFillsViewportHeight(true);
         this.bindingsTable.setRowHeight(20);
         this.bindingsTable.setFont(new Font(null, Font.PLAIN, 13));
@@ -59,8 +63,6 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
 
         this.bindingsTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(xmlSchemaBox));
         this.bindingsTable.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(nullCheckBox));
-        //this.bindingsTable.getColumnModel().getColumn(2).setCellRenderer(new DefaultTableCellRenderer());
-        //this.bindingsTable.getColumnModel().getColumn(3).setCellRenderer(new DefaultTableCellRenderer());
 
         JPanel buttonPanel = new JPanel(new BorderLayout());
         JPanel leftButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -81,15 +83,19 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
         removeButton.addActionListener(this);
         setButton.addActionListener(this);
         getButton.addActionListener(this);
-        leftButtonPanel.setOpaque(false);
-        rightButtonPanel.setOpaque(false);
-        buttonPanel.setOpaque(false);
-        scrollPane.setOpaque(false);
+
+        this.valueTextArea = new JTextArea();
+
+        JScrollPane scrollPane1 = new JScrollPane(this.bindingsTable);
+        JScrollPane scrollPane2 = new JScrollPane(this.valueTextArea);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitPane.setDividerLocation(320);
+        splitPane.add(scrollPane1);
+        splitPane.add(scrollPane2);
 
         JLabel helpLabel = new JLabel("Manage bindings by highlighting particular rows to set and get.");
-        helpLabel.setOpaque(false);
         this.add(helpLabel, BorderLayout.NORTH);
-        this.add(scrollPane, BorderLayout.CENTER);
+        this.add(splitPane, BorderLayout.CENTER);
         this.add(buttonPanel, BorderLayout.SOUTH);
 
 
@@ -219,8 +225,10 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
         }
     }
 
-    /*public void paintComponent(Graphics g) {
-        g.drawImage(ImageHolder.cowBackground.getImage(), 0, 0, null);
-        super.paintComponent(g);
-    }*/
+    public void valueChanged(ListSelectionEvent event) {
+        ListSelectionModel listModel = (ListSelectionModel) event.getSource();
+        if (this.bindingsTable.getSelectedRow() > -1)
+            this.valueTextArea.setText(this.bindingsTable.getValueAt(listModel.getMinSelectionIndex(), 1).toString());
+    }
+
 }

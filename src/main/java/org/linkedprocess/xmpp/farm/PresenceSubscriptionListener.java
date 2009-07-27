@@ -3,7 +3,6 @@ package org.linkedprocess.xmpp.farm;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
-import org.linkedprocess.xmpp.LopListener;
 
 /**
  * User: marko

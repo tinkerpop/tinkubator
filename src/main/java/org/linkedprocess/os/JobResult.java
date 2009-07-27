@@ -90,20 +90,20 @@ public class JobResult {
         returnSubmitJob.setPacketID(job.getJobId());
 
         if (this.type == ResultType.ABORTED) {
-                returnSubmitJob.setType(IQ.Type.ERROR);
-                returnSubmitJob.setError(new LopXmppError(XMPPError.Condition.not_allowed, LinkedProcess.LopErrorType.JOB_ABORTED, null, LinkedProcess.ClientType.VM));
-                return returnSubmitJob;
-        } else if(this.type == ResultType.ERROR) {
-                returnSubmitJob.setType(IQ.Type.ERROR);
-                returnSubmitJob.setError(new LopXmppError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.EVALUATION_ERROR, exception.getMessage(), LinkedProcess.ClientType.VM));
-                return returnSubmitJob;
-        } else if(this.type == ResultType.NORMAL_RESULT) {
-                returnSubmitJob.setType(IQ.Type.RESULT);
-                returnSubmitJob.setExpression(expression);
-                return returnSubmitJob;
-        } else if(this.type == ResultType.TIMED_OUT) {
-                returnSubmitJob.setType(IQ.Type.ERROR);
-                returnSubmitJob.setError(new LopXmppError(XMPPError.Condition.request_timeout, LinkedProcess.LopErrorType.JOB_TIMED_OUT, "execution of job timed out after " + job.getTimeSpent() + "ms of execution", LinkedProcess.ClientType.VM));
+            returnSubmitJob.setType(IQ.Type.ERROR);
+            returnSubmitJob.setError(new LopXmppError(XMPPError.Condition.not_allowed, LinkedProcess.LopErrorType.JOB_ABORTED, null, LinkedProcess.ClientType.VM));
+            return returnSubmitJob;
+        } else if (this.type == ResultType.ERROR) {
+            returnSubmitJob.setType(IQ.Type.ERROR);
+            returnSubmitJob.setError(new LopXmppError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.EVALUATION_ERROR, exception.getMessage(), LinkedProcess.ClientType.VM));
+            return returnSubmitJob;
+        } else if (this.type == ResultType.NORMAL_RESULT) {
+            returnSubmitJob.setType(IQ.Type.RESULT);
+            returnSubmitJob.setExpression(expression);
+            return returnSubmitJob;
+        } else if (this.type == ResultType.TIMED_OUT) {
+            returnSubmitJob.setType(IQ.Type.ERROR);
+            returnSubmitJob.setError(new LopXmppError(XMPPError.Condition.request_timeout, LinkedProcess.LopErrorType.JOB_TIMED_OUT, "execution of job timed out after " + job.getTimeSpent() + "ms of execution", LinkedProcess.ClientType.VM));
         }
         return returnSubmitJob;
 

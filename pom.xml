@@ -254,18 +254,18 @@
         </repository>
     </repositories>
     <developers>
-    	<developer>
-    		<name>Marko A. Rodriguez</name>
-    		<email>okrammarko@gmail.com</email>
-    	</developer>
-    	<developer>
-    		<name>Joshua Shinavier</name>
-    		<email>parcour@gmail.com</email>
-    	</developer>
-    	<developer>
-    		<name>Peter Neubauer</name>
-    		<email>peter@neubauer.se</email>
-    	</developer>
+        <developer>
+            <name>Marko A. Rodriguez</name>
+            <email>okrammarko@gmail.com</email>
+        </developer>
+        <developer>
+            <name>Joshua Shinavier</name>
+            <email>parcour@gmail.com</email>
+        </developer>
+        <developer>
+            <name>Peter Neubauer</name>
+            <email>peter@neubauer.se</email>
+        </developer>
     </developers>
 
     <build>

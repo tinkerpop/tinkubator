@@ -16,13 +16,12 @@ public class VmViewerFrame extends JFrame {
 
 
     public VmViewerFrame(XmppVirtualMachine xmppVm) {
-        super(xmppVm.getFullJid());
+        super(xmppVm.getResource());
         this.xmppVm = xmppVm;
         JTabbedPane tabbedPane = new JTabbedPane();
 
         PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel(this.xmppVm.getFullJid());
 
-        //PacketFilter fromToFilter = new OrFilter(new FromContainsFilter(xmppVm.getFullJid()), new ToContainsFilter(xmppVm.getFullJid()));
         xmppVm.getConnection().addPacketWriterInterceptor(packetSnifferPanel, null);
         xmppVm.getConnection().addPacketListener(packetSnifferPanel, null);
 
@@ -30,10 +29,8 @@ public class VmViewerFrame extends JFrame {
         tabbedPane.addTab("bindings", new ViewBindingsPanel(this.xmppVm));
         tabbedPane.addTab("packets", packetSnifferPanel);
         this.getContentPane().add(tabbedPane);
-        this.setResizable(false);
+        this.setResizable(true);
         this.pack();
-        //this.setSize(438,448);
-        this.setSize(442, 491);
         this.setVisible(true);
     }
 }

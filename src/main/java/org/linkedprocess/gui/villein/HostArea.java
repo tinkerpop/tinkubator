@@ -54,20 +54,18 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         this.tree.setModel(new DefaultTreeModel(treeRoot));
         this.tree.addMouseListener(this);
         this.tree.setRootVisible(false);
-        this.tree.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
         this.popupMenu = new JPopupMenu();
         this.popupMenu.setBorder(BorderFactory.createLineBorder(ImageHolder.GRAY_COLOR, 2));
 
-        //JScrollPane vmTreeScroll = new JScrollPane(this.tree);
+        JScrollPane vmTreeScroll = new JScrollPane(this.tree);
         JButton shutdownButton = new JButton(SHUTDOWN);
         shutdownButton.addActionListener(this);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         buttonPanel.add(shutdownButton);
         shutdownButton.addActionListener(this);
         JPanel treePanel = new JPanel(new BorderLayout());
-        treePanel.add(this.tree, BorderLayout.CENTER);
+        treePanel.add(vmTreeScroll, BorderLayout.CENTER);
         treePanel.add(buttonPanel, BorderLayout.SOUTH);
-        treePanel.setOpaque(false);
 
         RosterPanel rosterPanel = new RosterPanel(this.villeinGui.getXmppVillein().getRoster());
 
@@ -110,8 +108,8 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         } else if (event.getActionCommand().equals(DISCOVER_FEATURES)) {
             if (this.popupTreeObject instanceof FarmStruct) {
                 FarmStruct farmStruct = (FarmStruct) this.popupTreeObject;
-                FarmFrame farmFrame = new FarmFrame(farmStruct, this.villeinGui);
-                farmFrame.setVisible(true);
+                FarmDiscoFrame farmDiscoFrame = new FarmDiscoFrame(farmStruct, this.villeinGui);
+                farmDiscoFrame.setVisible(true);
             }
         } else if (event.getActionCommand().equals(SHUTDOWN)) {
             this.villeinGui.getXmppVillein().shutDown(null);
@@ -150,10 +148,10 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                         temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", vmStruct.getVmSpecies()));
                         model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
                     }
-                    if (vmStruct.getVmPassword() != null) {
+                    /*if (vmStruct.getVmPassword() != null) {
                         temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", vmStruct.getVmPassword()));
                         model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
-                    }
+                    }*/
                 }
                 model.insertNodeInto(farmNode, hostNode, hostNode.getChildCount());
                 this.tree.scrollPathToVisible(new TreePath(farmNode.getPath()));
@@ -209,10 +207,10 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                         temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", vmStruct.getVmSpecies()));
                         model.insertNodeInto(temp, node, node.getChildCount());
                     }
-                    if (vmStruct.getVmPassword() != null) {
+                    /*if (vmStruct.getVmPassword() != null) {
                         temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", vmStruct.getVmPassword()));
                         model.insertNodeInto(temp, node, node.getChildCount());
-                    }
+                    }*/
                     model.reload(node);
                 }
             }
@@ -262,11 +260,11 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                             model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
                             this.tree.scrollPathToVisible(new TreePath(temp.getPath()));
                         }
-                        if (vmStruct.getVmPassword() != null) {
+                        /*if (vmStruct.getVmPassword() != null) {
                             temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", vmStruct.getVmPassword()));
                             model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
                             this.tree.scrollPathToVisible(new TreePath(temp.getPath()));
-                        }
+                        }*/
 
                         model.insertNodeInto(vmNode, parentNode, parentNode.getChildCount());
                         this.tree.scrollPathToVisible(new TreePath(vmNode.getPath()));
