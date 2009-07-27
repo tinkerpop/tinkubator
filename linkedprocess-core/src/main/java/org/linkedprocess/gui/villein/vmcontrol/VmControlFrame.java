@@ -210,16 +210,6 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
     public VilleinGui getVilleinGui() {
         return this.villeinGui;
     }
-
-
-    public static void main(String[] args) {
-        VmStruct vmStruct = new VmStruct();
-        vmStruct.setFullJid("linked.process.1@xmpp.linkedprocess.org/LoPVM/12345");
-        vmStruct.setVmPassword("PASSWORD");
-        vmStruct.setVmSpecies(LinkedProcess.JAVASCRIPT);
-        new VmControlFrame(vmStruct, null);
-    }
-
 }
 
 

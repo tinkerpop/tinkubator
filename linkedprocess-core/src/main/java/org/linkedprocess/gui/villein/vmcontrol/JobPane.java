@@ -35,8 +35,8 @@ public class JobPane extends JPanel implements ActionListener {
         super(new BorderLayout());
         this.setOpaque(false);
         this.vmControlFrame = vmControlFrame;
-        this.expressionTextArea = new JTextArea(5, 32);
-        this.resultTextArea = new JTextArea(5, 32);
+        this.expressionTextArea = new JTextArea();
+        this.resultTextArea = new JTextArea();
         this.resultTextArea.setEditable(false);
         JScrollPane scrollPane1 = new JScrollPane(this.expressionTextArea);
         JScrollPane scrollPane2 = new JScrollPane(this.resultTextArea);
@@ -61,7 +61,6 @@ public class JobPane extends JPanel implements ActionListener {
         this.add(splitPane, BorderLayout.CENTER);
         this.add(buttonPanel, BorderLayout.SOUTH);
         this.jobId = jobId;
-        //this.setBorder(new LineBorder(ImageHolder.GRAY_COLOR, 2));
     }
 
     public String getJobId() {
@@ -172,10 +171,4 @@ public class JobPane extends JPanel implements ActionListener {
             this.clearButton.setEnabled(false);
         }
     }
-
-    public void paintComponent(Graphics g) {
-        //g.drawImage(ImageHolder.cowBackground.getImage(), 0, 0, null);
-        super.paintComponent(g);
-    }
-
 }

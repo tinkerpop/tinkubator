@@ -29,7 +29,7 @@ import java.util.Set;
 public class HostArea extends JPanel implements ActionListener, MouseListener {
 
     protected VilleinGui villeinGui;
-    protected JTreeImage tree;
+    protected JTree tree;
     protected JPopupMenu popupMenu;
     protected Object popupTreeObject;
     protected DefaultMutableTreeNode treeRoot;
@@ -49,7 +49,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         HostStruct hostStruct = new HostStruct();
         hostStruct.setFullJid(LinkedProcess.generateBareJid(this.villeinGui.getXmppVillein().getFullJid()));
         this.treeRoot = new DefaultMutableTreeNode(hostStruct);
-        this.tree = new JTreeImage(this.treeRoot, ImageHolder.cowBackground);
+        this.tree = new JTree(this.treeRoot);
         this.tree.setCellRenderer(new TreeRenderer());
         this.tree.setModel(new DefaultTreeModel(treeRoot));
         this.tree.addMouseListener(this);

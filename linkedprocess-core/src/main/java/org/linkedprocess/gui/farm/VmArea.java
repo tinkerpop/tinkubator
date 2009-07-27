@@ -26,7 +26,7 @@ import java.util.Map;
 public class VmArea extends JPanel implements ActionListener, MouseListener {
 
     protected FarmGui farmGui;
-    protected JTreeImage tree;
+    protected JTree tree;
     protected JTextArea farmFeaturesText;
     protected DefaultMutableTreeNode treeRoot;
     protected Map<String, DefaultMutableTreeNode> treeMap;
@@ -41,7 +41,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
         HostStruct hostStruct = new HostStruct();
         hostStruct.setFullJid(LinkedProcess.generateBareJid(farmGui.getXmppFarm().getFullJid()));
         this.treeRoot = new DefaultMutableTreeNode(hostStruct);
-        this.tree = new JTreeImage(this.treeRoot, ImageHolder.farmBackground);
+        this.tree = new JTree(this.treeRoot);
         this.tree.setCellRenderer(new TreeRenderer());
         this.tree.setModel(new DefaultTreeModel(treeRoot));
         this.tree.addMouseListener(this);
@@ -50,17 +50,13 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
         JButton shutdownButton = new JButton(SHUTDOWN);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         buttonPanel.add(shutdownButton);
-        //buttonPanel.setOpaque(false);
         shutdownButton.addActionListener(this);
         JPanel treePanel = new JPanel(new BorderLayout());
         treePanel.add(vmTreeScroll, BorderLayout.CENTER);
         treePanel.add(buttonPanel, BorderLayout.SOUTH);
-        //treePanel.setOpaque(false);
 
         //JPanel securityPanel = new JPanel();
         PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel(this.farmGui.getXmppFarm().getFullJid());
-        //packetSnifferPanel.setSize(10,10);
-        //PacketFilter fromToFilter = new OrFilter(new FromContainsFilter(farmGui.getXmppFarm().getFullJid()), new ToContainsFilter(farmGui.getXmppFarm().getFullJid()));
         this.farmGui.getXmppFarm().getConnection().addPacketWriterInterceptor(packetSnifferPanel, null);
         this.farmGui.getXmppFarm().getConnection().addPacketListener(packetSnifferPanel, null);
 
@@ -73,7 +69,6 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
         //tabbedPane.addTab("farm security", securityPanel);
         tabbedPane.addTab("roster", rosterPanel);
         tabbedPane.addTab("packets", packetSnifferPanel);
-
 
         this.add(tabbedPane, BorderLayout.CENTER);
 

@@ -194,6 +194,7 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
                     manageBindings.addBinding(name, null, null);
                 } catch (InvalidValueException e) {
                     // This won't happen because this is a GET
+                    e.printStackTrace();
                     System.exit(1);
                 }
             }
