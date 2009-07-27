@@ -110,4 +110,12 @@ public class ScriptEngineTest extends TestCase {
         //JRubyScriptEngine je = new JRubyScriptEngine();
 
     }
+
+    public void testGroovy() throws Exception {
+        ScriptEngineManager manager = LinkedProcess.createScriptEngineManager();
+        ScriptEngine engine = manager.getEngineByName(LinkedProcess.GROOVY);
+        System.out.println("" + engine.getClass());
+        assertNotNull(engine);
+        assertEquals("42", engine.eval("42").toString());
+    }
 }

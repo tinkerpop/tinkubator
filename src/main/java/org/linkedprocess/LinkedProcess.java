@@ -2,7 +2,6 @@ package org.linkedprocess;
 
 import org.jdom.Document;
 import org.jdom.JDOMException;
-import org.jdom.Text;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
@@ -25,6 +24,7 @@ import java.util.logging.Logger;
  */
 public class LinkedProcess {
     public static final String
+            GROOVY = "groovy",
             JAVASCRIPT = "JavaScript",
             PYTHON = "jython",
             RUBY = "jruby";
