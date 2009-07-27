@@ -3,6 +3,7 @@ package org.linkedprocess.gui.villein;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
+import org.linkedprocess.xmpp.villein.Struct;
 
 /**
  * User: marko
@@ -22,10 +23,8 @@ public class PresenceListener implements PacketListener {
 
         if (presence.getType() == Presence.Type.unavailable || presence.getType() == Presence.Type.unsubscribe || presence.getType() == Presence.Type.unsubscribed) {
             this.villeinGui.updateHostAreaTree(packet.getFrom(), true);
-        } else if (presence.getType() == Presence.Type.error) {
-            if (presence.getError().getCode() == 404) {
-                this.villeinGui.updateHostAreaTree(packet.getFrom(), true);
-            }
+        } else if (presence.getType() == Presence.Type.error && presence.getError().getCode() == 404) {
+            this.villeinGui.updateHostAreaTree(packet.getFrom(), true);
         } else {
             this.villeinGui.updateHostAreaTree(packet.getFrom(), false);
         }

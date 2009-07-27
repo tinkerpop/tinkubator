@@ -22,6 +22,8 @@ public class SpawnVmListener implements PacketListener {
         SpawnVm spawnVm = (SpawnVm) packet;
         if (spawnVm.getType() == IQ.Type.ERROR) {
             villeinGui.updateHostAreaTree(spawnVm.getVmJid(), true);
+        } else {
+            villeinGui.updateHostAreaTree(spawnVm.getVmJid(), false);
         }
     }
 
