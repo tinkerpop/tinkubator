@@ -11,7 +11,8 @@ public class ScriptEngineClassLoader extends ClassLoader {
     private static final Logger LOGGER = LinkedProcess.getLogger(ScriptEngineClassLoader.class);
 
     public ScriptEngineClassLoader() {
-        super(ScriptEngineClassLoader.class.getClassLoader());
+        //super(ScriptEngineClassLoader.class.getClassLoader());
+        //*
         try {
             loadClass("com.sun.phobos.script.javascript.RhinoScriptEngineFactory");
             loadClass("com.sun.script.jython.JythonScriptEngineFactory");
@@ -19,6 +20,6 @@ public class ScriptEngineClassLoader extends ClassLoader {
         } catch (ClassNotFoundException e) {
             LOGGER.severe("failed to load script engine factory classes: " + e);
             System.exit(1);
-        }
+        }         //*/
     }
 }

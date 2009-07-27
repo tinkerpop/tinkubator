@@ -29,6 +29,7 @@ public class ScriptEngineTest extends TestCase {
             String langName = factory.getLanguageName();
             String langVersion = factory.getLanguageVersion();
             System.out.printf("\tScript Engine: %s (%s)\n", engName, engVersion);
+            System.out.println("\tfactory class: " + factory.getClass());
             List<String> engNames = factory.getNames();
             for (String name : engNames) {
                 System.out.printf("\tEngine Alias: %s\n", name);
@@ -41,8 +42,8 @@ public class ScriptEngineTest extends TestCase {
         Class c = ScriptEngineFactory.class;
         for (Class c2 : c.getClasses()) {
             System.out.println("class: " + c2);
-
         }
+
         for (Class c2 : c.getDeclaredClasses()) {
             System.out.println("declared class: " + c2);
         }

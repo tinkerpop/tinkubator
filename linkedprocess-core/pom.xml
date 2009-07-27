@@ -239,19 +239,12 @@
         <repository>
             <id>aduna-repo</id>
             <name>Aduna repository</name>
-            <url>http://repo.aduna-software.org/maven2/releases
-            </url>
+            <url>http://repo.aduna-software.org/maven2/releases</url>
         </repository>
         <repository>
             <id>powermock-repo</id>
-            <url>http://powermock.googlecode.com/svn/repo/
-            </url>
+            <url>http://powermock.googlecode.com/svn/repo/</url>
         </repository>
-        <!--<repository>
-            <id>it.su.se</id>
-            <name>it.su.se Maven repository (for smackx-debug)</name>
-            <url>http://maven.it.su.se/it.su.se/maven2</url>
-        </repository>-->
         <repository>
             <id>fortytwo</id>
             <name>fortytwo.net Maven repository</name>

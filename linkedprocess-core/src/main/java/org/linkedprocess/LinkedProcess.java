@@ -224,7 +224,7 @@ public class LinkedProcess {
     public static final XMLOutputter xmlOut = new XMLOutputter();
 
     // Singleton ScriptEngineManager, subject to the pre-loading hack.
-    private static ScriptEngineManager createScriptEngineManager;
+    private static ScriptEngineManager scriptEngineManager;
 
     static {
         LOGGER = getLogger(LinkedProcess.class);
@@ -272,7 +272,7 @@ public class LinkedProcess {
 
                     // Avoid ClassNotFoundException for inner class
                     if (VMWorker.Status.ACTIVE_INPROGRESS.toString().equals("")) {
-                        // Do nothing.  The point was to load VMWorker.Status.
+                        // Do nothing.  The point was to simply to load VMWorker.Status.
                     }
 
                     //VMWorker w = new VMWorker(engine, nullHandler);
@@ -298,12 +298,14 @@ public class LinkedProcess {
     }
 
     public static ScriptEngineManager createScriptEngineManager() {
-        if (null == createScriptEngineManager) {
+        if (null == scriptEngineManager) {
             ClassLoader loader = new ScriptEngineClassLoader();
-            createScriptEngineManager = new ScriptEngineManager(loader);
+            scriptEngineManager = new ScriptEngineManager(loader);
+            //scriptEngineManager = new ScriptEngineManager();
+            //scriptEngineManager.getEngineFactories().
         }
 
-        return createScriptEngineManager;
+        return scriptEngineManager;
     }
 
     public static void main(final String[] args) throws Exception {
