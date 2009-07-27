@@ -56,12 +56,12 @@ public class JobPane extends JPanel implements ActionListener {
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.add(scrollPane1);
         splitPane.add(scrollPane2);
-        splitPane.setDividerLocation(183);
+        splitPane.setDividerLocation(250);
         splitPane.setOpaque(false);
         this.add(splitPane, BorderLayout.CENTER);
         this.add(buttonPanel, BorderLayout.SOUTH);
         this.jobId = jobId;
-        this.setBorder(new LineBorder(ImageHolder.GRAY_COLOR, 2));
+        //this.setBorder(new LineBorder(ImageHolder.GRAY_COLOR, 2));
     }
 
     public String getJobId() {
