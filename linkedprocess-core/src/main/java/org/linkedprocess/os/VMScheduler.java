@@ -34,7 +34,7 @@ public class VMScheduler {
     private static final long SCHEDULER_CLEANUP_INTERVAL;
 
     static {
-        Properties props = LinkedProcess.getProperties();
+        Properties props = LinkedProcess.getConfiguration();
 
         MAX_VM = new Integer(props.getProperty(
                 LinkedProcess.MAX_VIRTUAL_MACHINES_PER_SCHEDULER));
@@ -69,7 +69,7 @@ public class VMScheduler {
         this.resultHandler = new ResultCounter(resultHandler);
         this.eventHandler = eventHandler;
 
-        Properties props = LinkedProcess.getProperties();
+        Properties props = LinkedProcess.getConfiguration();
 
         long timeSlice = new Long(props.getProperty(
                 LinkedProcess.ROUND_ROBIN_TIME_SLICE));
@@ -195,7 +195,7 @@ public class VMScheduler {
         ScriptEngine engine = null;
         String l = language.toLowerCase();
         for (ScriptEngineFactory f : LinkedProcess.getSupportedScriptEngineFactories()) {
-            if (f.getLanguageName().toLowerCase().equals(language)) {
+            if (f.getLanguageName().toLowerCase().equals(l)) {
                 engine = f.getScriptEngine();
                 break;
             }

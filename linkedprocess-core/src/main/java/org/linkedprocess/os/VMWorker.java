@@ -92,10 +92,10 @@ public class VMWorker {
         this.scriptEngine = scriptEngine;
         this.resultHandler = resultHandler;
 
-        maxTimeSpentPerJob = new Long(LinkedProcess.getProperties().getProperty(
+        maxTimeSpentPerJob = new Long(LinkedProcess.getConfiguration().getProperty(
                 LinkedProcess.MAX_TIME_SPENT_PER_JOB));
 
-        int capacity = new Integer(LinkedProcess.getProperties().getProperty(
+        int capacity = new Integer(LinkedProcess.getConfiguration().getProperty(
                 LinkedProcess.MESSAGE_QUEUE_CAPACITY));
         jobQueue = new LinkedBlockingQueue<Job>(capacity);
 

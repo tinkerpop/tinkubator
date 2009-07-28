@@ -133,7 +133,6 @@ public class LinkedProcess {
         }
     }
 
-
     public static String getBareClassName(Class aClass) {
         String name = aClass.getName();
         if (name.contains(".")) {
@@ -216,7 +215,13 @@ public class LinkedProcess {
     public static final int LOWEST_PRIORITY = -128;
     public static final int HIGHEST_PRIORITY = 127;
 
+    // Configuration properties
     public static final String
+            CONFIGURATION_PROPERTIES = "org.linkedprocess.configurationProperties",
+            FARM_SERVER = "org.linkedprocess.farmServer",
+            FARM_PORT = "org.linkedprocess.farmPort",
+            FARM_USERNAME = "org.linkedprocess.farmUserName",
+            FARM_PASSWORD = "org.linkedprocess.farmPassword",
             MAX_CONCURRENT_WORKER_THREADS = "org.linkedprocess.maxConcurrentWorkerThreads",
             MAX_TIME_SPENT_PER_JOB = "org.linkedprocess.maxTimeSpentPerJob",
             MAX_VIRTUAL_MACHINES_PER_SCHEDULER = "org.linkedprocess.maxVirtualMachinesPerScheduler",
@@ -227,8 +232,7 @@ public class LinkedProcess {
 
     private static final Properties PROPERTIES = new Properties();
     private static final Logger LOGGER;
-    private static final String LOP_PROPERTIES = "lop.properties";
-    public static final String SECURITYDEFAULT_PROPERTIES = "security-default.properties";
+    private static final String LOP_DEFAULT_PROPERTIES = "lop-default.properties";
     public static final XMLOutputter xmlOut = new XMLOutputter();
 
     // Singleton ScriptEngineManager, subject to the pre-loading hack.
@@ -239,21 +243,19 @@ public class LinkedProcess {
 
     static {
         LOGGER = getLogger(LinkedProcess.class);
+        String file = System.getProperty(CONFIGURATION_PROPERTIES);
+        if (null == file) {
+            file = LOP_DEFAULT_PROPERTIES;
+        }
         try {
-            PROPERTIES.load(LinkedProcess.class.getResourceAsStream(LOP_PROPERTIES));
+            PROPERTIES.load(LinkedProcess.class.getResourceAsStream(file));
         } catch (IOException e) {
-            LOGGER.severe("unable to load properties file " + LOP_PROPERTIES);
+            LOGGER.severe("unable to load properties file " + file);
             System.exit(1);
         }
 
         // Necessary for sandboxing of VM threads.
-        Properties p = new Properties();
-        try {
-            p.load(VMSecurityManager.class.getResourceAsStream(SECURITYDEFAULT_PROPERTIES));
-        } catch (IOException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-        System.setSecurityManager(new VMSecurityManager(p));
+        System.setSecurityManager(new VMSecurityManager(PROPERTIES));
 
         preLoadingHack();
     }
@@ -267,9 +269,13 @@ public class LinkedProcess {
         new JobResult(null, (String) null);
 
         // Hack to pre-load Rhino and Jython resource bundles.  This will have to be extended.
-        ScriptEngineManager m = getScriptEngineManager();
-        for (String name : new String[]{JAVASCRIPT, PYTHON, RUBY, GROOVY}) {
-            ScriptEngine engine = m.getEngineByName(name);
+        for (ScriptEngineFactory f : LinkedProcess.getSupportedScriptEngineFactories()) {
+            // Avoid ClassNotFoundException for inner class
+            if (VMWorker.Status.ACTIVE_INPROGRESS.toString().equals("")) {
+                // Do nothing.  The point was to simply to load VMWorker.Status.
+            }
+
+            ScriptEngine engine = f.getScriptEngine();
             for (String expr : new String[]{
                     "1 + 1;",
                     "1 ... 1;",
@@ -280,12 +286,6 @@ public class LinkedProcess {
                     "function write(var s) {result = s;}",
                     "42"}) {
                 try {
-
-                    // Avoid ClassNotFoundException for inner class
-                    if (VMWorker.Status.ACTIVE_INPROGRESS.toString().equals("")) {
-                        // Do nothing.  The point was to simply to load VMWorker.Status.
-                    }
-
                     //VMWorker w = new VMWorker(engine, nullHandler);
                     //Job j = new Job(null, null, null, "42");
                     //w.addJob(j);
@@ -293,7 +293,7 @@ public class LinkedProcess {
                     //w.terminate();
 
                     engine.eval(expr);
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     // Do nothing.
                 }
             }
@@ -304,7 +304,7 @@ public class LinkedProcess {
         return Logger.getLogger(c.getName());
     }
 
-    public static Properties getProperties() {
+    public static Properties getConfiguration() {
         return PROPERTIES;
     }
 
@@ -322,7 +322,7 @@ public class LinkedProcess {
         if (null == supportedScriptEngineFactories) {
             Set<String> classNames = new HashSet<String>();
             for (Object key : PROPERTIES.keySet()) {
-                if (key.toString().startsWith("org.linkedprocess.supportedScriptEngineFactory_")) {
+                if (key.toString().startsWith("org.linkedprocess.supportedScriptEngineFactory")) {
                     classNames.add(PROPERTIES.get(key).toString().trim());
                 }
             }

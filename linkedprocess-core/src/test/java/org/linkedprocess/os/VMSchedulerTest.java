@@ -30,7 +30,7 @@ public class VMSchedulerTest extends TestCase {
         // Note: calling a LinkedProcess method simply ensures that its static initializer (part of whose job is
         //       to pre-load classes for scheduler threads) has already executed.
 
-        LinkedProcess.getProperties();
+        LinkedProcess.getConfiguration();
         resultsByID.clear();
         farmStatusEvents.clear();
         vmStatusEventTypes.clear();

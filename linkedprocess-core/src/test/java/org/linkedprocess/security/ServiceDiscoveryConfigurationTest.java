@@ -14,8 +14,7 @@ import java.util.Properties;
 public class ServiceDiscoveryConfigurationTest extends TestCase {
 
     public void testAll() throws Exception {
-        Properties p = new Properties();
-        p.load(VMSecurityManager.class.getResourceAsStream(LinkedProcess.SECURITYDEFAULT_PROPERTIES));
+        Properties p = LinkedProcess.getConfiguration();
         p.setProperty("org.linkedprocess.security.read", "true");
 
         VMSecurityManager m = new VMSecurityManager(p);

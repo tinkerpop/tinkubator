@@ -16,7 +16,6 @@ public class FarmStruct extends Struct {
         return vmStructs.get(vmJid);
     }
 
-
     public void addVmStruct(VmStruct vmStruct) {
         this.vmStructs.put(vmStruct.getFullJid(), vmStruct);
     }

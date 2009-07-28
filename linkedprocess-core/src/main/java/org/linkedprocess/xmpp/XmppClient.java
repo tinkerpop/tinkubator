@@ -75,7 +75,7 @@ public abstract class XmppClient {
         this.roster = this.connection.getRoster();
     }
 
-    public void logout(Presence logoutPresence) {
+    protected void logout(Presence logoutPresence) {
         LOGGER.info("Disconnecting from " + connection.getHost());
         if (logoutPresence == null)
             connection.disconnect();

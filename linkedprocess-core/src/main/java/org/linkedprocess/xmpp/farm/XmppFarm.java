@@ -26,13 +26,13 @@ import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 import javax.script.ScriptEngineFactory;
-import javax.script.ScriptEngineManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -85,7 +85,7 @@ public class XmppFarm extends XmppClient {
         this.connection.addPacketListener(new PresenceSubscriptionListener(this), subscribeFilter);
     }
 
-    public void logon(String server, int port, String username, String password) throws XMPPException {
+    private void logon(String server, int port, String username, String password) throws XMPPException {
         super.logon(server, port, username, password, RESOURCE_PREFIX);
     }
 
@@ -150,6 +150,7 @@ public class XmppFarm extends XmppClient {
     }
 
     public void shutDown() {
+        LOGGER.info("shutting down XmppFarm");
 
         this.vmScheduler.shutDown();
         try {
@@ -173,7 +174,6 @@ public class XmppFarm extends XmppClient {
 
         this.serviceExtension = new DataForm(Form.TYPE_RESULT);
 
-        ScriptEngineManager manager = LinkedProcess.getScriptEngineManager();
         FormField field = new FormField("vm_species");
         field.setRequired(true);
         field.setLabel("supported virtual machine species");
@@ -183,7 +183,13 @@ public class XmppFarm extends XmppClient {
             String langName = factory.getLanguageName();
             String langVersion = factory.getLanguageVersion();
             String engName = factory.getEngineName();
-            String engVersion = factory.getEngineVersion();
+            String engVersion;
+            try {
+                engVersion = factory.getEngineVersion();
+            } catch (java.lang.NoClassDefFoundError e) {
+                // FIXME: temporary kludge for a Groovy dependency issue.
+                engVersion = "?";
+            }
 
             String value = langName.toLowerCase();
             String label = langName + " " + langVersion + " (" + engName + " " + engVersion + ")";
@@ -201,7 +207,6 @@ public class XmppFarm extends XmppClient {
         SystemInfo.addFields(this.serviceExtension);
 
         discoManager.setExtendedInfo(this.serviceExtension);
-
     }
 
     public void setStatusEventHandler(VMScheduler.LopStatusEventHandler statusHandler) {
@@ -210,5 +215,29 @@ public class XmppFarm extends XmppClient {
 
     public String getFarmPassword() {
         return this.farmPassword;
+    }
+
+    public static void main(final String[] args) throws Exception {
+        Properties props = LinkedProcess.getConfiguration();
+        String server = props.getProperty(LinkedProcess.FARM_SERVER);
+        int port = Integer.valueOf(props.getProperty(LinkedProcess.FARM_PORT));
+        String userName = props.getProperty(LinkedProcess.FARM_USERNAME);
+        String password = props.getProperty(LinkedProcess.FARM_PASSWORD);
+
+        XmppFarm farm = new XmppFarm(server, port, userName, password);
+        StatusEventHandler h = new StatusEventHandler(farm);
+        farm.setStatusEventHandler(h);
+
+        Object o = "";
+        try {
+            synchronized (o) {
+                // Never break out until the process is killed.
+                while (true) {
+                    o.wait();
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 }
