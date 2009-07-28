@@ -211,6 +211,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                         temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", vmStruct.getVmPassword()));
                         model.insertNodeInto(temp, node, node.getChildCount());
                     }*/
+                    this.tree.scrollPathToVisible(new TreePath(node.getPath()));
                     model.reload(node);
                 }
             }

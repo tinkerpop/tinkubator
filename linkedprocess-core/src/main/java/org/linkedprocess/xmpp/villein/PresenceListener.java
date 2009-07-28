@@ -42,37 +42,42 @@ public class PresenceListener implements PacketListener {
             return;
         }
 
-        DiscoverInfo discoInfo = this.getDiscoInfo(packet.getFrom());
+        //Struct struct = xmppVillein.getStruct(packet.getFrom());
+        //if(null != struct && (struct instanceof HostStruct || struct instanceof FarmStruct || struct instanceof VmStruct)) {
+        //    struct.setPresence(presence);
+        //} else {
+            DiscoverInfo discoInfo = this.getDiscoInfo(packet.getFrom());
+    
+            if (LinkedProcess.isBareJid(packet.getFrom())) {
+                Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom(), XmppVillein.StructType.HOST);
+                if (checkStruct == null) {
+                    HostStruct hostStruct = new HostStruct();
+                    hostStruct.setFullJid(packet.getFrom());
+                    hostStruct.setPresence(presence);
+                    this.xmppVillein.addHostStruct(hostStruct);
+                } else {
+                    checkStruct.setPresence(presence);
+                }
+            } else if (isFarm(discoInfo)) {
+                Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom(), XmppVillein.StructType.FARM);
+                if (checkStruct == null) {
+                    FarmStruct farmStruct = new FarmStruct();
+                    farmStruct.setFullJid(packet.getFrom());
+                    farmStruct.setPresence(presence);
+                    farmStruct.setSupportedVmSpecies(this.getSupportedVmSpecies(discoInfo));
+                    this.xmppVillein.addFarmStruct(farmStruct);
+                } else {
+                    checkStruct.setPresence(presence);
+                }
 
-        if (LinkedProcess.isBareJid(packet.getFrom())) {
-            Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom(), XmppVillein.StructType.HOST);
-            if (checkStruct == null) {
-                HostStruct hostStruct = new HostStruct();
-                hostStruct.setFullJid(packet.getFrom());
-                hostStruct.setPresence(presence);
-                this.xmppVillein.addHostStruct(hostStruct);
             } else {
-                checkStruct.setPresence(presence);
+                // ONLY REPRESENT THOSE VMS THAT YOU HAVE SPAWNEDs
+                Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom());
+                if (checkStruct != null) {
+                    checkStruct.setPresence(presence);
+                }
             }
-        } else if (isFarm(discoInfo)) {
-            Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom(), XmppVillein.StructType.FARM);
-            if (checkStruct == null) {
-                FarmStruct farmStruct = new FarmStruct();
-                farmStruct.setFullJid(packet.getFrom());
-                farmStruct.setPresence(presence);
-                farmStruct.setSupportedVmSpecies(this.getSupportedVmSpecies(discoInfo));
-                this.xmppVillein.addFarmStruct(farmStruct);
-            } else {
-                checkStruct.setPresence(presence);
-            }
-
-        } else {
-            // ONLY REPRESENT THOSE VMS THAT YOU HAVE SPAWNEDs
-            Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom());
-            if (checkStruct != null) {
-                checkStruct.setPresence(presence);
-            }
-        }
+        //}
     }
 
     protected boolean isFarm(DiscoverInfo discoInfo) {

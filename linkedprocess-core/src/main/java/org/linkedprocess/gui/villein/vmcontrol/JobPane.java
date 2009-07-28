@@ -161,7 +161,7 @@ public class JobPane extends JPanel implements ActionListener {
             submitJobButton.setText(ABORT_JOB);
             submitJobButton.setActionCommand(ABORT_JOB);
             clearButton.setEnabled(false);
-            expressionTextArea.setEnabled(false);
+            expressionTextArea.setEditable(false);
         } else if (event.getActionCommand().equals(CLEAR)) {
             this.expressionTextArea.setText("");
         } else if (event.getActionCommand().equals(ABORT_JOB)) {
