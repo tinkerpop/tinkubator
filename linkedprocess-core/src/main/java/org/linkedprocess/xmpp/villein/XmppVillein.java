@@ -145,7 +145,7 @@ public class XmppVillein extends XmppClient {
 
     public void addFarmStruct(FarmStruct farmStruct) {
         Struct hostStruct = this.getStruct(LinkedProcess.generateBareJid(farmStruct.getFullJid()), StructType.HOST);
-        if (hostStruct != null)
+        if (hostStruct != null && hostStruct instanceof HostStruct)
             ((HostStruct) hostStruct).addFarmStruct(farmStruct);
         else
             LOGGER.severe("host struct null for " + farmStruct.getFullJid());
@@ -153,7 +153,7 @@ public class XmppVillein extends XmppClient {
 
     public void addVmStruct(String farmJid, VmStruct vmStruct) {
         Struct farmStruct = this.getStruct(farmJid, StructType.FARM);
-        if (farmStruct != null) {
+        if (farmStruct != null && farmStruct instanceof FarmStruct) {
             ((FarmStruct) farmStruct).addVmStruct(vmStruct);
         } else {
             LOGGER.severe("farm struct null for " + vmStruct.getFullJid());
@@ -164,6 +164,7 @@ public class XmppVillein extends XmppClient {
     public void spawnVirtualMachine(String farmJid, String vmSpecies) {
         SpawnVm spawn = new SpawnVm();
         spawn.setTo(farmJid);
+        spawn.setFrom(this.getFullJid());
         spawn.setVmSpecies(vmSpecies);
         spawn.setType(IQ.Type.GET);
         this.connection.sendPacket(spawn);
@@ -172,6 +173,7 @@ public class XmppVillein extends XmppClient {
     public void terminateVirtualMachine(VmStruct vmStruct) {
         TerminateVm terminate = new TerminateVm();
         terminate.setTo(vmStruct.getFullJid());
+        terminate.setFrom(this.getFullJid());
         terminate.setVmPassword(vmStruct.getVmPassword());
         terminate.setType(IQ.Type.GET);
         this.connection.sendPacket(terminate);

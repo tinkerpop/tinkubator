@@ -105,12 +105,8 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
 
         PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel(this.villeinGui.getXmppVillein().getFullJid());
         PacketFilter fromToFilter = new OrFilter(new FromContainsFilter(vmStruct.getFullJid()), new ToContainsFilter(vmStruct.getFullJid()));
-        try {
-            this.villeinGui.getXmppVillein().getConnection().addPacketWriterInterceptor(packetSnifferPanel, fromToFilter);
-            this.villeinGui.getXmppVillein().getConnection().addPacketListener(packetSnifferPanel, fromToFilter);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
+        this.villeinGui.getXmppVillein().getConnection().addPacketListener(packetSnifferPanel, fromToFilter);
+        this.villeinGui.getXmppVillein().getConnection().addPacketWriterInterceptor(packetSnifferPanel, fromToFilter);    
 
         JTabbedPane jobBindingsTabbedPane = new JTabbedPane();
         jobBindingsTabbedPane.addTab("jobs", this.splitPane);

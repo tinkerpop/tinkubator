@@ -68,10 +68,14 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         treePanel.add(buttonPanel, BorderLayout.SOUTH);
 
         RosterPanel rosterPanel = new RosterPanel(this.villeinGui.getXmppVillein().getRoster());
+        PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel(this.villeinGui.getXmppVillein().getFullJid());
+        this.villeinGui.getXmppVillein().getConnection().addPacketListener(packetSnifferPanel, null);
+        this.villeinGui.getXmppVillein().getConnection().addPacketWriterInterceptor(packetSnifferPanel, null);
 
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("hosts", treePanel);
         tabbedPane.addTab("roster", rosterPanel);
+        tabbedPane.addTab("packets", packetSnifferPanel);
 
         this.add(tabbedPane, BorderLayout.CENTER);
 

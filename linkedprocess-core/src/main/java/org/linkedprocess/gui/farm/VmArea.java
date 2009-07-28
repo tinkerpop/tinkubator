@@ -57,8 +57,9 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
 
         //JPanel securityPanel = new JPanel();
         PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel(this.farmGui.getXmppFarm().getFullJid());
-        this.farmGui.getXmppFarm().getConnection().addPacketWriterInterceptor(packetSnifferPanel, null);
         this.farmGui.getXmppFarm().getConnection().addPacketListener(packetSnifferPanel, null);
+        this.farmGui.getXmppFarm().getConnection().addPacketWriterInterceptor(packetSnifferPanel, null);
+
 
         RosterPanel rosterPanel = new RosterPanel(this.farmGui.getXmppFarm().getRoster());
 

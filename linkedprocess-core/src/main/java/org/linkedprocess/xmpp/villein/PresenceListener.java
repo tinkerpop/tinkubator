@@ -50,6 +50,7 @@ public class PresenceListener implements PacketListener {
             DiscoverInfo discoInfo = this.getDiscoInfo(packet.getFrom());
     
             if (LinkedProcess.isBareJid(packet.getFrom())) {
+                //System.out.println("Bare Jid " + packet.getFrom());
                 Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom(), XmppVillein.StructType.HOST);
                 if (checkStruct == null) {
                     HostStruct hostStruct = new HostStruct();
@@ -60,6 +61,7 @@ public class PresenceListener implements PacketListener {
                     checkStruct.setPresence(presence);
                 }
             } else if (isFarm(discoInfo)) {
+                //System.out.println("Farm Jid " + packet.getFrom());
                 Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom(), XmppVillein.StructType.FARM);
                 if (checkStruct == null) {
                     FarmStruct farmStruct = new FarmStruct();
@@ -73,8 +75,10 @@ public class PresenceListener implements PacketListener {
 
             } else {
                 // ONLY REPRESENT THOSE VMS THAT YOU HAVE SPAWNEDs
+                //System.out.println("Vm Jid " + packet.getFrom());
                 Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom());
                 if (checkStruct != null) {
+                    //System.out.println("DOES NOT EQUAL NULL");
                     checkStruct.setPresence(presence);
                 }
             }
@@ -94,9 +98,9 @@ public class PresenceListener implements PacketListener {
             try {
                 Document doc = LinkedProcess.createXMLDocument(discoInfo.toXML());
                 Element queryElement = doc.getRootElement().getChild("query", Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
-                Element xElement = queryElement.getChild("x", Namespace.getNamespace(LinkedProcess.X_NAMESPACE));
+                Element xElement = queryElement.getChild(LinkedProcess.X_TAG, Namespace.getNamespace(LinkedProcess.X_NAMESPACE));
                 for (Element field : (List<Element>) xElement.getChildren()) {
-                    if (field.getAttributeValue("var").equals("vm_species")) {
+                    if (field.getAttributeValue("var").equals(LinkedProcess.VM_SPECIES_ATTRIBUTE)) {
                         for (Element option : (List<Element>) field.getChildren("option", Namespace.getNamespace(LinkedProcess.X_NAMESPACE))) {
                             Element value = option.getChild("value", Namespace.getNamespace(LinkedProcess.X_NAMESPACE));
                             if (value != null) {

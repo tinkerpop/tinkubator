@@ -210,6 +210,7 @@ public abstract class XmppClient {
 
     public void probeJid(String jid) {
         ProbePresence probe = new ProbePresence();
+        probe.setFrom(this.getFullJid());
         probe.setTo(jid);
         this.connection.sendPacket(probe);
     }

@@ -29,13 +29,15 @@ public class SpawnVmListener implements PacketListener {
 
     public void processSpawnVmPacket(SpawnVm spawnVm) {
 
-        String farmJid = spawnVm.getFrom();
+        XmppVillein.LOGGER.info("Arrived " + SpawnVmListener.class.getName());
+        XmppVillein.LOGGER.info(spawnVm.toXML());
+
         if (spawnVm.getType() == IQ.Type.RESULT) {
             VmStruct vmStruct = new VmStruct();
             vmStruct.setFullJid(spawnVm.getVmJid());
             vmStruct.setVmPassword(spawnVm.getVmPassword());
             vmStruct.setVmSpecies(spawnVm.getVmSpecies());
-            xmppVillein.addVmStruct(farmJid, vmStruct);
+            xmppVillein.addVmStruct(spawnVm.getFrom(), vmStruct);
         } else {
             XmppVillein.LOGGER.severe("Error: " + spawnVm.getError().toXML());
         }

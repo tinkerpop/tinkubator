@@ -92,7 +92,7 @@ public class LopXmppError extends XMPPError {
         errorElement.addContent(lopElement);
         if (this.getMessage() != null) {
             Element textElement = new Element(LinkedProcess.TEXT_TAG, Namespace.getNamespace(LinkedProcess.XMPP_STANZAS_NAMESPACE));
-            textElement.setText(this.getMessage().replaceAll("<", "").replaceAll(">", ""));
+            textElement.setText(this.getMessage().replaceAll("<", "").replaceAll(">", "").replaceAll("&", ""));
             errorElement.addContent(textElement);
         }
         return LinkedProcess.xmlOut.outputString(errorElement);
