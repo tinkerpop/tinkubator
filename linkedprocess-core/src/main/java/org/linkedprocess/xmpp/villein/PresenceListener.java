@@ -11,9 +11,10 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * User: marko
@@ -87,9 +88,9 @@ public class PresenceListener implements PacketListener {
             return false;
     }
 
-    protected Set<String> getSupportedVmSpecies(DiscoverInfo discoInfo) {
+    protected Collection<String> getSupportedVmSpecies(DiscoverInfo discoInfo) {
         if (discoInfo != null) {
-            Set<String> supportedVmSpecies = new HashSet<String>();
+            List<String> supportedVmSpecies = new LinkedList<String>();
             try {
                 Document doc = LinkedProcess.createXMLDocument(discoInfo.toXML());
                 Element queryElement = doc.getRootElement().getChild("query", Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));

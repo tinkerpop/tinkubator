@@ -85,7 +85,6 @@ public class VilleinGui extends JFrame {
         VmControlFrame vmControlFrame = this.vmFrames.remove(vmStruct.getFullJid());
         if (vmControlFrame != null) {
             vmControlFrame.setVisible(false);
-            vmControlFrame = null;
         }
     }
 

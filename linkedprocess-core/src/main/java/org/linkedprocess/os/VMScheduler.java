@@ -1,11 +1,23 @@
 package org.linkedprocess.os;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.errors.*;
+import org.linkedprocess.os.errors.JobAlreadyExistsException;
+import org.linkedprocess.os.errors.JobNotFoundException;
+import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
+import org.linkedprocess.os.errors.VMAlreadyExistsException;
+import org.linkedprocess.os.errors.VMSchedulerIsFullException;
+import org.linkedprocess.os.errors.VMWorkerIsFullException;
+import org.linkedprocess.os.errors.VMWorkerNotFoundException;
 
 import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -77,7 +89,7 @@ public class VMScheduler {
 
         setSchedulerStatus(LinkedProcess.FarmStatus.ACTIVE);
 
-        manager = LinkedProcess.createScriptEngineManager();
+        manager = LinkedProcess.getScriptEngineManager();
     }
 
     public synchronized void setStatusEventHandler(LopStatusEventHandler statusHandler) {
@@ -146,7 +158,7 @@ public class VMScheduler {
      * Creates a new virtual machine.
      *
      * @param machineJID the intended JID of the virtual machine
-     * @param scriptType the type of virtual machine to create
+     * @param language the type of virtual machine to create
      * @throws org.linkedprocess.os.errors.UnsupportedScriptEngineException
      *          if the given script engine is not supported
      * @throws org.linkedprocess.os.errors.VMAlreadyExistsException
@@ -155,12 +167,12 @@ public class VMScheduler {
      *          if the scheduler cannot create additional virtual machines
      */
     public synchronized void spawnVirtualMachine(final String machineJID,
-                                                 final String scriptType) throws VMAlreadyExistsException, UnsupportedScriptEngineException, VMSchedulerIsFullException {
+                                                 final String language) throws VMAlreadyExistsException, UnsupportedScriptEngineException, VMSchedulerIsFullException {
         if (LinkedProcess.FarmStatus.TERMINATED == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
-        LOGGER.info("attempting to add machine of type " + scriptType + " with JID '" + machineJID + "'");
+        LOGGER.info("attempting to add machine of type " + language + " with JID '" + machineJID + "'");
 
         if (LinkedProcess.FarmStatus.ACTIVE_FULL == status) {
             throw new VMSchedulerIsFullException();
@@ -170,17 +182,26 @@ public class VMScheduler {
             throw new IllegalArgumentException("null or empty machine ID");
         }
 
-        if (null == scriptType || 0 == scriptType.length()) {
-            throw new UnsupportedScriptEngineException(scriptType);
+        if (null == language || 0 == language.length()) {
+            throw new IllegalArgumentException("non-null, non-empty language is required");
         }
 
         if (null != workersByJID.get(machineJID)) {
             throw new VMAlreadyExistsException(machineJID);
         }
 
-        ScriptEngine engine = manager.getEngineByName(scriptType);
+        // Pick an engine based on language name, not engine name.
+        // Note: language selection is case-insensitive.
+        ScriptEngine engine = null;
+        String l = language.toLowerCase();
+        for (ScriptEngineFactory f : LinkedProcess.getSupportedScriptEngineFactories()) {
+            if (f.getLanguageName().toLowerCase().equals(language)) {
+                engine = f.getScriptEngine();
+                break;
+            }
+        }
         if (null == engine) {
-            throw new UnsupportedScriptEngineException(scriptType);
+            throw new UnsupportedScriptEngineException(language);
         }
 
         VMWorker w = new VMWorker(engine, resultHandler);

@@ -10,10 +10,17 @@ import org.linkedprocess.os.VMWorker;
 import org.linkedprocess.security.VMSecurityManager;
 
 import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -226,6 +233,9 @@ public class LinkedProcess {
     // Singleton ScriptEngineManager, subject to the pre-loading hack.
     private static ScriptEngineManager scriptEngineManager;
 
+    // Note: these are specific to a farm.
+    private static List<ScriptEngineFactory> supportedScriptEngineFactories;
+
     static {
         LOGGER = getLogger(LinkedProcess.class);
         try {
@@ -256,7 +266,7 @@ public class LinkedProcess {
         new JobResult(null, (String) null);
 
         // Hack to pre-load Rhino and Jython resource bundles.  This will have to be extended.
-        ScriptEngineManager m = createScriptEngineManager();
+        ScriptEngineManager m = getScriptEngineManager();
         for (String name : new String[]{JAVASCRIPT, PYTHON, RUBY, GROOVY}) {
             ScriptEngine engine = m.getEngineByName(name);
             for (String expr : new String[]{
@@ -297,15 +307,45 @@ public class LinkedProcess {
         return PROPERTIES;
     }
 
-    public static ScriptEngineManager createScriptEngineManager() {
+    public static ScriptEngineManager getScriptEngineManager() {
         if (null == scriptEngineManager) {
-            ClassLoader loader = new ScriptEngineClassLoader();
-            scriptEngineManager = new ScriptEngineManager(loader);
+            scriptEngineManager = new ScriptEngineManager();
             //scriptEngineManager = new ScriptEngineManager();
             //scriptEngineManager.getEngineFactories().
         }
 
         return scriptEngineManager;
+    }
+
+    public static List<ScriptEngineFactory> getSupportedScriptEngineFactories() {
+        if (null == supportedScriptEngineFactories) {
+            Set<String> classNames = new HashSet<String>();
+            for (Object key : PROPERTIES.keySet()) {
+                if (key.toString().startsWith("org.linkedprocess.supportedScriptEngineFactory_")) {
+                    classNames.add(PROPERTIES.get(key).toString().trim());
+                }
+            }
+
+            supportedScriptEngineFactories = new LinkedList<ScriptEngineFactory>();
+            for (ScriptEngineFactory f : getScriptEngineManager().getEngineFactories()) {
+                if (classNames.contains(f.getClass().getName())) {
+                    supportedScriptEngineFactories.add(f);
+                }
+            }
+
+            Collections.sort(supportedScriptEngineFactories, new ScriptEngineFactoryComparator());
+        }
+
+        return supportedScriptEngineFactories;
+    }
+
+    private static class ScriptEngineFactoryComparator implements Comparator<ScriptEngineFactory> {
+
+        public int compare(ScriptEngineFactory first, ScriptEngineFactory second) {
+            String lFirst = first.getLanguageName().trim().toLowerCase();
+            String lSecond = second.getLanguageName().trim().toLowerCase();
+            return lFirst.compareTo(lSecond);
+        }
     }
 
     public static void main(final String[] args) throws Exception {

@@ -17,7 +17,7 @@ import java.util.List;
 public class ScriptEngineTest extends TestCase {
 
     public void testLanguageSupport() {
-        ScriptEngineManager manager = LinkedProcess.createScriptEngineManager();
+        ScriptEngineManager manager = LinkedProcess.getScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName(LinkedProcess.JAVASCRIPT);
         assertNotNull(engine);
 
@@ -48,7 +48,7 @@ public class ScriptEngineTest extends TestCase {
             System.out.println("declared class: " + c2);
         }
 
-        ScriptEngineManager manager = LinkedProcess.createScriptEngineManager();
+        ScriptEngineManager manager = LinkedProcess.getScriptEngineManager();
 
         for (ScriptEngineFactory f : manager.getEngineFactories()) {
             System.out.println("" + f.getEngineName());
@@ -72,7 +72,7 @@ public class ScriptEngineTest extends TestCase {
         ScriptEngine engine = new RhinoScriptEngine();
         assertEquals("42", engine.eval("42").toString());
 
-        ScriptEngineManager manager = LinkedProcess.createScriptEngineManager();
+        ScriptEngineManager manager = LinkedProcess.getScriptEngineManager();
         engine = manager.getEngineByName(LinkedProcess.JAVASCRIPT);
         System.out.println("" + engine.getClass());
         assertNotNull(engine);
@@ -100,7 +100,7 @@ public class ScriptEngineTest extends TestCase {
         ScriptEngine engine = new JRubyScriptEngine();
         assertEquals("42", engine.eval("42").toString());
 
-        ScriptEngineManager manager = LinkedProcess.createScriptEngineManager();
+        ScriptEngineManager manager = LinkedProcess.getScriptEngineManager();
         engine = manager.getEngineByName(LinkedProcess.RUBY);
         assertNotNull(engine);
         assertEquals("42", engine.eval("42").toString());
@@ -112,7 +112,7 @@ public class ScriptEngineTest extends TestCase {
     }
 
     public void testGroovy() throws Exception {
-        ScriptEngineManager manager = LinkedProcess.createScriptEngineManager();
+        ScriptEngineManager manager = LinkedProcess.getScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName(LinkedProcess.GROOVY);
         System.out.println("" + engine.getClass());
         assertNotNull(engine);

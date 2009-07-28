@@ -10,7 +10,7 @@ import java.util.*;
 public class FarmStruct extends Struct {
 
     protected Map<String, VmStruct> vmStructs = new HashMap<String, VmStruct>();
-    protected Set<String> supportedVmSpecies = new HashSet<String>();
+    protected Collection<String> supportedVmSpecies = new HashSet<String>();
 
     public VmStruct getVmStruct(String vmJid) {
         return vmStructs.get(vmJid);
@@ -29,7 +29,7 @@ public class FarmStruct extends Struct {
         this.vmStructs.remove(vmJid);
     }
 
-    public Set<String> getSupportedVmSpecies() {
+    public Collection<String> getSupportedVmSpecies() {
         return this.supportedVmSpecies;
     }
 
@@ -37,7 +37,7 @@ public class FarmStruct extends Struct {
         this.supportedVmSpecies.add(supportedVmSpecies);
     }
 
-    public void setSupportedVmSpecies(Set<String> supportedVmSpecies) {
+    public void setSupportedVmSpecies(Collection<String> supportedVmSpecies) {
         this.supportedVmSpecies = supportedVmSpecies;
     }
 }

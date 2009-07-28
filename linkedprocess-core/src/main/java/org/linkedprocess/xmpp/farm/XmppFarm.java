@@ -171,21 +171,24 @@ public class XmppFarm extends XmppClient {
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
         discoManager.addFeature(LinkedProcess.LOP_FARM_NAMESPACE);
 
-
         this.serviceExtension = new DataForm(Form.TYPE_RESULT);
 
-        ScriptEngineManager manager = LinkedProcess.createScriptEngineManager();
+        ScriptEngineManager manager = LinkedProcess.getScriptEngineManager();
         FormField field = new FormField("vm_species");
         field.setRequired(true);
         field.setLabel("supported virtual machine species");
         field.setType(FormField.TYPE_LIST_SINGLE);
-        List<ScriptEngineFactory> factories = manager.getEngineFactories();
+        List<ScriptEngineFactory> factories = LinkedProcess.getSupportedScriptEngineFactories();
         for (ScriptEngineFactory factory : factories) {
+            String langName = factory.getLanguageName();
+            String langVersion = factory.getLanguageVersion();
             String engName = factory.getEngineName();
             String engVersion = factory.getEngineVersion();
-            //String langName = factory.getLanguageName();
-            //String langVersion = factory.getLanguageVersion();
-            field.addOption(new FormField.Option(engName + ":" + engVersion, factory.getNames().get(0)));
+
+            String value = langName.toLowerCase();
+            String label = langName + " " + langVersion + " (" + engName + " " + engVersion + ")";
+            field.addOption(new FormField.Option(label, value));
+            //field.addOption(new FormField.Option(engName + ":" + engVersion, factory.getNames().get(0)));
         }
         this.serviceExtension.addField(field);
 
