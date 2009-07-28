@@ -16,9 +16,7 @@ import org.linkedprocess.xmpp.vm.*;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -66,21 +64,109 @@ public class XmppVillein extends XmppClient {
         this.roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
+        PacketFilter submitFilter = new AndFilter(new PacketTypeFilter(SubmitJob.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
+
         PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
 
         this.connection.addPacketListener(new SpawnVmListener(this), spawnFilter);
         this.connection.addPacketListener(new PresenceListener(this), presenceFilter);
+        this.connection.addPacketListener(new SubmitJobListener(this), submitFilter);
 
         this.hostStructs = new HashMap<String, HostStruct>();
         this.status = LinkedProcess.VilleinStatus.ACTIVE;
         this.connection.sendPacket(this.createPresence(this.status));
-        // this.createFarmsFromRoster();
     }
 
+    public void waitFromFarms(int numberOfFarms, long sleepTime) {
+        int x = 0;
+        while (x < numberOfFarms) {
+            x = this.getFarmStructs().size();
+            if (sleepTime > 0) {
+                try {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException e) {
+                    LOGGER.severe(e.getMessage());
+                }
+            }
+        }
+    }
+
+    public void waitFromVms(int numberOfVms, long sleepTime) {
+        int x = 0;
+        while (x < numberOfVms) {
+            x = this.getVmStructs().size();
+            if (sleepTime > 0) {
+                try {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException e) {
+                    LOGGER.severe(e.getMessage());
+                }
+            }
+        }
+    }
+
+    public Collection<Job> waitForJobs(Set<String> jobIds, long sleepTime) {
+        while (true) {
+            Collection<Job> jobs = this.getJobs(jobIds);
+            if (jobs.size() == jobIds.size()) {
+                return jobs;
+            }
+            if (sleepTime > 0) {
+                try {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException e) {
+                    LOGGER.severe(e.getMessage());
+                }
+            }
+        }
+    }
 
     public Collection<HostStruct> getHostStructs() {
         return this.hostStructs.values();
     }
+
+    public Collection<FarmStruct> getFarmStructs() {
+        Collection<FarmStruct> farmStructs = new HashSet<FarmStruct>();
+        for (HostStruct hostStruct : this.hostStructs.values()) {
+            farmStructs.addAll(hostStruct.getFarmStructs());
+        }
+        return farmStructs;
+    }
+
+    public Collection<VmStruct> getVmStructs() {
+        Collection<VmStruct> vmStructs = new HashSet<VmStruct>();
+        for (FarmStruct farmStruct : this.getFarmStructs()) {
+            vmStructs.addAll(farmStruct.getVmStructs());
+        }
+        return vmStructs;
+    }
+
+    public Collection<Job> getJobs(Set<String> jobIds) {
+        Collection<Job> jobs = new HashSet<Job>();
+        for (VmStruct vmStructs : this.getVmStructs()) {
+            for (String jobId : jobIds) {
+                Job job = vmStructs.getJob(jobId);
+                if (null != job)
+                    jobs.add(job);
+            }
+        }
+        return jobs;
+    }
+
+    public void removeJobs(Set<String> jobIds) {
+        for(VmStruct vmStruct : this.getVmStructs()) {
+            for(String jobId : jobIds) {
+                vmStruct.removeJob(jobId);
+            }
+        }
+    }
+
+    public void clearJobs() {
+        for(VmStruct vmStruct : this.getVmStructs()) {
+            vmStruct.clearJobs();
+        }
+    }
+
 
     public Struct getStruct(String jid) {
         return this.getStruct(jid, null);
@@ -178,6 +264,20 @@ public class XmppVillein extends XmppClient {
         terminate.setType(IQ.Type.GET);
         this.connection.sendPacket(terminate);
     }
+
+    public void submitJob(VmStruct vmStruct, String expression, String jobId) {
+        SubmitJob submitJob = new SubmitJob();
+        submitJob.setTo(vmStruct.getFullJid());
+        submitJob.setFrom(this.getFullJid());
+        submitJob.setExpression(expression);
+        submitJob.setVmPassword(vmStruct.getVmPassword());
+        if (null != jobId) {
+            submitJob.setPacketID(jobId);
+        }
+        submitJob.setType(IQ.Type.GET);
+        this.connection.sendPacket(submitJob);
+    }
+
 
     public void createHostStructsFromRoster() {
         this.roster.reload();
