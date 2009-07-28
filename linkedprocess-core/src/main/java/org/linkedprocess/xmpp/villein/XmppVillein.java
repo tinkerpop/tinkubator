@@ -154,15 +154,15 @@ public class XmppVillein extends XmppClient {
     }
 
     public void removeJobs(Set<String> jobIds) {
-        for(VmStruct vmStruct : this.getVmStructs()) {
-            for(String jobId : jobIds) {
+        for (VmStruct vmStruct : this.getVmStructs()) {
+            for (String jobId : jobIds) {
                 vmStruct.removeJob(jobId);
             }
         }
     }
 
     public void clearJobs() {
-        for(VmStruct vmStruct : this.getVmStructs()) {
+        for (VmStruct vmStruct : this.getVmStructs()) {
             vmStruct.clearJobs();
         }
     }

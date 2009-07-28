@@ -12,6 +12,10 @@ import org.linkedprocess.LinkedProcess;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.logging.Logger;
+import java.io.InputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 
 public abstract class XmppClient {
@@ -213,5 +217,16 @@ public abstract class XmppClient {
         probe.setFrom(this.getFullJid());
         probe.setTo(jid);
         this.connection.sendPacket(probe);
+    }
+
+    public static String convertStreamToString(InputStream inputStream) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        StringBuilder stringBuilder = new StringBuilder();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            stringBuilder.append(line + "\n");
+        }
+        inputStream.close();
+        return stringBuilder.toString();
     }
 }
