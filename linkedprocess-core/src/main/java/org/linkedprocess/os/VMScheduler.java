@@ -37,9 +37,9 @@ public class VMScheduler {
         Properties props = LinkedProcess.getConfiguration();
 
         MAX_VM = new Integer(props.getProperty(
-                LinkedProcess.MAX_VIRTUAL_MACHINES_PER_SCHEDULER));
+                LinkedProcess.MAX_CONCURRENT_VIRTUAL_MACHINES));
         VM_TIMEOUT = new Long(props.getProperty(
-                LinkedProcess.VM_TIMEOUT));
+                LinkedProcess.VIRTUAL_MACHINE_TIME_TO_LIVE));
         SCHEDULER_CLEANUP_INTERVAL = new Long(props.getProperty(
                 LinkedProcess.SCHEDULER_CLEANUP_INTERVAL));
     }

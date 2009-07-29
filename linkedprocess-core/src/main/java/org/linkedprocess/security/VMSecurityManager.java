@@ -86,6 +86,7 @@ public class VMSecurityManager extends SecurityManager {
     private PathPermissions
             readPermissions,
             writePermissions,
+            deletePermissions,
             execPermissions,
             linkPermissions,
             httpGetPermissions,
@@ -125,6 +126,7 @@ public class VMSecurityManager extends SecurityManager {
 
         readPermissions = readPermittedPaths(props, PermissionType.read);
         writePermissions = readPermittedPaths(props, PermissionType.write);
+        deletePermissions = readPermittedPaths(props, PermissionType.delete);
         execPermissions = readPermittedPaths(props, PermissionType.exec);
         linkPermissions = readPermittedPaths(props, PermissionType.link);
     }
@@ -161,6 +163,10 @@ public class VMSecurityManager extends SecurityManager {
         return writePermissions;
     }
 
+    public PathPermissions getDeletePermittedPaths() {
+        return deletePermissions;
+    }
+
     public PathPermissions getExecPermissions() {
         return execPermissions;
     }
@@ -177,6 +183,10 @@ public class VMSecurityManager extends SecurityManager {
 
     public void setWritePermissions(final PathPermissions p) {
         writePermissions = p;
+    }
+
+    public void setDeletePermissions(final PathPermissions p) {
+        deletePermissions = p;
     }
 
     public void setExecPermissions(final PathPermissions p) {
@@ -312,8 +322,12 @@ public class VMSecurityManager extends SecurityManager {
 
     @Override
     public void checkDelete(final String s) {
-        // For now, write permission implies delete permission.
-        checkWrite(s);
+        if (isVMWorkerThread()) {
+            checkPermissionType(PermissionType.delete);
+            if (null == deletePermissions || !deletePermissions.isPermitted(s)) {
+                permissionDenied(PermissionType.delete, s);
+            }
+        }
     }
 
     @Override

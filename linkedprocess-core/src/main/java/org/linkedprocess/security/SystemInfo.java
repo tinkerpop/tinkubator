@@ -12,12 +12,12 @@ import java.util.Properties;
  */
 public class SystemInfo {
     public enum SystemProperty {
-        JAVA_VERSION("java.version", "java-version", "version of the Java language"),
-        JAVA_VM_NAME("java.vm.name", "java-vm-name", "name of the Java virtual machine"),
-        JAVA_VM_VERSION("java.vm.version", "java-vm-version", "version of the Java virtual machine"),
-        OS_ARCH("os.arch", "os-arch", "operating system architecture"),
-        OS_NAME("os.name", "os-name", "operating system name"),
-        OS_VERSION("os.version", "os-version", "operating system version");
+        JAVA_VERSION("java.version", "java_version", "version of the Java language"),
+        JAVA_VM_NAME("java.vm.name", "java_vm_name", "name of the Java virtual machine"),
+        JAVA_VM_VERSION("java.vm.version", "java_vm_version", "version of the Java virtual machine"),
+        OS_ARCH("os.arch", "os_arch", "operating system architecture"),
+        OS_NAME("os.name", "os_name", "operating system name"),
+        OS_VERSION("os.version", "os_version", "operating system version");
 
         private final String propertyName;
         private final String specName;

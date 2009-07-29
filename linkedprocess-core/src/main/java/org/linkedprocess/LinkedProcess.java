@@ -230,11 +230,11 @@ public class LinkedProcess {
             FARM_USERNAME = "org.linkedprocess.farmUserName",
             FARM_PASSWORD = "org.linkedprocess.farmPassword",
             MAX_CONCURRENT_WORKER_THREADS = "org.linkedprocess.maxConcurrentWorkerThreads",
-            MAX_TIME_SPENT_PER_JOB = "org.linkedprocess.maxTimeSpentPerJob",
-            MAX_VIRTUAL_MACHINES_PER_SCHEDULER = "org.linkedprocess.maxVirtualMachinesPerScheduler",
-            MESSAGE_QUEUE_CAPACITY = "org.linkedprocess.messageQueueCapacity",
+            JOB_TIMEOUT = "org.linkedprocess.jobTimeout",
+            MAX_CONCURRENT_VIRTUAL_MACHINES = "org.linkedprocess.maxConcurrentVirtualMachines",
+            JOB_QUEUE_CAPACITY = "org.linkedprocess.jobQueueCapacity",
             ROUND_ROBIN_TIME_SLICE = "org.linkedprocess.roundRobinTimeSlice",
-            VM_TIMEOUT = "org.linkedprocess.virtualMachineTimeout",
+            VIRTUAL_MACHINE_TIME_TO_LIVE = "org.linkedprocess.virtualMachineTimeToLive",
             SCHEDULER_CLEANUP_INTERVAL = "org.linkedprocess.schedulerCleanupInterval";
 
     private static final Properties PROPERTIES = new Properties();

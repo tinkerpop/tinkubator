@@ -23,6 +23,7 @@ public class ServiceDiscoveryConfiguration {
     private PathPermissions
             readPermissions,
             writePermissions,
+            deletePermissions,
             execPermissions,
             linkPermissions,
             httpGetPermissions = null,
@@ -35,6 +36,7 @@ public class ServiceDiscoveryConfiguration {
         permittedTypes = m.getPermittedTypes();
         readPermissions = m.getReadPermissions();
         writePermissions = m.getWritePermissions();
+        deletePermissions = m.getDeletePermittedPaths();
         execPermissions = m.getExecPermissions();
         linkPermissions = m.getLinkPermissions();
     }
@@ -63,6 +65,8 @@ public class ServiceDiscoveryConfiguration {
                 case write:
                     writePermissions = createPathPermissions(field);
                     break;
+                case delete:
+                    deletePermissions = createPathPermissions(field);
                 case exec:
                     execPermissions = createPathPermissions(field);
                     break;
@@ -94,6 +98,7 @@ public class ServiceDiscoveryConfiguration {
     public void modifySecurityManager(final VMSecurityManager manager) {
         manager.setReadPermissions(readPermissions);
         manager.setWritePermissions(writePermissions);
+        manager.setDeletePermissions(deletePermissions);
         manager.setExecPermissions(execPermissions);
         manager.setLinkPermissions(linkPermissions);
     }
@@ -117,6 +122,10 @@ public class ServiceDiscoveryConfiguration {
                         addPermittedPaths(field, writePermissions);
                     }
                     break;
+                case delete:
+                    if (null != deletePermissions) {
+                        addPermittedPaths(field, deletePermissions);
+                    }
                 case exec:
                     if (null != execPermissions) {
                         addPermittedPaths(field, execPermissions);
@@ -151,6 +160,12 @@ public class ServiceDiscoveryConfiguration {
                     field.setType(FormField.TYPE_LIST_MULTI);
                     if (null != writePermissions) {
                         addPermittedPaths(field, writePermissions);
+                    }
+                    break;
+                case delete:
+                    field.setType(FormField.TYPE_LIST_MULTI);
+                    if (null != deletePermissions) {
+                        addPermittedPaths(field, deletePermissions);
                     }
                     break;
                 case exec:
