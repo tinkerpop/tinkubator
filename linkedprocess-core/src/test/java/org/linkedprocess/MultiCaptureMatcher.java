@@ -1,9 +1,10 @@
 package org.linkedprocess;
 
 import static org.easymock.EasyMock.reportMatcher;
-import org.easymock.IArgumentMatcher;
 
 import java.util.Collection;
+
+import org.easymock.IArgumentMatcher;
 
 public class MultiCaptureMatcher<T> implements IArgumentMatcher {
 
@@ -13,12 +14,10 @@ public class MultiCaptureMatcher<T> implements IArgumentMatcher {
         this.captureDestination = captureDestination;
     }
 
-    @Override
     public void appendTo(StringBuffer buffer) {
         buffer.append("multiCapture(").append(captureDestination.toString()).append(")");
     }
 
-    @Override
     public boolean matches(Object actual) {
         captureDestination.add((T) actual);
         return true;

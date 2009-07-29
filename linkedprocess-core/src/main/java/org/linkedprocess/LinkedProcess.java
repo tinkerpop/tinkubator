@@ -254,6 +254,7 @@ public class LinkedProcess {
         if (null == file) {
             file = LOP_DEFAULT_PROPERTIES;
         }
+        LOGGER.info("loading configuration from " + file);
         try {
             PROPERTIES.load(LinkedProcess.class.getResourceAsStream(file));
         } catch (IOException e) {

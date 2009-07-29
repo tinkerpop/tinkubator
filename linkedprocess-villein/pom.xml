@@ -6,7 +6,7 @@
     <artifactId>linkedprocess-villein</artifactId>
     <version>alpha1</version>
     <packaging>jar</packaging>
-    <name>Linked Process core</name>
+    <name>Linked Process Villein</name>
 
     <parent>
         <groupId>org.linkedprocess</groupId>
