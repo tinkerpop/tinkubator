@@ -1,8 +1,8 @@
 package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.gui.*;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
+import org.linkedprocess.gui.*;
 import org.linkedprocess.xmpp.villein.FarmStruct;
 import org.linkedprocess.xmpp.villein.HostStruct;
 import org.linkedprocess.xmpp.villein.Struct;
