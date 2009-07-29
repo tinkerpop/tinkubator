@@ -56,7 +56,7 @@ public class JobPane extends JPanel implements ActionListener {
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.add(scrollPane1);
         splitPane.add(scrollPane2);
-        splitPane.setDividerLocation(250);
+        splitPane.setDividerLocation(200);
         splitPane.setOpaque(false);
         this.add(splitPane, BorderLayout.CENTER);
         this.add(buttonPanel, BorderLayout.SOUTH);
@@ -166,7 +166,7 @@ public class JobPane extends JPanel implements ActionListener {
             this.expressionTextArea.setText("");
         } else if (event.getActionCommand().equals(ABORT_JOB)) {
             this.vmControlFrame.getVilleinGui().getConnection().sendPacket(this.getAbortJob());
-            this.expressionTextArea.setEnabled(false);
+            this.expressionTextArea.setEditable(false);
             this.submitJobButton.setEnabled(false);
             this.clearButton.setEnabled(false);
         }

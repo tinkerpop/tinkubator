@@ -3,6 +3,7 @@ package org.linkedprocess.gui.villein;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.gui.*;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
+import org.linkedprocess.gui.villein.FarmConfigurationFrame;
 import org.linkedprocess.xmpp.villein.FarmStruct;
 import org.linkedprocess.xmpp.villein.HostStruct;
 import org.linkedprocess.xmpp.villein.Struct;
@@ -35,7 +36,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
     protected DefaultMutableTreeNode treeRoot;
     protected Set<String> supportedVmSpeciesActionCommands = new HashSet<String>();
 
-    protected final static String DISCOVER_FEATURES = "discover features";
+    protected final static String FARM_CONFIGURATION = "farm configuration";
     protected final static String TERMINATE_VM = "terminate vm";
     protected final static String SPAWN_VM = "spawn vm";
     protected final static String ADD_HOST = "add host";
@@ -109,11 +110,11 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                 Struct struct = (Struct) this.popupTreeObject;
                 this.villeinGui.getXmppVillein().probeJid(struct.getFullJid());
             }
-        } else if (event.getActionCommand().equals(DISCOVER_FEATURES)) {
+        } else if (event.getActionCommand().equals(FARM_CONFIGURATION)) {
             if (this.popupTreeObject instanceof FarmStruct) {
                 FarmStruct farmStruct = (FarmStruct) this.popupTreeObject;
-                FarmDiscoFrame farmDiscoFrame = new FarmDiscoFrame(farmStruct, this.villeinGui);
-                farmDiscoFrame.setVisible(true);
+                FarmConfigurationFrame farmConfigurationFrame = new FarmConfigurationFrame(farmStruct, this.villeinGui);
+                farmConfigurationFrame.setVisible(true);
             }
         } else if (event.getActionCommand().equals(SHUTDOWN)) {
             this.villeinGui.getXmppVillein().shutDown(null);
@@ -337,7 +338,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         this.popupMenu.setBorder(new BevelBorder(6));
         JLabel menuLabel = new JLabel("Farm");
         JMenuItem probeItem = new JMenuItem(PROBE);
-        JMenuItem discoItem = new JMenuItem(DISCOVER_FEATURES);
+        JMenuItem discoItem = new JMenuItem(FARM_CONFIGURATION);
         JMenu spawnMenu = new JMenu(SPAWN_VM);
 
         for (String vmSpecies : farmStruct.getSupportedVmSpecies()) {

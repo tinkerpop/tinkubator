@@ -116,6 +116,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         this.getContentPane().add(jobBindingsTabbedPane);
         this.pack();
         this.setResizable(true);
+        this.setSize(600, 550);
         this.setVisible(true);
 
 

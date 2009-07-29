@@ -30,23 +30,25 @@ public class PresenceSubscriptionListener extends LopFarmListener {
         if (type == Presence.Type.subscribe) {
             XmppFarm.LOGGER.info("Subscribing to " + presence.getFrom());
             Presence subscribed = new Presence(Presence.Type.subscribed);
-            Presence subscribe = new Presence(Presence.Type.subscribe);
+            //Presence subscribe = new Presence(Presence.Type.subscribe);
             subscribed.setTo(presence.getFrom());
-            subscribe.setTo(presence.getFrom());
+            subscribed.setFrom(this.getXmppFarm().getFullJid());
+            //subscribe.setTo(presence.getFrom());
 
             Presence available = this.getXmppFarm().createPresence(this.getXmppFarm().getVmScheduler().getSchedulerStatus());
+            available.setFrom(this.getXmppFarm().getFullJid());
             available.setTo(presence.getFrom());
             available.setPacketID(presence.getPacketID());
 
             this.getXmppFarm().getConnection().sendPacket(subscribed);
-            this.getXmppFarm().getConnection().sendPacket(subscribe);
+            //this.getXmppFarm().getConnection().sendPacket(subscribe);
             this.getXmppFarm().getConnection().sendPacket(available);
 
-            try {
+            /*try {
                 this.getXmppFarm().getRoster().createEntry(presence.getFrom(), presence.getFrom(), null);
             } catch (XMPPException e) {
                 XmppFarm.LOGGER.severe(e.getMessage());
-            }
+            }*/
 
             return;
 
@@ -58,12 +60,9 @@ public class PresenceSubscriptionListener extends LopFarmListener {
             unsubscribed.setTo(presence.getFrom());
             unsubscribe.setTo(presence.getFrom());
 
-            Presence unavailable = this.getXmppFarm().createPresence(this.getXmppFarm().getVmScheduler().getSchedulerStatus());
-            unavailable.setTo(presence.getFrom());
 
             this.getXmppFarm().getConnection().sendPacket(unsubscribed);
             this.getXmppFarm().getConnection().sendPacket(unsubscribe);
-            this.getXmppFarm().getConnection().sendPacket(unavailable);
 
             try {
                 this.getXmppFarm().getRoster().removeEntry(this.getXmppFarm().getRoster().getEntry(presence.getFrom()));

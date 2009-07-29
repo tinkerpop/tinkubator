@@ -89,7 +89,7 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
         JScrollPane scrollPane1 = new JScrollPane(this.bindingsTable);
         JScrollPane scrollPane2 = new JScrollPane(this.valueTextArea);
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        splitPane.setDividerLocation(320);
+        splitPane.setDividerLocation(250);
         splitPane.add(scrollPane1);
         splitPane.add(scrollPane2);
 

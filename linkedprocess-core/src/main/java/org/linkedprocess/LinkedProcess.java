@@ -171,8 +171,15 @@ public class LinkedProcess {
     public static final String LOP_VM_NAMESPACE = LOP_NAMESPACE + "LoPVM#";
     public static final String BLANK_NAMESPACE = "";
     public static final String DISCO_INFO_NAMESPACE = "http://jabber.org/protocol/disco#info";
+    public static final String QUERY_TAG = "query";
     public static final String X_NAMESPACE = "jabber:x:data";
     public static final String X_TAG = "x";
+    public static final String FIELD_TAG = "field";
+    public static final String VALUE_TAG = "value";
+    public static final String OPTION_TAG = "option";
+    public static final String FEATURE_TAG = "feature";
+    public static final String VAR_ATTRIBUTE = "var";
+    public static final String LABEL_ATTRIBUTE = "label";
     public static final String JABBER_CLIENT_NAMESPACE = "jabber:client";
     public static final String XMPP_STANZAS_NAMESPACE = "urn:ietf:params:xml:ns:xmpp-stanzas";
     public static final String XMPP_STREAMS_NAMESPACE = "urn:ietf:params:xml:ns:xmpp-streams";
