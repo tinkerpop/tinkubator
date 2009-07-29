@@ -2,7 +2,11 @@ package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
-import org.linkedprocess.gui.*;
+import org.linkedprocess.gui.ImageHolder;
+import org.linkedprocess.gui.TreeRenderer;
+import org.linkedprocess.gui.RosterPanel;
+import org.linkedprocess.gui.PacketSnifferPanel;
+import org.linkedprocess.gui.TreeNodeProperty;
 import org.linkedprocess.xmpp.villein.FarmStruct;
 import org.linkedprocess.xmpp.villein.HostStruct;
 import org.linkedprocess.xmpp.villein.Struct;
@@ -394,6 +398,4 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
     public void mousePressed(MouseEvent event) {
 
     }
-
-
 }

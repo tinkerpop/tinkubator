@@ -25,7 +25,6 @@ public class VMBindings extends HashMap<String, Object> implements Bindings {
         private final String uri;
         private final Class javaClass;
 
-
         private XMLSchemaDatatype(final String uri,
                                   final Class javaClass) {
             this.uri = uri;
