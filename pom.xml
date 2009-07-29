@@ -34,6 +34,9 @@
 
     <modules>
         <module>linkedprocess-core</module>
+	<module>linkedprocess-farm</module>
+	<module>linkedprocess-villein</module>
+	<module>linkedprocess-gui</module>
     </modules>
 
     <build>
