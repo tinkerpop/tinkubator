@@ -1,6 +1,6 @@
 package org.linkedprocess;
 
-import com.sun.script.javascript.RhinoScriptEngineFactory;
+import com.sun.phobos.script.javascript.RhinoScriptEngineFactory;
 
 /**
  * Author: josh
