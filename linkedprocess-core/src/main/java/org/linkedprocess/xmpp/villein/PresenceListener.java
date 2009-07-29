@@ -85,13 +85,6 @@ public class PresenceListener implements PacketListener {
         //}
     }
 
-    protected boolean isFarm(DiscoverInfo discoInfo) {
-        if (discoInfo != null)
-            return discoInfo.containsFeature(LinkedProcess.LOP_FARM_NAMESPACE);
-        else
-            return false;
-    }
-
     protected Collection<String> getSupportedVmSpecies(DiscoverInfo discoInfo) {
         if (discoInfo != null) {
             List<String> supportedVmSpecies = new LinkedList<String>();
@@ -126,20 +119,22 @@ public class PresenceListener implements PacketListener {
         try {
             return discoManager.discoverInfo(jid);
         } catch (XMPPException e) {
-            XmppVillein.LOGGER.severe("XmppException with DiscoveryManager.");
+            XmppVillein.LOGGER.severe("XmppException with DiscoveryManager: " + e.getMessage());
             return null;
         }
     }
 
-
-    protected boolean isVirtualMachine(String jid) {
-        ServiceDiscoveryManager discoManager = this.xmppVillein.getDiscoManager();
-        try {
-            DiscoverInfo discoInfo = discoManager.discoverInfo(jid);
+    protected boolean isVirtualMachine(DiscoverInfo discoInfo) {
+        if(discoInfo != null)
             return discoInfo.containsFeature(LinkedProcess.LOP_VM_NAMESPACE);
-        } catch (XMPPException e) {
-            XmppVillein.LOGGER.severe("XmppException with DiscoveryManager.");
+        else
             return false;
-        }
+    }
+
+    protected boolean isFarm(DiscoverInfo discoInfo) {
+        if (discoInfo != null)
+            return discoInfo.containsFeature(LinkedProcess.LOP_FARM_NAMESPACE);
+        else
+            return false;
     }
 }
