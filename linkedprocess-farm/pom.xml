@@ -6,7 +6,7 @@
     <artifactId>linkedprocess-farm</artifactId>
     <version>alpha1</version>
     <packaging>jar</packaging>
-    <name>Linked Process core</name>
+    <name>Linked Process Farm</name>
 
     <parent>
         <groupId>org.linkedprocess</groupId>
