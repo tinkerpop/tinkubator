@@ -3,7 +3,6 @@ package org.linkedprocess.gui.villein;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.gui.*;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
-import org.linkedprocess.gui.villein.FarmConfigurationFrame;
 import org.linkedprocess.xmpp.villein.FarmStruct;
 import org.linkedprocess.xmpp.villein.HostStruct;
 import org.linkedprocess.xmpp.villein.Struct;
@@ -113,8 +112,12 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         } else if (event.getActionCommand().equals(FARM_CONFIGURATION)) {
             if (this.popupTreeObject instanceof FarmStruct) {
                 FarmStruct farmStruct = (FarmStruct) this.popupTreeObject;
-                FarmConfigurationFrame farmConfigurationFrame = new FarmConfigurationFrame(farmStruct, this.villeinGui);
-                farmConfigurationFrame.setVisible(true);
+                JFrame farmFrame = new JFrame(farmStruct.getFullJid());
+                farmFrame.getContentPane().add(new ViewFarmConfigurationPanel(farmStruct, villeinGui));
+                farmFrame.pack();
+                farmFrame.setSize(600, 600);
+                farmFrame.setVisible(true);
+                farmFrame.setResizable(true);
             }
         } else if (event.getActionCommand().equals(SHUTDOWN)) {
             this.villeinGui.getXmppVillein().shutDown(null);
