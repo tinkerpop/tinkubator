@@ -10,6 +10,6 @@ import com.sun.phobos.script.javascript.RhinoScriptEngineFactory;
 public class JavaScriptEngineFactory extends RhinoScriptEngineFactory {
     @Override
     public String getLanguageName() {
-        return "JavaScript";
+        return "javascript";
     }
 }
