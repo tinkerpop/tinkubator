@@ -90,6 +90,8 @@ public class XmppVirtualMachine extends XmppClient {
                 return new Presence(Presence.Type.available, statusMessage, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.dnd);
             case NOT_FOUND:
                 return new Presence(Presence.Type.unavailable);
+            case INACTIVE:
+                return new Presence(Presence.Type.unavailable);
             default:
                 throw new IllegalStateException("unhandled state: " + status);
         }
@@ -143,7 +145,7 @@ public class XmppVirtualMachine extends XmppClient {
     }
 
     public void shutDown() {
-        super.shutDown(this.createPresence(LinkedProcess.VmStatus.NOT_FOUND));
+        super.shutDown(this.createPresence(LinkedProcess.VmStatus.INACTIVE));
 
     }
 

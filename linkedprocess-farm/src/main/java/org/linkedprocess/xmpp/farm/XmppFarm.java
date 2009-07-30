@@ -96,7 +96,7 @@ public class XmppFarm extends XmppClient {
                 return new Presence(Presence.Type.available, STATUS_MESSAGE_ACTIVE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
             case ACTIVE_FULL:
                 return new Presence(Presence.Type.available, STATUS_MESSAGE_FULL, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.dnd);
-            case TERMINATED:
+            case INACTIVE:
                 return new Presence(Presence.Type.unavailable);
             default:
                 throw new IllegalStateException("unhandled state: " + status);
@@ -159,7 +159,7 @@ public class XmppFarm extends XmppClient {
         } catch (InterruptedException e) {
             LOGGER.severe(e.getMessage());
         }
-        super.shutDown(this.createPresence(LinkedProcess.FarmStatus.TERMINATED));
+        super.shutDown(this.createPresence(LinkedProcess.FarmStatus.INACTIVE));
 
     }
 

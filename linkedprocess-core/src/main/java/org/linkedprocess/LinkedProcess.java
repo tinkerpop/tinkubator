@@ -44,7 +44,7 @@ public class LinkedProcess {
     }
 
     public enum FarmStatus {
-        ACTIVE("active"), ACTIVE_FULL("full"), TERMINATED("terminated");
+        ACTIVE("active"), ACTIVE_FULL("full"), INACTIVE("inactive");
 
         private final String name;
 
@@ -58,7 +58,7 @@ public class LinkedProcess {
     }
 
     public enum VmStatus {
-        ACTIVE("active"), ACTIVE_FULL("full"), NOT_FOUND("not_found");
+        ACTIVE("active"), ACTIVE_FULL("full"), NOT_FOUND("not_found"), INACTIVE("inactive");
 
         private final String name;
 
@@ -77,6 +77,20 @@ public class LinkedProcess {
         private final String name;
 
         private VilleinStatus(final String name) {
+            this.name = name;
+        }
+
+        public String toString() {
+            return name;
+        }
+    }
+
+    public enum CountrysideStatus {
+        ACTIVE("active"), INACTIVE("inactive");
+
+        private final String name;
+
+        private CountrysideStatus(final String name) {
             this.name = name;
         }
 

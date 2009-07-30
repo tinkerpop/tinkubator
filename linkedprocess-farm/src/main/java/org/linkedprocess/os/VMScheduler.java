@@ -107,7 +107,7 @@ public class VMScheduler {
      */
     public synchronized void scheduleJob(final String machineJID,
                                          final Job job) throws VMWorkerIsFullException, VMWorkerNotFoundException, JobAlreadyExistsException {
-        if (LinkedProcess.FarmStatus.TERMINATED == status) {
+        if (LinkedProcess.FarmStatus.INACTIVE == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
@@ -138,7 +138,7 @@ public class VMScheduler {
      */
     public synchronized void abortJob(final String machineJID,
                                       final String jobID) throws VMWorkerNotFoundException, JobNotFoundException {
-        if (LinkedProcess.FarmStatus.TERMINATED == status) {
+        if (LinkedProcess.FarmStatus.INACTIVE == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
@@ -165,7 +165,7 @@ public class VMScheduler {
      */
     public synchronized void spawnVirtualMachine(final String machineJID,
                                                  final String language) throws VMAlreadyExistsException, UnsupportedScriptEngineException, VMSchedulerIsFullException {
-        if (LinkedProcess.FarmStatus.TERMINATED == status) {
+        if (LinkedProcess.FarmStatus.INACTIVE == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
@@ -221,7 +221,7 @@ public class VMScheduler {
      *          if a VM worker with the JID does not exist
      */
     public synchronized void terminateVirtualMachine(final String machineJID) throws VMWorkerNotFoundException {
-        if (LinkedProcess.FarmStatus.TERMINATED == status) {
+        if (LinkedProcess.FarmStatus.INACTIVE == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
@@ -247,7 +247,7 @@ public class VMScheduler {
      * @throws VMWorkerNotFoundException if no VM worker with the given JID exists
      */
     public synchronized VMBindings getAllBindings(final String machineJID) throws VMWorkerNotFoundException {
-        if (LinkedProcess.FarmStatus.TERMINATED == status) {
+        if (LinkedProcess.FarmStatus.INACTIVE == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
@@ -264,7 +264,7 @@ public class VMScheduler {
      */
     public synchronized VMBindings getBindings(final String machineJID,
                                                final Set<String> bindingNames) throws VMWorkerNotFoundException {
-        if (LinkedProcess.FarmStatus.TERMINATED == status) {
+        if (LinkedProcess.FarmStatus.INACTIVE == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
@@ -337,7 +337,7 @@ public class VMScheduler {
         }
         workersByJID.clear();
 
-        setSchedulerStatus(LinkedProcess.FarmStatus.TERMINATED);
+        setSchedulerStatus(LinkedProcess.FarmStatus.INACTIVE);
     }
 
     /**
@@ -367,7 +367,7 @@ public class VMScheduler {
      */
     public synchronized void setBindings(final String machineJID,
                                          final VMBindings bindings) throws VMWorkerNotFoundException {
-        if (LinkedProcess.FarmStatus.TERMINATED == status) {
+        if (LinkedProcess.FarmStatus.INACTIVE == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 

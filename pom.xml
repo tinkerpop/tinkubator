@@ -20,7 +20,7 @@
     <developers>
         <developer>
             <name>Marko A. Rodriguez</name>
-            <email>okrammarko@gmail.com</email>
+            <email>marko@markorodriguez.com</email>
         </developer>
         <developer>
             <name>Joshua Shinavier</name>
@@ -34,9 +34,10 @@
 
     <modules>
         <module>linkedprocess-core</module>
-	<module>linkedprocess-farm</module>
-	<module>linkedprocess-villein</module>
-	<module>linkedprocess-gui</module>
+        <module>linkedprocess-farm</module>
+        <module>linkedprocess-villein</module>
+        <module>linkedprocess-countryside</module>
+        <module>linkedprocess-gui</module>
     </modules>
 
     <build>
