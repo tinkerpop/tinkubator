@@ -9,7 +9,7 @@
     <name>Linked Process Core</name>
 
     <parent>
-        <groupId>org.linkedprocess</groupId>              
+        <groupId>org.linkedprocess</groupId>
         <artifactId>linkedprocess</artifactId>
         <version>alpha1</version>
     </parent>

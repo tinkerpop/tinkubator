@@ -2,6 +2,7 @@ package org.linkedprocess;
 
 import org.linkedprocess.os.VMWorker;
 import org.linkedprocess.os.JobResult;
+import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
 import org.linkedprocess.security.VMSecurityManager;
 
 import javax.script.ScriptEngineFactory;
@@ -53,9 +54,16 @@ public class LinkedProcessFarm {
 
             supportedScriptEngineFactories = new LinkedList<ScriptEngineFactory>();
             for (ScriptEngineFactory f : getScriptEngineManager().getEngineFactories()) {
+                String name = f.getClass().getName();
+//LOGGER.info("candidate script engine: " + name);
                 if (classNames.contains(f.getClass().getName())) {
+                    LOGGER.info("registering script engine: " + name);
                     supportedScriptEngineFactories.add(f);
+                    classNames.remove(name);
                 }
+            }
+            for (String name : classNames) {
+                LOGGER.warning("script engine could not be registered: " + name);
             }
 
             Collections.sort(supportedScriptEngineFactories, new ScriptEngineFactoryComparator());

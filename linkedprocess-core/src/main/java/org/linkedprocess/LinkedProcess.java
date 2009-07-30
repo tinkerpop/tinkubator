@@ -12,6 +12,7 @@ import java.io.StringReader;
 import java.io.FileInputStream;
 import java.util.Properties;
 import java.util.logging.Logger;
+import java.security.Provider;
 
 /**
  * Author: josh
@@ -242,14 +243,15 @@ public class LinkedProcess {
             VIRTUAL_MACHINE_TIME_TO_LIVE = "org.linkedprocess.virtualMachineTimeToLive",
             SCHEDULER_CLEANUP_INTERVAL = "org.linkedprocess.schedulerCleanupInterval";
 
-    private static final Properties PROPERTIES = new Properties();
+    private static final Properties PROPERTIES;
     private static final Logger LOGGER;
     private static final String LOP_DEFAULT_PROPERTIES = "lop-default.properties";
     public static final XMLOutputter xmlOut = new XMLOutputter();
 
-    static {
+    static {        
         LOGGER = getLogger(LinkedProcess.class);
 
+        PROPERTIES = new Properties();
         String file = System.getProperty(CONFIGURATION_PROPERTIES);
         try {
             if (null == file) {
