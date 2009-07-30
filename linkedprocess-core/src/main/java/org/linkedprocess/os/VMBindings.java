@@ -3,7 +3,6 @@ package org.linkedprocess.os;
 import org.linkedprocess.os.errors.InvalidValueException;
 import org.linkedprocess.os.errors.NoSuchDatatypeException;
 
-import javax.script.Bindings;
 import java.util.HashMap;
 
 /**
@@ -11,7 +10,7 @@ import java.util.HashMap;
  * Date: Jul 21, 2009
  * Time: 12:47:54 PM
  */
-public class VMBindings extends HashMap<String, Object> implements Bindings {
+public class VMBindings extends HashMap<String, Object> {
     private static final String XSD_NAMESPACE = "http://www.w3.org/2001/XMLSchema#";
 
     public enum XMLSchemaDatatype {

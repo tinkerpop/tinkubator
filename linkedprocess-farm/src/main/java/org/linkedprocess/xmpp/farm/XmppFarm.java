@@ -14,6 +14,7 @@ import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.LinkedProcessFarm;
 import org.linkedprocess.os.VMScheduler;
 import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
 import org.linkedprocess.os.errors.VMAlreadyExistsException;
@@ -178,7 +179,7 @@ public class XmppFarm extends XmppClient {
         field.setRequired(true);
         field.setLabel("supported virtual machine species");
         field.setType(FormField.TYPE_LIST_SINGLE);
-        List<ScriptEngineFactory> factories = LinkedProcess.getSupportedScriptEngineFactories();
+        List<ScriptEngineFactory> factories = LinkedProcessFarm.getSupportedScriptEngineFactories();
         for (ScriptEngineFactory factory : factories) {
             String langName = factory.getLanguageName();
             String langVersion = factory.getLanguageVersion();

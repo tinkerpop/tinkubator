@@ -1,6 +1,6 @@
 package org.linkedprocess.os.errors;
 
-import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.LinkedProcessFarm;
 
 import javax.script.ScriptEngineFactory;
 
@@ -17,7 +17,7 @@ public class UnsupportedScriptEngineException extends SchedulerException {
     private static String listAllLanguages() {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
-        for (ScriptEngineFactory f : LinkedProcess.getSupportedScriptEngineFactories()) {
+        for (ScriptEngineFactory f : LinkedProcessFarm.getSupportedScriptEngineFactories()) {
             String lang = f.getLanguageName();
             if (first) {
                 first = false;

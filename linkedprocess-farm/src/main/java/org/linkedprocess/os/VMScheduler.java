@@ -1,6 +1,7 @@
 package org.linkedprocess.os;
 
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.LinkedProcessFarm;
 import org.linkedprocess.os.errors.JobAlreadyExistsException;
 import org.linkedprocess.os.errors.JobNotFoundException;
 import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
@@ -11,7 +12,6 @@ import org.linkedprocess.os.errors.VMWorkerNotFoundException;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
-import javax.script.ScriptEngineManager;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -46,7 +46,6 @@ public class VMScheduler {
 
     private final SimpleBlockingQueue<VMWorker> workerQueue;
     private final Map<String, VMWorker> workersByJID;
-    private final ScriptEngineManager manager;
     private final VMResultHandler resultHandler;
     private LopStatusEventHandler eventHandler;
     private final int numberOfSequencers;
@@ -88,8 +87,6 @@ public class VMScheduler {
         }
 
         setSchedulerStatus(LinkedProcess.FarmStatus.ACTIVE);
-
-        manager = LinkedProcess.getScriptEngineManager();
     }
 
     public synchronized void setStatusEventHandler(LopStatusEventHandler statusHandler) {
@@ -194,7 +191,7 @@ public class VMScheduler {
         // Note: language selection is case-insensitive.
         ScriptEngine engine = null;
         String l = language.toLowerCase();
-        for (ScriptEngineFactory f : LinkedProcess.getSupportedScriptEngineFactories()) {
+        for (ScriptEngineFactory f : LinkedProcessFarm.getSupportedScriptEngineFactories()) {
             if (f.getLanguageName().toLowerCase().equals(l)) {
                 engine = f.getScriptEngine();
                 break;
