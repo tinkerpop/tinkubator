@@ -25,7 +25,7 @@ public class LinkedProcess {
             RUBY = "jruby";
 
     public enum ClientType {
-        VM, FARM, VILLEIN
+        VM, FARM, COUNTRYSIDE, VILLEIN
     }
 
     // TODO: how about a "queued" status for jobs?
@@ -169,10 +169,12 @@ public class LinkedProcess {
     }
 
     private static final String LOP_NAMESPACE = "http://linkedprocess.org/2009/06/";
-    public static final String LOP_FARM_NAMESPACE = LOP_NAMESPACE + "LoPFarm#";
-    public static final String LOP_VM_NAMESPACE = LOP_NAMESPACE + "LoPVM#";
+    public static final String LOP_FARM_NAMESPACE = LOP_NAMESPACE + "Farm#";
+    public static final String LOP_VM_NAMESPACE = LOP_NAMESPACE + "VirtualMachine#";
+    public static final String LOP_COUNTRYSIDE_NAMESPACE = LOP_NAMESPACE + "Countryside#";
     public static final String BLANK_NAMESPACE = "";
     public static final String DISCO_INFO_NAMESPACE = "http://jabber.org/protocol/disco#info";
+    public static final String DISCO_ITEMS_NAMESPACE = "http://jabber.org/protocol/disco#items";
     public static final String QUERY_TAG = "query";
     public static final String X_NAMESPACE = "jabber:x:data";
     public static final String X_TAG = "x";

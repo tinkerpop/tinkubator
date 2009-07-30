@@ -10,12 +10,10 @@ import org.linkedprocess.xmpp.farm.SpawnVm;
  * Date: Jul 8, 2009
  * Time: 8:52:55 AM
  */
-public class SpawnVmListener implements PacketListener {
-
-    protected XmppVillein xmppVillein;
+public class SpawnVmListener extends LopVilleinListener {
 
     public SpawnVmListener(XmppVillein xmppVillein) {
-        this.xmppVillein = xmppVillein;
+        super(xmppVillein);
     }
 
     public void processPacket(Packet packet) {
@@ -37,7 +35,7 @@ public class SpawnVmListener implements PacketListener {
             vmStruct.setFullJid(spawnVm.getVmJid());
             vmStruct.setVmPassword(spawnVm.getVmPassword());
             vmStruct.setVmSpecies(spawnVm.getVmSpecies());
-            xmppVillein.addVmStruct(spawnVm.getFrom(), vmStruct);
+            this.getXmppVillein().addVmStruct(spawnVm.getFrom(), vmStruct);
         } else {
             XmppVillein.LOGGER.severe("Error: " + spawnVm.getError().toXML());
         }

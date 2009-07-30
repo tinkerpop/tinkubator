@@ -10,6 +10,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.LopListener;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -21,12 +22,11 @@ import java.util.List;
  * Date: Jul 8, 2009
  * Time: 11:57:44 AM
  */
-public class PresenceListener implements PacketListener {
+public class PresenceListener extends LopVilleinListener {
 
-    XmppVillein xmppVillein;
 
     public PresenceListener(XmppVillein xmppVillein) {
-        this.xmppVillein = xmppVillein;
+        super(xmppVillein);
     }
 
     public void processPacket(Packet packet) {
@@ -39,7 +39,7 @@ public class PresenceListener implements PacketListener {
         if (presence.getType() == Presence.Type.unavailable ||
                 presence.getType() == Presence.Type.unsubscribe ||
                 presence.getType() == Presence.Type.unsubscribed) {
-            this.xmppVillein.removeStruct(packet.getFrom());
+            this.getXmppVillein().removeStruct(packet.getFrom());
             return;
         }
 
@@ -51,24 +51,24 @@ public class PresenceListener implements PacketListener {
     
             if (LinkedProcess.isBareJid(packet.getFrom())) {
                 //System.out.println("Bare Jid " + packet.getFrom());
-                Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom(), XmppVillein.StructType.HOST);
+                Struct checkStruct = this.getXmppVillein().getStruct(packet.getFrom(), XmppVillein.StructType.HOST);
                 if (checkStruct == null) {
                     HostStruct hostStruct = new HostStruct();
                     hostStruct.setFullJid(packet.getFrom());
                     hostStruct.setPresence(presence);
-                    this.xmppVillein.addHostStruct(hostStruct);
+                    this.getXmppVillein().addHostStruct(hostStruct);
                 } else {
                     checkStruct.setPresence(presence);
                 }
             } else if (isFarm(discoInfo)) {
                 //System.out.println("Farm Jid " + packet.getFrom());
-                Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom(), XmppVillein.StructType.FARM);
+                Struct checkStruct = this.getXmppVillein().getStruct(packet.getFrom(), XmppVillein.StructType.FARM);
                 if (checkStruct == null) {
                     FarmStruct farmStruct = new FarmStruct();
                     farmStruct.setFullJid(packet.getFrom());
                     farmStruct.setPresence(presence);
                     farmStruct.setSupportedVmSpecies(this.getSupportedVmSpecies(discoInfo));
-                    this.xmppVillein.addFarmStruct(farmStruct);
+                    this.getXmppVillein().addFarmStruct(farmStruct);
                 } else {
                     checkStruct.setPresence(presence);
                 }
@@ -76,65 +76,12 @@ public class PresenceListener implements PacketListener {
             } else {
                 // ONLY REPRESENT THOSE VMS THAT YOU HAVE SPAWNEDs
                 //System.out.println("Vm Jid " + packet.getFrom());
-                Struct checkStruct = this.xmppVillein.getStruct(packet.getFrom());
+                Struct checkStruct = this.getXmppVillein().getStruct(packet.getFrom());
                 if (checkStruct != null) {
                     //System.out.println("DOES NOT EQUAL NULL");
                     checkStruct.setPresence(presence);
                 }
             }
         //}
-    }
-
-    protected Collection<String> getSupportedVmSpecies(DiscoverInfo discoInfo) {
-        if (discoInfo != null) {
-            List<String> supportedVmSpecies = new LinkedList<String>();
-            try {
-                Document doc = LinkedProcess.createXMLDocument(discoInfo.toXML());
-                Element queryElement = doc.getRootElement().getChild("query", Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
-                Element xElement = queryElement.getChild(LinkedProcess.X_TAG, Namespace.getNamespace(LinkedProcess.X_NAMESPACE));
-                for (Element field : (List<Element>) xElement.getChildren()) {
-                    if (field.getAttributeValue("var").equals(LinkedProcess.VM_SPECIES_ATTRIBUTE)) {
-                        for (Element option : (List<Element>) field.getChildren("option", Namespace.getNamespace(LinkedProcess.X_NAMESPACE))) {
-                            Element value = option.getChild("value", Namespace.getNamespace(LinkedProcess.X_NAMESPACE));
-                            if (value != null) {
-                                String vmSpecies = value.getText();
-                                if (vmSpecies != null && vmSpecies.length() > 0)
-                                    supportedVmSpecies.add(vmSpecies);
-                            }
-                        }
-                    }
-                }
-                return supportedVmSpecies;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        } else {
-            return new HashSet<String>();
-        }
-    }
-
-    protected DiscoverInfo getDiscoInfo(String jid) {
-        ServiceDiscoveryManager discoManager = this.xmppVillein.getDiscoManager();
-        try {
-            return discoManager.discoverInfo(jid);
-        } catch (XMPPException e) {
-            XmppVillein.LOGGER.severe("XmppException with DiscoveryManager: " + e.getMessage());
-            return null;
-        }
-    }
-
-    protected boolean isVirtualMachine(DiscoverInfo discoInfo) {
-        if(discoInfo != null)
-            return discoInfo.containsFeature(LinkedProcess.LOP_VM_NAMESPACE);
-        else
-            return false;
-    }
-
-    protected boolean isFarm(DiscoverInfo discoInfo) {
-        if (discoInfo != null)
-            return discoInfo.containsFeature(LinkedProcess.LOP_FARM_NAMESPACE);
-        else
-            return false;
     }
 }

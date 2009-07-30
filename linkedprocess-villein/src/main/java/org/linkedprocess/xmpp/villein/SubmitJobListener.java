@@ -10,12 +10,10 @@ import org.linkedprocess.xmpp.vm.SubmitJob;
  * Date: Jul 28, 2009
  * Time: 1:01:30 PM
  */
-public class SubmitJobListener implements PacketListener {
-
-    protected XmppVillein xmppVillein;
+public class SubmitJobListener extends LopVilleinListener {
 
     public SubmitJobListener(XmppVillein xmppVillein) {
-        this.xmppVillein = xmppVillein;
+        super(xmppVillein);
     }
 
     public void processPacket(Packet packet) {
@@ -33,7 +31,7 @@ public class SubmitJobListener implements PacketListener {
         XmppVillein.LOGGER.info(submitJob.toXML());
 
         if (submitJob.getType() == IQ.Type.RESULT) {
-            VmStruct vmStruct = (VmStruct) this.xmppVillein.getStruct(submitJob.getFrom(), XmppVillein.StructType.VM);
+            VmStruct vmStruct = (VmStruct) this.getXmppVillein().getStruct(submitJob.getFrom(), XmppVillein.StructType.VM);
             if(vmStruct != null) {
                 Job job = new Job();
                 job.setResult(submitJob.getExpression());
@@ -43,7 +41,7 @@ public class SubmitJobListener implements PacketListener {
                 XmppVillein.LOGGER.severe("Job returned from unknown virtual machine: " + submitJob.getFrom());
             }
         } else if(submitJob.getType() == IQ.Type.ERROR) {
-             VmStruct vmStruct = (VmStruct) this.xmppVillein.getStruct(submitJob.getFrom(), XmppVillein.StructType.VM);
+             VmStruct vmStruct = (VmStruct) this.getXmppVillein().getStruct(submitJob.getFrom(), XmppVillein.StructType.VM);
             if(vmStruct != null) {
                 Job job = new Job();
                 job.setError(submitJob.getError());
