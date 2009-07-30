@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.Presence.Type;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 
 import android.app.Service;
@@ -74,6 +76,7 @@ public class VilleinService extends Service {
 	}
 
 	private void _shutdownService() {
+		villein.shutDown(new Presence(Type.unavailable ));
 		Log.i(getClass().getSimpleName(), "Villein service stopped!!!");
 	}
 

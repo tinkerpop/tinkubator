@@ -14,6 +14,7 @@ public class Villein extends Activity implements ConnectionListener {
 	private Bundle bundle;
 	private Button connectButton;
 	private TextView status;
+	private Button disconnectButton;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -22,6 +23,7 @@ public class Villein extends Activity implements ConnectionListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		status = (TextView) findViewById(R.id.status);
+		VilleinService.setConnectionListener(this);
 		connectButton = (Button) findViewById(R.id.Connect);
 		connectButton.setOnClickListener(new OnClickListener() {
 
@@ -34,14 +36,34 @@ public class Villein extends Activity implements ConnectionListener {
 				}
 			}
 		});
+		disconnectButton = (Button) findViewById(R.id.disconnect);
+		disconnectButton.setOnClickListener(new OnClickListener() {
+
+			public void onClick(View v) {
+				try {
+					disconnect();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	private void connect() throws IOException {
 		// setup and start MyService
 		{
-			VilleinService.setConnectionListener(this);
 			Intent svc = new Intent(this, VilleinService.class);
 			startService(svc);
+			
+		}
+
+	}
+	private void disconnect() throws IOException {
+		// setup and start MyService
+		{
+			Intent svc = new Intent(this, VilleinService.class);
+			stopService(svc);
 			
 		}
 

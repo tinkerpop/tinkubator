@@ -4,7 +4,18 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/Connect" android:text="Connect"></Button><TextView  
+<Button android:layout_width="fill_parent" 
+android:layout_height="wrap_content" android:id="@+id/Connect" android:text="Connect">
+</Button>
+
+<Button 
+	android:layout_width="fill_parent" 
+	android:layout_height="wrap_content" 
+	android:id="@+id/disconnect" 
+	android:text="disonnect">
+</Button>
+
+<TextView  
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent" 
     android:text="@string/hello"
