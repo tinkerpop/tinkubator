@@ -50,9 +50,9 @@ public class Job {
 
     public String toString() {
         return "Job("
-                + "jobID:'" + jobId + "'"
-                + ", vmJID:'" + vmJid + "'"
-                + ", appJID:'" + villeinJid + "'"
+                + "jobId:'" + jobId + "'"
+                + ", vmJid:'" + vmJid + "'"
+                + ", villeinJid:'" + villeinJid + "'"
                 + ", expression:'" + expression + "')";
 
     }

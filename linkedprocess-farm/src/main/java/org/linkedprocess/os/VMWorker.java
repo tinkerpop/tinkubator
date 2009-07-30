@@ -64,7 +64,7 @@ public class VMWorker {
     private static long threadID = 0;
 
     private static synchronized String nextThreadName() {
-        return "LOP VM worker thread #" + ++threadID;
+        return "LoP VM worker thread #" + ++threadID;
     }
 
     /**

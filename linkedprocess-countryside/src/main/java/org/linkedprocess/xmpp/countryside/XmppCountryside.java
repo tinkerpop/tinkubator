@@ -11,6 +11,7 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 
 import java.util.logging.Logger;
 import java.util.logging.LogManager;
+import java.util.Properties;
 import java.io.InputStream;
 import java.io.IOException;
 
@@ -69,6 +70,28 @@ public class XmppCountryside extends XmppClient {
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
         discoManager.addFeature(LinkedProcess.DISCO_ITEMS_NAMESPACE);
         discoManager.addFeature(LinkedProcess.LOP_COUNTRYSIDE_NAMESPACE);
+    }
+
+    public static void main(final String[] args) throws Exception {
+        /*Properties props = LinkedProcess.getConfiguration();
+        String server = props.getProperty(LinkedProcess.FARM_SERVER);
+        int port = Integer.valueOf(props.getProperty(LinkedProcess.FARM_PORT));
+        String userName = props.getProperty(LinkedProcess.FARM_USERNAME);
+        String password = props.getProperty(LinkedProcess.FARM_PASSWORD);*/
+
+        XmppCountryside xmppCountryside = new XmppCountryside("xmpp42.linkedprocess.org", 5222, "american_countryside", "american");
+    
+        Object o = "";
+        try {
+            synchronized (o) {
+                // Never break out until the process is killed.
+                while (true) {
+                    o.wait();
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
     
 }
