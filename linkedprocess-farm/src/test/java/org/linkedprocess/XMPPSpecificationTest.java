@@ -78,15 +78,12 @@ public class XMPPSpecificationTest {
         subscriptionPacket.setTo(mockFarmId);
         subscriptionPacket.setFrom(mockClient);
         subscriptionListener.processPacket(subscriptionPacket);
-        assertEquals(3, sentPackets.size());
+        assertEquals(2, sentPackets.size());
         // subscription acc
         Presence p0 = (Presence) sentPackets.get(0);
         assertEquals(Presence.Type.subscribed, p0.getType());
-        // subscribe request to the client
-        Presence p1 = (Presence) sentPackets.get(1);
-        assertEquals(Presence.Type.subscribe, p1.getType());
         // Farm status
-        Presence p2 = (Presence) sentPackets.get(2);
+        Presence p2 = (Presence) sentPackets.get(1);
         assertEquals(Presence.Type.available, p2.getType());
         assertEquals(p2.getPriority(), LinkedProcess.HIGHEST_PRIORITY);
         assertEquals(p2.getStatus(), XmppFarm.STATUS_MESSAGE_ACTIVE);
@@ -334,7 +331,7 @@ public class XMPPSpecificationTest {
         result = (SubmitJob) mockVM1Conn.sentPackets.get(0);
         assertEquals(result.getPacketID(), spawnPacketId);
         assertEquals(IQ.Type.RESULT, result.getType());
-        assertEquals("72.0", result.getExpression());
+        assertEquals("72", result.getExpression());
 
         // now, try with a wrong evaluation
         eval.setExpression("buh+2sdf;==");
@@ -411,17 +408,12 @@ public class XMPPSpecificationTest {
         mockVM1Conn.packetListeners.get(3).processPacket(terminate);
         ArrayList<Packet> sentPackets = mockVM1Conn.sentPackets;
         System.out.println(sentPackets);
-        assertEquals("we should get back one IQ TERMIANTE RESULT "
-                + "and one UNAVAILABLE presence packet back.", 2, sentPackets
+        assertEquals("we should get back one IQ TERMIANTE RESULT ", 1, sentPackets
                 .size());
         // first one - IQ
         TerminateVm result = (TerminateVm) sentPackets.get(0);
         assertEquals(IQ.Type.RESULT, result.getType());
         assertEquals(terminate.getPacketID(), result.getPacketID());
-        // second one should be the unavailable presence
-        assertEquals(Presence.Type.unavailable, ((Presence) sentPackets.get(1))
-                .getType());
-
     }
 
     private SpawnVm createSpawnPacket() {
