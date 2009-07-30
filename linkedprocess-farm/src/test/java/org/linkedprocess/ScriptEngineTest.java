@@ -76,7 +76,7 @@ public class ScriptEngineTest extends TestCase {
         engine = manager.getEngineByName(LinkedProcess.JAVASCRIPT);
         System.out.println("" + engine.getClass());
         assertNotNull(engine);
-        assertEquals("42", engine.eval("42").toString());
+        assertEquals("42.0", engine.eval("42").toString());
     }
 
     public void testJython() throws Exception {
