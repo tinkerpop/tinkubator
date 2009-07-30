@@ -9,6 +9,7 @@ import org.linkedprocess.security.VMSecurityManager;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.FileInputStream;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -248,13 +249,17 @@ public class LinkedProcess {
 
     static {
         LOGGER = getLogger(LinkedProcess.class);
+
         String file = System.getProperty(CONFIGURATION_PROPERTIES);
-        if (null == file) {
-            file = LOP_DEFAULT_PROPERTIES;
-        }
-        LOGGER.info("loading configuration from " + file);
         try {
-            PROPERTIES.load(LinkedProcess.class.getResourceAsStream(file));
+            if (null == file) {
+                file = LOP_DEFAULT_PROPERTIES;
+                LOGGER.info("loading default configuration: " + file);
+                PROPERTIES.load(LinkedProcess.class.getResourceAsStream(file));
+            } else {
+                LOGGER.info("loading configuration from external file: " + file);
+                PROPERTIES.load(new FileInputStream(file));
+            }
         } catch (IOException e) {
             LOGGER.severe("unable to load properties file " + file);
             System.exit(1);

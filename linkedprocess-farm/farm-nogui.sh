@@ -15,8 +15,12 @@ if [ "$JAVA_OPTIONS" = "" ] ; then
 	JAVA_OPTIONS="-Xms32M -Xmx512M"
 fi
 
+if [ $# -ge 1 ] ; then
+    JAVA_OPTIONS=$JAVA_OPTIONS" -Dorg.linkedprocess.configurationProperties="$1
+fi
+
 # Launch the application
-$JAVA $JAVA_OPTIONS -jar $JAR $*
+$JAVA $JAVA_OPTIONS -cp $JAR org.linkedprocess.xmpp.farm.XmppFarm
 
 # Return the program's exit code
 exit $?
