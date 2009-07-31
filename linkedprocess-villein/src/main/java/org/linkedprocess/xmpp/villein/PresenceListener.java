@@ -73,6 +73,16 @@ public class PresenceListener extends LopVilleinListener {
                     checkStruct.setPresence(presence);
                 }
 
+            } else if (isCountryside(discoInfo)) {
+                Struct checkStruct = this.getXmppVillein().getStruct(packet.getFrom(), XmppVillein.StructType.COUNTRYSIDE);
+                if (checkStruct == null) {
+                    CountrysideStruct countrysideStruct = new CountrysideStruct();
+                    countrysideStruct.setFullJid(packet.getFrom());
+                    countrysideStruct.setPresence(presence);
+                    this.getXmppVillein().addCountrysideStruct(countrysideStruct);
+                } else {
+                    checkStruct.setPresence(presence);
+                }
             } else {
                 // ONLY REPRESENT THOSE VMS THAT YOU HAVE SPAWNEDs
                 //System.out.println("Vm Jid " + packet.getFrom());

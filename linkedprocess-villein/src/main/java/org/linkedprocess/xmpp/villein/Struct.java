@@ -11,7 +11,6 @@ public class Struct {
 
     protected Presence presence;
     protected String fullJid;
-    protected Struct parentStruct;
 
     public void setPresence(Presence presence) {
         this.presence = presence;

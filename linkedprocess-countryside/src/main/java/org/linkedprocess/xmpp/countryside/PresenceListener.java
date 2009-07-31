@@ -1,12 +1,9 @@
 package org.linkedprocess.xmpp.countryside;
 
 
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
-import org.jivesoftware.smackx.packet.DiscoverItems;
 
 /**
  * User: marko
@@ -28,33 +25,17 @@ public class PresenceListener extends LopCountrysideListener {
 
         if (presence.isAvailable()) {
             DiscoverInfo discoInfo = this.getDiscoInfo(packet.getFrom());
-            System.out.println(discoInfo.toXML());
             if (isFarm(discoInfo)) {
-                System.out.println("Farm discovered: " + packet.getFrom());
-                ServiceDiscoveryManager discoManager = this.getXmppCountryside().getDiscoManager();
-                DiscoverItems.Item item = new DiscoverItems.Item(packet.getFrom());
-                item.setAction(DiscoverItems.Item.UPDATE_ACTION);
-                DiscoverItems items = new DiscoverItems();
-                items.addItem(item);
-                try {
-                    discoManager.publishItems(packet.getFrom(), items);
-                } catch (XMPPException e) {
-                    XmppCountryside.LOGGER.severe("XMPP Discovery Manager error: " + e.getMessage());
-                }
-                XmppCountryside.LOGGER.info(items.toXML());
+                System.out.println("Registering Farm resource: " + packet.getFrom());
+                this.getXmppCountryside().addFarmItem(packet.getFrom());
             }
         } else {
-            ServiceDiscoveryManager discoManager = this.getXmppCountryside().getDiscoManager();
-            DiscoverItems.Item item = new DiscoverItems.Item(packet.getFrom());
-            item.setAction(DiscoverItems.Item.REMOVE_ACTION);
-            DiscoverItems items = new DiscoverItems();
-            items.addItem(item);
-            try {
-                discoManager.publishItems(packet.getFrom(), items);
-            } catch (XMPPException e) {
-                XmppCountryside.LOGGER.severe("XMPP Discovery Manager error: " + e.getMessage());
-            }
-            XmppCountryside.LOGGER.info(items.toXML());
+            System.out.println("Unregistering resource: " + packet.getFrom());
+            this.getXmppCountryside().removeFarmItem(packet.getFrom());
         }
+
+        /*DiscoverItems items = new DiscoverItems();
+        items.setTo(this.getXmppCountryside().getFullJid());
+        this.getXmppCountryside().getConnection().sendPacket(items);*/
     }
 }

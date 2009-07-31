@@ -180,6 +180,8 @@ public class LinkedProcess {
     public static final String QUERY_TAG = "query";
     public static final String X_NAMESPACE = "jabber:x:data";
     public static final String X_TAG = "x";
+    public static final String ITEM_TAG = "item";
+    public static final String JID_ATTRIBUTE = "jid";
     public static final String FIELD_TAG = "field";
     public static final String VALUE_TAG = "value";
     public static final String OPTION_TAG = "option";

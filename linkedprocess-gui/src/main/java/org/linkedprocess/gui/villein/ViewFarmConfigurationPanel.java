@@ -35,7 +35,7 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
     protected static final String REFRESH = "refresh";
     protected FarmStruct farmStruct;
     protected VilleinGui villeinGui;
-    protected Document discoDocument;
+    protected Document discoInfoDocument;
     protected DiscoverInfo discoInfo;
     protected JList featuresList;
 
@@ -84,7 +84,7 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
         this.featuresList.setBorder(BorderFactory.createTitledBorder("Farm Features"));
 
         try {
-            this.generateDiscoDocument();
+            this.generateDiscoInfoDocument();
             this.refreshFarmConfiguration();
             this.refreshFarmFeatures();
         } catch (Exception e) {
@@ -131,11 +131,11 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
     public void actionPerformed(ActionEvent event) {
         if (event.getActionCommand().equals(REFRESH)) {
             try {
-                this.generateDiscoDocument();
+                this.generateDiscoInfoDocument();
                 this.refreshFarmConfiguration();
                 this.refreshFarmFeatures();
             } catch (Exception e) {
-                e.printStackTrace();
+                XmppVillein.LOGGER.severe(e.getMessage());
             }
         }
 
@@ -148,16 +148,16 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
         }
     }
 
-    private void generateDiscoDocument() throws XMPPException, JDOMException, IOException {
+    private void generateDiscoInfoDocument() throws XMPPException, JDOMException, IOException {
         ServiceDiscoveryManager discoManager = this.villeinGui.getXmppVillein().getDiscoManager();
         this.discoInfo = discoManager.discoverInfo(farmStruct.getFullJid());
-        this.discoDocument = LinkedProcess.createXMLDocument(this.discoInfo.toXML());
+        this.discoInfoDocument = LinkedProcess.createXMLDocument(this.discoInfo.toXML());
     }
 
     private Set<String> getFeatures() {
         Set<String> features = new HashSet<String>();
-        if (null != this.discoDocument) {
-            Element queryElement = this.discoDocument.getRootElement().getChild(LinkedProcess.QUERY_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
+        if (null != this.discoInfoDocument) {
+            Element queryElement = this.discoInfoDocument.getRootElement().getChild(LinkedProcess.QUERY_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
             if (null != queryElement) {
                 for (Element featureElement : (java.util.List<Element>) queryElement.getChildren(LinkedProcess.FEATURE_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE))) {
                     features.add(featureElement.getAttributeValue(LinkedProcess.VAR_ATTRIBUTE));
@@ -168,8 +168,8 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
     }
 
     private Element getFieldElement(String fieldVar) {
-        if (null != this.discoDocument) {
-            Element queryElement = discoDocument.getRootElement().getChild(LinkedProcess.QUERY_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
+        if (null != this.discoInfoDocument) {
+            Element queryElement = discoInfoDocument.getRootElement().getChild(LinkedProcess.QUERY_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
             if (null != queryElement) {
                 Namespace xNamespace = Namespace.getNamespace(LinkedProcess.X_NAMESPACE);
                 Element xElement = queryElement.getChild(LinkedProcess.X_TAG, xNamespace);
@@ -188,8 +188,8 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
 
     private void refreshFarmConfiguration() {
         this.clearAllRows(this.configurationTable);
-        if (null != this.discoDocument) {
-            Element queryElement = discoDocument.getRootElement().getChild(LinkedProcess.QUERY_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
+        if (null != this.discoInfoDocument) {
+            Element queryElement = discoInfoDocument.getRootElement().getChild(LinkedProcess.QUERY_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
             if (null != queryElement) {
                 Namespace xNamespace = Namespace.getNamespace(LinkedProcess.X_NAMESPACE);
                 Element xElement = queryElement.getChild(LinkedProcess.X_TAG, xNamespace);

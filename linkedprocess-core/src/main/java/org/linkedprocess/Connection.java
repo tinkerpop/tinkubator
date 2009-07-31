@@ -17,6 +17,8 @@ public interface Connection {
 
     void addPacketWriterInterceptor(PacketInterceptor interceptor, PacketFilter filter);
 
+    PacketCollector createPacketCollector(PacketFilter filter);
+
     void sendPacket(Packet packet);
 
     Roster getRoster();

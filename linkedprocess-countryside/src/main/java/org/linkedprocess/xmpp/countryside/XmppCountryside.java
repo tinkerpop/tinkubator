@@ -7,11 +7,14 @@ import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.packet.DiscoverItems;
 
 import java.util.logging.Logger;
 import java.util.logging.LogManager;
-import java.util.Properties;
+import java.util.Set;
+import java.util.HashSet;
 import java.io.InputStream;
 import java.io.IOException;
 
@@ -26,8 +29,10 @@ public class XmppCountryside extends XmppClient {
     public static final String RESOURCE_PREFIX = "LoPCountryside";
     public static final String STATUS_MESSAGE = "LoP Countryside v0.1";
     protected LinkedProcess.CountrysideStatus status;
+    protected Set<String> farmItems = new HashSet<String>();
 
     public XmppCountryside(final String server, final int port, final String username, final String password) throws XMPPException {
+
         InputStream resourceAsStream = getClass().getResourceAsStream("/logging.properties");
         try {
             LogManager.getLogManager().readConfiguration(resourceAsStream);
@@ -46,10 +51,14 @@ public class XmppCountryside extends XmppClient {
         this.roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
 
         PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
+        PacketFilter discoInfoFilter = new PacketTypeFilter(DiscoverItems.class);
         this.connection.addPacketListener(new PresenceListener(this), presenceFilter);
+        this.connection.addPacketListener(new DiscoItemsListener(this),  discoInfoFilter);
 
         this.status = LinkedProcess.CountrysideStatus.ACTIVE;
         this.connection.sendPacket(this.createPresence(this.status));
+
+
     }
 
     public final Presence createPresence(final LinkedProcess.CountrysideStatus status) {
@@ -70,6 +79,31 @@ public class XmppCountryside extends XmppClient {
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
         discoManager.addFeature(LinkedProcess.DISCO_ITEMS_NAMESPACE);
         discoManager.addFeature(LinkedProcess.LOP_COUNTRYSIDE_NAMESPACE);
+        try {
+            LOGGER.info("Can publish items: " + discoManager.canPublishItems(this.getBareJid()));
+        } catch(XMPPException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void addFarmItem(String jid) {
+        this.farmItems.add(jid);
+    }
+
+    public void removeFarmItem(String jid) {
+        this.farmItems.remove(jid);
+    }
+
+    public DiscoverItems createDiscoItems(String toJid) {
+        DiscoverItems items = new DiscoverItems();
+        items.setType(IQ.Type.RESULT);
+        items.setFrom(this.getFullJid());
+        items.setTo(toJid);
+        for(String item : this.farmItems) {
+            items.addItem(new DiscoverItems.Item(item));
+        }
+        return items;
     }
 
     public static void main(final String[] args) throws Exception {
@@ -79,8 +113,8 @@ public class XmppCountryside extends XmppClient {
         String userName = props.getProperty(LinkedProcess.FARM_USERNAME);
         String password = props.getProperty(LinkedProcess.FARM_PASSWORD);*/
 
-        XmppCountryside xmppCountryside = new XmppCountryside("xmpp42.linkedprocess.org", 5222, "american_countryside", "american");
-    
+        XmppCountryside xmppCountryside = new XmppCountryside("xmpp42.linkedprocess.org", 5222, "linked.process.1", "linked12");
+
         Object o = "";
         try {
             synchronized (o) {

@@ -7,10 +7,9 @@ import org.linkedprocess.gui.TreeRenderer;
 import org.linkedprocess.gui.RosterPanel;
 import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.gui.TreeNodeProperty;
-import org.linkedprocess.xmpp.villein.FarmStruct;
-import org.linkedprocess.xmpp.villein.HostStruct;
-import org.linkedprocess.xmpp.villein.Struct;
-import org.linkedprocess.xmpp.villein.VmStruct;
+import org.linkedprocess.xmpp.villein.*;
+import org.jivesoftware.smackx.packet.DiscoverItems;
+import org.jivesoftware.smack.packet.IQ;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -40,6 +39,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
     protected Set<String> supportedVmSpeciesActionCommands = new HashSet<String>();
 
     protected final static String FARM_CONFIGURATION = "farm configuration";
+    protected final static String COUNTRYSIDE_FARMS = "countryside farms";
     protected final static String TERMINATE_VM = "terminate vm";
     protected final static String SPAWN_VM = "spawn vm";
     protected final static String ADD_HOST = "add host";
@@ -123,6 +123,16 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                 farmFrame.setVisible(true);
                 farmFrame.setResizable(true);
             }
+        } else if (event.getActionCommand().equals(COUNTRYSIDE_FARMS)) {
+            if (this.popupTreeObject instanceof CountrysideStruct) {
+                CountrysideStruct countrysideStruct = (CountrysideStruct) this.popupTreeObject;
+                JFrame farmFrame = new JFrame(countrysideStruct.getFullJid());
+                farmFrame.getContentPane().add(new ViewCountrysideFarmsPanel(countrysideStruct, villeinGui));
+                farmFrame.pack();
+                farmFrame.setSize(600, 300);
+                farmFrame.setVisible(true);
+                farmFrame.setResizable(true);
+            }    
         } else if (event.getActionCommand().equals(SHUTDOWN)) {
             this.villeinGui.getXmppVillein().shutDown(null);
             this.villeinGui.loadLoginFrame();
@@ -144,6 +154,11 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
         for (HostStruct hostStruct : this.villeinGui.getXmppVillein().getHostStructs()) {
             DefaultMutableTreeNode hostNode = new DefaultMutableTreeNode(hostStruct);
+            for (CountrysideStruct countrysideStruct : hostStruct.getCountrysideStructs()) {
+                DefaultMutableTreeNode countrysideNode = new DefaultMutableTreeNode(countrysideStruct);
+                model.insertNodeInto(countrysideNode, hostNode, hostNode.getChildCount());
+                this.tree.scrollPathToVisible(new TreePath(countrysideNode.getPath()));
+            } 
             for (FarmStruct farmStruct : hostStruct.getFarmStructs()) {
                 DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(farmStruct);
                 for (VmStruct vmStruct : farmStruct.getVmStructs()) {
@@ -206,6 +221,9 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                 } else if (node.getUserObject() instanceof FarmStruct) {
                     this.tree.scrollPathToVisible(new TreePath(node.getPath()));
                     model.reload(node);
+                } else if (node.getUserObject() instanceof CountrysideStruct) {
+                    this.tree.scrollPathToVisible(new TreePath(node.getPath()));
+                    model.reload(node);
                 } else {
                     node.removeAllChildren();
                     VmStruct vmStruct = (VmStruct) node.getUserObject();
@@ -257,6 +275,22 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                             model.reload(farmNode);
                         }
                     }
+                } else if(struct instanceof CountrysideStruct) {
+                    if (parentNode != null) {
+                        DefaultMutableTreeNode countrysideNode = new DefaultMutableTreeNode(struct);
+                        model.insertNodeInto(countrysideNode, parentNode, parentNode.getChildCount());
+                        this.tree.scrollPathToVisible(new TreePath(countrysideNode.getPath()));
+                        model.reload(countrysideNode);
+                    } else {
+                        parentStruct = this.villeinGui.getXmppVillein().getParentStruct(LinkedProcess.generateBareJid(jid));
+                        parentNode = this.getNode(this.treeRoot, parentStruct.getFullJid());
+                        if (parentNode != null) {
+                            DefaultMutableTreeNode countrysideNode = new DefaultMutableTreeNode(struct);
+                            model.insertNodeInto(countrysideNode, parentNode, parentNode.getChildCount());
+                            this.tree.scrollPathToVisible(new TreePath(countrysideNode.getPath()));
+                            model.reload(countrysideNode);
+                        }
+                    }
                 } else if (struct instanceof VmStruct) {
                     if (parentNode != null) {
                         VmStruct vmStruct = (VmStruct) struct;
@@ -303,6 +337,8 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
             if (event.getButton() == MouseEvent.BUTTON3 && event.getClickCount() == 1) {
                 if (this.popupTreeObject instanceof HostStruct) {
                     this.createHostPopupMenu();
+                } else if (this.popupTreeObject instanceof CountrysideStruct) {
+                    this.createCountrysidePopupMenu();
                 } else if (this.popupTreeObject instanceof FarmStruct) {
                     this.createFarmPopupMenu((FarmStruct) this.popupTreeObject);
                 } else if (this.popupTreeObject instanceof VmStruct) {
@@ -340,12 +376,28 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         probeItem.addActionListener(this);
     }
 
+    public void createCountrysidePopupMenu() {
+        this.popupMenu = new JPopupMenu();
+        this.popupMenu.setBorder(new BevelBorder(6));
+        JLabel menuLabel = new JLabel("Countryside");
+        JMenuItem probeResource = new JMenuItem(PROBE);
+        JMenuItem discoItems = new JMenuItem(COUNTRYSIDE_FARMS);
+
+        menuLabel.setHorizontalTextPosition(JLabel.CENTER);
+        this.popupMenu.add(menuLabel);
+        this.popupMenu.addSeparator();
+        this.popupMenu.add(probeResource);
+        this.popupMenu.add(discoItems);
+        discoItems.addActionListener(this);
+        probeResource.addActionListener(this);
+    }
+
     public void createFarmPopupMenu(FarmStruct farmStruct) {
         this.popupMenu = new JPopupMenu();
         this.popupMenu.setBorder(new BevelBorder(6));
         JLabel menuLabel = new JLabel("Farm");
-        JMenuItem probeItem = new JMenuItem(PROBE);
-        JMenuItem discoItem = new JMenuItem(FARM_CONFIGURATION);
+        JMenuItem probeResource = new JMenuItem(PROBE);
+        JMenuItem discoInfo = new JMenuItem(FARM_CONFIGURATION);
         JMenu spawnMenu = new JMenu(SPAWN_VM);
 
         for (String vmSpecies : farmStruct.getSupportedVmSpecies()) {
@@ -358,29 +410,29 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         menuLabel.setHorizontalTextPosition(JLabel.CENTER);
         this.popupMenu.add(menuLabel);
         this.popupMenu.addSeparator();
-        this.popupMenu.add(probeItem);
-        this.popupMenu.add(discoItem);
+        this.popupMenu.add(probeResource);
+        this.popupMenu.add(discoInfo);
         this.popupMenu.add(spawnMenu);
-        discoItem.addActionListener(this);
-        probeItem.addActionListener(this);
+        discoInfo.addActionListener(this);
+        probeResource.addActionListener(this);
     }
 
     public void createVmPopupMenu() {
         this.popupMenu = new JPopupMenu();
         this.popupMenu.setBorder(new BevelBorder(6));
         JLabel menuLabel = new JLabel("Virtual Machine");
-        JMenuItem probeItem = new JMenuItem(PROBE);
+        JMenuItem probeResource = new JMenuItem(PROBE);
         JMenuItem vmControlItem = new JMenuItem(VM_CONTROL);
         JMenuItem terminateVmItem = new JMenuItem(TERMINATE_VM);
         menuLabel.setHorizontalTextPosition(JLabel.CENTER);
         this.popupMenu.add(menuLabel);
         this.popupMenu.addSeparator();
-        this.popupMenu.add(probeItem);
+        this.popupMenu.add(probeResource);
         this.popupMenu.add(vmControlItem);
         this.popupMenu.add(terminateVmItem);
         terminateVmItem.addActionListener(this);
         vmControlItem.addActionListener(this);
-        probeItem.addActionListener(this);
+        probeResource.addActionListener(this);
     }
 
     public void mouseReleased(MouseEvent e) {

@@ -27,6 +27,10 @@ public class XMPPConnectionWrapper implements Connection {
         delegate.addPacketWriterInterceptor(interceptor, filter);
     }
 
+    public PacketCollector createPacketCollector(PacketFilter filter) {
+        return delegate.createPacketCollector(filter);
+    }
+
     public void connect() throws XMPPException {
         delegate.connect();
     }

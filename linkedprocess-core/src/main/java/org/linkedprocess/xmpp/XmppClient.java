@@ -49,6 +49,7 @@ public abstract class XmppClient {
         ConnectionConfiguration connConfig = new ConnectionConfiguration(server, port);
         connConfig.setRosterLoadedAtLogin(false);
         connConfig.setSendPresence(false);
+
         this.connection = new XMPPConnectionWrapper(connConfig);
         this.connection.connect();
 

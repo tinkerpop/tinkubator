@@ -2,10 +2,7 @@ package org.linkedprocess.gui;
 
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.farm.XmppFarm;
-import org.linkedprocess.xmpp.villein.FarmStruct;
-import org.linkedprocess.xmpp.villein.HostStruct;
-import org.linkedprocess.xmpp.villein.VmStruct;
-import org.linkedprocess.xmpp.villein.XmppVillein;
+import org.linkedprocess.xmpp.villein.*;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 import javax.swing.*;
@@ -41,6 +38,11 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
             this.setText(LinkedProcess.generateResource(((XmppVillein) x).getFullJid()));
             this.setIcon(ImageHolder.villeinIcon);
             this.setToolTipText("villein");
+        } else if (x instanceof CountrysideStruct) {
+            CountrysideStruct countrysideStruct = (CountrysideStruct) x;
+            this.setText(LinkedProcess.generateResource(countrysideStruct.getFullJid()));
+            this.setIcon(ImageHolder.countrysideIcon);
+            this.setToolTipText("countryside_jid");
         } else if (x instanceof FarmStruct) {
             FarmStruct farmStruct = (FarmStruct) x;
             this.setText(LinkedProcess.generateResource(farmStruct.getFullJid()));

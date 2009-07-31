@@ -1,7 +1,7 @@
 package org.linkedprocess.xmpp.countryside;
 
-import org.linkedprocess.xmpp.LopListener;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.LopListener;
 
 /**
  * User: marko
