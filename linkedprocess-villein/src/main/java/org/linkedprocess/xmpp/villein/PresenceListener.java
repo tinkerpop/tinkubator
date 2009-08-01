@@ -61,7 +61,7 @@ public class PresenceListener extends LopVilleinListener {
                     checkStruct.setPresence(presence);
                 }
 
-            } else if (isCountryside(discoInfo)) {
+            } else if (isRegistry(discoInfo)) {
                 Struct checkStruct = this.getXmppVillein().getStruct(packet.getFrom(), XmppVillein.StructType.REGISTRY);
                 if (checkStruct == null) {
                     RegistryStruct registryStruct = new RegistryStruct();
