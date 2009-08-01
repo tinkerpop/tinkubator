@@ -50,7 +50,7 @@ public abstract class LopListener implements PacketListener {
             return false;
     }
 
-    protected boolean isCountryside(DiscoverInfo discoInfo) {
+    protected boolean isRegistry(DiscoverInfo discoInfo) {
          if (discoInfo != null)
             return discoInfo.containsFeature(LinkedProcess.LOP_REGISTRY_NAMESPACE);
         else
