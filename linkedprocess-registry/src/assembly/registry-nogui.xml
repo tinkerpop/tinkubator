@@ -1,6 +1,6 @@
 <assembly>
 
-	<id>countryside-nogui</id>
+	<id>registry-nogui</id>
 
 	<formats>
 		<format>jar</format>

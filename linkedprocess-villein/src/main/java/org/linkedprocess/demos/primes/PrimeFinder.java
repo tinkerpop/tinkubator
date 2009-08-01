@@ -24,7 +24,7 @@ public class PrimeFinder extends XmppVillein {
 
     public PrimeFinder(int startInteger, int endInteger) throws Exception {
         super("fortytwo.linkedprocess.org", 5222, "linked.process.2@fortytwo.linkedprocess.org", "linked23");
-        this.createFarmlandStructsFromRoster();
+        this.createCountrysideStructsFromRoster();
         this.waitFromFarms(DESIRED_FARMS, 500);
 
         for (FarmStruct farmStruct : this.getFarmStructs()) {

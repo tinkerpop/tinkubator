@@ -10,11 +10,11 @@ import java.awt.*;
  * Date: Jul 31, 2009
  * Time: 11:41:34 PM
  */
-public class FarmlandListRenderer extends DefaultListCellRenderer {
+public class CountrysideListRenderer extends DefaultListCellRenderer {
 
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        label.setIcon(ImageHolder.farmlandIcon);
+        label.setIcon(ImageHolder.countrysideIcon);
         return label;
     }
 }

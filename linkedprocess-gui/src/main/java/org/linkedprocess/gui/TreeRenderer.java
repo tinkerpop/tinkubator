@@ -38,11 +38,11 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
             this.setText(LinkedProcess.generateResource(((XmppVillein) x).getFullJid()));
             this.setIcon(ImageHolder.villeinIcon);
             this.setToolTipText("villein");
-        } else if (x instanceof CountrysideStruct) {
-            CountrysideStruct countrysideStruct = (CountrysideStruct) x;
-            this.setText(LinkedProcess.generateResource(countrysideStruct.getFullJid()));
-            this.setIcon(ImageHolder.countrysideIcon);
-            this.setToolTipText("countryside_jid");
+        } else if (x instanceof RegistryStruct) {
+            RegistryStruct registryStruct = (RegistryStruct) x;
+            this.setText(LinkedProcess.generateResource(registryStruct.getFullJid()));
+            this.setIcon(ImageHolder.registryIcon);
+            this.setToolTipText("registry_jid");
         } else if (x instanceof FarmStruct) {
             FarmStruct farmStruct = (FarmStruct) x;
             this.setText(LinkedProcess.generateResource(farmStruct.getFullJid()));
@@ -53,11 +53,11 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
             this.setText(LinkedProcess.generateResource(vmStruct.getFullJid()));
             this.setIcon(ImageHolder.vmIcon);
             this.setToolTipText("vm_jid");
-        } else if (x instanceof FarmlandStruct) {
-            FarmlandStruct farmlandStruct = (FarmlandStruct) x;
-            this.setText(farmlandStruct.getFullJid());
-            this.setIcon(ImageHolder.farmlandIcon);
-            this.setToolTipText("host_jid");
+        } else if (x instanceof CountrysideStruct) {
+            CountrysideStruct countrysideStruct = (CountrysideStruct) x;
+            this.setText(countrysideStruct.getFullJid());
+            this.setIcon(ImageHolder.countrysideIcon);
+            this.setToolTipText("countryside_jid");
         } else if (x instanceof TreeNodeProperty) {
             if (((TreeNodeProperty) x).getKey().equals("villein_jid")) {
                 this.setIcon(ImageHolder.villeinIcon);

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Path to JAR
-JAR=`dirname $0`/target/linkedprocess-*-countryside-nogui.jar
+JAR=`dirname $0`/target/linkedprocess-*-registry-nogui.jar
 
 # Find Java
 if [ "$JAVA_HOME" = "" ] ; then
@@ -20,7 +20,7 @@ if [ $# -ge 1 ] ; then
 fi
 
 # Launch the application
-$JAVA $JAVA_OPTIONS -cp $JAR org.linkedprocess.xmpp.countryside.XmppCountryside
+$JAVA $JAVA_OPTIONS -cp $JAR org.linkedprocess.xmpp.registry.XmppRegistry
 
 # Return the program's exit code
 exit $?

@@ -28,6 +28,7 @@ public class XmppVirtualMachine extends XmppClient {
 
     public static Logger LOGGER = LinkedProcess.getLogger(XmppVirtualMachine.class);
     public static String RESOURCE_PREFIX = "LoPVM";
+    public static String STATUS_MESSAGE = "LoP Virtual Machine v0.1";
 
     protected final XmppFarm farm;
     protected final String vmPassword;
@@ -82,12 +83,12 @@ public class XmppVirtualMachine extends XmppClient {
     }
 
     public final Presence createPresence(final LinkedProcess.VmStatus status) {
-        String statusMessage = "LoP VM v0.1";
+
         switch (status) {
             case ACTIVE:
-                return new Presence(Presence.Type.available, statusMessage, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.available);
+                return new Presence(Presence.Type.available, XmppVirtualMachine.STATUS_MESSAGE, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.available);
             case ACTIVE_FULL:
-                return new Presence(Presence.Type.available, statusMessage, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.dnd);
+                return new Presence(Presence.Type.available, XmppVirtualMachine.STATUS_MESSAGE, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.dnd);
             case NOT_FOUND:
                 return new Presence(Presence.Type.unavailable);
             case INACTIVE:

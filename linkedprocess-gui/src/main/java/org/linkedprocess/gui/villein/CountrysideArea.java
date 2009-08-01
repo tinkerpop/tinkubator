@@ -27,7 +27,7 @@ import java.util.Set;
  * Date: Jul 7, 2009
  * Time: 11:13:22 PM
  */
-public class FarmlandArea extends JPanel implements ActionListener, MouseListener {
+public class CountrysideArea extends JPanel implements ActionListener, MouseListener {
 
     protected VilleinGui villeinGui;
     protected JTree tree;
@@ -37,20 +37,20 @@ public class FarmlandArea extends JPanel implements ActionListener, MouseListene
     protected Set<String> supportedVmSpeciesActionCommands = new HashSet<String>();
 
     protected final static String FARM_CONFIGURATION = "farm configuration";
-    protected final static String COUNTRYSIDE_FARMLANDS = "countryside farmlands";
+    protected final static String REGISTRY_COUNTRYSIDES = "countrysides";
     protected final static String TERMINATE_VM = "terminate vm";
     protected final static String SPAWN_VM = "spawn vm";
-    protected final static String ADD_FARMLAND = "add farmland";
+    protected final static String ADD_COUNTRYSIDE = "add countryside";
     protected final static String SHUTDOWN = "shutdown";
     protected final static String VM_CONTROL = "vm control";
     protected final static String PROBE = "probe";
 
-    public FarmlandArea(VilleinGui villeinGui) {
+    public CountrysideArea(VilleinGui villeinGui) {
         super(new BorderLayout());
         this.villeinGui = villeinGui;
-        FarmlandStruct farmlandStruct = new FarmlandStruct();
-        farmlandStruct.setFullJid(LinkedProcess.generateBareJid(this.villeinGui.getXmppVillein().getFullJid()));
-        this.treeRoot = new DefaultMutableTreeNode(farmlandStruct);
+        CountrysideStruct countrysideStruct = new CountrysideStruct();
+        countrysideStruct.setFullJid(LinkedProcess.generateBareJid(this.villeinGui.getXmppVillein().getFullJid()));
+        this.treeRoot = new DefaultMutableTreeNode(countrysideStruct);
         this.tree = new JTree(this.treeRoot);
         this.tree.setCellRenderer(new TreeRenderer());
         this.tree.setModel(new DefaultTreeModel(treeRoot));
@@ -75,13 +75,13 @@ public class FarmlandArea extends JPanel implements ActionListener, MouseListene
         this.villeinGui.getXmppVillein().getConnection().addPacketWriterInterceptor(packetSnifferPanel, null);
 
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("farmlands", treePanel);
+        tabbedPane.addTab("countrysides", treePanel);
         tabbedPane.addTab("roster", rosterPanel);
         tabbedPane.addTab("packets", packetSnifferPanel);
 
         this.add(tabbedPane, BorderLayout.CENTER);
 
-        this.villeinGui.getXmppVillein().createFarmlandStructsFromRoster();
+        this.villeinGui.getXmppVillein().createCountrysideStructsFromRoster();
         this.createTree();
     }
 
@@ -121,11 +121,11 @@ public class FarmlandArea extends JPanel implements ActionListener, MouseListene
                 farmFrame.setVisible(true);
                 farmFrame.setResizable(true);
             }
-        } else if (event.getActionCommand().equals(COUNTRYSIDE_FARMLANDS)) {
-            if (this.popupTreeObject instanceof CountrysideStruct) {
-                CountrysideStruct countrysideStruct = (CountrysideStruct) this.popupTreeObject;
-                JFrame farmFrame = new JFrame(countrysideStruct.getFullJid());
-                farmFrame.getContentPane().add(new ViewCountrysideFarmlandsPanel(countrysideStruct, villeinGui));
+        } else if (event.getActionCommand().equals(REGISTRY_COUNTRYSIDES)) {
+            if (this.popupTreeObject instanceof RegistryStruct) {
+                RegistryStruct registryStruct = (RegistryStruct) this.popupTreeObject;
+                JFrame farmFrame = new JFrame(registryStruct.getFullJid());
+                farmFrame.getContentPane().add(new ViewRegistryCountrysidesPanel(registryStruct, villeinGui));
                 farmFrame.pack();
                 farmFrame.setVisible(true);
                 farmFrame.setResizable(true);
@@ -149,14 +149,14 @@ public class FarmlandArea extends JPanel implements ActionListener, MouseListene
     public void createTree() {
         treeRoot.removeAllChildren();
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-        for (FarmlandStruct farmlandStruct : this.villeinGui.getXmppVillein().getFarmlandStructs()) {
-            DefaultMutableTreeNode farmlandNode = new DefaultMutableTreeNode(farmlandStruct);
-            for (CountrysideStruct countrysideStruct : farmlandStruct.getCountrysideStructs()) {
-                DefaultMutableTreeNode countrysideNode = new DefaultMutableTreeNode(countrysideStruct);
-                model.insertNodeInto(countrysideNode, farmlandNode, farmlandNode.getChildCount());
-                this.tree.scrollPathToVisible(new TreePath(countrysideNode.getPath()));
+        for (CountrysideStruct countrysideStruct : this.villeinGui.getXmppVillein().getCountrysideStructs()) {
+            DefaultMutableTreeNode countrysideNode = new DefaultMutableTreeNode(countrysideStruct);
+            for (RegistryStruct registryStruct : countrysideStruct.getRegistryStructs()) {
+                DefaultMutableTreeNode registryNode = new DefaultMutableTreeNode(registryStruct);
+                model.insertNodeInto(registryNode, countrysideNode, countrysideNode.getChildCount());
+                this.tree.scrollPathToVisible(new TreePath(registryNode.getPath()));
             } 
-            for (FarmStruct farmStruct : farmlandStruct.getFarmStructs()) {
+            for (FarmStruct farmStruct : countrysideStruct.getFarmStructs()) {
                 DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(farmStruct);
                 for (VmStruct vmStruct : farmStruct.getVmStructs()) {
                     DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(vmStruct);
@@ -177,12 +177,12 @@ public class FarmlandArea extends JPanel implements ActionListener, MouseListene
                         model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
                     }*/
                 }
-                model.insertNodeInto(farmNode, farmlandNode, farmlandNode.getChildCount());
+                model.insertNodeInto(farmNode, countrysideNode, countrysideNode.getChildCount());
                 this.tree.scrollPathToVisible(new TreePath(farmNode.getPath()));
             }
 
-            model.insertNodeInto(farmlandNode, this.treeRoot, this.treeRoot.getChildCount());
-            this.tree.scrollPathToVisible(new TreePath(farmlandNode.getPath()));
+            model.insertNodeInto(countrysideNode, this.treeRoot, this.treeRoot.getChildCount());
+            this.tree.scrollPathToVisible(new TreePath(countrysideNode.getPath()));
         }
         model.reload();
     }
@@ -212,16 +212,10 @@ public class FarmlandArea extends JPanel implements ActionListener, MouseListene
                 node.removeAllChildren();
                 model.removeNodeFromParent(node);
             } else {
-                if (node.getUserObject() instanceof FarmlandStruct) {
+                if (node.getUserObject() instanceof CountrysideStruct || node.getUserObject() instanceof RegistryStruct || node.getUserObject() instanceof FarmStruct) {
                     this.tree.scrollPathToVisible(new TreePath(node.getPath()));
                     model.reload(node);
-                } else if (node.getUserObject() instanceof FarmStruct) {
-                    this.tree.scrollPathToVisible(new TreePath(node.getPath()));
-                    model.reload(node);
-                } else if (node.getUserObject() instanceof CountrysideStruct) {
-                    this.tree.scrollPathToVisible(new TreePath(node.getPath()));
-                    model.reload(node);
-                } else {
+                } else if (node.getUserObject() instanceof VmStruct) {
                     node.removeAllChildren();
                     VmStruct vmStruct = (VmStruct) node.getUserObject();
                     DefaultMutableTreeNode temp;
@@ -240,6 +234,8 @@ public class FarmlandArea extends JPanel implements ActionListener, MouseListene
                     }*/
                     this.tree.scrollPathToVisible(new TreePath(node.getPath()));
                     model.reload(node);
+                } else {
+                    XmppVillein.LOGGER.severe("Unknow node/struct object: " + node.getUserObject());
                 }
             }
         } else {
@@ -251,41 +247,25 @@ public class FarmlandArea extends JPanel implements ActionListener, MouseListene
                 }
 
                 Struct struct = this.villeinGui.getXmppVillein().getStruct(jid);
-                if (struct instanceof FarmlandStruct) {
-                    DefaultMutableTreeNode farmlandNode = new DefaultMutableTreeNode(struct);
-                    model.insertNodeInto(farmlandNode, this.treeRoot, this.treeRoot.getChildCount());
-                    this.tree.scrollPathToVisible(new TreePath(farmlandNode.getPath()));
-                    model.reload(farmlandNode);
-                } else if (struct instanceof FarmStruct) {
+                if (struct instanceof CountrysideStruct) {
+                    DefaultMutableTreeNode countrysideStruct = new DefaultMutableTreeNode(struct);
+                    model.insertNodeInto(countrysideStruct, this.treeRoot, this.treeRoot.getChildCount());
+                    this.tree.scrollPathToVisible(new TreePath(countrysideStruct.getPath()));
+                    model.reload(countrysideStruct);
+                } else if (struct instanceof RegistryStruct || struct instanceof FarmStruct) {
                     if (parentNode != null) {
-                        DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(struct);
-                        model.insertNodeInto(farmNode, parentNode, parentNode.getChildCount());
-                        this.tree.scrollPathToVisible(new TreePath(farmNode.getPath()));
-                        model.reload(farmNode);
+                        DefaultMutableTreeNode otherNode = new DefaultMutableTreeNode(struct);
+                        model.insertNodeInto(otherNode, parentNode, parentNode.getChildCount());
+                        this.tree.scrollPathToVisible(new TreePath(otherNode.getPath()));
+                        model.reload(otherNode);
                     } else {
                         parentStruct = this.villeinGui.getXmppVillein().getParentStruct(LinkedProcess.generateBareJid(jid));
                         parentNode = this.getNode(this.treeRoot, parentStruct.getFullJid());
                         if (parentNode != null) {
-                            DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(struct);
-                            model.insertNodeInto(farmNode, parentNode, parentNode.getChildCount());
-                            this.tree.scrollPathToVisible(new TreePath(farmNode.getPath()));
-                            model.reload(farmNode);
-                        }
-                    }
-                } else if(struct instanceof CountrysideStruct) {
-                    if (parentNode != null) {
-                        DefaultMutableTreeNode countrysideNode = new DefaultMutableTreeNode(struct);
-                        model.insertNodeInto(countrysideNode, parentNode, parentNode.getChildCount());
-                        this.tree.scrollPathToVisible(new TreePath(countrysideNode.getPath()));
-                        model.reload(countrysideNode);
-                    } else {
-                        parentStruct = this.villeinGui.getXmppVillein().getParentStruct(LinkedProcess.generateBareJid(jid));
-                        parentNode = this.getNode(this.treeRoot, parentStruct.getFullJid());
-                        if (parentNode != null) {
-                            DefaultMutableTreeNode countrysideNode = new DefaultMutableTreeNode(struct);
-                            model.insertNodeInto(countrysideNode, parentNode, parentNode.getChildCount());
-                            this.tree.scrollPathToVisible(new TreePath(countrysideNode.getPath()));
-                            model.reload(countrysideNode);
+                            DefaultMutableTreeNode otherNode = new DefaultMutableTreeNode(struct);
+                            model.insertNodeInto(otherNode, parentNode, parentNode.getChildCount());
+                            this.tree.scrollPathToVisible(new TreePath(otherNode.getPath()));
+                            model.reload(otherNode);
                         }
                     }
                 } else if (struct instanceof VmStruct) {
@@ -332,10 +312,10 @@ public class FarmlandArea extends JPanel implements ActionListener, MouseListene
             this.popupTreeObject = selectedNode.getUserObject();
 
             if (event.getButton() == MouseEvent.BUTTON3 && event.getClickCount() == 1) {
-                if (this.popupTreeObject instanceof FarmlandStruct) {
-                    this.createFarmlandPopupMenu();
-                } else if (this.popupTreeObject instanceof CountrysideStruct) {
+                if (this.popupTreeObject instanceof CountrysideStruct) {
                     this.createCountrysidePopupMenu();
+                } else if (this.popupTreeObject instanceof RegistryStruct) {
+                    this.createRegistryPopupMenu();
                 } else if (this.popupTreeObject instanceof FarmStruct) {
                     this.createFarmPopupMenu((FarmStruct) this.popupTreeObject);
                 } else if (this.popupTreeObject instanceof VmStruct) {
@@ -361,10 +341,10 @@ public class FarmlandArea extends JPanel implements ActionListener, MouseListene
         }
     }
 
-    public void createFarmlandPopupMenu() {
+    public void createCountrysidePopupMenu() {
         this.popupMenu = new JPopupMenu();
         this.popupMenu.setBorder(new BevelBorder(6));
-        JLabel menuLabel = new JLabel("Farmland");
+        JLabel menuLabel = new JLabel("Countryside");
         JMenuItem probeItem = new JMenuItem(PROBE);
         menuLabel.setHorizontalTextPosition(JLabel.CENTER);
         this.popupMenu.add(menuLabel);
@@ -373,12 +353,12 @@ public class FarmlandArea extends JPanel implements ActionListener, MouseListene
         probeItem.addActionListener(this);
     }
 
-    public void createCountrysidePopupMenu() {
+    public void createRegistryPopupMenu() {
         this.popupMenu = new JPopupMenu();
         this.popupMenu.setBorder(new BevelBorder(6));
-        JLabel menuLabel = new JLabel("Countryside");
+        JLabel menuLabel = new JLabel("Registry");
         JMenuItem probeResource = new JMenuItem(PROBE);
-        JMenuItem discoItems = new JMenuItem(COUNTRYSIDE_FARMLANDS);
+        JMenuItem discoItems = new JMenuItem(REGISTRY_COUNTRYSIDES);
 
         menuLabel.setHorizontalTextPosition(JLabel.CENTER);
         this.popupMenu.add(menuLabel);

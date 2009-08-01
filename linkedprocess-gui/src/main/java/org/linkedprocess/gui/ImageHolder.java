@@ -13,7 +13,7 @@ public class ImageHolder {
     public static final ImageIcon farmBackground = new ImageIcon(ImageHolder.class.getResource("farm-background.png"));
     public static final ImageIcon cowBackground = new ImageIcon(ImageHolder.class.getResource("cow-background.png"));
     public static final ImageIcon farmIcon = new ImageIcon(ImageHolder.class.getResource("farm.png"));
-    public static final ImageIcon countrysideIcon = new ImageIcon(ImageHolder.class.getResource("countryside.png"));
+    public static final ImageIcon registryIcon = new ImageIcon(ImageHolder.class.getResource("registry.png"));
     public static final ImageIcon lopIcon = new ImageIcon(ImageHolder.class.getResource("lop-logo.png"));
     public static final ImageIcon speciesIcon = new ImageIcon(ImageHolder.class.getResource("species.png"));
     public static final ImageIcon passwordIcon = new ImageIcon(ImageHolder.class.getResource("password.png"));
@@ -25,7 +25,7 @@ public class ImageHolder {
     public static final ImageIcon vmIcon = new ImageIcon(ImageHolder.class.getResource("vm.png"));
     public static final ImageIcon addIcon = new ImageIcon(ImageHolder.class.getResource("add.png"));
     public static final ImageIcon removeIcon = new ImageIcon(ImageHolder.class.getResource("remove.png"));
-    public static final ImageIcon farmlandIcon = new ImageIcon(ImageHolder.class.getResource("farmland.png"));
+    public static final ImageIcon countrysideIcon = new ImageIcon(ImageHolder.class.getResource("countryside.png"));
     public static final ImageIcon mailboxIcon = new ImageIcon(ImageHolder.class.getResource("mailbox.png"));
     public static final ImageIcon letterIcon = new ImageIcon(ImageHolder.class.getResource("letter.png"));
 

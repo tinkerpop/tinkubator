@@ -5,17 +5,12 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.PacketCollector;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.gui.ImageHolder;
-import org.linkedprocess.xmpp.villein.CountrysideStruct;
+import org.linkedprocess.xmpp.villein.RegistryStruct;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,23 +21,23 @@ import java.io.IOException;
  * Date: Jul 30, 2009
  * Time: 5:05:38 PM
  */
-public class ViewCountrysideFarmlandsPanel extends JPanel implements ActionListener {
+public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListener {
 
     protected JList farmlandList;
     protected static final String REFRESH = "refresh";
     protected static final String SUBSCRIBE = "subscribe";
-    protected CountrysideStruct countrysideStruct;
+    protected RegistryStruct registryStruct;
     protected VilleinGui villeinGui;
     protected Document discoItemsDocument;
 
 
-    public ViewCountrysideFarmlandsPanel(CountrysideStruct countrysideStruct, VilleinGui villeinGui) {
+    public ViewRegistryCountrysidesPanel(RegistryStruct registryStruct, VilleinGui villeinGui) {
         super(new BorderLayout());
-        this.countrysideStruct = countrysideStruct;
+        this.registryStruct = registryStruct;
         this.villeinGui = villeinGui;
 
         this.farmlandList = new JList(new DefaultListModel());
-        this.farmlandList.setCellRenderer(new FarmlandListRenderer());
+        this.farmlandList.setCellRenderer(new CountrysideListRenderer());
         this.farmlandList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -88,7 +83,7 @@ public class ViewCountrysideFarmlandsPanel extends JPanel implements ActionListe
 
     private void generateDiscoItemsDocument() throws XMPPException, JDOMException, IOException {
         ServiceDiscoveryManager discoManager = this.villeinGui.getXmppVillein().getDiscoManager();
-        this.discoItemsDocument = LinkedProcess.createXMLDocument(discoManager.discoverItems(this.countrysideStruct.getFullJid()).toXML());
+        this.discoItemsDocument = LinkedProcess.createXMLDocument(discoManager.discoverItems(this.registryStruct.getFullJid()).toXML());
         //PacketCollector collector = this.villeinGui.getXmppVillein().getConnection().createPacketCollector(new PacketTypeFilter(DiscoverItems.class));
         //this.discoItemsDocument = LinkedProcess.createXMLDocument(collector.nextResult().toXML());
         //collector.cancel();

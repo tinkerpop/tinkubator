@@ -1,4 +1,4 @@
-package org.linkedprocess.xmpp.countryside;
+package org.linkedprocess.xmpp.registry;
 
 import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.LinkedProcess;
@@ -24,15 +24,15 @@ import java.io.IOException;
  * Date: Jul 30, 2009
  * Time: 11:33:10 AM
  */
-public class XmppCountryside extends XmppClient {
+public class XmppRegistry extends XmppClient {
 
-    public static Logger LOGGER = LinkedProcess.getLogger(XmppCountryside.class);
-    public static final String RESOURCE_PREFIX = "LoPCountryside";
-    public static final String STATUS_MESSAGE = "LoP Countryside v0.1";
+    public static Logger LOGGER = LinkedProcess.getLogger(XmppRegistry.class);
+    public static final String RESOURCE_PREFIX = "LoPRegistry";
+    public static final String STATUS_MESSAGE = "LoP Registry v0.1";
     protected LinkedProcess.CountrysideStatus status;
-    protected Set<String> farmlands = new HashSet<String>();
+    protected Set<String> countrysides = new HashSet<String>();
 
-    public XmppCountryside(final String server, final int port, final String username, final String password) throws XMPPException {
+    public XmppRegistry(final String server, final int port, final String username, final String password) throws XMPPException {
 
         InputStream resourceAsStream = getClass().getResourceAsStream("/logging.properties");
         try {
@@ -62,10 +62,9 @@ public class XmppCountryside extends XmppClient {
     }
 
     public final Presence createPresence(final LinkedProcess.CountrysideStatus status) {
-        String statusMessage = "LoP Countryside v0.1";
         switch (status) {
             case ACTIVE:
-                return new Presence(Presence.Type.available, statusMessage, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
+                return new Presence(Presence.Type.available, XmppRegistry.STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
             case INACTIVE:
                 return new Presence(Presence.Type.unavailable);
             default:
@@ -75,18 +74,18 @@ public class XmppCountryside extends XmppClient {
 
     protected void initiateFeatures() {
         super.initiateFeatures();
-        ServiceDiscoveryManager.setIdentityName(XmppCountryside.RESOURCE_PREFIX);
+        ServiceDiscoveryManager.setIdentityName(XmppRegistry.RESOURCE_PREFIX);
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
         this.getDiscoManager().addFeature(LinkedProcess.DISCO_ITEMS_NAMESPACE);
-        this.getDiscoManager().addFeature(LinkedProcess.LOP_COUNTRYSIDE_NAMESPACE);
+        this.getDiscoManager().addFeature(LinkedProcess.LOP_REGISTRY_NAMESPACE);
     }
 
-    public void addFarmland(String jid) {
-        this.farmlands.add(jid);
+    public void addCountryside(String jid) {
+        this.countrysides.add(jid);
     }
 
-    public void removeFarmland(String jid) {
-        this.farmlands.remove(jid);
+    public void removeCountryside(String jid) {
+        this.countrysides.remove(jid);
     }
 
     public DiscoverItems createDiscoItems(String toJid) {
@@ -94,7 +93,7 @@ public class XmppCountryside extends XmppClient {
         items.setType(IQ.Type.RESULT);
         items.setFrom(this.getFullJid());
         items.setTo(toJid);
-        for(String item : this.farmlands) {
+        for(String item : this.countrysides) {
             items.addItem(new DiscoverItems.Item(item));
         }
         return items;
@@ -102,12 +101,12 @@ public class XmppCountryside extends XmppClient {
 
     public static void main(final String[] args) throws Exception {
         Properties props = LinkedProcess.getConfiguration();
-        String server = props.getProperty(LinkedProcess.COUNTRYSIDE_SERVER);
-        int port = Integer.valueOf(props.getProperty(LinkedProcess.COUNTRYSIDE_PORT));
-        String username = props.getProperty(LinkedProcess.COUNTRYSIDE_USERNAME);
-        String password = props.getProperty(LinkedProcess.COUNTRYSIDE_PASSWORD);
+        String server = props.getProperty(LinkedProcess.REGISTRY_SERVER);
+        int port = Integer.valueOf(props.getProperty(LinkedProcess.REGISTRY_PORT));
+        String username = props.getProperty(LinkedProcess.REGISTRY_USERNAME);
+        String password = props.getProperty(LinkedProcess.REGISTRY_PASSWORD);
 
-        XmppCountryside xmppCountryside = new XmppCountryside(server, port, username, password);
+        XmppRegistry xmppRegistry = new XmppRegistry(server, port, username, password);
 
         Object o = "";
         try {

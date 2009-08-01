@@ -52,7 +52,7 @@ public abstract class LopListener implements PacketListener {
 
     protected boolean isCountryside(DiscoverInfo discoInfo) {
          if (discoInfo != null)
-            return discoInfo.containsFeature(LinkedProcess.LOP_COUNTRYSIDE_NAMESPACE);
+            return discoInfo.containsFeature(LinkedProcess.LOP_REGISTRY_NAMESPACE);
         else
             return false;
     }

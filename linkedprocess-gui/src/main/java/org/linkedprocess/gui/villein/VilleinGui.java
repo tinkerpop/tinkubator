@@ -29,7 +29,7 @@ public class VilleinGui extends JFrame {
     protected static final String FRAME_TITLE = "Simple Linked Process Villein";
 
     protected XmppVillein xmppVillein;
-    protected FarmlandArea farmlandArea;
+    protected CountrysideArea countrysideArea;
     protected Map<String, VmControlFrame> vmFrames = new HashMap<String, VmControlFrame>();
 
     public VilleinGui() {
@@ -67,9 +67,9 @@ public class VilleinGui extends JFrame {
         this.xmppVillein.getConnection().addPacketListener(new ManageBindingsListener(this), bindingsFilter);
 
         this.getContentPane().removeAll();
-        this.farmlandArea = new FarmlandArea(this);
-        this.farmlandArea.createTree();
-        this.getContentPane().add(farmlandArea);
+        this.countrysideArea = new CountrysideArea(this);
+        this.countrysideArea.createTree();
+        this.getContentPane().add(countrysideArea);
         this.setResizable(true);
         this.pack();
         this.setVisible(true);
@@ -93,19 +93,19 @@ public class VilleinGui extends JFrame {
     }
 
     public void updateHostAreaTree(String jid, boolean remove) {
-        this.farmlandArea.updateTree(jid, remove);
+        this.countrysideArea.updateTree(jid, remove);
     }
 
     public void createTree() {
-        this.farmlandArea.createTree();
+        this.countrysideArea.createTree();
     }
 
     public XmppVillein getXmppVillein() {
         return this.xmppVillein;
     }
 
-    public FarmlandArea getHostArea() {
-        return this.farmlandArea;
+    public CountrysideArea getHostArea() {
+        return this.countrysideArea;
     }
 
     public void shutDown() {

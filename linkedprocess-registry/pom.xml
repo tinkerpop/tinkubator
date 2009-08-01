@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.linkedprocess</groupId>
-    <artifactId>linkedprocess-countryside</artifactId>
+    <artifactId>linkedprocess-registry</artifactId>
     <version>alpha1</version>
     <packaging>jar</packaging>
-    <name>Linked Process Countryside</name>
+    <name>Linked Process Registry</name>
 
     <parent>
         <groupId>org.linkedprocess</groupId>
@@ -117,7 +117,7 @@
                 </executions>
                 <configuration>
                     <descriptors>
-                        <descriptor>src/assembly/countryside-nogui.xml</descriptor>
+                        <descriptor>src/assembly/registry-nogui.xml</descriptor>
                     </descriptors>
                     <finalName>linkedprocess-${project.version}</finalName>
                     <outputDirectory>target</outputDirectory>
@@ -125,7 +125,7 @@
                     <tarLongFileMode>warn</tarLongFileMode>
                     <archive>
                         <manifest>
-                            <mainClass>org.linkedprocess.xmpp.countryside.XmppCountryside</mainClass>
+                            <mainClass>org.linkedprocess.xmpp.registry.XmppRegistry</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

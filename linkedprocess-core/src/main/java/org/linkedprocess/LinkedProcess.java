@@ -27,7 +27,7 @@ public class LinkedProcess {
             RUBY = "jruby";
 
     public enum ClientType {
-        VM, FARM, COUNTRYSIDE, VILLEIN
+        VM, FARM, REGISTRY, VILLEIN
     }
 
     // TODO: how about a "queued" status for jobs?
@@ -173,7 +173,7 @@ public class LinkedProcess {
     private static final String LOP_NAMESPACE = "http://linkedprocess.org/2009/06/";
     public static final String LOP_FARM_NAMESPACE = LOP_NAMESPACE + "Farm#";
     public static final String LOP_VM_NAMESPACE = LOP_NAMESPACE + "VirtualMachine#";
-    public static final String LOP_COUNTRYSIDE_NAMESPACE = LOP_NAMESPACE + "Countryside#";
+    public static final String LOP_REGISTRY_NAMESPACE = LOP_NAMESPACE + "Registry#";
     public static final String BLANK_NAMESPACE = "";
     public static final String DISCO_INFO_NAMESPACE = "http://jabber.org/protocol/disco#info";
     public static final String DISCO_ITEMS_NAMESPACE = "http://jabber.org/protocol/disco#items";
@@ -237,10 +237,10 @@ public class LinkedProcess {
             FARM_PORT = "org.linkedprocess.farmPort",
             FARM_USERNAME = "org.linkedprocess.farmUsername",
             FARM_PASSWORD = "org.linkedprocess.farmPassword",
-            COUNTRYSIDE_SERVER = "org.linkedprocess.countrysideServer",
-            COUNTRYSIDE_PORT = "org.linkedprocess.countrysidePort",
-            COUNTRYSIDE_USERNAME = "org.linkedprocess.countrysideUsername",
-            COUNTRYSIDE_PASSWORD = "org.linkedprocess.countrysidePassword",
+            REGISTRY_SERVER = "org.linkedprocess.registryServer",
+            REGISTRY_PORT = "org.linkedprocess.registryPort",
+            REGISTRY_USERNAME = "org.linkedprocess.registryUsername",
+            REGISTRY_PASSWORD = "org.linkedprocess.registryPassword",
             MAX_CONCURRENT_WORKER_THREADS = "org.linkedprocess.maxConcurrentWorkerThreads",
             JOB_TIMEOUT = "org.linkedprocess.jobTimeout",
             MAX_CONCURRENT_VIRTUAL_MACHINES = "org.linkedprocess.maxConcurrentVirtualMachines",

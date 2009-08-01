@@ -16,7 +16,7 @@ import java.awt.event.ActionEvent;
 public class VilleinLoginArea extends LoginArea {
 
     protected VilleinGui villeinGui;
-    protected final static String PROPERTIES_FILE = "vm_manager.properties";
+    protected final static String PROPERTIES_FILE = "villein_manager.properties";
 
     public VilleinLoginArea(VilleinGui villeinGui) {
         super(ImageHolder.cowBackground.getImage(), PROPERTIES_FILE);

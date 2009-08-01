@@ -39,12 +39,12 @@ public class PresenceListener extends LopVilleinListener {
     
             if (LinkedProcess.isBareJid(packet.getFrom())) {
                 //System.out.println("Bare Jid " + packet.getFrom());
-                Struct checkStruct = this.getXmppVillein().getStruct(packet.getFrom(), XmppVillein.StructType.FARMLAND);
+                Struct checkStruct = this.getXmppVillein().getStruct(packet.getFrom(), XmppVillein.StructType.COUNTRYSIDE);
                 if (checkStruct == null) {
-                    FarmlandStruct farmlandStruct = new FarmlandStruct();
-                    farmlandStruct.setFullJid(packet.getFrom());
-                    farmlandStruct.setPresence(presence);
-                    this.getXmppVillein().addFarmlandStruct(farmlandStruct);
+                    CountrysideStruct countrysideStruct = new CountrysideStruct();
+                    countrysideStruct.setFullJid(packet.getFrom());
+                    countrysideStruct.setPresence(presence);
+                    this.getXmppVillein().addCountrysideStruct(countrysideStruct);
                 } else {
                     checkStruct.setPresence(presence);
                 }
@@ -62,12 +62,12 @@ public class PresenceListener extends LopVilleinListener {
                 }
 
             } else if (isCountryside(discoInfo)) {
-                Struct checkStruct = this.getXmppVillein().getStruct(packet.getFrom(), XmppVillein.StructType.COUNTRYSIDE);
+                Struct checkStruct = this.getXmppVillein().getStruct(packet.getFrom(), XmppVillein.StructType.REGISTRY);
                 if (checkStruct == null) {
-                    CountrysideStruct countrysideStruct = new CountrysideStruct();
-                    countrysideStruct.setFullJid(packet.getFrom());
-                    countrysideStruct.setPresence(presence);
-                    this.getXmppVillein().addCountrysideStruct(countrysideStruct);
+                    RegistryStruct registryStruct = new RegistryStruct();
+                    registryStruct.setFullJid(packet.getFrom());
+                    registryStruct.setPresence(presence);
+                    this.getXmppVillein().addRegistryStruct(registryStruct);
                 } else {
                     checkStruct.setPresence(presence);
                 }

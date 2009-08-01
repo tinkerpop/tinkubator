@@ -1,4 +1,4 @@
-package org.linkedprocess.xmpp.countryside;
+package org.linkedprocess.xmpp.registry;
 
 
 import org.jivesoftware.smack.packet.Packet;
@@ -11,28 +11,28 @@ import org.linkedprocess.LinkedProcess;
  * Date: Jul 30, 2009
  * Time: 11:59:59 AM
  */
-public class PresenceListener extends LopCountrysideListener {
+public class PresenceListener extends LopRegistryListener {
 
 
-    public PresenceListener(XmppCountryside xmppCountryside) {
-        super(xmppCountryside);
+    public PresenceListener(XmppRegistry xmppRegistry) {
+        super(xmppRegistry);
     }
 
     public void processPacket(Packet packet) {
         Presence presence = (Presence) packet;
 
-        XmppCountryside.LOGGER.info("Arrived " + PresenceListener.class.getName());
-        XmppCountryside.LOGGER.info(presence.toXML());
+        XmppRegistry.LOGGER.info("Arrived " + PresenceListener.class.getName());
+        XmppRegistry.LOGGER.info(presence.toXML());
 
         if (presence.isAvailable()) {
             DiscoverInfo discoInfo = this.getDiscoInfo(packet.getFrom());
             if (isFarm(discoInfo)) {
-                System.out.println("Registering Farm resource: " + packet.getFrom());
-                this.getXmppCountryside().addFarmland(LinkedProcess.generateBareJid(packet.getFrom()));
+                System.out.println("Registering countryside: " + packet.getFrom());
+                this.getXmppCountryside().addCountryside(LinkedProcess.generateBareJid(packet.getFrom()));
             }
         } else {
             System.out.println("Unregistering resource: " + packet.getFrom());
-            this.getXmppCountryside().removeFarmland(packet.getFrom());
+            this.getXmppCountryside().removeCountryside(packet.getFrom());
         }
     }
 }
