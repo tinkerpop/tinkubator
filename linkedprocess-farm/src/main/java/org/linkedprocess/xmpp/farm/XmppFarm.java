@@ -171,7 +171,7 @@ public class XmppFarm extends XmppClient {
         super.initiateFeatures();
         ServiceDiscoveryManager.setIdentityName(XmppFarm.RESOURCE_PREFIX);
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
-        discoManager.addFeature(LinkedProcess.LOP_FARM_NAMESPACE);
+        this.getDiscoManager().addFeature(LinkedProcess.LOP_FARM_NAMESPACE);
 
         this.serviceExtension = new DataForm(Form.TYPE_RESULT);
 
@@ -207,7 +207,7 @@ public class XmppFarm extends XmppClient {
         // Add system info
         SystemInfo.addFields(this.serviceExtension);
 
-        discoManager.setExtendedInfo(this.serviceExtension);
+        this.getDiscoManager().setExtendedInfo(this.serviceExtension);
     }
 
     public void setStatusEventHandler(VMScheduler.LopStatusEventHandler statusHandler) {

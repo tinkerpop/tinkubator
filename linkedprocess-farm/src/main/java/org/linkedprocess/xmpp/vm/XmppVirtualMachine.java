@@ -121,7 +121,7 @@ public class XmppVirtualMachine extends XmppClient {
         super.initiateFeatures();
         ServiceDiscoveryManager.setIdentityName(XmppVirtualMachine.RESOURCE_PREFIX);
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
-        discoManager.addFeature(LinkedProcess.LOP_VM_NAMESPACE);
+        this.getDiscoManager().addFeature(LinkedProcess.LOP_VM_NAMESPACE);
     }
 
     public void terminateSelf() throws VMWorkerNotFoundException {

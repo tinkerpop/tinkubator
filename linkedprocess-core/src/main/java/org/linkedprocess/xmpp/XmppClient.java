@@ -24,7 +24,6 @@ public abstract class XmppClient {
     protected Connection connection;
     protected Roster roster;
     protected boolean shutdownRequested = false;
-    protected ServiceDiscoveryManager discoManager;
 
     protected long startTime;
     private String username;
@@ -99,8 +98,7 @@ public abstract class XmppClient {
     }
 
     public String getBareJid() {
-        String fullJid = this.getFullJid();
-        return LinkedProcess.generateBareJid(fullJid);
+        return LinkedProcess.generateBareJid(this.getFullJid());
     }
 
     public String getResource() {
@@ -170,19 +168,16 @@ public abstract class XmppClient {
     }
 
     public ServiceDiscoveryManager getDiscoManager() {
-        return this.discoManager;
+        return  ServiceDiscoveryManager.getInstanceFor(this.connection.getDelegate());
     }
 
     protected void initiateFeatures() {
-        XMPPConnection delegate = connection.getDelegate();
-        LOGGER.fine(delegate.toString());
-        discoManager = ServiceDiscoveryManager.getInstanceFor(delegate);
-        Iterator<String> features = discoManager.getFeatures();
+        Iterator<String> features = this.getDiscoManager().getFeatures();
         while (features.hasNext()) {
             String feature = features.next();
-            discoManager.removeFeature(feature);
+            this.getDiscoManager().removeFeature(feature);
         }
-        discoManager.addFeature(LinkedProcess.DISCO_INFO_NAMESPACE);
+        this.getDiscoManager().addFeature(LinkedProcess.DISCO_INFO_NAMESPACE);
     }
 
     public void requestSubscription(String jid) {

@@ -77,8 +77,8 @@ public class XmppCountryside extends XmppClient {
         super.initiateFeatures();
         ServiceDiscoveryManager.setIdentityName(XmppCountryside.RESOURCE_PREFIX);
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
-        discoManager.addFeature(LinkedProcess.DISCO_ITEMS_NAMESPACE);
-        discoManager.addFeature(LinkedProcess.LOP_COUNTRYSIDE_NAMESPACE);
+        this.getDiscoManager().addFeature(LinkedProcess.DISCO_ITEMS_NAMESPACE);
+        this.getDiscoManager().addFeature(LinkedProcess.LOP_COUNTRYSIDE_NAMESPACE);
     }
 
     public void addFarmland(String jid) {
