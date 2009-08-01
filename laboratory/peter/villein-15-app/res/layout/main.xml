@@ -14,6 +14,12 @@ android:layout_height="wrap_content" android:id="@+id/Connect" android:text="Con
 	android:id="@+id/disconnect" 
 	android:text="disonnect">
 </Button>
+<Button 
+	android:layout_width="fill_parent" 
+	android:layout_height="wrap_content" 
+	android:id="@+id/primefinder" 
+	android:text="primeFinder">
+</Button>
 
 <TextView  
     android:layout_width="fill_parent" 
