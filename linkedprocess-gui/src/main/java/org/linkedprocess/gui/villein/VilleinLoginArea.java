@@ -5,6 +5,7 @@ import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.LoginArea;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 /**
@@ -28,14 +29,13 @@ public class VilleinLoginArea extends LoginArea {
 
         try {
             if (event.getActionCommand().equals(LOGIN)) {
-                this.statusLabel.setText("");
                 XmppVillein villein = new XmppVillein(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText());
                 this.villeinGui.loadHostArea(villein);
             } else if (event.getActionCommand().equals(QUIT)) {
                 System.exit(0);
             }
         } catch (XMPPException e) {
-            this.statusLabel.setText("Could not login: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage(), "could not login", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

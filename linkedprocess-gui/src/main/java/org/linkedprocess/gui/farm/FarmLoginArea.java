@@ -5,6 +5,7 @@ import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.LoginArea;
 import org.linkedprocess.xmpp.farm.XmppFarm;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 /**
@@ -30,15 +31,13 @@ public class FarmLoginArea extends LoginArea {
 
         try {
             if (event.getActionCommand().equals(LOGIN)) {
-                this.statusLabel.setText("");
                 XmppFarm farm = new XmppFarm(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText());
                 this.farmGui.loadMainFrame(farm);
             } else if (event.getActionCommand().equals(QUIT)) {
                 System.exit(0);
             }
         } catch (XMPPException e) {
-            this.statusLabel.setText("Could not login: " + e.getMessage());
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, e.getMessage(), "could not login", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

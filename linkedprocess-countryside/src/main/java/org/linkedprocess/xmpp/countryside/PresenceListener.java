@@ -4,6 +4,7 @@ package org.linkedprocess.xmpp.countryside;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
+import org.linkedprocess.LinkedProcess;
 
 /**
  * User: marko
@@ -27,15 +28,11 @@ public class PresenceListener extends LopCountrysideListener {
             DiscoverInfo discoInfo = this.getDiscoInfo(packet.getFrom());
             if (isFarm(discoInfo)) {
                 System.out.println("Registering Farm resource: " + packet.getFrom());
-                this.getXmppCountryside().addFarmItem(packet.getFrom());
+                this.getXmppCountryside().addFarmland(LinkedProcess.generateBareJid(packet.getFrom()));
             }
         } else {
             System.out.println("Unregistering resource: " + packet.getFrom());
-            this.getXmppCountryside().removeFarmItem(packet.getFrom());
+            this.getXmppCountryside().removeFarmland(packet.getFrom());
         }
-
-        /*DiscoverItems items = new DiscoverItems();
-        items.setTo(this.getXmppCountryside().getFullJid());
-        this.getXmppCountryside().getConnection().sendPacket(items);*/
     }
 }

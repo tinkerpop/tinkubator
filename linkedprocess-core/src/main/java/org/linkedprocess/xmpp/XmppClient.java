@@ -191,6 +191,7 @@ public abstract class XmppClient {
 
         Presence subscribe = new Presence(Presence.Type.subscribe);
         subscribe.setTo(jid);
+        subscribe.setFrom(this.getFullJid());
         this.connection.sendPacket(subscribe);
     }
 
@@ -200,6 +201,7 @@ public abstract class XmppClient {
 
         Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
         unsubscribe.setTo(jid);
+        unsubscribe.setFrom(this.getFullJid());
         this.connection.sendPacket(unsubscribe);
         if (removeFromRoster) {
             try {
@@ -210,6 +212,7 @@ public abstract class XmppClient {
         }
         Presence unsubscribed = new Presence(Presence.Type.unsubscribed);
         unsubscribed.setTo(jid);
+        unsubscribed.setFrom(this.getFullJid());
         this.connection.sendPacket(unsubscribed);
     }
 

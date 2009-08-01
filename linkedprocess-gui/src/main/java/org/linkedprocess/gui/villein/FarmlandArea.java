@@ -125,9 +125,8 @@ public class FarmlandArea extends JPanel implements ActionListener, MouseListene
             if (this.popupTreeObject instanceof CountrysideStruct) {
                 CountrysideStruct countrysideStruct = (CountrysideStruct) this.popupTreeObject;
                 JFrame farmFrame = new JFrame(countrysideStruct.getFullJid());
-                farmFrame.getContentPane().add(new ViewCountrysideFarmsPanel(countrysideStruct, villeinGui));
+                farmFrame.getContentPane().add(new ViewCountrysideFarmlandsPanel(countrysideStruct, villeinGui));
                 farmFrame.pack();
-                farmFrame.setSize(600, 300);
                 farmFrame.setVisible(true);
                 farmFrame.setResizable(true);
             }    

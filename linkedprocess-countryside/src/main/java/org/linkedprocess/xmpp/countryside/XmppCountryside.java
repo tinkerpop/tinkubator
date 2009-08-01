@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import java.util.logging.LogManager;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Properties;
 import java.io.InputStream;
 import java.io.IOException;
 
@@ -29,7 +30,7 @@ public class XmppCountryside extends XmppClient {
     public static final String RESOURCE_PREFIX = "LoPCountryside";
     public static final String STATUS_MESSAGE = "LoP Countryside v0.1";
     protected LinkedProcess.CountrysideStatus status;
-    protected Set<String> farmItems = new HashSet<String>();
+    protected Set<String> farmlands = new HashSet<String>();
 
     public XmppCountryside(final String server, final int port, final String username, final String password) throws XMPPException {
 
@@ -78,20 +79,14 @@ public class XmppCountryside extends XmppClient {
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
         discoManager.addFeature(LinkedProcess.DISCO_ITEMS_NAMESPACE);
         discoManager.addFeature(LinkedProcess.LOP_COUNTRYSIDE_NAMESPACE);
-        try {
-            LOGGER.info("Can publish items: " + discoManager.canPublishItems(this.getBareJid()));
-        } catch(XMPPException e) {
-            e.printStackTrace();
-        }
-
     }
 
-    public void addFarmItem(String jid) {
-        this.farmItems.add(jid);
+    public void addFarmland(String jid) {
+        this.farmlands.add(jid);
     }
 
-    public void removeFarmItem(String jid) {
-        this.farmItems.remove(jid);
+    public void removeFarmland(String jid) {
+        this.farmlands.remove(jid);
     }
 
     public DiscoverItems createDiscoItems(String toJid) {
@@ -99,20 +94,20 @@ public class XmppCountryside extends XmppClient {
         items.setType(IQ.Type.RESULT);
         items.setFrom(this.getFullJid());
         items.setTo(toJid);
-        for(String item : this.farmItems) {
+        for(String item : this.farmlands) {
             items.addItem(new DiscoverItems.Item(item));
         }
         return items;
     }
 
     public static void main(final String[] args) throws Exception {
-        /*Properties props = LinkedProcess.getConfiguration();
-        String server = props.getProperty(LinkedProcess.FARM_SERVER);
-        int port = Integer.valueOf(props.getProperty(LinkedProcess.FARM_PORT));
-        String userName = props.getProperty(LinkedProcess.FARM_USERNAME);
-        String password = props.getProperty(LinkedProcess.FARM_PASSWORD);*/
+        Properties props = LinkedProcess.getConfiguration();
+        String server = props.getProperty(LinkedProcess.COUNTRYSIDE_SERVER);
+        int port = Integer.valueOf(props.getProperty(LinkedProcess.COUNTRYSIDE_PORT));
+        String username = props.getProperty(LinkedProcess.COUNTRYSIDE_USERNAME);
+        String password = props.getProperty(LinkedProcess.COUNTRYSIDE_PASSWORD);
 
-        XmppCountryside xmppCountryside = new XmppCountryside("xmpp42.linkedprocess.org", 5222, "linked.process.1", "linked12");
+        XmppCountryside xmppCountryside = new XmppCountryside(server, port, username, password);
 
         Object o = "";
         try {

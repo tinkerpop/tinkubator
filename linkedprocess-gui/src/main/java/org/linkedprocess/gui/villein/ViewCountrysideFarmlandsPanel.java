@@ -10,6 +10,7 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.xmpp.villein.CountrysideStruct;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 
@@ -25,38 +26,33 @@ import java.io.IOException;
  * Date: Jul 30, 2009
  * Time: 5:05:38 PM
  */
-public class ViewCountrysideFarmsPanel extends JPanel implements ActionListener {
+public class ViewCountrysideFarmlandsPanel extends JPanel implements ActionListener {
 
-    protected JTable farmsTable;
+    protected JList farmlandList;
     protected static final String REFRESH = "refresh";
+    protected static final String SUBSCRIBE = "subscribe";
     protected CountrysideStruct countrysideStruct;
     protected VilleinGui villeinGui;
     protected Document discoItemsDocument;
-    protected DiscoverItems discoItems;
 
 
-    public ViewCountrysideFarmsPanel(CountrysideStruct countrysideStruct, VilleinGui villeinGui) {
+    public ViewCountrysideFarmlandsPanel(CountrysideStruct countrysideStruct, VilleinGui villeinGui) {
         super(new BorderLayout());
         this.countrysideStruct = countrysideStruct;
         this.villeinGui = villeinGui;
 
-        DefaultTableModel tableModel1 = new DefaultTableModel(new Object[][]{}, new Object[]{"farm jid", "farm name"});
-        this.farmsTable = new JTable(tableModel1) {
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return false;
-            }
-        };
-        this.farmsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        this.farmsTable.setFillsViewportHeight(true);
-        this.farmsTable.setRowHeight(20);
-        this.farmsTable.setFont(new Font(null, Font.PLAIN, 13));
-        this.farmsTable.getColumnModel().getColumn(0).setPreferredWidth(250);
-        this.farmsTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        this.farmlandList = new JList(new DefaultListModel());
+        this.farmlandList.setCellRenderer(new FarmlandListRenderer());
+        this.farmlandList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton subscribeButton = new JButton(SUBSCRIBE);
         JButton refreshButton = new JButton(REFRESH);
+        buttonPanel.add(subscribeButton);
+        subscribeButton.addActionListener(this);
         buttonPanel.add(refreshButton);
         refreshButton.addActionListener(this);
+
 
 
         try {
@@ -66,7 +62,7 @@ public class ViewCountrysideFarmsPanel extends JPanel implements ActionListener 
             XmppVillein.LOGGER.severe(e.getMessage());
         }
 
-        JScrollPane scrollPane1 = new JScrollPane(this.farmsTable);
+        JScrollPane scrollPane1 = new JScrollPane(this.farmlandList);
 
         this.add(scrollPane1, BorderLayout.CENTER);
         this.add(buttonPanel, BorderLayout.SOUTH);
@@ -82,34 +78,30 @@ public class ViewCountrysideFarmsPanel extends JPanel implements ActionListener 
             } catch (Exception e) {
                 XmppVillein.LOGGER.severe(e.getMessage());
             }
+        } else if(event.getActionCommand().equals(SUBSCRIBE)) {
+            for(Object farmlandJid : this.farmlandList.getSelectedValues()) {
+                villeinGui.getXmppVillein().requestSubscription(farmlandJid.toString());
+            }
         }
 
-    }
-
-    private void clearAllRows(JTable table) {
-        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-        while (tableModel.getRowCount() > 0) {
-            tableModel.removeRow(0);
-        }
     }
 
     private void generateDiscoItemsDocument() throws XMPPException, JDOMException, IOException {
         ServiceDiscoveryManager discoManager = this.villeinGui.getXmppVillein().getDiscoManager();
-        this.discoItems = discoManager.discoverItems(this.countrysideStruct.getFullJid());
-        PacketCollector collector = this.villeinGui.getXmppVillein().getConnection().createPacketCollector(new PacketTypeFilter(DiscoverItems.class));
-        this.discoItemsDocument = LinkedProcess.createXMLDocument(collector.nextResult().toXML());
-        collector.cancel();
+        this.discoItemsDocument = LinkedProcess.createXMLDocument(discoManager.discoverItems(this.countrysideStruct.getFullJid()).toXML());
+        //PacketCollector collector = this.villeinGui.getXmppVillein().getConnection().createPacketCollector(new PacketTypeFilter(DiscoverItems.class));
+        //this.discoItemsDocument = LinkedProcess.createXMLDocument(collector.nextResult().toXML());
+        //collector.cancel();
     }
 
-
     private void refreshCountrysideFarms() {
-        this.clearAllRows(this.farmsTable);
+        DefaultListModel listModel = (DefaultListModel) this.farmlandList.getModel();
+        listModel.removeAllElements();
         if (null != this.discoItemsDocument) {
             Element queryElement = discoItemsDocument.getRootElement().getChild(LinkedProcess.QUERY_TAG, Namespace.getNamespace(LinkedProcess.DISCO_ITEMS_NAMESPACE));
             if (null != queryElement) {
-                DefaultTableModel tableModel = (DefaultTableModel) this.farmsTable.getModel();
                 for (Element itemElement : (java.util.List<Element>) queryElement.getChildren(LinkedProcess.ITEM_TAG, Namespace.getNamespace(LinkedProcess.DISCO_ITEMS_NAMESPACE))) {
-                    tableModel.addRow(new Object[]{itemElement.getAttributeValue(LinkedProcess.JID_ATTRIBUTE), itemElement.getAttributeValue(LinkedProcess.NAME_ATTRIBUTE)});
+                    listModel.addElement(itemElement.getAttributeValue(LinkedProcess.JID_ATTRIBUTE));
                 }
             }
         }

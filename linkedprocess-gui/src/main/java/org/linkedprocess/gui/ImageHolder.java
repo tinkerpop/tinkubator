@@ -25,7 +25,7 @@ public class ImageHolder {
     public static final ImageIcon vmIcon = new ImageIcon(ImageHolder.class.getResource("vm.png"));
     public static final ImageIcon addIcon = new ImageIcon(ImageHolder.class.getResource("add.png"));
     public static final ImageIcon removeIcon = new ImageIcon(ImageHolder.class.getResource("remove.png"));
-    public static final ImageIcon hostIcon = new ImageIcon(ImageHolder.class.getResource("host.png"));
+    public static final ImageIcon farmlandIcon = new ImageIcon(ImageHolder.class.getResource("farmland.png"));
     public static final ImageIcon mailboxIcon = new ImageIcon(ImageHolder.class.getResource("mailbox.png"));
     public static final ImageIcon letterIcon = new ImageIcon(ImageHolder.class.getResource("letter.png"));
 

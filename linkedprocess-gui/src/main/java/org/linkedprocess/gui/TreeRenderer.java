@@ -56,7 +56,7 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
         } else if (x instanceof FarmlandStruct) {
             FarmlandStruct farmlandStruct = (FarmlandStruct) x;
             this.setText(farmlandStruct.getFullJid());
-            this.setIcon(ImageHolder.hostIcon);
+            this.setIcon(ImageHolder.farmlandIcon);
             this.setToolTipText("host_jid");
         } else if (x instanceof TreeNodeProperty) {
             if (((TreeNodeProperty) x).getKey().equals("villein_jid")) {

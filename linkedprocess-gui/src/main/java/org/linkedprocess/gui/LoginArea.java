@@ -20,7 +20,6 @@ public abstract class LoginArea extends JPanel implements ActionListener {
     protected JTextField passwordField;
     protected JTextField serverField;
     protected JTextField portField;
-    protected JLabel statusLabel;
     protected JCheckBox rememberBox;
     protected Image backgroundImage;
     protected String BORDER_SPACE = "    ";
@@ -56,9 +55,7 @@ public abstract class LoginArea extends JPanel implements ActionListener {
         JPanel mainPanel = new JPanel(new GridLayout(6, 2, 0, 0));
 
         mainPanel.add(new JLabel());
-        this.statusLabel = new JLabel();
-        this.statusLabel.setForeground(Color.RED);
-        mainPanel.add(this.statusLabel);
+        mainPanel.add(new JLabel());
 
         mainPanel.add(new JLabel(BORDER_SPACE + "username:"));
         mainPanel.add(usernameField);
