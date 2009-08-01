@@ -16,7 +16,7 @@ public abstract class LopRegistryListener extends LopListener {
         super(xmppRegistry);
     }
 
-    public XmppRegistry getXmppCountryside() {
+    public XmppRegistry getXmppRegistry() {
         return (XmppRegistry) this.xmppClient;
     }
 

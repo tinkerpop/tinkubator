@@ -12,7 +12,6 @@ import java.io.StringReader;
 import java.io.FileInputStream;
 import java.util.Properties;
 import java.util.logging.Logger;
-import java.security.Provider;
 
 /**
  * Author: josh
@@ -87,12 +86,12 @@ public class LinkedProcess {
         }
     }
 
-    public enum CountrysideStatus {
+    public enum RegistryStatus {
         ACTIVE("active"), INACTIVE("inactive");
 
         private final String name;
 
-        private CountrysideStatus(final String name) {
+        private RegistryStatus(final String name) {
             this.name = name;
         }
 

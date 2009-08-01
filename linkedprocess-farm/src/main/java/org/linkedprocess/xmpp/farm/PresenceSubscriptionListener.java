@@ -30,25 +30,9 @@ public class PresenceSubscriptionListener extends LopFarmListener {
         if (type == Presence.Type.subscribe) {
             XmppFarm.LOGGER.info("Subscribing to " + presence.getFrom());
             Presence subscribed = new Presence(Presence.Type.subscribed);
-            //Presence subscribe = new Presence(Presence.Type.subscribe);
             subscribed.setTo(presence.getFrom());
             subscribed.setFrom(this.getXmppFarm().getFullJid());
-            //subscribe.setTo(presence.getFrom());
-
-            Presence available = this.getXmppFarm().createPresence(this.getXmppFarm().getVmScheduler().getSchedulerStatus());
-            available.setFrom(this.getXmppFarm().getFullJid());
-            available.setTo(presence.getFrom());
-            available.setPacketID(presence.getPacketID());
-
             this.getXmppFarm().getConnection().sendPacket(subscribed);
-            //this.getXmppFarm().getConnection().sendPacket(subscribe);
-            this.getXmppFarm().getConnection().sendPacket(available);
-
-            /*try {
-                this.getXmppFarm().getRoster().createEntry(presence.getFrom(), presence.getFrom(), null);
-            } catch (XMPPException e) {
-                XmppFarm.LOGGER.severe(e.getMessage());
-            }*/
 
             return;
 
@@ -58,17 +42,12 @@ public class PresenceSubscriptionListener extends LopFarmListener {
             Presence unsubscribed = new Presence(Presence.Type.unsubscribed);
             Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
             unsubscribed.setTo(presence.getFrom());
+            unsubscribed.setFrom(this.getXmppFarm().getFullJid());
             unsubscribe.setTo(presence.getFrom());
-
+            unsubscribe.setFrom(this.getXmppFarm().getFullJid());
 
             this.getXmppFarm().getConnection().sendPacket(unsubscribed);
             this.getXmppFarm().getConnection().sendPacket(unsubscribe);
-
-            try {
-                this.getXmppFarm().getRoster().removeEntry(this.getXmppFarm().getRoster().getEntry(presence.getFrom()));
-            } catch (XMPPException e) {
-                XmppFarm.LOGGER.severe(e.getMessage());
-            }
             return;
         }
         XmppFarm.LOGGER.severe("This shouldn't have happened.");  // TODO: make this an exception or something -- however, this has yet to happen. Perhaps just remove.

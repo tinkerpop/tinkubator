@@ -61,7 +61,7 @@ public class XmppVillein extends XmppClient {
         this.initiateFeatures();
         //this.printClientStatistics();
 
-        this.roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
+        this.roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
         PacketFilter submitFilter = new AndFilter(new PacketTypeFilter(SubmitJob.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));

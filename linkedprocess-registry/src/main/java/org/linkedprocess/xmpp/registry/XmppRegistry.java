@@ -6,6 +6,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
@@ -29,8 +30,8 @@ public class XmppRegistry extends XmppClient {
     public static Logger LOGGER = LinkedProcess.getLogger(XmppRegistry.class);
     public static final String RESOURCE_PREFIX = "LoPRegistry";
     public static final String STATUS_MESSAGE = "LoP Registry v0.1";
-    protected LinkedProcess.CountrysideStatus status;
-    protected Set<String> countrysides = new HashSet<String>();
+    protected LinkedProcess.RegistryStatus status;
+    protected Set<String> activeFarms = new HashSet<String>();
 
     public XmppRegistry(final String server, final int port, final String username, final String password) throws XMPPException {
 
@@ -49,19 +50,21 @@ public class XmppRegistry extends XmppClient {
         this.initiateFeatures();
         //this.printClientStatistics();
 
-        this.roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
+        this.roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
 
         PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
         PacketFilter discoInfoFilter = new PacketTypeFilter(DiscoverItems.class);
+        PacketFilter subscribeFilter = new AndFilter(new PacketTypeFilter(Presence.class), new PresenceSubscriptionFilter());
+        this.connection.addPacketListener(new PresenceSubscriptionListener(this), subscribeFilter);
         this.connection.addPacketListener(new PresenceListener(this), presenceFilter);
         this.connection.addPacketListener(new DiscoItemsListener(this),  discoInfoFilter);
 
-        this.status = LinkedProcess.CountrysideStatus.ACTIVE;
+        this.status = LinkedProcess.RegistryStatus.ACTIVE;
         this.connection.sendPacket(this.createPresence(this.status));
 
     }
 
-    public final Presence createPresence(final LinkedProcess.CountrysideStatus status) {
+    public final Presence createPresence(final LinkedProcess.RegistryStatus status) {
         switch (status) {
             case ACTIVE:
                 return new Presence(Presence.Type.available, XmppRegistry.STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
@@ -80,12 +83,12 @@ public class XmppRegistry extends XmppClient {
         this.getDiscoManager().addFeature(LinkedProcess.LOP_REGISTRY_NAMESPACE);
     }
 
-    public void addCountryside(String jid) {
-        this.countrysides.add(jid);
+    public void addActiveFarm(String jid) {
+        this.activeFarms.add(jid);
     }
 
-    public void removeCountryside(String jid) {
-        this.countrysides.remove(jid);
+    public void removeActiveFarm(String jid) {
+        this.activeFarms.remove(jid);
     }
 
     public DiscoverItems createDiscoItems(String toJid) {
@@ -93,9 +96,15 @@ public class XmppRegistry extends XmppClient {
         items.setType(IQ.Type.RESULT);
         items.setFrom(this.getFullJid());
         items.setTo(toJid);
-        for(String item : this.countrysides) {
-            items.addItem(new DiscoverItems.Item(item));
+        Set<String> farmCountrysides = new HashSet<String>();
+        for(String farmJid : this.activeFarms) {
+            farmCountrysides.add(LinkedProcess.generateBareJid(farmJid));
         }
+        for(String countrysideJid : farmCountrysides) {
+            items.addItem(new DiscoverItems.Item(countrysideJid));
+        }
+
+
         return items;
     }
 

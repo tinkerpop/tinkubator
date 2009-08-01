@@ -18,9 +18,9 @@ public class DiscoItemsListener extends LopRegistryListener {
     public void processPacket(Packet packet) {
         DiscoverItems discoItems = (DiscoverItems) packet;
         if(discoItems.getType() == IQ.Type.GET) {
-            DiscoverItems returnDiscoItems = this.getXmppCountryside().createDiscoItems(discoItems.getFrom());
+            DiscoverItems returnDiscoItems = this.getXmppRegistry().createDiscoItems(discoItems.getFrom());
             returnDiscoItems.setPacketID(discoItems.getPacketID());
-            this.getXmppCountryside().getConnection().sendPacket(returnDiscoItems);
+            this.getXmppRegistry().getConnection().sendPacket(returnDiscoItems);
             System.out.println(returnDiscoItems.toXML());
         }
 
