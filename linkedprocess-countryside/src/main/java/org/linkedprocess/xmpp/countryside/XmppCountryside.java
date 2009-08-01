@@ -58,7 +58,6 @@ public class XmppCountryside extends XmppClient {
         this.status = LinkedProcess.CountrysideStatus.ACTIVE;
         this.connection.sendPacket(this.createPresence(this.status));
 
-
     }
 
     public final Presence createPresence(final LinkedProcess.CountrysideStatus status) {

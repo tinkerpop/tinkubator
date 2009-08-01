@@ -9,7 +9,7 @@ import java.util.Map;
  * Date: Jul 8, 2009
  * Time: 1:02:16 PM
  */
-public class HostStruct extends Struct {
+public class FarmlandStruct extends Struct {
 
 
     protected Map<String, FarmStruct> farmStructs = new HashMap<String, FarmStruct>();

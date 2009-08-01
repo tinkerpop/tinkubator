@@ -1,21 +1,9 @@
 package org.linkedprocess.xmpp.villein;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Namespace;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.xmpp.LopListener;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * User: marko
@@ -51,12 +39,12 @@ public class PresenceListener extends LopVilleinListener {
     
             if (LinkedProcess.isBareJid(packet.getFrom())) {
                 //System.out.println("Bare Jid " + packet.getFrom());
-                Struct checkStruct = this.getXmppVillein().getStruct(packet.getFrom(), XmppVillein.StructType.HOST);
+                Struct checkStruct = this.getXmppVillein().getStruct(packet.getFrom(), XmppVillein.StructType.FARMLAND);
                 if (checkStruct == null) {
-                    HostStruct hostStruct = new HostStruct();
-                    hostStruct.setFullJid(packet.getFrom());
-                    hostStruct.setPresence(presence);
-                    this.getXmppVillein().addHostStruct(hostStruct);
+                    FarmlandStruct farmlandStruct = new FarmlandStruct();
+                    farmlandStruct.setFullJid(packet.getFrom());
+                    farmlandStruct.setPresence(presence);
+                    this.getXmppVillein().addFarmlandStruct(farmlandStruct);
                 } else {
                     checkStruct.setPresence(presence);
                 }

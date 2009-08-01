@@ -8,8 +8,6 @@ import org.linkedprocess.gui.RosterPanel;
 import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.gui.TreeNodeProperty;
 import org.linkedprocess.xmpp.villein.*;
-import org.jivesoftware.smackx.packet.DiscoverItems;
-import org.jivesoftware.smack.packet.IQ;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -29,7 +27,7 @@ import java.util.Set;
  * Date: Jul 7, 2009
  * Time: 11:13:22 PM
  */
-public class HostArea extends JPanel implements ActionListener, MouseListener {
+public class FarmlandArea extends JPanel implements ActionListener, MouseListener {
 
     protected VilleinGui villeinGui;
     protected JTree tree;
@@ -39,20 +37,20 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
     protected Set<String> supportedVmSpeciesActionCommands = new HashSet<String>();
 
     protected final static String FARM_CONFIGURATION = "farm configuration";
-    protected final static String COUNTRYSIDE_FARMS = "countryside farms";
+    protected final static String COUNTRYSIDE_FARMLANDS = "countryside farmlands";
     protected final static String TERMINATE_VM = "terminate vm";
     protected final static String SPAWN_VM = "spawn vm";
-    protected final static String ADD_HOST = "add host";
+    protected final static String ADD_FARMLAND = "add farmland";
     protected final static String SHUTDOWN = "shutdown";
     protected final static String VM_CONTROL = "vm control";
     protected final static String PROBE = "probe";
 
-    public HostArea(VilleinGui villeinGui) {
+    public FarmlandArea(VilleinGui villeinGui) {
         super(new BorderLayout());
         this.villeinGui = villeinGui;
-        HostStruct hostStruct = new HostStruct();
-        hostStruct.setFullJid(LinkedProcess.generateBareJid(this.villeinGui.getXmppVillein().getFullJid()));
-        this.treeRoot = new DefaultMutableTreeNode(hostStruct);
+        FarmlandStruct farmlandStruct = new FarmlandStruct();
+        farmlandStruct.setFullJid(LinkedProcess.generateBareJid(this.villeinGui.getXmppVillein().getFullJid()));
+        this.treeRoot = new DefaultMutableTreeNode(farmlandStruct);
         this.tree = new JTree(this.treeRoot);
         this.tree.setCellRenderer(new TreeRenderer());
         this.tree.setModel(new DefaultTreeModel(treeRoot));
@@ -77,13 +75,13 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         this.villeinGui.getXmppVillein().getConnection().addPacketWriterInterceptor(packetSnifferPanel, null);
 
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("hosts", treePanel);
+        tabbedPane.addTab("farmlands", treePanel);
         tabbedPane.addTab("roster", rosterPanel);
         tabbedPane.addTab("packets", packetSnifferPanel);
 
         this.add(tabbedPane, BorderLayout.CENTER);
 
-        this.villeinGui.getXmppVillein().createHostStructsFromRoster();
+        this.villeinGui.getXmppVillein().createFarmlandStructsFromRoster();
         this.createTree();
     }
 
@@ -123,7 +121,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                 farmFrame.setVisible(true);
                 farmFrame.setResizable(true);
             }
-        } else if (event.getActionCommand().equals(COUNTRYSIDE_FARMS)) {
+        } else if (event.getActionCommand().equals(COUNTRYSIDE_FARMLANDS)) {
             if (this.popupTreeObject instanceof CountrysideStruct) {
                 CountrysideStruct countrysideStruct = (CountrysideStruct) this.popupTreeObject;
                 JFrame farmFrame = new JFrame(countrysideStruct.getFullJid());
@@ -152,14 +150,14 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
     public void createTree() {
         treeRoot.removeAllChildren();
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-        for (HostStruct hostStruct : this.villeinGui.getXmppVillein().getHostStructs()) {
-            DefaultMutableTreeNode hostNode = new DefaultMutableTreeNode(hostStruct);
-            for (CountrysideStruct countrysideStruct : hostStruct.getCountrysideStructs()) {
+        for (FarmlandStruct farmlandStruct : this.villeinGui.getXmppVillein().getFarmlandStructs()) {
+            DefaultMutableTreeNode farmlandNode = new DefaultMutableTreeNode(farmlandStruct);
+            for (CountrysideStruct countrysideStruct : farmlandStruct.getCountrysideStructs()) {
                 DefaultMutableTreeNode countrysideNode = new DefaultMutableTreeNode(countrysideStruct);
-                model.insertNodeInto(countrysideNode, hostNode, hostNode.getChildCount());
+                model.insertNodeInto(countrysideNode, farmlandNode, farmlandNode.getChildCount());
                 this.tree.scrollPathToVisible(new TreePath(countrysideNode.getPath()));
             } 
-            for (FarmStruct farmStruct : hostStruct.getFarmStructs()) {
+            for (FarmStruct farmStruct : farmlandStruct.getFarmStructs()) {
                 DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(farmStruct);
                 for (VmStruct vmStruct : farmStruct.getVmStructs()) {
                     DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(vmStruct);
@@ -180,12 +178,12 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                         model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
                     }*/
                 }
-                model.insertNodeInto(farmNode, hostNode, hostNode.getChildCount());
+                model.insertNodeInto(farmNode, farmlandNode, farmlandNode.getChildCount());
                 this.tree.scrollPathToVisible(new TreePath(farmNode.getPath()));
             }
 
-            model.insertNodeInto(hostNode, this.treeRoot, this.treeRoot.getChildCount());
-            this.tree.scrollPathToVisible(new TreePath(hostNode.getPath()));
+            model.insertNodeInto(farmlandNode, this.treeRoot, this.treeRoot.getChildCount());
+            this.tree.scrollPathToVisible(new TreePath(farmlandNode.getPath()));
         }
         model.reload();
     }
@@ -215,7 +213,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                 node.removeAllChildren();
                 model.removeNodeFromParent(node);
             } else {
-                if (node.getUserObject() instanceof HostStruct) {
+                if (node.getUserObject() instanceof FarmlandStruct) {
                     this.tree.scrollPathToVisible(new TreePath(node.getPath()));
                     model.reload(node);
                 } else if (node.getUserObject() instanceof FarmStruct) {
@@ -254,11 +252,11 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
                 }
 
                 Struct struct = this.villeinGui.getXmppVillein().getStruct(jid);
-                if (struct instanceof HostStruct) {
-                    DefaultMutableTreeNode hostNode = new DefaultMutableTreeNode(struct);
-                    model.insertNodeInto(hostNode, this.treeRoot, this.treeRoot.getChildCount());
-                    this.tree.scrollPathToVisible(new TreePath(hostNode.getPath()));
-                    model.reload(hostNode);
+                if (struct instanceof FarmlandStruct) {
+                    DefaultMutableTreeNode farmlandNode = new DefaultMutableTreeNode(struct);
+                    model.insertNodeInto(farmlandNode, this.treeRoot, this.treeRoot.getChildCount());
+                    this.tree.scrollPathToVisible(new TreePath(farmlandNode.getPath()));
+                    model.reload(farmlandNode);
                 } else if (struct instanceof FarmStruct) {
                     if (parentNode != null) {
                         DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(struct);
@@ -335,8 +333,8 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
             this.popupTreeObject = selectedNode.getUserObject();
 
             if (event.getButton() == MouseEvent.BUTTON3 && event.getClickCount() == 1) {
-                if (this.popupTreeObject instanceof HostStruct) {
-                    this.createHostPopupMenu();
+                if (this.popupTreeObject instanceof FarmlandStruct) {
+                    this.createFarmlandPopupMenu();
                 } else if (this.popupTreeObject instanceof CountrysideStruct) {
                     this.createCountrysidePopupMenu();
                 } else if (this.popupTreeObject instanceof FarmStruct) {
@@ -364,10 +362,10 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         }
     }
 
-    public void createHostPopupMenu() {
+    public void createFarmlandPopupMenu() {
         this.popupMenu = new JPopupMenu();
         this.popupMenu.setBorder(new BevelBorder(6));
-        JLabel menuLabel = new JLabel("Host");
+        JLabel menuLabel = new JLabel("Farmland");
         JMenuItem probeItem = new JMenuItem(PROBE);
         menuLabel.setHorizontalTextPosition(JLabel.CENTER);
         this.popupMenu.add(menuLabel);
@@ -381,7 +379,7 @@ public class HostArea extends JPanel implements ActionListener, MouseListener {
         this.popupMenu.setBorder(new BevelBorder(6));
         JLabel menuLabel = new JLabel("Countryside");
         JMenuItem probeResource = new JMenuItem(PROBE);
-        JMenuItem discoItems = new JMenuItem(COUNTRYSIDE_FARMS);
+        JMenuItem discoItems = new JMenuItem(COUNTRYSIDE_FARMLANDS);
 
         menuLabel.setHorizontalTextPosition(JLabel.CENTER);
         this.popupMenu.add(menuLabel);

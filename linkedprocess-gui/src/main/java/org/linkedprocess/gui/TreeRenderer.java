@@ -53,9 +53,9 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
             this.setText(LinkedProcess.generateResource(vmStruct.getFullJid()));
             this.setIcon(ImageHolder.vmIcon);
             this.setToolTipText("vm_jid");
-        } else if (x instanceof HostStruct) {
-            HostStruct hostStruct = (HostStruct) x;
-            this.setText(hostStruct.getFullJid());
+        } else if (x instanceof FarmlandStruct) {
+            FarmlandStruct farmlandStruct = (FarmlandStruct) x;
+            this.setText(farmlandStruct.getFullJid());
             this.setIcon(ImageHolder.hostIcon);
             this.setToolTipText("host_jid");
         } else if (x instanceof TreeNodeProperty) {

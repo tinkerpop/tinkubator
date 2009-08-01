@@ -3,7 +3,7 @@ package org.linkedprocess.gui.farm;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.gui.*;
 import org.linkedprocess.gui.farm.vmviewer.VmViewerFrame;
-import org.linkedprocess.xmpp.villein.HostStruct;
+import org.linkedprocess.xmpp.villein.FarmlandStruct;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 import javax.swing.*;
@@ -38,9 +38,9 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
     public VmArea(FarmGui farmGui) {
         super(new BorderLayout());
         this.farmGui = farmGui;
-        HostStruct hostStruct = new HostStruct();
-        hostStruct.setFullJid(LinkedProcess.generateBareJid(farmGui.getXmppFarm().getFullJid()));
-        this.treeRoot = new DefaultMutableTreeNode(hostStruct);
+        FarmlandStruct farmlandStruct = new FarmlandStruct();
+        farmlandStruct.setFullJid(LinkedProcess.generateBareJid(farmGui.getXmppFarm().getFullJid()));
+        this.treeRoot = new DefaultMutableTreeNode(farmlandStruct);
         this.tree = new JTree(this.treeRoot);
         this.tree.setCellRenderer(new TreeRenderer());
         this.tree.setModel(new DefaultTreeModel(treeRoot));
