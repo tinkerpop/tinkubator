@@ -23,7 +23,7 @@ public class PrimeFinder extends XmppVillein {
     protected Set<String> jobIds = new HashSet<String>();
 
     public PrimeFinder(int startInteger, int endInteger) throws Exception {
-        super("xmpp42.linkedprocess.org", 5222, "linked.process.2@xmpp42.linkedprocess.org", "linked23");
+        super("fortytwo.linkedprocess.org", 5222, "linked.process.2@fortytwo.linkedprocess.org", "linked23");
         this.createFarmlandStructsFromRoster();
         this.waitFromFarms(DESIRED_FARMS, 500);
 
@@ -108,7 +108,7 @@ public class PrimeFinder extends XmppVillein {
     }
 
     public static void main(String args[]) throws Exception {
-        new PrimeFinder(1, 50000);
+        new PrimeFinder(1, 10000);
     }
 
 }
