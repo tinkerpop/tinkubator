@@ -8,6 +8,7 @@ import org.linkedprocess.xmpp.villein.VmStruct;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 
@@ -18,12 +19,17 @@ import java.util.*;
  */
 public class PrimeFinder extends XmppVillein {
 
-    protected final static int DESIRED_FARMS = 4;
-    protected final static int DESIRED_VMS = 4;
+    protected final static int DESIRED_FARMS = 1;
+    protected final static int DESIRED_VMS = 1;
     protected Set<String> jobIds = new HashSet<String>();
+	private static InputStream script =  null;
+    public PrimeFinder(int startInteger, int endInteger, InputStream script,  String username, String password, String server) throws Exception {
+    	this(startInteger, endInteger, username, password, server);
+		this.script = script;
+    }
 
-    public PrimeFinder(int startInteger, int endInteger) throws Exception {
-        super("fortytwo.linkedprocess.org", 5222, "linked.process.2@fortytwo.linkedprocess.org", "linked23");
+    public PrimeFinder(int startInteger, int endInteger, String username, String password, String server) throws Exception {
+        super(server, 5222, username, password);
         this.createCountrysideStructsFromRoster();
         this.waitFromFarms(DESIRED_FARMS, 500);
 
@@ -108,7 +114,7 @@ public class PrimeFinder extends XmppVillein {
     }
 
     public static void main(String args[]) throws Exception {
-        new PrimeFinder(1, 10000);
+        new PrimeFinder(1, 10000, "linked.process.2@fortytwo.linkedprocess.org", "linked23", "fortytwo.linkedprocess.org");
     }
 
 }
