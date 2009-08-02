@@ -4,27 +4,74 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-<Button android:layout_width="fill_parent" 
-android:layout_height="wrap_content" android:id="@+id/Connect" android:text="Connect">
-</Button>
-
-<Button 
-	android:layout_width="fill_parent" 
-	android:layout_height="wrap_content" 
-	android:id="@+id/disconnect" 
-	android:text="disonnect">
-</Button>
 <Button 
 	android:layout_width="fill_parent" 
 	android:layout_height="wrap_content" 
 	android:id="@+id/primefinder" 
-	android:text="primeFinder">
+	android:text="primeFinder (shatter-gather)">
 </Button>
-
-<TextView  
-    android:layout_width="fill_parent" 
-    android:layout_height="fill_parent" 
-    android:text="@string/hello"
-    android:layout_gravity="bottom" android:id="@+id/status"/>
-
+<LinearLayout android:id="@+id/LinearLayout01" 
+ android:orientation="horizontal"
+ android:layout_width="wrap_content" 
+ android:layout_height="wrap_content">
+<TextView android:text="username" 
+android:layout_width="wrap_content" 
+android:layout_height="wrap_content">
+</TextView>
+<EditText 
+	android:text="linked.process.1" 
+	android:id="@+id/username" 
+	android:layout_width="fill_parent" 
+	android:layout_height="wrap_content" 
+	android:singleLine="true">
+</EditText>
+</LinearLayout>
+<LinearLayout 
+ android:orientation="horizontal"
+ android:layout_width="wrap_content" 
+ android:layout_height="wrap_content">
+<TextView android:text="password" 
+android:layout_width="wrap_content" 
+android:layout_height="wrap_content">
+</TextView>
+<EditText 
+	android:text="linked12" 
+	android:id="@+id/password" 
+	android:layout_width="fill_parent" 
+	android:layout_height="wrap_content" 
+	android:singleLine="true">
+</EditText>
+</LinearLayout>
+<LinearLayout 
+ android:orientation="horizontal"
+ android:layout_width="wrap_content" 
+ android:layout_height="wrap_content">
+<TextView android:text="port" 
+android:layout_width="wrap_content" 
+android:layout_height="wrap_content">
+</TextView>
+<EditText 
+	android:text="5222" 
+	android:id="@+id/port" 
+	android:layout_width="fill_parent" 
+	android:layout_height="wrap_content" 
+	android:singleLine="true">
+</EditText>
+</LinearLayout>
+<LinearLayout 
+ android:orientation="horizontal"
+ android:layout_width="wrap_content" 
+ android:layout_height="wrap_content">
+<TextView android:text="server" 
+android:layout_width="wrap_content" 
+android:layout_height="wrap_content">
+</TextView>
+<EditText 
+	android:text="xmpp.linkedprocess.org" 
+	android:id="@+id/server" 
+	android:layout_width="fill_parent" 
+	android:layout_height="wrap_content" 
+	android:singleLine="true">
+</EditText>
+</LinearLayout>
 </LinearLayout>

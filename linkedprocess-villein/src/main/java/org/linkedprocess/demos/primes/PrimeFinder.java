@@ -19,22 +19,24 @@ import java.util.*;
  */
 public class PrimeFinder extends XmppVillein {
 
-    protected final static int DESIRED_FARMS = 1;
-    protected final static int DESIRED_VMS = 1;
+    protected static int DESIRED_FARMS = 1;
+    protected static int DESIRED_VMS = 1;
     protected Set<String> jobIds = new HashSet<String>();
 	private static InputStream script =  null;
-    public PrimeFinder(int startInteger, int endInteger, InputStream script,  String username, String password, String server) throws Exception {
-    	this(startInteger, endInteger, username, password, server);
+    public PrimeFinder(int startInteger, int endInteger, InputStream script, String vm_type, int nrOfFarms, int nrOfVMs, String username, String password, int port, String server) throws Exception {
+    	this(startInteger, endInteger, vm_type, nrOfFarms, nrOfVMs, username, password, port, server);
 		this.script = script;
     }
 
-    public PrimeFinder(int startInteger, int endInteger, String username, String password, String server) throws Exception {
-        super(server, 5222, username, password);
+    public PrimeFinder(int startInteger, int endInteger, String vm_type, int nfOfFarms, int nrOfVMs, String username, String password, int port, String server) throws Exception {
+        super(server, port, username, password);
+        DESIRED_FARMS = nfOfFarms;
+        DESIRED_VMS = nrOfVMs;
         this.createCountrysideStructsFromRoster();
         this.waitFromFarms(DESIRED_FARMS, 500);
 
         for (FarmStruct farmStruct : this.getFarmStructs()) {
-            this.spawnVirtualMachine(farmStruct.getFullJid(), "groovy");
+            this.spawnVirtualMachine(farmStruct.getFullJid(), vm_type);
         }
         this.waitFromVms(DESIRED_VMS, 500);
         int numberOfVms = this.getVmStructs().size();
@@ -114,7 +116,7 @@ public class PrimeFinder extends XmppVillein {
     }
 
     public static void main(String args[]) throws Exception {
-        new PrimeFinder(1, 10000, "linked.process.2@fortytwo.linkedprocess.org", "linked23", "fortytwo.linkedprocess.org");
+        new PrimeFinder(1, 10000, "groovy", 4, 4, "linked.process.2@fortytwo.linkedprocess.org", "linked23", 5222,"fortytwo.linkedprocess.org");
     }
 
 }
