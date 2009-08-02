@@ -1,18 +1,19 @@
 package org.linkedprocess.xmpp;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.packet.DiscoverInfo;
+import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.FormField.Option;
+import org.jivesoftware.smackx.packet.DataForm;
+import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Namespace;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.HashSet;
 
 /**
  * User: marko
@@ -60,27 +61,19 @@ public abstract class LopListener implements PacketListener {
     protected Collection<String> getSupportedVmSpecies(DiscoverInfo discoInfo) {
         if (discoInfo != null) {
             List<String> supportedVmSpecies = new LinkedList<String>();
-            try {
-                Document doc = LinkedProcess.createXMLDocument(discoInfo.toXML());
-                Element queryElement = doc.getRootElement().getChild("query", Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
-                Element xElement = queryElement.getChild(LinkedProcess.X_TAG, Namespace.getNamespace(LinkedProcess.X_NAMESPACE));
-                for (Element field : (List<Element>) xElement.getChildren()) {
-                    if (field.getAttributeValue("var").equals(LinkedProcess.VM_SPECIES_ATTRIBUTE)) {
-                        for (Element option : (List<Element>) field.getChildren("option", Namespace.getNamespace(LinkedProcess.X_NAMESPACE))) {
-                            Element value = option.getChild("value", Namespace.getNamespace(LinkedProcess.X_NAMESPACE));
-                            if (value != null) {
-                                String vmSpecies = value.getText();
-                                if (vmSpecies != null && vmSpecies.length() > 0)
-                                    supportedVmSpecies.add(vmSpecies);
-                            }
-                        }
-                    }
-                }
-                return supportedVmSpecies;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
+            DataForm extension = (DataForm)discoInfo.getExtension("jabber:x:data");
+            Iterator<FormField> fields = extension.getFields();
+			while(fields.hasNext()) {
+            	FormField field = fields.next();
+            	if(field.getVariable().equals(LinkedProcess.VM_SPECIES_ATTRIBUTE)) {
+            		Iterator<Option> vms = field.getOptions();
+					while (vms.hasNext()) {
+						Option next = vms.next();
+            			supportedVmSpecies.add(next.getValue());
+            		}
+            	}
             }
+			return supportedVmSpecies;
         } else {
             return new HashSet<String>();
         }
