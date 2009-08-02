@@ -19,7 +19,7 @@
     </properties>
 
     <dependencies>
-    <!-- 
+
         <dependency>
             <groupId>jivesoftware</groupId>
             <artifactId>smack</artifactId>
@@ -35,7 +35,7 @@
             <artifactId>smackx-debug</artifactId>
             <version>3.1.0</version>
         </dependency>
-     -->
+ 
         <dependency>
             <groupId>org.powermock.modules</groupId>
             <artifactId>powermock-module-junit4
