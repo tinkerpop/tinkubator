@@ -1,16 +1,19 @@
 package org.linkedprocess;
 
-import org.linkedprocess.os.VMWorker;
 import org.linkedprocess.os.JobResult;
-import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
-import org.linkedprocess.security.VMSecurityManager;
+import org.linkedprocess.os.VMWorker;
 
-import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
-import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Logger;
-import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -80,7 +83,7 @@ public class LinkedProcessFarm {
             return lFirst.compareTo(lSecond);
         }
     }
-
+                                     
     private static void preLoadingHack() {
         LOGGER.info("pre-loading script engines");
 
@@ -118,6 +121,14 @@ public class LinkedProcessFarm {
                     // Do nothing.
                 }
             }
+        }
+    }
+
+    public static void main(final String[] args) throws Exception {
+        //System.out.println(System.getProperty("java.class.path"));
+        String[] paths = System.getProperty("java.class.path").split(":");
+        for (String p : paths) {
+            System.out.println(p);
         }
     }
 }

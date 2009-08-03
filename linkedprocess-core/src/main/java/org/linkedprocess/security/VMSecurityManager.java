@@ -18,6 +18,9 @@ import java.util.logging.Logger;
 public class VMSecurityManager extends SecurityManager {
     private static final Logger LOGGER = LinkedProcess.getLogger(VMSecurityManager.class);
 
+    // TODO (maybe): make this configurable by turning it into a permission type.
+    private static final boolean PERMIT_READ_TO_CLASSPATH = true;
+
     public enum PermissionType {
         permission("permission", "exercise a permission"),
         createClassLoader("create_class_loader", "create a Java class loader"),
@@ -124,14 +127,14 @@ public class VMSecurityManager extends SecurityManager {
     public VMSecurityManager(final Properties props) {
         permittedTypes = PermissionType.createSet(props);
 
-        readPermissions = readPermittedPaths(props, PermissionType.read);
-        writePermissions = readPermittedPaths(props, PermissionType.write);
-        deletePermissions = readPermittedPaths(props, PermissionType.delete);
-        execPermissions = readPermittedPaths(props, PermissionType.exec);
-        linkPermissions = readPermittedPaths(props, PermissionType.link);
+        setReadPermissions(findPermittedPaths(props, PermissionType.read));
+        setWritePermissions(findPermittedPaths(props, PermissionType.write));
+        setDeletePermissions(findPermittedPaths(props, PermissionType.delete));
+        setExecPermissions(findPermittedPaths(props, PermissionType.exec));
+        setLinkPermissions(findPermittedPaths(props, PermissionType.link));
     }
 
-    private PathPermissions readPermittedPaths(final Properties props,
+    private PathPermissions findPermittedPaths(final Properties props,
                                                final PermissionType type) {
         PathPermissions p = new PathPermissions();
         String prefix = type.getPropertyName() + ".permitted";
@@ -147,6 +150,13 @@ public class VMSecurityManager extends SecurityManager {
         }
 
         return p;
+    }
+
+    private void addClassPath(final PathPermissions perms) {
+        String[] paths = System.getProperty("java.class.path").split(":");
+        for (String p : paths) {
+            perms.addPermitRule(p);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -179,6 +189,10 @@ public class VMSecurityManager extends SecurityManager {
 
     public void setReadPermissions(final PathPermissions p) {
         readPermissions = p;
+
+        if (PERMIT_READ_TO_CLASSPATH) {
+            addClassPath(readPermissions);
+        }
     }
 
     public void setWritePermissions(final PathPermissions p) {
