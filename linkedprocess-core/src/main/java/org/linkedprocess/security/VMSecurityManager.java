@@ -5,9 +5,10 @@ import org.linkedprocess.LinkedProcess;
 import java.io.FileDescriptor;
 import java.net.InetAddress;
 import java.security.Permission;
-import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.List;
+import java.util.LinkedList;
 import java.util.logging.Logger;
 
 /**
@@ -21,69 +22,6 @@ public class VMSecurityManager extends SecurityManager {
     // TODO (maybe): make this configurable by turning it into a permission type.
     private static final boolean PERMIT_READ_TO_CLASSPATH = true;
 
-    public enum PermissionType {
-        permission("permission", "exercise a permission"),
-        createClassLoader("create_class_loader", "create a Java class loader"),
-        access("access", "modify a Java thread or thread group"),
-        exit("exit", "exit the farm process"),
-        exec("exec", "execute a program"),
-        link("link", "create a file system link"),
-        read("read", "read from a file"),
-        write("write", "write to a file"),
-        delete("delete", "delete a file"),
-        connect("connect", "open a socket connection"),
-        listen("listen", "wait for a connection request"),
-        accept("accept", "accept a socket connection"),
-        multicast("multicast", "use IP multicast"),
-        propertiesAccess("properties_access", "access or modify system properties"),
-        propertyAccess("property_access", "access or modify a system property"),
-        printJobAccess("print_job_access", "initiate a print job request"),
-        systemClipboardAccess("system_clipboard_access", "access the system clipboard"),
-        awtEventQueueAccess("awt_event_queue_access", "access the Java AWT event queue"),
-        packageAccess("package_access", "access a Java package"),
-        packageDefinition("package_definition", "define classes in a package"),
-        setFactory("set_factory", "set a socket factory"),
-        memberAccess("member_access", "access Java members"),
-        securityAccess("security_access", "exercise a permission");
-
-        private final String specName;
-        private final String label;
-
-        private PermissionType(final String specName,
-                               final String label) {
-            this.specName = specName;
-            this.label = label;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public boolean isPermitted(final Properties props) {
-            return Boolean.valueOf(props.getProperty(getPropertyName()));
-        }
-
-        public static Set<PermissionType> createSet(final Properties props) {
-            Set<PermissionType> set = new HashSet<PermissionType>();
-
-            for (PermissionType pt : PermissionType.values()) {
-                if (pt.isPermitted(props)) {
-                    set.add(pt);
-                }
-            }
-
-            return set;
-        }
-
-        public String getPropertyName() {
-            return "org.linkedprocess.security." + this;
-        }
-
-        public String getSpecName() {
-            return specName;
-        }
-    }
-
     private final Set<PermissionType> permittedTypes;
 
     private PathPermissions
@@ -96,6 +34,8 @@ public class VMSecurityManager extends SecurityManager {
             httpPutPermissions,
             httpPostPermissions;
 
+    private final List<VMSecurityManagerListener> listeners;
+
     private boolean isVMWorkerThread() {
         // This is weird, but the below (commented out) results in a ClassCircularityError due to permissions associated with class comparison.
         return Thread.currentThread().toString() == VMSandboxedThread.SPECIAL_TOSTRING_VALUE;
@@ -103,19 +43,43 @@ public class VMSecurityManager extends SecurityManager {
         //return Thread.currentThread().getClass() == VMSandboxedThread.class;
     }
 
+    private void alertListeners(final SecurityException e,
+                                final PermissionType type,
+                                final String path) {
+        if (0 < listeners.size()) {
+            for (VMSecurityManagerListener l : listeners) {
+                if (null == path) {
+                    if (null == type) {
+                        l.notPermitted(e);
+                    } else {
+                        l.notPermittedByType(e, type);
+                    }
+                } else {
+                    l.notPermittedByTypeAndPath(e, type, path);
+                }
+            }
+        }
+    }
+
     private void permissionDenied() {
         LOGGER.info("denying permission");
-        throw new SecurityException("operation is not allowed in VM worker threads");
+        SecurityException e = new SecurityException("operation is not allowed in VM worker threads");
+        alertListeners(e, null, null);
+        throw e;
     }
 
     private void permissionDenied(final PermissionType type) {
         LOGGER.info("denying permission '" + type.getSpecName() + "'");
-        throw new SecurityException("operation type is not allowed in VM worker threads: " + type);
+        SecurityException e = new SecurityException("operation type is not allowed in VM worker threads: " + type);
+        alertListeners(e, type, null);
+        throw e;
     }
 
     private void permissionDenied(final PermissionType type, final String resource) {
         LOGGER.info("denying permission '" + type.getSpecName() + "' to resource '" + resource + "'");
-        throw new SecurityException("permission '" + type + "' is not granted for resource: " + resource);
+        SecurityException e = new SecurityException("permission '" + type + "' is not granted for resource: " + resource);
+        alertListeners(e, type, resource);
+        throw e;
     }
 
     private void checkPermissionType(final PermissionType type) {
@@ -132,6 +96,12 @@ public class VMSecurityManager extends SecurityManager {
         setDeletePermissions(findPermittedPaths(props, PermissionType.delete));
         setExecPermissions(findPermittedPaths(props, PermissionType.exec));
         setLinkPermissions(findPermittedPaths(props, PermissionType.link));
+
+        listeners = new LinkedList<VMSecurityManagerListener>();
+    }
+
+    public void addListener(final VMSecurityManagerListener listener) {
+        listeners.add(listener);
     }
 
     private PathPermissions findPermittedPaths(final Properties props,

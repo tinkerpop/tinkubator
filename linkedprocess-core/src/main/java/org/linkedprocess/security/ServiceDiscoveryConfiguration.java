@@ -30,7 +30,7 @@ public class ServiceDiscoveryConfiguration {
             httpPutPermissions = null,
             httpPostPermissions = null;
 
-    private final Set<VMSecurityManager.PermissionType> permittedTypes;
+    private final Set<PermissionType> permittedTypes;
 
     public ServiceDiscoveryConfiguration(final VMSecurityManager m) {
         permittedTypes = m.getPermittedTypes();
@@ -43,7 +43,7 @@ public class ServiceDiscoveryConfiguration {
 
     // TODO: namespace logic
     public ServiceDiscoveryConfiguration(final Element x) {
-        permittedTypes = new HashSet<VMSecurityManager.PermissionType>();
+        permittedTypes = new HashSet<PermissionType>();
 
         if (!x.getName().equals(X)) {
             throw new IllegalArgumentException("expected a jabber:x:data element named 'x'");
@@ -51,7 +51,7 @@ public class ServiceDiscoveryConfiguration {
 
         for (Element field : (Collection<Element>) x.getChildren(FIELD)) {
             String varValue = field.getAttributeValue(VAR);
-            VMSecurityManager.PermissionType type = VMSecurityManager.PermissionType.valueOf(varValue);
+            PermissionType type = PermissionType.valueOf(varValue);
             if (null == type) {
                 throw new IllegalArgumentException("missing '" + VAR + "' attribute");
             }
@@ -106,7 +106,7 @@ public class ServiceDiscoveryConfiguration {
     public Element toElement() {
         Element x = new Element(X);
 
-        for (VMSecurityManager.PermissionType type : permittedTypes) {
+        for (PermissionType type : permittedTypes) {
             Element field = new Element(FIELD);
             field.setAttribute(VAR, type.getSpecName());
             x.addContent(field);
@@ -145,7 +145,7 @@ public class ServiceDiscoveryConfiguration {
     }
 
     public void addFields(final DataForm serviceExtension) {
-        for (VMSecurityManager.PermissionType type : VMSecurityManager.PermissionType.values()) {
+        for (PermissionType type : PermissionType.values()) {
             FormField field = new FormField(type.getSpecName());
             field.setLabel(type.getLabel());
 

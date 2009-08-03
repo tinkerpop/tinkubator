@@ -12,7 +12,8 @@ import java.nio.charset.Charset;
  * To change this template use File | Settings | File Templates.
  */
 public class NQuadsFormat extends RDFFormat {
-    
+    public static NQuadsFormat NQUADS = new NQuadsFormat();
+
     private NQuadsFormat() {
         // RDFFormat(String name, String mimeType, Charset charset, String fileExtension, boolean supportsNamespaces, boolean supportsContexts)
         super("nquads", "text/x-nquads", Charset.forName("US-ASCII"), "nq", true, true);
