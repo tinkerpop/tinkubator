@@ -1,9 +1,23 @@
 package org.linkedprocess.xmpp.villein;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.*;
+import org.jivesoftware.smack.filter.AndFilter;
+import org.jivesoftware.smack.filter.IQTypeFilter;
+import org.jivesoftware.smack.filter.OrFilter;
+import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -13,13 +27,14 @@ import org.linkedprocess.xmpp.ProbePresence;
 import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.farm.SpawnVm;
 import org.linkedprocess.xmpp.farm.SpawnVmProvider;
-import org.linkedprocess.xmpp.vm.*;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+import org.linkedprocess.xmpp.vm.AbortJobProvider;
+import org.linkedprocess.xmpp.vm.JobStatusProvider;
+import org.linkedprocess.xmpp.vm.ManageBindings;
+import org.linkedprocess.xmpp.vm.ManageBindingsProvider;
+import org.linkedprocess.xmpp.vm.SubmitJob;
+import org.linkedprocess.xmpp.vm.SubmitJobProvider;
+import org.linkedprocess.xmpp.vm.TerminateVm;
+import org.linkedprocess.xmpp.vm.TerminateVmProvider;
 
 /**
  * User: marko
@@ -57,7 +72,6 @@ public class XmppVillein extends XmppClient {
         pm.addIQProvider(LinkedProcess.JOB_STATUS_TAG, LinkedProcess.LOP_VM_NAMESPACE, new JobStatusProvider());
         pm.addIQProvider(LinkedProcess.ABORT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE, new AbortJobProvider());
         pm.addIQProvider(LinkedProcess.MANAGE_BINDINGS_TAG, LinkedProcess.LOP_VM_NAMESPACE, new ManageBindingsProvider());
-
         this.logon(server, port, username, password, RESOURCE_PREFIX);
         this.initiateFeatures();
         //this.printClientStatistics();
@@ -66,12 +80,14 @@ public class XmppVillein extends XmppClient {
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
         PacketFilter submitFilter = new AndFilter(new PacketTypeFilter(SubmitJob.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
+        PacketFilter manageBindingsFilter = new AndFilter(new PacketTypeFilter(ManageBindings.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
 
         PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
 
         this.connection.addPacketListener(new SpawnVmListener(this), spawnFilter);
         this.connection.addPacketListener(new PresenceListener(this), presenceFilter);
         this.connection.addPacketListener(new SubmitJobListener(this), submitFilter);
+		this.connection.addPacketListener(new ManageBindingsListener(this), manageBindingsFilter);
 
         this.countrysideStructs = new HashMap<String, CountrysideStruct>();
         this.status = LinkedProcess.VilleinStatus.ACTIVE;
@@ -264,7 +280,10 @@ public class XmppVillein extends XmppClient {
         manageBindings.setTo(vmStruct.getFullJid());
         manageBindings.setFrom(this.getFullJid());
         manageBindings.setType(type);
+        manageBindings.setVmPassword(vmStruct.getVmPassword());
         manageBindings.setBindings(vmBindings);
+        //set the VMStruncts bindings in case we need them later for getting stuff
+        vmStruct.setBindings(vmBindings);
         this.connection.sendPacket(manageBindings);
     }
 
@@ -319,4 +338,13 @@ public class XmppVillein extends XmppClient {
         this.countrysideStructs.remove(jid);
 
     }
+    public void sendGetBindings(VmStruct vm) {
+		ManageBindings bindings = new ManageBindings();
+		bindings.setTo(vm.getFullJid());
+		bindings.setFrom(this.getFullJid());
+		bindings.setBindings(vm.getBindings());
+		bindings.setVmPassword(vm.getVmPassword());
+		bindings.setType(IQ.Type.GET);
+		this.connection.sendPacket(bindings);
+	}
 }

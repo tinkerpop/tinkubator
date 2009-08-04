@@ -1,8 +1,7 @@
 package org.linkedprocess.xmpp.villein;
 
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.xmpp.vm.SubmitJob;
 
 /**
