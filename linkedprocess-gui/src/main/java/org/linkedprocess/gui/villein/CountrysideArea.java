@@ -92,7 +92,7 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
         if (event.getActionCommand().equals(TERMINATE_VM)) {
             if (this.popupTreeObject instanceof VmStruct) {
                 VmStruct vmStruct = (VmStruct) this.popupTreeObject;
-                this.villeinGui.getXmppVillein().terminateVirtualMachine(vmStruct);
+                this.villeinGui.getXmppVillein().sendTerminateVirtualMachine(vmStruct);
                 this.villeinGui.removeVmFrame(vmStruct);
             }
         } else if (event.getActionCommand().equals(VM_CONTROL)) {
@@ -138,7 +138,7 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
                 if (event.getActionCommand().equals(vmSpecies)) {
                     if (this.popupTreeObject instanceof FarmStruct) {
                         String farmJid = ((FarmStruct) this.popupTreeObject).getFullJid();
-                        this.villeinGui.getXmppVillein().spawnVirtualMachine(farmJid, vmSpecies);
+                        this.villeinGui.getXmppVillein().sendSpawnVirtualMachine(farmJid, vmSpecies);
                         break;
                     }
                 }

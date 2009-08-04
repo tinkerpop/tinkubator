@@ -6,7 +6,6 @@ import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.ToContainsFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.gui.villein.VilleinGui;
@@ -196,7 +195,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
             }
 
         } else if (event.getActionCommand().equals(TERMINATE_VM)) {
-            this.villeinGui.getXmppVillein().terminateVirtualMachine(this.vmStruct);
+            this.villeinGui.getXmppVillein().sendTerminateVirtualMachine(this.vmStruct);
             this.villeinGui.removeVmFrame(this.vmStruct);
         } else if (event.getActionCommand().equals(CLOSE)) {
             this.setVisible(false);

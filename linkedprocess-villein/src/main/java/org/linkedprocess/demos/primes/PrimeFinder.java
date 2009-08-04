@@ -30,13 +30,13 @@ public class PrimeFinder extends XmppVillein {
 
     public PrimeFinder(int startInteger, int endInteger, String vm_type, int nfOfFarms, int nrOfVMs, String username, String password, int port, String server) throws Exception {
         super(server, port, username, password);
-        DESIRED_FARMS = nfOfFarms;
+        /*DESIRED_FARMS = nfOfFarms;
         DESIRED_VMS = nrOfVMs;
         this.createCountrysideStructsFromRoster();
         this.waitFromFarms(DESIRED_FARMS, 500);
 
         for (FarmStruct farmStruct : this.getFarmStructs()) {
-            this.spawnVirtualMachine(farmStruct.getFullJid(), vm_type);
+            this.sendSpawnVirtualMachine(farmStruct.getFullJid(), vm_type);
         }
         this.waitFromVms(DESIRED_VMS, 500);
         int numberOfVms = this.getVmStructs().size();
@@ -44,7 +44,7 @@ public class PrimeFinder extends XmppVillein {
 
         long startTime = System.currentTimeMillis();
         for (VmStruct vmStruct : this.getVmStructs()) {
-            this.submitJob(vmStruct, PrimeFinder.getGroovyFindPrimesMethod(), "prime1234");
+            this.sendSubmitJob(vmStruct, PrimeFinder.getGroovyFindPrimesMethod(), "prime1234");
         }
 
         int interval = Math.round((endInteger - startInteger) / numberOfVms);
@@ -54,7 +54,7 @@ public class PrimeFinder extends XmppVillein {
             if (endValue > endInteger)
                 endValue = endInteger;
             String jobId = "job-" + new Random().nextInt();
-            this.submitJob(vmStruct, "findPrimes(" + startValue + "," + endValue + ")", jobId);
+            this.sendSubmitJob(vmStruct, "findPrimes(" + startValue + "," + endValue + ")", jobId);
             System.out.println("Submitted job " + startValue + " to " + endValue + " to " + vmStruct.getFullJid());
             this.jobIds.add(jobId);
             startValue = interval + startValue + 1;
@@ -78,14 +78,14 @@ public class PrimeFinder extends XmppVillein {
         System.out.println("Running time: " + ((System.currentTimeMillis() - startTime) / 1000.0f) + " seconds.");
 
         for (VmStruct vmStruct : this.getVmStructs()) {
-            this.terminateVirtualMachine(vmStruct);
+            this.sendTerminateVirtualMachine(vmStruct);
         }
         this.clearJobs();
         this.shutDown(this.createPresence(LinkedProcess.VilleinStatus.INACTIVE));
 
         startTime = System.currentTimeMillis();
         System.out.println("\nResult: " + this.findPrimes(startInteger, endInteger));
-        System.out.println("Running time: " + ((System.currentTimeMillis() - startTime) / 1000.0f) + " seconds.");
+        System.out.println("Running time: " + ((System.currentTimeMillis() - startTime) / 1000.0f) + " seconds.");*/
 
     }
 
