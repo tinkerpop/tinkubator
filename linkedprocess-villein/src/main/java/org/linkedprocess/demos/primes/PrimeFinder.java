@@ -1,10 +1,6 @@
 package org.linkedprocess.demos.primes;
 
-import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.XmppClient;
-import org.linkedprocess.xmpp.villein.FarmStruct;
-import org.linkedprocess.xmpp.villein.Job;
-import org.linkedprocess.xmpp.villein.VmStruct;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 
 import java.io.IOException;
@@ -80,7 +76,7 @@ public class PrimeFinder extends XmppVillein {
         for (VmStruct vmStruct : this.getVmStructs()) {
             this.sendTerminateVirtualMachine(vmStruct);
         }
-        this.clearJobs();
+        this.clearAllJobs();
         this.shutDown(this.createPresence(LinkedProcess.VilleinStatus.INACTIVE));
 
         startTime = System.currentTimeMillis();

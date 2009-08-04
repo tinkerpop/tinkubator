@@ -126,7 +126,7 @@ public class XmppVillein extends XmppClient {
         }
     }
 
-    public void clearJobs() {
+    public void clearAllJobs() {
         for (VmStruct vmStruct : this.getVmStructs()) {
             vmStruct.clearJobs();
         }
@@ -203,29 +203,28 @@ public class XmppVillein extends XmppClient {
         this.countrysideStructs.put(countrysideStruct.getFullJid(), countrysideStruct);
     }
 
-    public void addFarmStruct(FarmStruct farmStruct) {
+    public void addFarmStruct(FarmStruct farmStruct) throws ParentStructNotFoundException {
         Struct farmlandStruct = this.getStruct(LinkedProcess.generateBareJid(farmStruct.getFullJid()), StructType.COUNTRYSIDE);
         if (farmlandStruct != null && farmlandStruct instanceof CountrysideStruct)
             ((CountrysideStruct) farmlandStruct).addFarmStruct(farmStruct);
         else
-            LOGGER.severe("countryside struct null for " + farmStruct.getFullJid());
+            throw new ParentStructNotFoundException("countryside struct null for " + farmStruct.getFullJid());
     }
 
-    public void addRegistryStruct(RegistryStruct registryStruct) {
+    public void addRegistryStruct(RegistryStruct registryStruct) throws ParentStructNotFoundException {
         Struct farmlandStruct = this.getStruct(LinkedProcess.generateBareJid(registryStruct.getFullJid()), StructType.COUNTRYSIDE);
         if (farmlandStruct != null && farmlandStruct instanceof CountrysideStruct)
             ((CountrysideStruct) farmlandStruct).addRegistryStruct(registryStruct);
         else
-            LOGGER.severe("countryside struct null for " + registryStruct.getFullJid());
+            throw new ParentStructNotFoundException("countryside struct null for " + registryStruct.getFullJid());
     }
 
-    public void addVmStruct(String farmJid, VmStruct vmStruct) {
+    public void addVmStruct(String farmJid, VmStruct vmStruct) throws ParentStructNotFoundException {
         Struct farmStruct = this.getStruct(farmJid, StructType.FARM);
-        if (farmStruct != null && farmStruct instanceof FarmStruct) {
+        if (farmStruct != null && farmStruct instanceof FarmStruct)
             ((FarmStruct) farmStruct).addVmStruct(vmStruct);
-        } else {
-            LOGGER.severe("farm struct null for " + vmStruct.getFullJid());
-        }
+        else
+            throw new ParentStructNotFoundException("farm struct null for " + vmStruct.getFullJid());   
     }
 
 
@@ -270,7 +269,7 @@ public class XmppVillein extends XmppClient {
     }
 
 
-    public void createCountrysideStructsFromRoster() {
+    public synchronized void createCountrysideStructsFromRoster() {
         this.roster.reload();
         //this.userStructs.clear();
         for (RosterEntry entry : this.getRoster().getEntries()) {

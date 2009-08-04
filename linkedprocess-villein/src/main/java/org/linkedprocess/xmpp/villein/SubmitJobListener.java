@@ -41,7 +41,7 @@ public class SubmitJobListener extends LopVilleinListener {
                 XmppVillein.LOGGER.severe("Job returned from unknown virtual machine: " + submitJob.getFrom());
             }
         } else if(submitJob.getType() == IQ.Type.ERROR) {
-             VmStruct vmStruct = (VmStruct) this.getXmppVillein().getStruct(submitJob.getFrom(), XmppVillein.StructType.VM);
+            VmStruct vmStruct = (VmStruct) this.getXmppVillein().getStruct(submitJob.getFrom(), XmppVillein.StructType.VM);
             if(vmStruct != null) {
                 Job job = new Job();
                 job.setError(submitJob.getError());

@@ -35,7 +35,11 @@ public class SpawnVmListener extends LopVilleinListener {
             vmStruct.setFullJid(spawnVm.getVmJid());
             vmStruct.setVmPassword(spawnVm.getVmPassword());
             vmStruct.setVmSpecies(spawnVm.getVmSpecies());
-            this.getXmppVillein().addVmStruct(spawnVm.getFrom(), vmStruct);
+            try {
+                this.getXmppVillein().addVmStruct(spawnVm.getFrom(), vmStruct);
+            } catch(ParentStructNotFoundException e) {
+                XmppVillein.LOGGER.severe(e.getMessage());
+            }
         } else {
             XmppVillein.LOGGER.severe("Error: " + spawnVm.getError().toXML());
         }

@@ -56,7 +56,11 @@ public class PresenceListener extends LopVilleinListener {
                     farmStruct.setFullJid(packet.getFrom());
                     farmStruct.setPresence(presence);
                     farmStruct.setSupportedVmSpecies(this.getSupportedVmSpecies(discoInfo));
-                    this.getXmppVillein().addFarmStruct(farmStruct);
+                    try {
+                        this.getXmppVillein().addFarmStruct(farmStruct);
+                    } catch(ParentStructNotFoundException e) {
+                        XmppVillein.LOGGER.severe(e.getMessage());
+                    }
                 } else {
                     checkStruct.setPresence(presence);
                 }
@@ -67,7 +71,11 @@ public class PresenceListener extends LopVilleinListener {
                     RegistryStruct registryStruct = new RegistryStruct();
                     registryStruct.setFullJid(packet.getFrom());
                     registryStruct.setPresence(presence);
-                    this.getXmppVillein().addRegistryStruct(registryStruct);
+                    try {
+                        this.getXmppVillein().addRegistryStruct(registryStruct);
+                    } catch(ParentStructNotFoundException e) {
+                        XmppVillein.LOGGER.severe(e.getMessage());
+                    }
                 } else {
                     checkStruct.setPresence(presence);
                 }
