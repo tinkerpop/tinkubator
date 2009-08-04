@@ -12,5 +12,6 @@ def findPrimes(startInt, endInt) {
             x.add(n);
         }
     }
+    progress=100;
     return x;
 };
