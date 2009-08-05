@@ -27,10 +27,11 @@ import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 import javax.script.ScriptEngineFactory;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.logging.LogManager;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
@@ -53,14 +54,6 @@ public class XmppFarm extends XmppClient {
     protected DataForm serviceExtension;
 
     public XmppFarm(final String server, final int port, final String username, final String password) throws XMPPException {
-        InputStream resourceAsStream = getClass().getResourceAsStream("/logging.properties");
-        try {
-            LogManager.getLogManager().readConfiguration(resourceAsStream);
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         LOGGER.info("Starting " + STATUS_MESSAGE);
 
         ProviderManager pm = ProviderManager.getInstance();

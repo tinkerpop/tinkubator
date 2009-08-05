@@ -14,7 +14,7 @@
         <version>alpha1</version>
     </parent>
 
-    <properties>
+    <properties>                         
         <powermock.version>1.2.5</powermock.version>
     </properties>
 

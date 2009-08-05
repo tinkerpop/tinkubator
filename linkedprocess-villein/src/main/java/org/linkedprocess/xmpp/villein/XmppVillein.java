@@ -3,24 +3,45 @@ package org.linkedprocess.xmpp.villein;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.*;
+import org.jivesoftware.smack.filter.AndFilter;
+import org.jivesoftware.smack.filter.IQTypeFilter;
+import org.jivesoftware.smack.filter.OrFilter;
+import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.VMBindings;
-import org.linkedprocess.xmpp.ProbePresence;
 import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.farm.SpawnVm;
 import org.linkedprocess.xmpp.farm.SpawnVmProvider;
-import org.linkedprocess.xmpp.villein.handlers.*;
-import org.linkedprocess.xmpp.villein.structs.*;
-import org.linkedprocess.xmpp.vm.*;
+import org.linkedprocess.xmpp.villein.handlers.AbortJobHandler;
+import org.linkedprocess.xmpp.villein.handlers.ManageBindingsHandler;
+import org.linkedprocess.xmpp.villein.handlers.PresenceHandler;
+import org.linkedprocess.xmpp.villein.handlers.SpawnVmHandler;
+import org.linkedprocess.xmpp.villein.handlers.SubmitJobHandler;
+import org.linkedprocess.xmpp.villein.structs.CountrysideStruct;
+import org.linkedprocess.xmpp.villein.structs.FarmStruct;
+import org.linkedprocess.xmpp.villein.structs.Job;
+import org.linkedprocess.xmpp.villein.structs.ParentStructNotFoundException;
+import org.linkedprocess.xmpp.villein.structs.RegistryStruct;
+import org.linkedprocess.xmpp.villein.structs.Struct;
+import org.linkedprocess.xmpp.villein.structs.VmStruct;
+import org.linkedprocess.xmpp.vm.AbortJobProvider;
+import org.linkedprocess.xmpp.vm.JobStatusProvider;
+import org.linkedprocess.xmpp.vm.ManageBindings;
+import org.linkedprocess.xmpp.vm.ManageBindingsProvider;
+import org.linkedprocess.xmpp.vm.SubmitJob;
+import org.linkedprocess.xmpp.vm.SubmitJobProvider;
+import org.linkedprocess.xmpp.vm.TerminateVm;
+import org.linkedprocess.xmpp.vm.TerminateVmProvider;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.logging.LogManager;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -48,14 +69,6 @@ public class XmppVillein extends XmppClient {
     protected Map<String, CountrysideStruct> countrysideStructs;
 
     public XmppVillein(final String server, final int port, final String username, final String password) throws XMPPException {
-        InputStream resourceAsStream = getClass().getResourceAsStream("/logging.properties");
-        try {
-            LogManager.getLogManager().readConfiguration(resourceAsStream);
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         LOGGER.info("Starting " + STATUS_MESSAGE);
 
         ProviderManager pm = ProviderManager.getInstance();

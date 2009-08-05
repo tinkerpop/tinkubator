@@ -12,12 +12,9 @@ import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.XmppClient;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
@@ -34,15 +31,6 @@ public class XmppRegistry extends XmppClient {
     protected Set<String> activeFarms = new HashSet<String>();
 
     public XmppRegistry(final String server, final int port, final String username, final String password) throws XMPPException {
-
-        InputStream resourceAsStream = getClass().getResourceAsStream("/logging.properties");
-        try {
-            LogManager.getLogManager().readConfiguration(resourceAsStream);
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         LOGGER.info("Starting " + STATUS_MESSAGE);
 
 

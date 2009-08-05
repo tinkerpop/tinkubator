@@ -10,8 +10,10 @@ import org.linkedprocess.security.VMSecurityManager;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Logger;
+import java.util.logging.LogManager;
 
 /**
  * Author: josh
@@ -254,6 +256,15 @@ public class LinkedProcess {
     public static final XMLOutputter xmlOut = new XMLOutputter();
 
     static {
+        InputStream resourceAsStream = LinkedProcess.class.getResourceAsStream("/logging.properties");
+        try {
+            LogManager.getLogManager().readConfiguration(resourceAsStream);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         LOGGER = getLogger(LinkedProcess.class);
 
         PROPERTIES = new Properties();
