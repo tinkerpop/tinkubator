@@ -219,7 +219,6 @@ public class XmppVillein extends XmppClient {
         }
     }
 
-
     public void addCountrysideStruct(CountrysideStruct countrysideStruct) {
         this.countrysideStructs.put(countrysideStruct.getFullJid(), countrysideStruct);
     }

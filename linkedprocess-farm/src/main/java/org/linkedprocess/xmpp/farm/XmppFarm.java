@@ -59,7 +59,6 @@ public class XmppFarm extends XmppClient {
         ProviderManager pm = ProviderManager.getInstance();
         pm.addIQProvider(LinkedProcess.SPAWN_VM_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new SpawnVmProvider());
 
-
         this.logon(server, port, username, password);
         this.initiateFeatures();
         //this.printClientStatistics();
@@ -73,6 +72,11 @@ public class XmppFarm extends XmppClient {
 
         this.connection.addPacketListener(new SpawnVmListener(this), spawnFilter);
         this.connection.addPacketListener(new PresenceSubscriptionListener(this), subscribeFilter);
+
+        this.farmPassword = LinkedProcess.getConfiguration().getProperty(LinkedProcess.FARM_PASSWORD);
+        if (null != this.farmPassword) {
+            this.farmPassword = this.farmPassword.trim();
+        }
     }
 
     private void logon(String server, int port, String username, String password) throws XMPPException {
@@ -206,6 +210,10 @@ public class XmppFarm extends XmppClient {
     public String getFarmPassword() {
         return this.farmPassword;
     }
+
+    //public void setFarmPassword(final String farmPassword) {
+    //    this.farmPassword = farmPassword;
+    //}
 
     public static void main(final String[] args) throws Exception {
         Properties props = LinkedProcess.getConfiguration();

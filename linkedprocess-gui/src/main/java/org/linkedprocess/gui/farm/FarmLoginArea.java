@@ -24,7 +24,6 @@ public class FarmLoginArea extends LoginArea {
         this.farmGui = farmGui;
     }
 
-
     public void actionPerformed(ActionEvent event) {
 
         this.doRememberedProperties();
