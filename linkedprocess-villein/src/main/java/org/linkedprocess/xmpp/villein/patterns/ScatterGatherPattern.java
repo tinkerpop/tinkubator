@@ -5,10 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.jivesoftware.smack.packet.IQ;
-import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.VMBindings;
-import org.linkedprocess.xmpp.villein.FarmStruct;
 import org.linkedprocess.xmpp.villein.Job;
 import org.linkedprocess.xmpp.villein.VmStruct;
 import org.linkedprocess.xmpp.villein.XmppVillein;
