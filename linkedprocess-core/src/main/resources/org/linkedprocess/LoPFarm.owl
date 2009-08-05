@@ -2,61 +2,61 @@
 
 
 <!DOCTYPE rdf:RDF [
-    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
-    <!ENTITY owl2 "http://www.w3.org/2006/12/owl2#" >
-    <!ENTITY dc "http://purl.org/dc/elements/1.1/" >
-    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
-    <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
-    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
-    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
-]>
+        <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+        <!ENTITY owl2 "http://www.w3.org/2006/12/owl2#" >
+        <!ENTITY dc "http://purl.org/dc/elements/1.1/" >
+        <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+        <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
+        <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+        <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+        ]>
 
 
 <rdf:RDF xmlns="http://linkedprocess.org/2006/06/LoPFarm#"
-     xml:base="http://linkedprocess.org/2006/06/LoPFarm"
-     xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
-     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:dc="http://purl.org/dc/elements/1.1/"
-     xmlns:owl2="http://www.w3.org/2006/12/owl2#"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     xmlns:owl="http://www.w3.org/2002/07/owl#">
+         xml:base="http://linkedprocess.org/2006/06/LoPFarm"
+         xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xmlns:owl2="http://www.w3.org/2006/12/owl2#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#">
     <owl:Ontology rdf:about="">
         <owl:versionInfo>2006-06</owl:versionInfo>
         <dc:title
-            >Linked Process OWL Ontology</dc:title>
+                >Linked Process OWL Ontology
+        </dc:title>
         <dc:creator
-            >Joshua Shinavier</dc:creator>
+                >Joshua Shinavier
+        </dc:creator>
         <rdfs:comment xml:lang="en"
-            >Linked Process (http://linkedprocess.org)</rdfs:comment>
+                >Linked Process (http://linkedprocess.org)
+        </rdfs:comment>
         <dc:creator
-            >Marko A. Rodriguez</dc:creator>
+                >Marko A. Rodriguez
+        </dc:creator>
     </owl:Ontology>
-    
 
 
     <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Annotation properties
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
+   ///////////////////////////////////////////////////////////////////////////////////////
+   //
+   // Annotation properties
+   //
+   ///////////////////////////////////////////////////////////////////////////////////////
+    -->
 
     <owl:AnnotationProperty rdf:about="&dc;creator"/>
     <owl:AnnotationProperty rdf:about="&dc;title"/>
-    
 
 
     <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Object Properties
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
-
-    
+   ///////////////////////////////////////////////////////////////////////////////////////
+   //
+   // Object Properties
+   //
+   ///////////////////////////////////////////////////////////////////////////////////////
+    -->
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#hasProperty -->
@@ -64,7 +64,6 @@
     <owl:ObjectProperty rdf:about="#hasProperty">
         <rdfs:domain rdf:resource="#Farm"/>
     </owl:ObjectProperty>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#supportsAbstractVirtualMachine -->
@@ -73,18 +72,15 @@
         <rdfs:range rdf:resource="#AbstractVirtualMachine"/>
         <rdfs:domain rdf:resource="#Farm"/>
     </owl:ObjectProperty>
-    
 
 
     <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Data properties
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
-
-    
+   ///////////////////////////////////////////////////////////////////////////////////////
+   //
+   // Data properties
+   //
+   ///////////////////////////////////////////////////////////////////////////////////////
+    -->
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#engineName -->
@@ -93,7 +89,6 @@
         <rdfs:domain rdf:resource="#AbstractVirtualMachine"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#engineVersion -->
@@ -102,7 +97,6 @@
         <rdfs:domain rdf:resource="#AbstractVirtualMachine"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#hasCharacteristicValue -->
@@ -110,7 +104,6 @@
     <owl:DatatypeProperty rdf:about="#hasCharacteristicValue">
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#hasParameterValue -->
@@ -118,7 +111,6 @@
     <owl:DatatypeProperty rdf:about="#hasParameterValue">
         <rdfs:domain rdf:resource="#Parameter"/>
     </owl:DatatypeProperty>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#hasPermittedPath -->
@@ -127,7 +119,6 @@
         <rdfs:domain rdf:resource="#PathBasedPermission"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#isPermitted -->
@@ -136,7 +127,6 @@
         <rdfs:domain rdf:resource="#Permission"/>
         <rdfs:range rdf:resource="&xsd;boolean"/>
     </owl:DatatypeProperty>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#jid -->
@@ -146,7 +136,6 @@
         <rdfs:domain rdf:resource="#Farm"/>
         <rdfs:range rdf:resource="&xsd;anyURI"/>
     </owl:DatatypeProperty>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#languageName -->
@@ -155,7 +144,6 @@
         <rdfs:domain rdf:resource="#AbstractVirtualMachine"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#languageVersion -->
@@ -164,7 +152,6 @@
         <rdfs:domain rdf:resource="#AbstractVirtualMachine"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#vmSpecies -->
@@ -173,18 +160,15 @@
         <rdfs:domain rdf:resource="#AbstractVirtualMachine"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
-    
 
 
     <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Classes
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
-
-    
+   ///////////////////////////////////////////////////////////////////////////////////////
+   //
+   // Classes
+   //
+   ///////////////////////////////////////////////////////////////////////////////////////
+    -->
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#AWTEventQueueAccessPermission -->
@@ -192,7 +176,6 @@
     <owl:Class rdf:about="#AWTEventQueueAccessPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#AbstractVirtualMachine -->
@@ -200,7 +183,6 @@
     <owl:Class rdf:about="#AbstractVirtualMachine">
         <rdfs:subClassOf rdf:resource="&owl;Thing"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#AcceptPermission -->
@@ -208,7 +190,6 @@
     <owl:Class rdf:about="#AcceptPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#AccessPermission -->
@@ -216,7 +197,6 @@
     <owl:Class rdf:about="#AccessPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#ConnectPermission -->
@@ -224,7 +204,6 @@
     <owl:Class rdf:about="#ConnectPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#CreateClassLoaderPermission -->
@@ -232,7 +211,6 @@
     <owl:Class rdf:about="#CreateClassLoaderPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#DeletePermission -->
@@ -240,7 +218,6 @@
     <owl:Class rdf:about="#DeletePermission">
         <rdfs:subClassOf rdf:resource="#PathBasedPermission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#ExecutePermission -->
@@ -248,7 +225,6 @@
     <owl:Class rdf:about="#ExecutePermission">
         <rdfs:subClassOf rdf:resource="#PathBasedPermission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#ExitPermission -->
@@ -256,7 +232,6 @@
     <owl:Class rdf:about="#ExitPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#Farm -->
@@ -265,7 +240,6 @@
         <rdfs:subClassOf rdf:resource="&owl;Thing"/>
         <rdfs:comment xml:lang="en">An LoP Farm.</rdfs:comment>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#JavaVersionParameter -->
@@ -273,7 +247,6 @@
     <owl:Class rdf:about="#JavaVersionParameter">
         <rdfs:subClassOf rdf:resource="#Parameter"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#JavaVirtualMachineNameParameter -->
@@ -281,7 +254,6 @@
     <owl:Class rdf:about="#JavaVirtualMachineNameParameter">
         <rdfs:subClassOf rdf:resource="#Parameter"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#JavaVirtualMachineVersionParameter -->
@@ -289,7 +261,6 @@
     <owl:Class rdf:about="#JavaVirtualMachineVersionParameter">
         <rdfs:subClassOf rdf:resource="#Parameter"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#JobQueueCapacityParameter -->
@@ -297,7 +268,6 @@
     <owl:Class rdf:about="#JobQueueCapacityParameter">
         <rdfs:subClassOf rdf:resource="#Parameter"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#JobTimeoutParameter -->
@@ -305,7 +275,6 @@
     <owl:Class rdf:about="#JobTimeoutParameter">
         <rdfs:subClassOf rdf:resource="#Parameter"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#LinkPermission -->
@@ -313,7 +282,6 @@
     <owl:Class rdf:about="#LinkPermission">
         <rdfs:subClassOf rdf:resource="#PathBasedPermission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#ListenPermission -->
@@ -321,7 +289,6 @@
     <owl:Class rdf:about="#ListenPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#MaxConcurrentVirtualMachinesParameter -->
@@ -329,7 +296,6 @@
     <owl:Class rdf:about="#MaxConcurrentVirtualMachinesParameter">
         <rdfs:subClassOf rdf:resource="#Parameter"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#MemberAccessPermission -->
@@ -337,7 +303,6 @@
     <owl:Class rdf:about="#MemberAccessPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#MulticastPermission -->
@@ -345,7 +310,6 @@
     <owl:Class rdf:about="#MulticastPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#OperatingSystemArchitectureParameter -->
@@ -353,7 +317,6 @@
     <owl:Class rdf:about="#OperatingSystemArchitectureParameter">
         <rdfs:subClassOf rdf:resource="#Parameter"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#OperatingSystemNameParameter -->
@@ -361,7 +324,6 @@
     <owl:Class rdf:about="#OperatingSystemNameParameter">
         <rdfs:subClassOf rdf:resource="#Parameter"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#PackageAccessPermission -->
@@ -369,7 +331,6 @@
     <owl:Class rdf:about="#PackageAccessPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#PackageDefinitionPermission -->
@@ -377,7 +338,6 @@
     <owl:Class rdf:about="#PackageDefinitionPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#Parameter -->
@@ -385,7 +345,6 @@
     <owl:Class rdf:about="#Parameter">
         <rdfs:subClassOf rdf:resource="&owl;Thing"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#PathBasedPermission -->
@@ -393,7 +352,6 @@
     <owl:Class rdf:about="#PathBasedPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#Permission -->
@@ -401,9 +359,9 @@
     <owl:Class rdf:about="#Permission">
         <rdfs:subClassOf rdf:resource="&owl;Thing"/>
         <rdfs:comment
-            >Security-based permissions.</rdfs:comment>
+                >Security-based permissions.
+        </rdfs:comment>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#PermissionPermission -->
@@ -411,7 +369,6 @@
     <owl:Class rdf:about="#PermissionPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#PrintJobAccessPermission -->
@@ -419,7 +376,6 @@
     <owl:Class rdf:about="#PrintJobAccessPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#PropertiesAccessPermission -->
@@ -427,7 +383,6 @@
     <owl:Class rdf:about="#PropertiesAccessPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#PropertyAccessPermission -->
@@ -435,7 +390,6 @@
     <owl:Class rdf:about="#PropertyAccessPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#ReadPermission -->
@@ -443,7 +397,6 @@
     <owl:Class rdf:about="#ReadPermission">
         <rdfs:subClassOf rdf:resource="#PathBasedPermission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#SecurityAccessPermission -->
@@ -451,7 +404,6 @@
     <owl:Class rdf:about="#SecurityAccessPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#SetFactoryPermission -->
@@ -459,7 +411,6 @@
     <owl:Class rdf:about="#SetFactoryPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#SystemClipboardAccessPermission -->
@@ -467,7 +418,6 @@
     <owl:Class rdf:about="#SystemClipboardAccessPermission">
         <rdfs:subClassOf rdf:resource="#Permission"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#VirtualMachineTimeToLiveParameter -->
@@ -475,7 +425,6 @@
     <owl:Class rdf:about="#VirtualMachineTimeToLiveParameter">
         <rdfs:subClassOf rdf:resource="#Parameter"/>
     </owl:Class>
-    
 
 
     <!-- http://linkedprocess.org/2006/06/LoPFarm#WritePermission -->
@@ -483,7 +432,6 @@
     <owl:Class rdf:about="#WritePermission">
         <rdfs:subClassOf rdf:resource="#PathBasedPermission"/>
     </owl:Class>
-    
 
 
     <!-- http://www.w3.org/2002/07/owl#Thing -->

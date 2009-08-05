@@ -1,7 +1,7 @@
 package org.linkedprocess.xmpp.registry;
 
-import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 
 /**
@@ -17,7 +17,7 @@ public class DiscoItemsListener extends LopRegistryListener {
 
     public void processPacket(Packet packet) {
         DiscoverItems discoItems = (DiscoverItems) packet;
-        if(discoItems.getType() == IQ.Type.GET) {
+        if (discoItems.getType() == IQ.Type.GET) {
             DiscoverItems returnDiscoItems = this.getXmppRegistry().createDiscoItems(discoItems.getFrom());
             returnDiscoItems.setPacketID(discoItems.getPacketID());
             this.getXmppRegistry().getConnection().sendPacket(returnDiscoItems);

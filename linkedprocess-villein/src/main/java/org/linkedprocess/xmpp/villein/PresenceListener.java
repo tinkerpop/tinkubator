@@ -4,6 +4,7 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.villein.handlers.PresenceHandler;
 
 /**
  * User: marko
@@ -23,71 +24,59 @@ public class PresenceListener extends LopVilleinListener {
         XmppVillein.LOGGER.info("Presence received from " + presence.getFrom());
         XmppVillein.LOGGER.info(presence.toXML());
 
+        Struct struct = this.getXmppVillein().getStruct(presence.getFrom());
 
-        if (presence.getType() == Presence.Type.unavailable ||
+        if (struct != null && (presence.getType() == Presence.Type.unavailable ||
                 presence.getType() == Presence.Type.unsubscribe ||
-                presence.getType() == Presence.Type.unsubscribed) {
-            this.getXmppVillein().removeStruct(packet.getFrom());
+                presence.getType() == Presence.Type.unsubscribed)) {
+            this.getXmppVillein().removeStruct(presence.getFrom());
+            for (PresenceHandler presenceHandler : this.getXmppVillein().getPresenceHandlers()) {
+                presenceHandler.handlePresenceUpdate(struct, presence.getType());
+            }
             return;
         }
 
-        //Struct struct = xmppVillein.getStruct(packet.getFrom());
-        //if(null != struct && (struct instanceof HostStruct || struct instanceof FarmStruct || struct instanceof VmStruct)) {
-        //    struct.setPresence(presence);
-        //} else {
-            DiscoverInfo discoInfo = this.getDiscoInfo(packet.getFrom());
-    
-            if (LinkedProcess.isBareJid(packet.getFrom())) {
+
+        if (null != struct && (struct instanceof CountrysideStruct || struct instanceof FarmStruct || struct instanceof VmStruct)) {
+            struct.setPresence(presence);
+        } else {
+            DiscoverInfo discoInfo = this.getDiscoInfo(presence.getFrom());
+
+            if (LinkedProcess.isBareJid(presence.getFrom())) {
                 //System.out.println("Bare Jid " + packet.getFrom());
-                Struct checkStruct = this.getXmppVillein().getStruct(packet.getFrom(), XmppVillein.StructType.COUNTRYSIDE);
-                if (checkStruct == null) {
-                    CountrysideStruct countrysideStruct = new CountrysideStruct();
-                    countrysideStruct.setFullJid(packet.getFrom());
-                    countrysideStruct.setPresence(presence);
-                    this.getXmppVillein().addCountrysideStruct(countrysideStruct);
-                } else {
-                    checkStruct.setPresence(presence);
-                }
+                CountrysideStruct countrysideStruct = new CountrysideStruct();
+                countrysideStruct.setFullJid(presence.getFrom());
+                countrysideStruct.setPresence(presence);
+                this.getXmppVillein().addCountrysideStruct(countrysideStruct);
+                struct = countrysideStruct;
+
             } else if (isFarm(discoInfo)) {
                 //System.out.println("Farm Jid " + packet.getFrom());
-                Struct checkStruct = this.getXmppVillein().getStruct(packet.getFrom(), XmppVillein.StructType.FARM);
-                if (checkStruct == null) {
-                    FarmStruct farmStruct = new FarmStruct();
-                    farmStruct.setFullJid(packet.getFrom());
-                    farmStruct.setPresence(presence);
-                    farmStruct.setSupportedVmSpecies(this.getSupportedVmSpecies(discoInfo));
-                    try {
-                        this.getXmppVillein().addFarmStruct(farmStruct);
-                    } catch(ParentStructNotFoundException e) {
-                        XmppVillein.LOGGER.severe(e.getMessage());
-                    }
-                } else {
-                    checkStruct.setPresence(presence);
+                FarmStruct farmStruct = new FarmStruct();
+                farmStruct.setFullJid(presence.getFrom());
+                farmStruct.setPresence(presence);
+                farmStruct.setSupportedVmSpecies(this.getSupportedVmSpecies(discoInfo));
+                try {
+                    this.getXmppVillein().addFarmStruct(farmStruct);
+                    struct = farmStruct;
+                } catch (ParentStructNotFoundException e) {
+                    XmppVillein.LOGGER.severe(e.getMessage());
                 }
-
             } else if (isRegistry(discoInfo)) {
-                Struct checkStruct = this.getXmppVillein().getStruct(packet.getFrom(), XmppVillein.StructType.REGISTRY);
-                if (checkStruct == null) {
-                    RegistryStruct registryStruct = new RegistryStruct();
-                    registryStruct.setFullJid(packet.getFrom());
-                    registryStruct.setPresence(presence);
-                    try {
-                        this.getXmppVillein().addRegistryStruct(registryStruct);
-                    } catch(ParentStructNotFoundException e) {
-                        XmppVillein.LOGGER.severe(e.getMessage());
-                    }
-                } else {
-                    checkStruct.setPresence(presence);
-                }
-            } else {
-                // ONLY REPRESENT THOSE VMS THAT YOU HAVE SPAWNEDs
-                //System.out.println("Vm Jid " + packet.getFrom());
-                Struct checkStruct = this.getXmppVillein().getStruct(packet.getFrom());
-                if (checkStruct != null) {
-                    //System.out.println("DOES NOT EQUAL NULL");
-                    checkStruct.setPresence(presence);
+                RegistryStruct registryStruct = new RegistryStruct();
+                registryStruct.setFullJid(presence.getFrom());
+                registryStruct.setPresence(presence);
+                try {
+                    this.getXmppVillein().addRegistryStruct(registryStruct);
+                    struct = registryStruct;
+                } catch (ParentStructNotFoundException e) {
+                    XmppVillein.LOGGER.severe(e.getMessage());
                 }
             }
-        //}
+        }
+
+        for (PresenceHandler presenceHandler : this.getXmppVillein().getPresenceHandlers()) {
+            presenceHandler.handlePresenceUpdate(struct, presence.getType());
+        }
     }
 }

@@ -20,7 +20,7 @@ public class FarmLoginArea extends LoginArea {
 
     public FarmLoginArea(FarmGui farmGui) {
         super(ImageHolder.farmBackground.getImage(), PROPERTIES_FILE);
-        
+
         this.farmGui = farmGui;
     }
 

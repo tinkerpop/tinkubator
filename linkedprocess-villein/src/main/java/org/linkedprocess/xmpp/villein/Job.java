@@ -7,7 +7,7 @@ import org.jivesoftware.smack.packet.XMPPError;
  * Date: Jul 28, 2009
  * Time: 12:59:40 PM
  */
-public class Job {
+public class Job implements Comparable {
     protected String jobId;
     protected String result;
     protected XMPPError error;
@@ -36,7 +36,13 @@ public class Job {
         this.error = error;
     }
 
-
+    public int compareTo(Object job) {
+        if (job instanceof Job) {
+            return this.jobId.compareTo(((Job) job).getJobId());
+        } else {
+            throw new ClassCastException();
+        }
+    }
 
 
 }

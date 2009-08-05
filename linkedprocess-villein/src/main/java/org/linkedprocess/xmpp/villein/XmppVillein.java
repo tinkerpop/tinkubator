@@ -1,23 +1,9 @@
 package org.linkedprocess.xmpp.villein;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
-
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.filter.IQTypeFilter;
-import org.jivesoftware.smack.filter.OrFilter;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.*;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -27,14 +13,14 @@ import org.linkedprocess.xmpp.ProbePresence;
 import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.farm.SpawnVm;
 import org.linkedprocess.xmpp.farm.SpawnVmProvider;
-import org.linkedprocess.xmpp.vm.AbortJobProvider;
-import org.linkedprocess.xmpp.vm.JobStatusProvider;
-import org.linkedprocess.xmpp.vm.ManageBindings;
-import org.linkedprocess.xmpp.vm.ManageBindingsProvider;
-import org.linkedprocess.xmpp.vm.SubmitJob;
-import org.linkedprocess.xmpp.vm.SubmitJobProvider;
-import org.linkedprocess.xmpp.vm.TerminateVm;
-import org.linkedprocess.xmpp.vm.TerminateVmProvider;
+import org.linkedprocess.xmpp.villein.handlers.*;
+import org.linkedprocess.xmpp.vm.*;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
  * User: marko
@@ -47,6 +33,12 @@ public class XmppVillein extends XmppClient {
     public static final String RESOURCE_PREFIX = "LoPVillein";
     public static final String STATUS_MESSAGE = "LoP Villein v0.1";
     protected LinkedProcess.VilleinStatus status;
+
+    protected Set<SpawnVmHandler> spawnVmHandlers = new HashSet<SpawnVmHandler>();
+    protected Set<PresenceHandler> presenceHandlers = new HashSet<PresenceHandler>();
+    protected Set<SubmitJobHandler> submitJobHandlers = new HashSet<SubmitJobHandler>();
+    protected Set<AbortJobHandler> abortJobHandlers = new HashSet<AbortJobHandler>();
+    protected Set<ManageBindingsHandler> manageBindingsHandlers = new HashSet<ManageBindingsHandler>();
 
     public enum StructType {
         COUNTRYSIDE, FARM, REGISTRY, VM
@@ -87,7 +79,7 @@ public class XmppVillein extends XmppClient {
         this.connection.addPacketListener(new SpawnVmListener(this), spawnFilter);
         this.connection.addPacketListener(new PresenceListener(this), presenceFilter);
         this.connection.addPacketListener(new SubmitJobListener(this), submitFilter);
-		this.connection.addPacketListener(new ManageBindingsListener(this), manageBindingsFilter);
+        this.connection.addPacketListener(new ManageBindingsListener(this), manageBindingsFilter);
 
         this.countrysideStructs = new HashMap<String, CountrysideStruct>();
         this.status = LinkedProcess.VilleinStatus.ACTIVE;
@@ -106,7 +98,7 @@ public class XmppVillein extends XmppClient {
         return farmStructs;
     }
 
-     public Collection<RegistryStruct> getRegistryStructs() {
+    public Collection<RegistryStruct> getRegistryStructs() {
         Collection<RegistryStruct> registryStructs = new HashSet<RegistryStruct>();
         for (CountrysideStruct countrysideStruct : this.countrysideStructs.values()) {
             registryStructs.addAll(countrysideStruct.getRegistryStructs());
@@ -121,7 +113,7 @@ public class XmppVillein extends XmppClient {
         }
         return vmStructs;
     }
-    
+
     public Collection<Job> getJobs(Set<String> jobIds) {
         Collection<Job> jobs = new HashSet<Job>();
         for (VmStruct vmStructs : this.getVmStructs()) {
@@ -165,7 +157,7 @@ public class XmppVillein extends XmppClient {
             if (countrysideStruct.getFullJid().equals(jid))
                 return null;
             for (RegistryStruct registryStruct : countrysideStruct.getRegistryStructs()) {
-                if(registryStruct.getFullJid().equals(jid))
+                if (registryStruct.getFullJid().equals(jid))
                     return countrysideStruct;
             }
             for (FarmStruct farmStruct : countrysideStruct.getFarmStructs()) {
@@ -185,7 +177,7 @@ public class XmppVillein extends XmppClient {
             if (countrysideStruct.getFullJid().equals(jid) && (type == null || type == StructType.COUNTRYSIDE))
                 return countrysideStruct;
             for (RegistryStruct registryStruct : countrysideStruct.getRegistryStructs()) {
-                if(registryStruct.getFullJid().equals(jid) && (type == null || type == StructType.REGISTRY))
+                if (registryStruct.getFullJid().equals(jid) && (type == null || type == StructType.REGISTRY))
                     return registryStruct;
             }
             for (FarmStruct farmStruct : countrysideStruct.getFarmStructs()) {
@@ -240,7 +232,7 @@ public class XmppVillein extends XmppClient {
         if (farmStruct != null && farmStruct instanceof FarmStruct)
             ((FarmStruct) farmStruct).addVmStruct(vmStruct);
         else
-            throw new ParentStructNotFoundException("farm struct null for " + vmStruct.getFullJid());   
+            throw new ParentStructNotFoundException("farm struct null for " + vmStruct.getFullJid());
     }
 
 
@@ -298,7 +290,7 @@ public class XmppVillein extends XmppClient {
                 countrysideStruct.setFullJid(entry.getUser());
                 this.countrysideStructs.put(countrysideStruct.getFullJid(), countrysideStruct);
             }
-            countrysideStruct.setPresence(this.roster.getPresence(entry.getUser()));  
+            countrysideStruct.setPresence(this.roster.getPresence(entry.getUser()));
             ProbePresence probe = new ProbePresence();
             probe.setTo(countrysideStruct.getFullJid());
             probe.setFrom(this.getFullJid());
@@ -339,4 +331,67 @@ public class XmppVillein extends XmppClient {
         }
         this.countrysideStructs.remove(jid);
     }
+
+    /////////////////////////
+
+    public void addSpawnVmHandler(SpawnVmHandler spawnVmHandler) {
+        this.spawnVmHandlers.add(spawnVmHandler);
+    }
+
+    public Set<SpawnVmHandler> getSpawnVmHandlers() {
+        return this.spawnVmHandlers;
+    }
+
+    public void removeSpawnVmHandler(SpawnVmHandler spawnVmHandler) {
+        this.spawnVmHandlers.remove(spawnVmHandler);
+    }
+
+    public void addPresenceHandler(PresenceHandler presenceHandler) {
+        this.presenceHandlers.add(presenceHandler);
+    }
+
+    public Set<PresenceHandler> getPresenceHandlers() {
+        return this.presenceHandlers;
+    }
+
+    public void removePresenceHandler(PresenceHandler presenceHandler) {
+        this.presenceHandlers.remove(presenceHandler);
+    }
+
+    public void addSubmitJobHandler(SubmitJobHandler submitJobHandler) {
+        this.submitJobHandlers.add(submitJobHandler);
+    }
+
+    public Set<SubmitJobHandler> getSubmitJobHandlers() {
+        return this.submitJobHandlers;
+    }
+
+    public void removeSubmitJobHandler(SubmitJobHandler submitJobHandler) {
+        this.submitJobHandlers.remove(submitJobHandler);
+    }
+
+    public void addAbortJobHandler(AbortJobHandler abortJobHandler) {
+        this.abortJobHandlers.add(abortJobHandler);
+    }
+
+    public Set<AbortJobHandler> getAbortJobHandlers() {
+        return this.abortJobHandlers;
+    }
+
+    public void removeAbortJobHandler(AbortJobHandler abortJobHandler) {
+        this.abortJobHandlers.remove(abortJobHandler);
+    }
+
+    public void addManageBindingsHandler(ManageBindingsHandler manageBindingsHandler) {
+        this.manageBindingsHandlers.add(manageBindingsHandler);
+    }
+
+    public Set<ManageBindingsHandler> getManageBindingsHandlers() {
+        return this.manageBindingsHandlers;
+    }
+
+    public void removeManageBindingsHandler(ManageBindingsHandler manageBindingsHandler) {
+        this.manageBindingsHandlers.remove(manageBindingsHandler);
+    }
+
 }

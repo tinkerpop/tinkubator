@@ -29,11 +29,7 @@ import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 import javax.script.ScriptEngineFactory;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 

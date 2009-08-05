@@ -1,13 +1,12 @@
 package org.linkedprocess.gui.villein;
 
+import org.jivesoftware.smack.packet.Presence;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.gui.*;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
-import org.linkedprocess.gui.ImageHolder;
-import org.linkedprocess.gui.TreeRenderer;
-import org.linkedprocess.gui.RosterPanel;
-import org.linkedprocess.gui.PacketSnifferPanel;
-import org.linkedprocess.gui.TreeNodeProperty;
 import org.linkedprocess.xmpp.villein.*;
+import org.linkedprocess.xmpp.villein.handlers.PresenceHandler;
+import org.linkedprocess.xmpp.villein.handlers.SpawnVmHandler;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -27,7 +26,7 @@ import java.util.Set;
  * Date: Jul 7, 2009
  * Time: 11:13:22 PM
  */
-public class CountrysideArea extends JPanel implements ActionListener, MouseListener {
+public class CountrysideArea extends JPanel implements ActionListener, MouseListener, SpawnVmHandler, PresenceHandler {
 
     protected VilleinGui villeinGui;
     protected JTree tree;
@@ -129,7 +128,7 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
                 farmFrame.pack();
                 farmFrame.setVisible(true);
                 farmFrame.setResizable(true);
-            }    
+            }
         } else if (event.getActionCommand().equals(SHUTDOWN)) {
             this.villeinGui.getXmppVillein().shutDown(null);
             this.villeinGui.loadLoginFrame();
@@ -155,7 +154,7 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
                 DefaultMutableTreeNode registryNode = new DefaultMutableTreeNode(registryStruct);
                 model.insertNodeInto(registryNode, countrysideNode, countrysideNode.getChildCount());
                 this.tree.scrollPathToVisible(new TreePath(registryNode.getPath()));
-            } 
+            }
             for (FarmStruct farmStruct : countrysideStruct.getFarmStructs()) {
                 DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(farmStruct);
                 for (VmStruct vmStruct : farmStruct.getVmStructs()) {
@@ -235,7 +234,7 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
                     this.tree.scrollPathToVisible(new TreePath(node.getPath()));
                     model.reload(node);
                 } else {
-                    XmppVillein.LOGGER.severe("Unknow node/struct object: " + node.getUserObject());
+                    XmppVillein.LOGGER.severe("Unknown node/struct object: " + node.getUserObject());
                 }
             }
         } else {
@@ -426,5 +425,17 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
 
     public void mousePressed(MouseEvent event) {
 
+    }
+
+    public void handleSuccessfulSpawnVm(VmStruct vmStruct) {
+        villeinGui.updateHostAreaTree(vmStruct.getFullJid(), false);
+    }
+
+    public void handlePresenceUpdate(Struct struct, Presence.Type presenceType) {
+        if (presenceType == Presence.Type.unavailable || presenceType == Presence.Type.unsubscribe || presenceType == Presence.Type.unsubscribed) {
+            this.villeinGui.updateHostAreaTree(struct.getFullJid(), true);
+        } else {
+            this.villeinGui.updateHostAreaTree(struct.getFullJid(), false);
+        }
     }
 }

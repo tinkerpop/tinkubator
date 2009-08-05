@@ -1,16 +1,16 @@
 package org.linkedprocess.security;
 
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-import java.util.HashSet;
 
 /**
  * Created by IntelliJ IDEA.
-* User: josh
-* Date: Aug 3, 2009
-* Time: 5:26:32 PM
-* To change this template use File | Settings | File Templates.
-*/
+ * User: josh
+ * Date: Aug 3, 2009
+ * Time: 5:26:32 PM
+ * To change this template use File | Settings | File Templates.
+ */
 public enum PermissionType {
     permission("permission", "exercise a permission"),
     createClassLoader("create_class_loader", "create a Java class loader"),
@@ -40,7 +40,7 @@ public enum PermissionType {
     private final String label;
 
     PermissionType(final String specName,
-                           final String label) {
+                   final String label) {
         this.specName = specName;
         this.label = label;
     }

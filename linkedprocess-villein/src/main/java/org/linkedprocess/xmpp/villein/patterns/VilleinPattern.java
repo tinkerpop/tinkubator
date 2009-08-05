@@ -15,7 +15,7 @@ public class VilleinPattern {
         this.xmppVillein = xmppVillein;
     }
 
-    public XmppVillein getXmppVillein()  {
+    public XmppVillein getXmppVillein() {
         return this.xmppVillein;
     }
 }

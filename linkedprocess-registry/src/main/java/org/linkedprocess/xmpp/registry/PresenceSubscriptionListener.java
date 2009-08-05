@@ -1,8 +1,7 @@
 package org.linkedprocess.xmpp.registry;
 
-import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Presence;
 
 /**
  * User: marko

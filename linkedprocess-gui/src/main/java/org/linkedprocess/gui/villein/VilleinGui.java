@@ -1,19 +1,14 @@
 package org.linkedprocess.gui.villein;
 
-import org.jivesoftware.smack.filter.*;
-import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Presence;
 import org.linkedprocess.Connection;
-import org.linkedprocess.gui.villein.vmcontrol.AbortJobListener;
-import org.linkedprocess.gui.villein.vmcontrol.ManageBindingsListener;
-import org.linkedprocess.gui.villein.vmcontrol.SubmitJobListener;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
-import org.linkedprocess.xmpp.farm.SpawnVm;
+import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.xmpp.villein.Job;
 import org.linkedprocess.xmpp.villein.VmStruct;
 import org.linkedprocess.xmpp.villein.XmppVillein;
-import org.linkedprocess.xmpp.vm.AbortJob;
-import org.linkedprocess.xmpp.vm.ManageBindings;
-import org.linkedprocess.xmpp.vm.SubmitJob;
+import org.linkedprocess.xmpp.villein.handlers.AbortJobHandler;
+import org.linkedprocess.xmpp.villein.handlers.ManageBindingsHandler;
+import org.linkedprocess.xmpp.villein.handlers.SubmitJobHandler;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -24,7 +19,7 @@ import java.util.Map;
  * Date: Jul 7, 2009
  * Time: 10:33:02 PM
  */
-public class VilleinGui extends JFrame {
+public class VilleinGui extends JFrame implements SubmitJobHandler, AbortJobHandler, ManageBindingsHandler {
 
     protected static final String FRAME_TITLE = "Simple Linked Process Villein";
 
@@ -54,21 +49,14 @@ public class VilleinGui extends JFrame {
     public void loadHostArea(XmppVillein xmppVillein) {
         this.xmppVillein = xmppVillein;
 
-        PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
-        PacketFilter submitFilter = new AndFilter(new PacketTypeFilter(SubmitJob.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-        PacketFilter abortFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-        PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-        PacketFilter bindingsFilter = new AndFilter(new PacketTypeFilter(ManageBindings.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-
-        this.xmppVillein.getConnection().addPacketListener(new PresenceListener(this), presenceFilter);
-        this.xmppVillein.getConnection().addPacketListener(new SubmitJobListener(this), submitFilter);
-        this.xmppVillein.getConnection().addPacketListener(new AbortJobListener(this), abortFilter);
-        this.xmppVillein.getConnection().addPacketListener(new SpawnVmListener(this), spawnFilter);
-        this.xmppVillein.getConnection().addPacketListener(new ManageBindingsListener(this), bindingsFilter);
-
         this.getContentPane().removeAll();
         this.countrysideArea = new CountrysideArea(this);
         this.countrysideArea.createTree();
+        this.xmppVillein.addSpawnVmHandler(this.countrysideArea);
+        this.xmppVillein.addPresenceHandler(this.countrysideArea);
+        this.xmppVillein.addSubmitJobHandler(this);
+        this.xmppVillein.addAbortJobHandler(this);
+        this.xmppVillein.addManageBindingsHandler(this);
         this.getContentPane().add(countrysideArea);
         this.setResizable(true);
         this.pack();
@@ -116,5 +104,32 @@ public class VilleinGui extends JFrame {
 
     public static void main(String[] args) {
         new VilleinGui();
+    }
+
+    public void handleSubmitJob(VmStruct vmStruct, Job job) {
+        VmControlFrame vmControlFrame = this.getVmFrame(vmStruct.getFullJid());
+        if (vmControlFrame != null) {
+            vmControlFrame.handleIncomingSubmitJob(job);
+        } else {
+            XmppVillein.LOGGER.severe("Could not find vmframe for " + vmStruct.getFullJid());
+        }
+    }
+
+    public void handleAbortJobResult(VmStruct vmStruct, String jobId) {
+        VmControlFrame vmControlFrame = this.getVmFrame(vmStruct.getFullJid());
+        if (vmControlFrame != null) {
+            vmControlFrame.handleIncomingAbortJob(jobId);
+        } else {
+            XmppVillein.LOGGER.severe("Could not find vmframe for " + vmStruct.getFullJid());
+        }
+    }
+
+    public void handleManageBindingsResult(VmStruct vmStruct, VMBindings vmBindings) {
+        VmControlFrame vmControlFrame = this.getVmFrame(vmStruct.getFullJid());
+        if (vmControlFrame != null) {
+            vmControlFrame.handleIncomingManageBindings(vmBindings);
+        } else {
+            XmppVillein.LOGGER.severe("Could not find vmframe for " + vmStruct.getFullJid());
+        }
     }
 }

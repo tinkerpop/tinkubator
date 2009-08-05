@@ -32,7 +32,7 @@ public class CountrysideStruct extends Struct {
         this.registryStructs.put(registryStruct.getFullJid(), registryStruct);
     }
 
-    public void removeRegistryStruct(String countrysideJid)  {
+    public void removeRegistryStruct(String countrysideJid) {
         this.registryStructs.remove(countrysideJid);
     }
 

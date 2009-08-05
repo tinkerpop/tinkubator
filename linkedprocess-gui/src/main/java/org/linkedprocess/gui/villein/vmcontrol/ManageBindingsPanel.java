@@ -203,24 +203,22 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
         return manageBindings;
     }
 
-    public void handleIncomingManageBindings(ManageBindings manageBindings) {
+    public void handleIncomingManageBindings(VMBindings vmBindings) {
         DefaultTableModel tableModel = (DefaultTableModel) this.bindingsTable.getModel();
-        if (manageBindings.getType() == IQ.Type.RESULT) {
-            for (String name : manageBindings.getBindings().keySet()) {
-                for (int i = 0; i < tableModel.getRowCount(); i++) {
-                    if (tableModel.getValueAt(i, 0).equals(name)) {
-                        TypedValue typedValue = manageBindings.getBinding(name);
-                        if (null == typedValue) {
-                            tableModel.setValueAt("", i, 1);
-                            tableModel.setValueAt("", i, 2);
-                            tableModel.setValueAt(true, i, 3);
-                        } else {
-                            tableModel.setValueAt(typedValue.getValue(), i, 1);
-                            tableModel.setValueAt(typedValue.getDatatype().abbreviate(), i, 2);
-                            tableModel.setValueAt(false, i, 3);
-                        }
-
+        for (String name : vmBindings.keySet()) {
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                if (tableModel.getValueAt(i, 0).equals(name)) {
+                    TypedValue typedValue = vmBindings.getTyped(name);
+                    if (null == typedValue) {
+                        tableModel.setValueAt("", i, 1);
+                        tableModel.setValueAt("", i, 2);
+                        tableModel.setValueAt(true, i, 3);
+                    } else {
+                        tableModel.setValueAt(typedValue.getValue(), i, 1);
+                        tableModel.setValueAt(typedValue.getDatatype().abbreviate(), i, 2);
+                        tableModel.setValueAt(false, i, 3);
                     }
+
                 }
             }
         }

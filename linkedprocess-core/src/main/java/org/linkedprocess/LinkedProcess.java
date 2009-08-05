@@ -7,9 +7,9 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.linkedprocess.security.VMSecurityManager;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.FileInputStream;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -253,7 +253,7 @@ public class LinkedProcess {
     private static final String LOP_DEFAULT_PROPERTIES = "lop-default.properties";
     public static final XMLOutputter xmlOut = new XMLOutputter();
 
-    static {        
+    static {
         LOGGER = getLogger(LinkedProcess.class);
 
         PROPERTIES = new Properties();

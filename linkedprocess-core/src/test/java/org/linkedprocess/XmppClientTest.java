@@ -20,7 +20,7 @@ public class XmppClientTest extends TestCase {
 
     public void testJidConversion() {
         assertEquals(LinkedProcess.generateBareJid("linked.process.1@gmail.com/test/12345"), username);
-        assertEquals(LinkedProcess.generateBareJid("lop1@xmpp.linkedprocess.org/test/" + XmppClient.generateRandomID()), "lop1@xmpp.linkedprocess.org");
+        assertEquals(LinkedProcess.generateBareJid("lop1@xmpp.linkedprocess.org/test/" + XmppClient.generateRandomResourceId()), "lop1@xmpp.linkedprocess.org");
         assertEquals(LinkedProcess.generateResource("lop1@xmpp.linkedprocess.org/test/"), "test/");
     }
 
@@ -28,8 +28,8 @@ public class XmppClientTest extends TestCase {
         // 1,000,000 random IDs are generated without conflict.
         Set<String> uniques = new HashSet<String>();
         for (int i = 0; i < 100000; i++) {
-            //System.out.println(XmppClient.generateRandomID());
-            uniques.add(XmppClient.generateRandomID());
+            //System.out.println(XmppClient.generateRandomResourceId());
+            uniques.add(XmppClient.generateRandomResourceId());
         }
         assertEquals(uniques.size(), 100000);
     }

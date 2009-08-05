@@ -49,7 +49,6 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
         refreshButton.addActionListener(this);
 
 
-
         try {
             this.generateDiscoItemsDocument();
             this.refreshCountrysideFarms();
@@ -73,8 +72,8 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
             } catch (Exception e) {
                 XmppVillein.LOGGER.severe(e.getMessage());
             }
-        } else if(event.getActionCommand().equals(SUBSCRIBE)) {
-            for(Object farmlandJid : this.farmlandList.getSelectedValues()) {
+        } else if (event.getActionCommand().equals(SUBSCRIBE)) {
+            for (Object farmlandJid : this.farmlandList.getSelectedValues()) {
                 villeinGui.getXmppVillein().requestSubscription(farmlandJid.toString());
             }
         }

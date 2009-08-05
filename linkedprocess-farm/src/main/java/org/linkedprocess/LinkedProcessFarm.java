@@ -6,13 +6,7 @@ import org.linkedprocess.os.VMWorker;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -83,7 +77,7 @@ public class LinkedProcessFarm {
             return lFirst.compareTo(lSecond);
         }
     }
-                                     
+
     private static void preLoadingHack() {
         LOGGER.info("pre-loading script engines");
 

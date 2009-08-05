@@ -2,6 +2,7 @@ package org.linkedprocess.xmpp.villein;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
+import org.linkedprocess.xmpp.villein.handlers.SubmitJobHandler;
 import org.linkedprocess.xmpp.vm.SubmitJob;
 
 /**
@@ -31,26 +32,33 @@ public class SubmitJobListener extends LopVilleinListener {
 
         if (submitJob.getType() == IQ.Type.RESULT) {
             VmStruct vmStruct = (VmStruct) this.getXmppVillein().getStruct(submitJob.getFrom(), XmppVillein.StructType.VM);
-            if(vmStruct != null) {
+            if (vmStruct != null) {
                 Job job = new Job();
                 job.setResult(submitJob.getExpression());
                 job.setJobId(submitJob.getPacketID());
                 vmStruct.addJob(job);
+                for (SubmitJobHandler submitJobHandler : this.getXmppVillein().getSubmitJobHandlers()) {
+                    submitJobHandler.handleSubmitJob(vmStruct, job);
+                }
             } else {
                 XmppVillein.LOGGER.severe("Job returned from unknown virtual machine: " + submitJob.getFrom());
             }
-        } else if(submitJob.getType() == IQ.Type.ERROR) {
+        } else if (submitJob.getType() == IQ.Type.ERROR) {
             VmStruct vmStruct = (VmStruct) this.getXmppVillein().getStruct(submitJob.getFrom(), XmppVillein.StructType.VM);
-            if(vmStruct != null) {
+            if (vmStruct != null) {
                 Job job = new Job();
                 job.setError(submitJob.getError());
                 job.setJobId(submitJob.getPacketID());
                 vmStruct.addJob(job);
+                for (SubmitJobHandler submitJobHandler : this.getXmppVillein().getSubmitJobHandlers()) {
+                    submitJobHandler.handleSubmitJob(vmStruct, job);
+                }
+
             } else {
                 XmppVillein.LOGGER.severe("Job returned from unknown virtual machine: " + submitJob.getFrom());
             }
         } else {
-            XmppVillein.LOGGER.severe("Error: " + submitJob.getError().toXML());
+            XmppVillein.LOGGER.severe("Error: " + submitJob.toXML());
         }
     }
 }

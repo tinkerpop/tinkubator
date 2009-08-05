@@ -2,20 +2,20 @@ package org.linkedprocess.xmpp;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.Connection;
 import org.linkedprocess.LinkedProcess;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.logging.Logger;
-import java.io.InputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 
 public abstract class XmppClient {
@@ -53,7 +53,7 @@ public abstract class XmppClient {
         this.connection.connect();
 
         LOGGER.info("Connected to " + connection.getHost());
-        connection.login(username, password, resource + LinkedProcess.FORWARD_SLASH + XmppClient.generateRandomID());
+        connection.login(username, password, resource + LinkedProcess.FORWARD_SLASH + XmppClient.generateRandomResourceId());
         LOGGER.info("Logged in as " + connection.getUser());
 
         Thread shutdownHook = new Thread(new Runnable() {
@@ -148,7 +148,7 @@ public abstract class XmppClient {
         return this.getRunningTime() / 6000.0f;
     }
 
-    public static String generateRandomID() {
+    public static String generateRandomResourceId() {
         // e.g. from gtalk 6D56433B
         Random random = new Random();
         StringBuilder b = new StringBuilder();
@@ -164,11 +164,15 @@ public abstract class XmppClient {
     }
 
     public static String generateRandomPassword() {
-        return XmppClient.generateRandomID();
+        return XmppClient.generateRandomResourceId();
+    }
+
+    public static String generateRandomJobId() {
+        return Packet.nextID();
     }
 
     public ServiceDiscoveryManager getDiscoManager() {
-        return  ServiceDiscoveryManager.getInstanceFor(this.connection.getDelegate());
+        return ServiceDiscoveryManager.getInstanceFor(this.connection.getDelegate());
     }
 
     protected void initiateFeatures() {

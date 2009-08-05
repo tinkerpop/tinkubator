@@ -1,9 +1,8 @@
 package org.linkedprocess.xmpp.villein;
 
-import java.util.ArrayList;
-
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
+import org.linkedprocess.xmpp.villein.handlers.ManageBindingsHandler;
 import org.linkedprocess.xmpp.vm.ManageBindings;
 
 /**
@@ -14,8 +13,7 @@ import org.linkedprocess.xmpp.vm.ManageBindings;
 public class ManageBindingsListener extends LopVilleinListener {
 
 
-
-	public ManageBindingsListener(XmppVillein xmppVillein) {
+    public ManageBindingsListener(XmppVillein xmppVillein) {
         super(xmppVillein);
     }
 
@@ -28,22 +26,25 @@ public class ManageBindingsListener extends LopVilleinListener {
     }
 
 
-    public void processManageBindingsPacket(ManageBindings bindingsJob) {
+    public void processManageBindingsPacket(ManageBindings manageBindings) {
 
         XmppVillein.LOGGER.info("Arrived " + ManageBindingsListener.class.getName());
-        XmppVillein.LOGGER.info(bindingsJob.toXML());
+        XmppVillein.LOGGER.info(manageBindings.toXML());
 
-        if (bindingsJob.getType() == IQ.Type.RESULT) {
-            VmStruct vmStruct = (VmStruct) this.getXmppVillein().getStruct(bindingsJob.getFrom(), XmppVillein.StructType.VM);
-            if(vmStruct != null) {
-                vmStruct.setBindings(bindingsJob.getBindings());
+        if (manageBindings.getType() == IQ.Type.RESULT) {
+            VmStruct vmStruct = (VmStruct) this.getXmppVillein().getStruct(manageBindings.getFrom(), XmppVillein.StructType.VM);
+            if (vmStruct != null) {
+                vmStruct.setBindings(manageBindings.getBindings());
+                for (ManageBindingsHandler manageBindingsHandler : this.getXmppVillein().getManageBindingsHandlers()) {
+                    manageBindingsHandler.handleManageBindingsResult(vmStruct, manageBindings.getBindings());
+                }
             } else {
-                XmppVillein.LOGGER.severe("Bindings returned from unknown virtual machine: " + bindingsJob.getFrom());
+                XmppVillein.LOGGER.severe("Bindings returned from unknown virtual machine: " + manageBindings.getFrom());
             }
         } else {
-            XmppVillein.LOGGER.severe("Error: " + bindingsJob.getError().toXML());
+            XmppVillein.LOGGER.severe("Error: " + manageBindings.getError().toXML());
         }
     }
-    
-    
+
+
 }

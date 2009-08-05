@@ -1,10 +1,9 @@
 package org.linkedprocess;
 
 import static org.easymock.EasyMock.reportMatcher;
+import org.easymock.IArgumentMatcher;
 
 import java.util.Collection;
-
-import org.easymock.IArgumentMatcher;
 
 public class MultiCaptureMatcher<T> implements IArgumentMatcher {
 

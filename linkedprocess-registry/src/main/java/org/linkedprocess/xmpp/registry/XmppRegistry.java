@@ -1,24 +1,24 @@
 package org.linkedprocess.xmpp.registry;
 
-import org.linkedprocess.xmpp.XmppClient;
-import org.linkedprocess.LinkedProcess;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
-import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverItems;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.XmppClient;
 
-import java.util.logging.Logger;
-import java.util.logging.LogManager;
-import java.util.Set;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Properties;
-import java.io.InputStream;
-import java.io.IOException;
+import java.util.Set;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
  * User: marko
@@ -57,7 +57,7 @@ public class XmppRegistry extends XmppClient {
         PacketFilter subscribeFilter = new AndFilter(new PacketTypeFilter(Presence.class), new PresenceSubscriptionFilter());
         this.connection.addPacketListener(new PresenceSubscriptionListener(this), subscribeFilter);
         this.connection.addPacketListener(new PresenceListener(this), presenceFilter);
-        this.connection.addPacketListener(new DiscoItemsListener(this),  discoInfoFilter);
+        this.connection.addPacketListener(new DiscoItemsListener(this), discoInfoFilter);
 
         this.status = LinkedProcess.RegistryStatus.ACTIVE;
         this.connection.sendPacket(this.createPresence(this.status));
@@ -97,10 +97,10 @@ public class XmppRegistry extends XmppClient {
         items.setFrom(this.getFullJid());
         items.setTo(toJid);
         Set<String> farmCountrysides = new HashSet<String>();
-        for(String farmJid : this.activeFarms) {
+        for (String farmJid : this.activeFarms) {
             farmCountrysides.add(LinkedProcess.generateBareJid(farmJid));
         }
-        for(String countrysideJid : farmCountrysides) {
+        for (String countrysideJid : farmCountrysides) {
             items.addItem(new DiscoverItems.Item(countrysideJid));
         }
 
@@ -129,5 +129,5 @@ public class XmppRegistry extends XmppClient {
             t.printStackTrace();
         }
     }
-    
+
 }

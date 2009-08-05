@@ -1,9 +1,9 @@
 package org.linkedprocess.xmpp.villein;
 
-import java.util.Map;
-import java.util.HashMap;
-
 import org.linkedprocess.os.VMBindings;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: marko
@@ -15,7 +15,7 @@ public class VmStruct extends Struct {
     protected String vmPassword;
     protected String vmSpecies;
     protected Map<String, Job> jobs = new HashMap<String, Job>();
-	private VMBindings bindings;
+    private VMBindings bindings;
 
     public void setVmPassword(final String vmPassword) {
         this.vmPassword = vmPassword;
@@ -38,7 +38,7 @@ public class VmStruct extends Struct {
     }
 
     public Job getJob(String jobId) {
-        return this.jobs.get(jobId);   
+        return this.jobs.get(jobId);
     }
 
     public void removeJob(String jobId) {
@@ -49,13 +49,13 @@ public class VmStruct extends Struct {
         this.jobs.clear();
     }
 
-	public void setBindings(VMBindings bindings) {
-		this.bindings = bindings;
-		
-	}
+    public void setBindings(VMBindings bindings) {
+        this.bindings = bindings;
 
-	public VMBindings getBindings() {
-		return this.bindings;
-	}
+    }
+
+    public VMBindings getBindings() {
+        return this.bindings;
+    }
 }
 

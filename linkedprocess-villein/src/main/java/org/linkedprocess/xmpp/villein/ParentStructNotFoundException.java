@@ -8,5 +8,5 @@ package org.linkedprocess.xmpp.villein;
 public class ParentStructNotFoundException extends Exception {
     public ParentStructNotFoundException(final String msg) {
         super(msg);
-    } 
+    }
 }

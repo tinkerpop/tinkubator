@@ -1,12 +1,11 @@
 package org.linkedprocess.gui.villein.vmcontrol;
 
 import org.jivesoftware.smack.packet.PacketExtension;
-import org.linkedprocess.gui.ImageHolder;
+import org.linkedprocess.xmpp.villein.Job;
 import org.linkedprocess.xmpp.vm.AbortJob;
 import org.linkedprocess.xmpp.vm.SubmitJob;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -103,34 +102,34 @@ public class JobPane extends JPanel implements ActionListener {
         return abortJob;
     }
 
-    public void handleIncomingSubmitJob(SubmitJob submitJob) {
-        if (submitJob.getError() == null) {
-            this.resultTextArea.setText(submitJob.getExpression());
+    public void handleIncomingSubmitJob(Job job) {
+        if (job.getError() == null) {
+            this.resultTextArea.setText(job.getResult());
             this.submitJobButton.setEnabled(false);
         } else {
             StringBuffer errorMessage = new StringBuffer();
-            if (submitJob.getError().getType() != null) {
-                errorMessage.append(submitJob.getError().getType().toString().toLowerCase() + "\n");
+            if (job.getError().getType() != null) {
+                errorMessage.append(job.getError().getType().toString().toLowerCase() + "\n");
             }
-            if (submitJob.getError().getCondition() != null) {
-                errorMessage.append(submitJob.getError().getCondition() + "\n");
+            if (job.getError().getCondition() != null) {
+                errorMessage.append(job.getError().getCondition() + "\n");
             }
-            if (submitJob.getError().getExtensions() != null) {
-                for (PacketExtension extension : submitJob.getError().getExtensions()) {
+            if (job.getError().getExtensions() != null) {
+                for (PacketExtension extension : job.getError().getExtensions()) {
                     errorMessage.append(extension.getElementName() + "\n");
                 }
             }
-            if (submitJob.getError().getMessage() != null) {
-                errorMessage.append(submitJob.getError().getMessage());
+            if (job.getError().getMessage() != null) {
+                errorMessage.append(job.getError().getMessage());
             }
             this.resultTextArea.setText(errorMessage.toString().trim());
         }
     }
 
-    public void handleIncomingAbortJob(AbortJob abortJob) {
-        if (abortJob.getError() == null) {
-            this.resultTextArea.setText("job aborted");
-        } else {
+    public void handleIncomingAbortJob(String jobId) {
+
+        this.resultTextArea.setText("job aborted");
+        /*} else {
             StringBuffer errorMessage = new StringBuffer();
             if (abortJob.getError().getType() != null) {
                 errorMessage.append(abortJob.getError().getType().toString().toLowerCase() + "\n");
@@ -147,7 +146,7 @@ public class JobPane extends JPanel implements ActionListener {
                 errorMessage.append(abortJob.getError().getMessage());
             }
             this.resultTextArea.setText(errorMessage.toString().trim());
-        }
+        }*/
     }
 
 

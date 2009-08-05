@@ -4,15 +4,13 @@ import org.jivesoftware.smack.filter.FromContainsFilter;
 import org.jivesoftware.smack.filter.OrFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.ToContainsFilter;
-import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.gui.villein.VilleinGui;
+import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.xmpp.villein.Job;
 import org.linkedprocess.xmpp.villein.VmStruct;
-import org.linkedprocess.xmpp.vm.AbortJob;
-import org.linkedprocess.xmpp.vm.ManageBindings;
-import org.linkedprocess.xmpp.vm.SubmitJob;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -105,7 +103,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel(this.villeinGui.getXmppVillein().getFullJid());
         PacketFilter fromToFilter = new OrFilter(new FromContainsFilter(vmStruct.getFullJid()), new ToContainsFilter(vmStruct.getFullJid()));
         this.villeinGui.getXmppVillein().getConnection().addPacketListener(packetSnifferPanel, fromToFilter);
-        this.villeinGui.getXmppVillein().getConnection().addPacketWriterInterceptor(packetSnifferPanel, fromToFilter);    
+        this.villeinGui.getXmppVillein().getConnection().addPacketWriterInterceptor(packetSnifferPanel, fromToFilter);
 
         JTabbedPane jobBindingsTabbedPane = new JTabbedPane();
         jobBindingsTabbedPane.addTab("jobs", this.splitPane);
@@ -142,14 +140,14 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
 
     }
 
-    public void handleIncomingManageBindings(ManageBindings manageBindings) {
-        this.manageBindingsPanel.handleIncomingManageBindings(manageBindings);
+    public void handleIncomingManageBindings(VMBindings vmBindings) {
+        this.manageBindingsPanel.handleIncomingManageBindings(vmBindings);
     }
 
-    public void handleIncomingSubmitJob(SubmitJob submitJob) {
-        String jobId = submitJob.getPacketID();
+    public void handleIncomingSubmitJob(Job job) {
+        String jobId = job.getJobId();
         if (null == this.jobStatus.get(jobId)) {
-            if (submitJob.getType() == IQ.Type.ERROR)
+            if (null != job.getError())
                 this.jobStatus.put(jobId, JobStatus.ERROR);
             else
                 this.jobStatus.put(jobId, JobStatus.COMPLETED);
@@ -158,19 +156,18 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         for (int i = 0; i < this.jobList.getModel().getSize(); i++) {
             JobPane jobPane = (JobPane) this.jobList.getModel().getElementAt(i);
             if (jobPane.getJobId().equals(jobId)) {
-                jobPane.handleIncomingSubmitJob(submitJob);
+                jobPane.handleIncomingSubmitJob(job);
             }
         }
         jobList.repaint();
     }
 
-    public void handleIncomingAbortJob(AbortJob abortJob) {
-        String jobId = abortJob.getJobId();
+    public void handleIncomingAbortJob(String jobId) {
         this.jobStatus.put(jobId, JobStatus.ABORTED);
         for (int i = 0; i < this.jobList.getModel().getSize(); i++) {
             JobPane jobPane = (JobPane) this.jobList.getModel().getElementAt(i);
             if (jobPane.getJobId().equals(jobId)) {
-                jobPane.handleIncomingAbortJob(abortJob);
+                jobPane.handleIncomingAbortJob(jobId);
             }
         }
         jobList.repaint();
