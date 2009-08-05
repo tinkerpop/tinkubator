@@ -59,7 +59,7 @@ public class XMPPSpecificationTest {
     private ArrayList<Packet> sentPacketsVM1;
 
     @Test
-    public void subscribingToAFarmsRosterShouldResultInThreePresencePacketsBack()
+    public void subscribingToAFarmsRosterShouldResultInTOnePresencePacketsBack()
             throws Exception {
 
         // activate all mock objects
@@ -78,15 +78,10 @@ public class XMPPSpecificationTest {
         subscriptionPacket.setTo(mockFarmId);
         subscriptionPacket.setFrom(mockClient);
         subscriptionListener.processPacket(subscriptionPacket);
-        assertEquals(2, sentPackets.size());
+        assertEquals(1, sentPackets.size());
         // subscription acc
         Presence p0 = (Presence) sentPackets.get(0);
         assertEquals(Presence.Type.subscribed, p0.getType());
-        // Farm status
-        Presence p2 = (Presence) sentPackets.get(1);
-        assertEquals(Presence.Type.available, p2.getType());
-        assertEquals(p2.getPriority(), LinkedProcess.HIGHEST_PRIORITY);
-        assertEquals(p2.getStatus(), XmppFarm.STATUS_MESSAGE_ACTIVE);
         xmppFarm.shutDown();
 
     }
