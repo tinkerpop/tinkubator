@@ -73,14 +73,13 @@ public class XmppVillein extends XmppClient {
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
         PacketFilter submitFilter = new AndFilter(new PacketTypeFilter(SubmitJob.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-        PacketFilter manageBindingsFilter = new AndFilter(new PacketTypeFilter(ManageBindings.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-
+        PacketFilter manageFilter = new AndFilter(new PacketTypeFilter(ManageBindings.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
         PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
 
         this.connection.addPacketListener(new SpawnVmListener(this), spawnFilter);
         this.connection.addPacketListener(new PresenceListener(this), presenceFilter);
         this.connection.addPacketListener(new SubmitJobListener(this), submitFilter);
-        this.connection.addPacketListener(new ManageBindingsListener(this), manageBindingsFilter);
+        this.connection.addPacketListener(new ManageBindingsListener(this), manageFilter);
 
         this.countrysideStructs = new HashMap<String, CountrysideStruct>();
         this.status = LinkedProcess.VilleinStatus.ACTIVE;
@@ -292,10 +291,6 @@ public class XmppVillein extends XmppClient {
                 this.countrysideStructs.put(countrysideStruct.getFullJid(), countrysideStruct);
             }
             countrysideStruct.setPresence(this.roster.getPresence(entry.getUser()));
-            ProbePresence probe = new ProbePresence();
-            probe.setTo(countrysideStruct.getFullJid());
-            probe.setFrom(this.getFullJid());
-            this.connection.sendPacket(probe);
         }
     }
 
