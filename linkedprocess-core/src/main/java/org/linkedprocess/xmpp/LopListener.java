@@ -28,7 +28,7 @@ public abstract class LopListener implements PacketListener {
         try {
             return discoManager.discoverInfo(jid);
         } catch (XMPPException e) {
-            XmppClient.LOGGER.severe("XmppException with DiscoveryManager: " + e.getMessage());
+            XmppClient.LOGGER.severe("XmppException with DiscoveryManager on " + jid + ": " + e.getMessage());
             return null;
         }
     }
