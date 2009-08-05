@@ -9,7 +9,7 @@ import org.linkedprocess.os.VMBindings.XMLSchemaDatatype;
 import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.villein.Job;
 import org.linkedprocess.xmpp.villein.VmStruct;
-import org.linkedprocess.xmpp.villein.patterns.ScatterGatherVillein;
+import org.linkedprocess.xmpp.villein.patterns.ScatterGatherPattern;
 
 /**
  * User: marko Date: Jul 28, 2009 Time: 11:35:49 AM
@@ -20,12 +20,12 @@ public class PrimeFinder {
 	private static final long TIMEOUT = 1000000;
 	private static final long POLL_INTERVALL = 200;
 	private String jobId= "groovyPrimeFinderFunctionDef";
-	private ScatterGatherVillein scatter;
+	private ScatterGatherPattern scatter;
 
-	public PrimeFinder(int startInteger, int endInteger,
+	/*public PrimeFinder(int startInteger, int endInteger,
 			String vm_type, int nrOfFarms, int nrOfVMs, String username,
 			String password, int port, String server) throws Exception {
-		scatter = new ScatterGatherVillein(vm_type, nrOfFarms, nrOfVMs, TIMEOUT,username, password, port, server);
+		scatter = new ScatterGatherPattern(vm_type, nrOfFarms, nrOfVMs, TIMEOUT,username, password, port, server);
 		VMBindings bindings = new VMBindings();
 		bindings.putTyped(PROGRESS, new TypedValue(XMLSchemaDatatype.INTEGER, "0"));
 		scatter.setBinding(bindings);
@@ -72,7 +72,7 @@ public class PrimeFinder {
           startValue = interval + startValue + 1;
       }
       return result;
-	}
+	}*/
 	
 	
 }

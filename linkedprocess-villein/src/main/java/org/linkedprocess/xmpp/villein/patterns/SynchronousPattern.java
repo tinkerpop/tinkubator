@@ -11,12 +11,11 @@ import java.util.Set;
  * Date: Aug 4, 2009
  * Time: 1:56:00 PM
  */
-public class SynchronousPattern {
+public class SynchronousPattern extends VilleinPattern {
 
-    protected XmppVillein xmppVillein;
 
     public SynchronousPattern(XmppVillein xmppVillein) {
-        this.xmppVillein = xmppVillein;
+        super(xmppVillein);
     }
 
     private void checkTimeout(long startTime, long timeout) throws WaitTimeoutException {

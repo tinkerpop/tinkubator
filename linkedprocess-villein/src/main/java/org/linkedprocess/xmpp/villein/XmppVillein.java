@@ -283,23 +283,25 @@ public class XmppVillein extends XmppClient {
         manageBindings.setVmPassword(vmStruct.getVmPassword());
         manageBindings.setBindings(vmBindings);
         //set the VMStruncts bindings in case we need them later for getting stuff
-        vmStruct.setBindings(vmBindings);
+        // TODO: this should be done when the result is returned so you know the VM accepted the packet
+        //vmStruct.setBindings(vmBindings);
         this.connection.sendPacket(manageBindings);
     }
 
 
     public synchronized void createCountrysideStructsFromRoster() {
         this.roster.reload();
-        //this.userStructs.clear();
         for (RosterEntry entry : this.getRoster().getEntries()) {
             CountrysideStruct countrysideStruct = this.countrysideStructs.get(entry.getUser());
-            if (countrysideStruct == null)
+            if (countrysideStruct == null) {
                 countrysideStruct = new CountrysideStruct();
-            countrysideStruct.setFullJid(entry.getUser());
-            countrysideStruct.setPresence(this.roster.getPresence(entry.getUser()));
-            this.countrysideStructs.put(countrysideStruct.getFullJid(), countrysideStruct);
+                countrysideStruct.setFullJid(entry.getUser());
+                this.countrysideStructs.put(countrysideStruct.getFullJid(), countrysideStruct);
+            }
+            countrysideStruct.setPresence(this.roster.getPresence(entry.getUser()));  
             ProbePresence probe = new ProbePresence();
-            probe.setTo(entry.getUser());
+            probe.setTo(countrysideStruct.getFullJid());
+            probe.setFrom(this.getFullJid());
             this.connection.sendPacket(probe);
         }
     }
@@ -336,15 +338,5 @@ public class XmppVillein extends XmppClient {
             }
         }
         this.countrysideStructs.remove(jid);
-
     }
-    public void sendGetBindings(VmStruct vm) {
-		ManageBindings bindings = new ManageBindings();
-		bindings.setTo(vm.getFullJid());
-		bindings.setFrom(this.getFullJid());
-		bindings.setBindings(vm.getBindings());
-		bindings.setVmPassword(vm.getVmPassword());
-		bindings.setType(IQ.Type.GET);
-		this.connection.sendPacket(bindings);
-	}
 }

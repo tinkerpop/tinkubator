@@ -16,50 +16,6 @@ import org.linkedprocess.xmpp.vm.*;
  */
 public class XmppVirtualMachineTest extends TestCase {
 
-    public static final String USERNAME = "linked.process.3";
-    public static final String GTALK_USERNAME = "linked.process.3@gmail.com";
-    public static final String PASSWORD = "linked34";
-    public static final String OPS4J_SERVER = "srv03.codedragons.com";
-    public static final String GTALK_SERVER = "talk1.l.google.com";
-    public static final String XMPP42_SERVER = "xmpp42.linkedprocess.org";
-    public static final int PORT = 5222;
-
-    private XmppVirtualMachine xmppVirtualMachine;
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
-    @Test
-    public void testLoginXmpp42() throws Exception {
-        xmppVirtualMachine = new XmppVirtualMachine(XMPP42_SERVER, PORT, USERNAME, PASSWORD, null, null, LinkedProcess.JAVASCRIPT, "pass");
-        Connection connection = xmppVirtualMachine.getConnection();
-        assertTrue(connection.isConnected());
-        xmppVirtualMachine.shutDown();
-
-    }
-
-    @Test
-    public void testLoginOPS4J() throws Exception {
-        xmppVirtualMachine = new XmppVirtualMachine(OPS4J_SERVER, PORT, USERNAME, PASSWORD, null, null, LinkedProcess.JAVASCRIPT, "pass");
-        Connection connection = xmppVirtualMachine.getConnection();
-        assertTrue(connection.isConnected());
-        xmppVirtualMachine.shutDown();
-
-    }
-
-    @Test
-    public void testLoginGTalk() throws Exception {
-        xmppVirtualMachine = new XmppVirtualMachine(GTALK_SERVER, PORT, GTALK_USERNAME, PASSWORD, null, null, LinkedProcess.JAVASCRIPT, "pass");
-        Connection connection = xmppVirtualMachine.getConnection();
-        assertTrue(connection.isConnected());
-        xmppVirtualMachine.shutDown();
-
-    }
 
     @Test
     public void testSubmitJobTag() {
@@ -108,17 +64,4 @@ public class XmppVirtualMachineTest extends TestCase {
         assertTrue(terminateString.contains("vm_password=\"pass\""));
     }
 
-    @Test
-    public void testSpawnVirtualMachine() throws Exception {
-        XmppFarm farm = new XmppFarm(XMPP42_SERVER, PORT, USERNAME, PASSWORD);
-        XmppVirtualMachine vm = farm.spawnVirtualMachine("appJid", LinkedProcess.JAVASCRIPT);
-        farm.shutDown();
-    }
-
-    @Test
-    public void testExecuteScript() throws Exception {
-        XmppFarm farm = new XmppFarm(XMPP42_SERVER, PORT, USERNAME, PASSWORD);
-        XmppVirtualMachine vm = farm.spawnVirtualMachine("appJid", LinkedProcess.JAVASCRIPT);
-        farm.shutDown();
-    }
 }
