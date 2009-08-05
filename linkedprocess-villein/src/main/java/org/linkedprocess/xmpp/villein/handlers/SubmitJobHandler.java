@@ -1,7 +1,7 @@
 package org.linkedprocess.xmpp.villein.handlers;
 
-import org.linkedprocess.xmpp.villein.Job;
-import org.linkedprocess.xmpp.villein.VmStruct;
+import org.linkedprocess.xmpp.villein.structs.Job;
+import org.linkedprocess.xmpp.villein.structs.VmStruct;
 
 /**
  * User: marko

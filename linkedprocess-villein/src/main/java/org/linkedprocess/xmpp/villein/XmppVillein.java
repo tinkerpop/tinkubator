@@ -14,6 +14,7 @@ import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.farm.SpawnVm;
 import org.linkedprocess.xmpp.farm.SpawnVmProvider;
 import org.linkedprocess.xmpp.villein.handlers.*;
+import org.linkedprocess.xmpp.villein.structs.*;
 import org.linkedprocess.xmpp.vm.*;
 
 import java.io.IOException;

@@ -3,6 +3,7 @@ package org.linkedprocess.xmpp.villein;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.xmpp.villein.handlers.AbortJobHandler;
+import org.linkedprocess.xmpp.villein.structs.VmStruct;
 import org.linkedprocess.xmpp.vm.AbortJob;
 
 /**

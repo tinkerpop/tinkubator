@@ -1,7 +1,7 @@
 package org.linkedprocess.xmpp.villein.handlers;
 
 import org.jivesoftware.smack.packet.Presence;
-import org.linkedprocess.xmpp.villein.Struct;
+import org.linkedprocess.xmpp.villein.structs.Struct;
 
 /**
  * User: marko

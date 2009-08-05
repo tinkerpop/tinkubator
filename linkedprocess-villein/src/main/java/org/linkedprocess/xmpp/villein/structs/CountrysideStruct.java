@@ -1,4 +1,8 @@
-package org.linkedprocess.xmpp.villein;
+package org.linkedprocess.xmpp.villein.structs;
+
+import org.linkedprocess.xmpp.villein.structs.Struct;
+import org.linkedprocess.xmpp.villein.structs.FarmStruct;
+import org.linkedprocess.xmpp.villein.structs.RegistryStruct;
 
 import java.util.Collection;
 import java.util.HashMap;

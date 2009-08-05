@@ -8,7 +8,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.xmpp.villein.FarmStruct;
+import org.linkedprocess.xmpp.villein.structs.FarmStruct;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 
 import javax.swing.*;

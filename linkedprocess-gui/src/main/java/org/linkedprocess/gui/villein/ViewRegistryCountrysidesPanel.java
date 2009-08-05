@@ -7,7 +7,7 @@ import org.jdom.Namespace;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.xmpp.villein.RegistryStruct;
+import org.linkedprocess.xmpp.villein.structs.RegistryStruct;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 
 import javax.swing.*;

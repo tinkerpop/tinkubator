@@ -9,8 +9,8 @@ import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.gui.villein.VilleinGui;
 import org.linkedprocess.os.VMBindings;
-import org.linkedprocess.xmpp.villein.Job;
-import org.linkedprocess.xmpp.villein.VmStruct;
+import org.linkedprocess.xmpp.villein.structs.Job;
+import org.linkedprocess.xmpp.villein.structs.VmStruct;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;

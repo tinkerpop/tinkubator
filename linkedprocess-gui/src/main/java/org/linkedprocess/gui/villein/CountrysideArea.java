@@ -5,6 +5,7 @@ import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.gui.*;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
 import org.linkedprocess.xmpp.villein.*;
+import org.linkedprocess.xmpp.villein.structs.*;
 import org.linkedprocess.xmpp.villein.handlers.PresenceHandler;
 import org.linkedprocess.xmpp.villein.handlers.SpawnVmHandler;
 

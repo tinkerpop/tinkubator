@@ -5,6 +5,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.villein.handlers.PresenceHandler;
+import org.linkedprocess.xmpp.villein.structs.*;
 
 /**
  * User: marko

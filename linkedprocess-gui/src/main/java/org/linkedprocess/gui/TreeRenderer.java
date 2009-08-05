@@ -3,6 +3,10 @@ package org.linkedprocess.gui;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.farm.XmppFarm;
 import org.linkedprocess.xmpp.villein.*;
+import org.linkedprocess.xmpp.villein.structs.CountrysideStruct;
+import org.linkedprocess.xmpp.villein.structs.FarmStruct;
+import org.linkedprocess.xmpp.villein.structs.RegistryStruct;
+import org.linkedprocess.xmpp.villein.structs.VmStruct;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 import javax.swing.*;

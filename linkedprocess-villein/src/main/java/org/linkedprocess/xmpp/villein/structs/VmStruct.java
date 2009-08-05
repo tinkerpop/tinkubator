@@ -1,6 +1,8 @@
-package org.linkedprocess.xmpp.villein;
+package org.linkedprocess.xmpp.villein.structs;
 
 import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.xmpp.villein.structs.Job;
+import org.linkedprocess.xmpp.villein.structs.Struct;
 
 import java.util.HashMap;
 import java.util.Map;

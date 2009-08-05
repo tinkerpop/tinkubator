@@ -6,7 +6,7 @@ import org.linkedprocess.gui.RosterPanel;
 import org.linkedprocess.gui.TreeNodeProperty;
 import org.linkedprocess.gui.TreeRenderer;
 import org.linkedprocess.gui.farm.vmviewer.VmViewerFrame;
-import org.linkedprocess.xmpp.villein.CountrysideStruct;
+import org.linkedprocess.xmpp.villein.structs.CountrysideStruct;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 import javax.swing.*;

@@ -1,7 +1,7 @@
 package org.linkedprocess.gui.villein.vmcontrol;
 
 import org.jivesoftware.smack.packet.PacketExtension;
-import org.linkedprocess.xmpp.villein.Job;
+import org.linkedprocess.xmpp.villein.structs.Job;
 import org.linkedprocess.xmpp.vm.AbortJob;
 import org.linkedprocess.xmpp.vm.SubmitJob;
 
