@@ -64,7 +64,7 @@ public class ConfigurePrimes extends Activity {
 			String scriptString = script.getText().toString();
 			Bundle extras = getIntent().getExtras();
 			int nrOfFarms = Integer.parseInt((String)numberOfMachines.getSelectedItem());
-			PrimeFinder primeFinder = new PrimeFinder(1, 1000, new ByteArrayInputStream(scriptString.getBytes()),(String)language2.getSelectedItem(), nrOfFarms, nrOfFarms, 
+			PrimeFinder primeFinder = new PrimeFinder(1, 1000, scriptString,(String)language2.getSelectedItem(), nrOfFarms, nrOfFarms, 
 					extras.getString(Villein.USERNAME), extras.getString(Villein.PASSWORD), extras.getInt(Villein.PORT), extras.getString(Villein.SERVER));
 			// primeFinder.shutDown(new Presence(Presence.Type.unavailable));
 		} catch (Exception e) {
