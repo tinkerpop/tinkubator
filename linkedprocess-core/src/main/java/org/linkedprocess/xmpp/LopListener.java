@@ -28,7 +28,7 @@ public abstract class LopListener implements PacketListener {
         try {
             return discoManager.discoverInfo(jid);
         } catch (XMPPException e) {
-            XmppClient.LOGGER.severe("XmppException with DiscoveryManager on " + jid + ": " + e.getMessage());
+            XmppClient.LOGGER.warning("XmppException with DiscoveryManager on " + jid + ": " + e.getMessage());
             return null;
         }
     }
@@ -57,7 +57,7 @@ public abstract class LopListener implements PacketListener {
     protected Collection<String> getSupportedVmSpecies(DiscoverInfo discoInfo) {
         if (discoInfo != null) {
             List<String> supportedVmSpecies = new LinkedList<String>();
-            DataForm extension = (DataForm) discoInfo.getExtension("jabber:x:data");
+            DataForm extension = (DataForm) discoInfo.getExtension(LinkedProcess.X_JABBER_DATA_NAMESPACE);
             Iterator<FormField> fields = extension.getFields();
             while (fields.hasNext()) {
                 FormField field = fields.next();

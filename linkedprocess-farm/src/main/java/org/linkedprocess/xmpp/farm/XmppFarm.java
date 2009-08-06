@@ -43,9 +43,7 @@ public class XmppFarm extends XmppClient {
 
     public static Logger LOGGER = LinkedProcess.getLogger(XmppFarm.class);
     public static final String RESOURCE_PREFIX = "LoPFarm";
-    public static final String STATUS_MESSAGE = "LoP Farm v0.1";
-    public static final String STATUS_MESSAGE_ACTIVE = STATUS_MESSAGE + " - active";
-    public static final String STATUS_MESSAGE_FULL = STATUS_MESSAGE + " - full";
+    public static final String STATUS_MESSAGE = "LoPSideD Farm";
 
     protected String farmPassword;
 
@@ -86,9 +84,9 @@ public class XmppFarm extends XmppClient {
     public Presence createPresence(final LinkedProcess.FarmStatus status) {
         switch (status) {
             case ACTIVE:
-                return new Presence(Presence.Type.available, STATUS_MESSAGE_ACTIVE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
+                return new Presence(Presence.Type.available, STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
             case ACTIVE_FULL:
-                return new Presence(Presence.Type.available, STATUS_MESSAGE_FULL, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.dnd);
+                return new Presence(Presence.Type.unavailable);
             case INACTIVE:
                 return new Presence(Presence.Type.unavailable);
             default:

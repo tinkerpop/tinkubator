@@ -179,7 +179,7 @@ public class LinkedProcess {
     public static final String DISCO_INFO_NAMESPACE = "http://jabber.org/protocol/disco#info";
     public static final String DISCO_ITEMS_NAMESPACE = "http://jabber.org/protocol/disco#items";
     public static final String QUERY_TAG = "query";
-    public static final String X_NAMESPACE = "jabber:x:data";
+    public static final String X_JABBER_DATA_NAMESPACE = "jabber:x:data";
     public static final String X_TAG = "x";
     public static final String ITEM_TAG = "item";
     public static final String JID_ATTRIBUTE = "jid";

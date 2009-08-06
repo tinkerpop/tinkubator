@@ -31,6 +31,7 @@ public class PresenceListener extends LopVilleinListener {
                 presence.getType() == Presence.Type.unsubscribe ||
                 presence.getType() == Presence.Type.unsubscribed)) {
             this.getXmppVillein().removeStruct(presence.getFrom());
+            // Handlers
             for (PresenceHandler presenceHandler : this.getXmppVillein().getPresenceHandlers()) {
                 presenceHandler.handlePresenceUpdate(struct, presence.getType());
             }
@@ -61,7 +62,7 @@ public class PresenceListener extends LopVilleinListener {
                     this.getXmppVillein().addFarmStruct(farmStruct);
                     struct = farmStruct;
                 } catch (ParentStructNotFoundException e) {
-                    XmppVillein.LOGGER.severe(e.getMessage());
+                    XmppVillein.LOGGER.warning(e.getMessage());
                 }
             } else if (isRegistry(discoInfo)) {
                 RegistryStruct registryStruct = new RegistryStruct();
@@ -71,11 +72,11 @@ public class PresenceListener extends LopVilleinListener {
                     this.getXmppVillein().addRegistryStruct(registryStruct);
                     struct = registryStruct;
                 } catch (ParentStructNotFoundException e) {
-                    XmppVillein.LOGGER.severe(e.getMessage());
+                    XmppVillein.LOGGER.warning(e.getMessage());
                 }
             }
         }
-
+        // Handlers
         for (PresenceHandler presenceHandler : this.getXmppVillein().getPresenceHandlers()) {
             presenceHandler.handlePresenceUpdate(struct, presence.getType());
         }

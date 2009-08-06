@@ -46,10 +46,10 @@ public class SpawnVmListener extends LopVilleinListener {
                 }
 
             } catch (ParentStructNotFoundException e) {
-                XmppVillein.LOGGER.severe(e.getMessage());
+                XmppVillein.LOGGER.warning(e.getMessage());
             }
         } else {
-            XmppVillein.LOGGER.severe("Error: " + spawnVm.getError().toXML());
+            XmppVillein.LOGGER.warning("Error: " + spawnVm.getError().toXML());
         }
     }
 }

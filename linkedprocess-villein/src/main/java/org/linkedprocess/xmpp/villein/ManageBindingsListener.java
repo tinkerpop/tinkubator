@@ -5,6 +5,9 @@ import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.xmpp.villein.handlers.ManageBindingsHandler;
 import org.linkedprocess.xmpp.villein.structs.VmStruct;
 import org.linkedprocess.xmpp.vm.ManageBindings;
+import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.os.errors.InvalidValueException;
+import com.sun.jdi.InvalidTypeException;
 
 /**
  * User: marko
@@ -35,7 +38,15 @@ public class ManageBindingsListener extends LopVilleinListener {
         if (manageBindings.getType() == IQ.Type.RESULT) {
             VmStruct vmStruct = (VmStruct) this.getXmppVillein().getStruct(manageBindings.getFrom(), XmppVillein.StructType.VM);
             if (vmStruct != null) {
-                vmStruct.setBindings(manageBindings.getBindings());
+                try {
+                    VMBindings vmBindings = manageBindings.getBindings();
+                    if(null != vmBindings) {
+                        vmStruct.addVmBindings(vmBindings);
+                    }
+                } catch(InvalidValueException e) {
+                    XmppVillein.LOGGER.severe(e.getMessage());
+                }
+                
                 for (ManageBindingsHandler manageBindingsHandler : this.getXmppVillein().getManageBindingsHandlers()) {
                     manageBindingsHandler.handleManageBindingsResult(vmStruct, manageBindings.getBindings());
                 }

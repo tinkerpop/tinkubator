@@ -17,6 +17,7 @@ public class FarmStruct extends Struct {
 
     protected Map<String, VmStruct> vmStructs = new HashMap<String, VmStruct>();
     protected Collection<String> supportedVmSpecies = new HashSet<String>();
+    protected String farmPassword;
 
     public VmStruct getVmStruct(String vmJid) {
         return vmStructs.get(vmJid);
@@ -44,5 +45,13 @@ public class FarmStruct extends Struct {
 
     public void setSupportedVmSpecies(Collection<String> supportedVmSpecies) {
         this.supportedVmSpecies = supportedVmSpecies;
+    }
+
+    public String getFarmPassword() {
+        return this.farmPassword;
+    }
+
+    public void setFarmPassword(String farmPassword) {
+        this.farmPassword = farmPassword;
     }
 }

@@ -3,7 +3,7 @@ package org.linkedprocess.xmpp.villein;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.xmpp.villein.handlers.SubmitJobHandler;
-import org.linkedprocess.xmpp.villein.structs.Job;
+import org.linkedprocess.xmpp.villein.structs.CompletedJob;
 import org.linkedprocess.xmpp.villein.structs.VmStruct;
 import org.linkedprocess.xmpp.vm.SubmitJob;
 
@@ -32,35 +32,22 @@ public class SubmitJobListener extends LopVilleinListener {
         XmppVillein.LOGGER.info("Arrived " + SubmitJobListener.class.getName());
         XmppVillein.LOGGER.info(submitJob.toXML());
 
-        if (submitJob.getType() == IQ.Type.RESULT) {
-            VmStruct vmStruct = (VmStruct) this.getXmppVillein().getStruct(submitJob.getFrom(), XmppVillein.StructType.VM);
-            if (vmStruct != null) {
-                Job job = new Job();
-                job.setResult(submitJob.getExpression());
-                job.setJobId(submitJob.getPacketID());
-                vmStruct.addJob(job);
-                for (SubmitJobHandler submitJobHandler : this.getXmppVillein().getSubmitJobHandlers()) {
-                    submitJobHandler.handleSubmitJob(vmStruct, job);
-                }
-            } else {
-                XmppVillein.LOGGER.severe("Job returned from unknown virtual machine: " + submitJob.getFrom());
-            }
-        } else if (submitJob.getType() == IQ.Type.ERROR) {
-            VmStruct vmStruct = (VmStruct) this.getXmppVillein().getStruct(submitJob.getFrom(), XmppVillein.StructType.VM);
-            if (vmStruct != null) {
-                Job job = new Job();
-                job.setError(submitJob.getError());
-                job.setJobId(submitJob.getPacketID());
-                vmStruct.addJob(job);
-                for (SubmitJobHandler submitJobHandler : this.getXmppVillein().getSubmitJobHandlers()) {
-                    submitJobHandler.handleSubmitJob(vmStruct, job);
-                }
-
-            } else {
-                XmppVillein.LOGGER.severe("Job returned from unknown virtual machine: " + submitJob.getFrom());
+        VmStruct vmStruct = (VmStruct) this.getXmppVillein().getStruct(submitJob.getFrom(), XmppVillein.StructType.VM);
+        if (vmStruct != null) {
+            CompletedJob completedJob = new CompletedJob();
+            if (submitJob.getType() == IQ.Type.RESULT)
+                completedJob.setResult(submitJob.getExpression());
+            else if (submitJob.getType() == IQ.Type.ERROR)
+                completedJob.setError(submitJob.getError());
+            completedJob.setJobId(submitJob.getPacketID());
+            vmStruct.addJob(completedJob);
+            // Handlers
+            for (SubmitJobHandler submitJobHandler : this.getXmppVillein().getSubmitJobHandlers()) {
+                submitJobHandler.handleSubmitJob(vmStruct, completedJob);
             }
         } else {
-            XmppVillein.LOGGER.severe("Error: " + submitJob.toXML());
+            XmppVillein.LOGGER.warning("Job returned from unknown virtual machine: " + submitJob.getFrom());
         }
+
     }
 }

@@ -9,7 +9,7 @@ import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.gui.villein.VilleinGui;
 import org.linkedprocess.os.VMBindings;
-import org.linkedprocess.xmpp.villein.structs.Job;
+import org.linkedprocess.xmpp.villein.structs.CompletedJob;
 import org.linkedprocess.xmpp.villein.structs.VmStruct;
 
 import javax.swing.*;
@@ -144,10 +144,10 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         this.manageBindingsPanel.handleIncomingManageBindings(vmBindings);
     }
 
-    public void handleIncomingSubmitJob(Job job) {
-        String jobId = job.getJobId();
+    public void handleIncomingSubmitJob(CompletedJob completedJob) {
+        String jobId = completedJob.getJobId();
         if (null == this.jobStatus.get(jobId)) {
-            if (null != job.getError())
+            if (null != completedJob.getError())
                 this.jobStatus.put(jobId, JobStatus.ERROR);
             else
                 this.jobStatus.put(jobId, JobStatus.COMPLETED);
@@ -156,7 +156,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         for (int i = 0; i < this.jobList.getModel().getSize(); i++) {
             JobPane jobPane = (JobPane) this.jobList.getModel().getElementAt(i);
             if (jobPane.getJobId().equals(jobId)) {
-                jobPane.handleIncomingSubmitJob(job);
+                jobPane.handleIncomingSubmitJob(completedJob);
             }
         }
         jobList.repaint();
@@ -192,7 +192,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
             }
 
         } else if (event.getActionCommand().equals(TERMINATE_VM)) {
-            this.villeinGui.getXmppVillein().sendTerminateVirtualMachine(this.vmStruct);
+            this.villeinGui.getXmppVillein().terminateVirtualMachine(this.vmStruct);
             this.villeinGui.removeVmFrame(this.vmStruct);
         } else if (event.getActionCommand().equals(CLOSE)) {
             this.setVisible(false);

@@ -1,8 +1,10 @@
 package org.linkedprocess.xmpp.villein.patterns;
 
-import org.linkedprocess.xmpp.villein.structs.Job;
+import org.linkedprocess.xmpp.villein.structs.CompletedJob;
 import org.linkedprocess.xmpp.villein.structs.VmStruct;
 import org.linkedprocess.xmpp.villein.XmppVillein;
+import org.linkedprocess.os.VMBindings;
+import org.jivesoftware.smack.packet.IQ;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -40,7 +42,7 @@ public class SynchronousPattern extends VilleinPattern {
             try {
                 Thread.sleep(this.pollingSleepTime);
             } catch (InterruptedException e) {
-                XmppVillein.LOGGER.severe(e.getMessage());
+                XmppVillein.LOGGER.warning(e.getMessage());
             }
         }
     }
@@ -65,35 +67,44 @@ public class SynchronousPattern extends VilleinPattern {
         }
     }
 
-    public Collection<Job> waitForJobs(Set<String> jobIds, long timeout) throws WaitTimeoutException {
+    public Collection<CompletedJob> waitForJobs(Set<String> jobIds, long timeout) throws WaitTimeoutException {
         long currentTime = System.currentTimeMillis();
         while (true) {
             checkTimeout(currentTime, timeout);
-            Collection<Job> jobs = this.xmppVillein.getJobs(jobIds);
-            if (jobs.size() == jobIds.size()) {
-                return jobs;
+            Collection<CompletedJob> completedJobs = this.xmppVillein.getJobs(jobIds);
+            if (completedJobs.size() == jobIds.size()) {
+                return completedJobs;
             }
             this.pollingSleep();
         }
     }
 
-    public Job waitForJob(VmStruct vmStruct, String expression, String jobId, long timeout) throws WaitTimeoutException {
-        this.xmppVillein.sendSubmitJob(vmStruct, expression, jobId);
+    public CompletedJob waitForJob(VmStruct vmStruct, String expression, String jobId, long timeout) throws WaitTimeoutException {
+        this.xmppVillein.submitJob(vmStruct, expression, jobId);
         long currentTime = System.currentTimeMillis();
         while (true) {
             checkTimeout(currentTime, timeout);
-            Job job = vmStruct.getJob(jobId);
-            if (null != job)
-                return job;
+            CompletedJob completedJob = vmStruct.getJob(jobId);
+            if (null != completedJob)
+                return completedJob;
         }
     }
 
-    public Collection<Job> distributeJobAndWait(Set<VmStruct> vmStructs, String expression, long timeout) throws WaitTimeoutException {
+    public VMBindings waitForBindings(VmStruct vmStruct, VMBindings vmBindings, IQ.Type manageBindingsType, long timeout) throws WaitTimeoutException {
+        this.xmppVillein.manageBindings(vmStruct, vmBindings, manageBindingsType);
+        long currentTime = System.currentTimeMillis();
+        while(true) {
+            checkTimeout(currentTime, timeout);
+            //VMBindings vmBindings = vmStruct.getVmBindings()
+        }
+    }
+
+    public Collection<CompletedJob> distributeJobAndWait(Set<VmStruct> vmStructs, String expression, long timeout) throws WaitTimeoutException {
         Set<String> jobIds = new HashSet<String>();
         for (VmStruct vmStruct : vmStructs) {
             String jobId = XmppVillein.generateRandomJobId();
             jobIds.add(jobId);
-            this.xmppVillein.sendSubmitJob(vmStruct, expression, jobId);
+            this.xmppVillein.submitJob(vmStruct, expression, jobId);
         }
         return this.waitForJobs(jobIds, timeout);
     }

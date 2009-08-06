@@ -28,7 +28,7 @@ public class XmppVirtualMachine extends XmppClient {
 
     public static Logger LOGGER = LinkedProcess.getLogger(XmppVirtualMachine.class);
     public static String RESOURCE_PREFIX = "LoPVM";
-    public static String STATUS_MESSAGE = "LoP Virtual Machine v0.1";
+    public static String STATUS_MESSAGE = "LoPSideD Virtual Machine";
 
     protected final XmppFarm farm;
     protected final String vmPassword;

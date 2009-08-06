@@ -34,12 +34,13 @@ public class AbortJobListener extends LopVilleinListener {
         VmStruct vmStruct = (VmStruct) this.getXmppVillein().getStruct(abortJob.getFrom(), XmppVillein.StructType.VM);
         if (vmStruct != null) {
             if (abortJob.getType() == IQ.Type.RESULT) {
+                // Handlers
                 for (AbortJobHandler abortJobHandler : this.getXmppVillein().getAbortJobHandlers()) {
                     abortJobHandler.handleAbortJobResult(vmStruct, abortJob.getJobId());
                 }
             }
         } else {
-            XmppVillein.LOGGER.severe("Job returned from unknown virtual machine: " + abortJob.getFrom());
+            XmppVillein.LOGGER.warning("Job returned from unknown virtual machine: " + abortJob.getFrom());
         }
 
 

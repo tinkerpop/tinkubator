@@ -115,12 +115,12 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
             if (null != fieldElement) {
                 DefaultTableModel tableModel = (DefaultTableModel) this.valuesTable.getModel();
                 this.clearAllRows(this.valuesTable);
-                java.util.List<Element> valuesList = (java.util.List<Element>) fieldElement.getChildren(LinkedProcess.VALUE_TAG, Namespace.getNamespace(LinkedProcess.X_NAMESPACE));
+                java.util.List<Element> valuesList = (java.util.List<Element>) fieldElement.getChildren(LinkedProcess.VALUE_TAG, Namespace.getNamespace(LinkedProcess.X_JABBER_DATA_NAMESPACE));
                 for (Element valueElement : valuesList) {
                     tableModel.addRow(new Object[]{valueElement.getText(), null, false});
                 }
-                for (Element optionElement : (java.util.List<Element>) fieldElement.getChildren(LinkedProcess.OPTION_TAG, Namespace.getNamespace(LinkedProcess.X_NAMESPACE))) {
-                    for (Element valueElement : (java.util.List<Element>) optionElement.getChildren(LinkedProcess.VALUE_TAG, Namespace.getNamespace(LinkedProcess.X_NAMESPACE))) {
+                for (Element optionElement : (java.util.List<Element>) fieldElement.getChildren(LinkedProcess.OPTION_TAG, Namespace.getNamespace(LinkedProcess.X_JABBER_DATA_NAMESPACE))) {
+                    for (Element valueElement : (java.util.List<Element>) optionElement.getChildren(LinkedProcess.VALUE_TAG, Namespace.getNamespace(LinkedProcess.X_JABBER_DATA_NAMESPACE))) {
                         tableModel.addRow(new Object[]{valueElement.getText(), optionElement.getAttributeValue(LinkedProcess.LABEL_ATTRIBUTE), true});
                     }
                 }
@@ -171,7 +171,7 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
         if (null != this.discoInfoDocument) {
             Element queryElement = discoInfoDocument.getRootElement().getChild(LinkedProcess.QUERY_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
             if (null != queryElement) {
-                Namespace xNamespace = Namespace.getNamespace(LinkedProcess.X_NAMESPACE);
+                Namespace xNamespace = Namespace.getNamespace(LinkedProcess.X_JABBER_DATA_NAMESPACE);
                 Element xElement = queryElement.getChild(LinkedProcess.X_TAG, xNamespace);
                 if (null != xElement) {
                     for (Element fieldElement : (java.util.List<Element>) xElement.getChildren(LinkedProcess.FIELD_TAG, xNamespace)) {
@@ -191,7 +191,7 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
         if (null != this.discoInfoDocument) {
             Element queryElement = discoInfoDocument.getRootElement().getChild(LinkedProcess.QUERY_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
             if (null != queryElement) {
-                Namespace xNamespace = Namespace.getNamespace(LinkedProcess.X_NAMESPACE);
+                Namespace xNamespace = Namespace.getNamespace(LinkedProcess.X_JABBER_DATA_NAMESPACE);
                 Element xElement = queryElement.getChild(LinkedProcess.X_TAG, xNamespace);
                 if (null != xElement) {
                     DefaultTableModel tableModel = (DefaultTableModel) this.configurationTable.getModel();

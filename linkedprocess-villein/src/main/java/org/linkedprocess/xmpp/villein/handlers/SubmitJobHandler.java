@@ -1,6 +1,6 @@
 package org.linkedprocess.xmpp.villein.handlers;
 
-import org.linkedprocess.xmpp.villein.structs.Job;
+import org.linkedprocess.xmpp.villein.structs.CompletedJob;
 import org.linkedprocess.xmpp.villein.structs.VmStruct;
 
 /**
@@ -10,6 +10,6 @@ import org.linkedprocess.xmpp.villein.structs.VmStruct;
  */
 public interface SubmitJobHandler {
 
-    public void handleSubmitJob(VmStruct vmStruct, Job job);
+    public void handleSubmitJob(VmStruct vmStruct, CompletedJob completedJob);
 
 }

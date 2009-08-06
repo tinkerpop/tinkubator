@@ -1,7 +1,8 @@
 package org.linkedprocess.xmpp.villein.structs;
 
 import org.linkedprocess.os.VMBindings;
-import org.linkedprocess.xmpp.villein.structs.Job;
+import org.linkedprocess.os.errors.InvalidValueException;
+import org.linkedprocess.xmpp.villein.structs.CompletedJob;
 import org.linkedprocess.xmpp.villein.structs.Struct;
 
 import java.util.HashMap;
@@ -16,8 +17,8 @@ public class VmStruct extends Struct {
 
     protected String vmPassword;
     protected String vmSpecies;
-    protected Map<String, Job> jobs = new HashMap<String, Job>();
-    private VMBindings bindings;
+    protected Map<String, CompletedJob> jobs = new HashMap<String, CompletedJob>();
+    private VMBindings vmBindings = new VMBindings();
 
     public void setVmPassword(final String vmPassword) {
         this.vmPassword = vmPassword;
@@ -35,11 +36,11 @@ public class VmStruct extends Struct {
         return this.vmSpecies;
     }
 
-    public void addJob(Job job) {
-        this.jobs.put(job.getJobId(), job);
+    public void addJob(CompletedJob completedJob) {
+        this.jobs.put(completedJob.getJobId(), completedJob);
     }
 
-    public Job getJob(String jobId) {
+    public CompletedJob getJob(String jobId) {
         return this.jobs.get(jobId);
     }
 
@@ -51,13 +52,20 @@ public class VmStruct extends Struct {
         this.jobs.clear();
     }
 
-    public void setBindings(VMBindings bindings) {
-        this.bindings = bindings;
-
+    public void addVmBindings(VMBindings bindings) throws InvalidValueException {
+        for(String bindingName : bindings.keySet()) {
+           this.vmBindings.putTyped(bindingName, bindings.getTyped(bindingName));
+        }
     }
 
-    public VMBindings getBindings() {
-        return this.bindings;
+    public void removeVmBindings(VMBindings bindings) {
+        for(String bindingName : bindings.keySet()) {
+           this.vmBindings.remove(bindingName);
+        }
+    }
+
+    public VMBindings getVmBindings() {
+        return this.vmBindings;
     }
 }
 
