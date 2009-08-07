@@ -233,18 +233,21 @@ public class XmppFarm extends XmppClient {
 
     // TODO: move this
     private enum ConfigurationBasedField {
-        MAX_CONCURRENT_VIRTUAL_MACHINES("max_concurrent_virtual_machines", "the number of concurrent virtual machines which this farm can support before it rejects a request to spawn a new virtual machine"),
-        JOB_QUEUE_CAPACITY("job_queue_capacity", "the number of jobs which a virtual machine can hold in its queue before it rejects requests to submit additional jobs"),
-        JOB_TIMEOUT("job_timeout", "the number of milliseconds for which a job may execute before it is aborted by this farm"),
-        VIRTUAL_MACHINE_TIME_TO_LIVE("vm_time_to_live", "the number of milliseconds for which a virtual machine may exist before it is terminated by this farm"),
-        FARM_PASSWORD_REQUIRED("farm_password_required", "whether a password is required to spawn additional virtual machines on this farm"),
-        FARM_START_TIME("farm_start_time", "the moment at which this farm was created");
+        MAX_CONCURRENT_VIRTUAL_MACHINES(FormField.TYPE_TEXT_SINGLE, "max_concurrent_virtual_machines", "the number of concurrent virtual machines which this farm can support before it rejects a request to spawn a new virtual machine"),
+        JOB_QUEUE_CAPACITY(FormField.TYPE_TEXT_SINGLE, "job_queue_capacity", "the number of jobs which a virtual machine can hold in its queue before it rejects requests to submit additional jobs"),
+        JOB_TIMEOUT(FormField.TYPE_TEXT_SINGLE, "job_timeout", "the number of milliseconds for which a job may execute before it is aborted by this farm"),
+        VIRTUAL_MACHINE_TIME_TO_LIVE(FormField.TYPE_TEXT_SINGLE, "vm_time_to_live", "the number of milliseconds for which a virtual machine may exist before it is terminated by this farm"),
+        FARM_PASSWORD_REQUIRED(FormField.TYPE_BOOLEAN, "farm_password_required", "whether a password is required to spawn additional virtual machines on this farm"),
+        FARM_START_TIME(FormField.TYPE_TEXT_SINGLE, "farm_start_time", "the xsd:dateTime at which this farm was started");
 
+        private final String formType;
         private final String specName;
         private final String label;
 
-        private ConfigurationBasedField(final String specName,
+        private ConfigurationBasedField(final String formType,
+                                        final String specName,
                                         final String label) {
+            this.formType = formType;
             this.specName = specName;
             this.label = label;
         }
@@ -261,7 +264,7 @@ public class XmppFarm extends XmppClient {
         public FormField toField(final String value) {
             FormField field = new FormField(specName);
             field.setLabel(label);
-            field.setType(FormField.TYPE_TEXT_SINGLE);
+            field.setType(formType);
             field.addValue(value);
             return field;
         }

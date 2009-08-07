@@ -183,7 +183,7 @@ public class ServiceDiscoveryConfiguration {
                 default:
                     // Other types have no special formatting.
                     field.setType(FormField.TYPE_BOOLEAN);
-                    field.addValue(permittedTypes.contains(type) ? "1" : "0");
+                    field.addValue(permittedTypes.contains(type) ? "true" : "false");
             }
 
             serviceExtension.addField(field);
