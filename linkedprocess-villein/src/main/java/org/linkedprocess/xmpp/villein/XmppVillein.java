@@ -11,6 +11,10 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.xmpp.XmppClient;
@@ -328,6 +332,12 @@ public class XmppVillein extends XmppClient {
             }
         }
         this.countrysideStructs.remove(jid);
+    }
+
+     protected void initiateFeatures() {
+        super.initiateFeatures();
+        ServiceDiscoveryManager.setIdentityName(XmppVillein.RESOURCE_PREFIX);
+        ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
     }
 
     /////////////////////////
