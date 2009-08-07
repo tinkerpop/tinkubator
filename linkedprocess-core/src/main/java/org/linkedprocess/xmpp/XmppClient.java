@@ -148,6 +148,14 @@ public abstract class XmppClient {
         return this.getRunningTime() / 6000.0f;
     }
 
+    public long getStartTime() {
+        return this.startTime;
+    }
+
+    public java.util.Date getStartTimeAsDate() {
+        return new java.util.Date(this.startTime);
+    }
+
     public static String generateRandomResourceId() {
         // e.g. from gtalk 6D56433B
         Random random = new Random();
