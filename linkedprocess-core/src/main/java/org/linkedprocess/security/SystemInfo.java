@@ -45,5 +45,5 @@ public class SystemInfo {
                 serviceExtension.addField(field);
             }
         }
-    }
+    }    
 }

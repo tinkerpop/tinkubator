@@ -12,6 +12,7 @@ import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.ReportedData;
 import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.LinkedProcessFarm;
@@ -166,6 +167,7 @@ public class XmppFarm extends XmppClient {
 
         this.serviceExtension = new DataForm(Form.TYPE_RESULT);
 
+        // Add VM species
         FormField field = new FormField("vm_species");
         field.setRequired(true);
         field.setLabel("supported virtual machine species");
@@ -198,7 +200,71 @@ public class XmppFarm extends XmppClient {
         // Add system info
         SystemInfo.addFields(this.serviceExtension);
 
+        // Add configuration-based fields
+        addConfigurationBasedFields(this.serviceExtension);
+
         this.getDiscoManager().setExtendedInfo(this.serviceExtension);
+    }
+
+    // TODO: move this
+    private void addConfigurationBasedFields(final DataForm serviceExtension) {
+        this.serviceExtension.addField(
+                ConfigurationBasedField.FARM_START_TIME.toField(
+                        this.getStartTimeAsXsdDateTime()));
+
+        this.serviceExtension.addField(
+                ConfigurationBasedField.FARM_PASSWORD_REQUIRED.toField(
+                        "" + (null != this.farmPassword)));
+
+        Properties p = LinkedProcess.getConfiguration();
+        this.serviceExtension.addField(
+                ConfigurationBasedField.MAX_CONCURRENT_VIRTUAL_MACHINES.toField(
+                        p.getProperty(LinkedProcess.MAX_CONCURRENT_VIRTUAL_MACHINES)));
+        this.serviceExtension.addField(
+                ConfigurationBasedField.JOB_QUEUE_CAPACITY.toField(
+                        p.getProperty(LinkedProcess.JOB_QUEUE_CAPACITY)));
+        this.serviceExtension.addField(
+                ConfigurationBasedField.JOB_TIMEOUT.toField(
+                        p.getProperty(LinkedProcess.JOB_TIMEOUT)));
+        this.serviceExtension.addField(
+                ConfigurationBasedField.VIRTUAL_MACHINE_TIME_TO_LIVE.toField(
+                        p.getProperty(LinkedProcess.VIRTUAL_MACHINE_TIME_TO_LIVE)));
+    }
+
+    // TODO: move this
+    private enum ConfigurationBasedField {
+        MAX_CONCURRENT_VIRTUAL_MACHINES("max_concurrent_virtual_machines", "the number of concurrent virtual machines which this farm can support before it rejects a request to spawn a new virtual machine"),
+        JOB_QUEUE_CAPACITY("job_queue_capacity", "the number of jobs which a virtual machine can hold in its queue before it rejects requests to submit additional jobs"),
+        JOB_TIMEOUT("job_timeout", "the number of milliseconds for which a job may execute before it is aborted by this farm"),
+        VIRTUAL_MACHINE_TIME_TO_LIVE("vm_time_to_live", "the number of milliseconds for which a virtual machine may exist before it is terminated by this farm"),
+        FARM_PASSWORD_REQUIRED("farm_password_required", "whether a password is required to spawn additional virtual machines on this farm"),
+        FARM_START_TIME("farm_start_time", "the moment at which this farm was created");
+
+        private final String specName;
+        private final String label;
+
+        private ConfigurationBasedField(final String specName,
+                                        final String label) {
+            this.specName = specName;
+            this.label = label;
+        }
+
+        public String getSpecName() {
+            return specName;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        // Note: only single-valued fields here.
+        public FormField toField(final String value) {
+            FormField field = new FormField(specName);
+            field.setLabel(label);
+            field.setType(FormField.TYPE_TEXT_SINGLE);
+            field.addValue(value);
+            return field;
+        }
     }
 
     public void setStatusEventHandler(VMScheduler.LopStatusEventHandler statusHandler) {
