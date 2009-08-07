@@ -47,7 +47,7 @@ public class MetadataPanel extends JPanel implements ActionListener {
         c.gridy = 4;
         metaPanel.add(new JLabel(this.xmppVm.getVmPassword(), ImageHolder.passwordIcon, JLabel.LEFT), c);
         c.gridy = 5;
-        this.timeLabel = new JLabel(this.xmppVm.getRunningTimeInSecods() + " seconds", ImageHolder.timeIcon, JLabel.LEFT);
+        this.timeLabel = new JLabel(this.xmppVm.getRunningTimeInSeconds() + " seconds", ImageHolder.timeIcon, JLabel.LEFT);
         metaPanel.add(this.timeLabel, c);
         this.add(metaPanel, BorderLayout.NORTH);
         this.setBackground(Color.WHITE);
@@ -58,7 +58,7 @@ public class MetadataPanel extends JPanel implements ActionListener {
 
     public void actionPerformed(ActionEvent event) {
         if (event.getActionCommand().equals(REFRESH)) {
-            this.timeLabel.setText(this.xmppVm.getRunningTimeInSecods() + " seconds");
+            this.timeLabel.setText(this.xmppVm.getRunningTimeInSeconds() + " seconds");
             this.statusLabel.setText(this.xmppVm.getVmStatus().toString());
         }
     }

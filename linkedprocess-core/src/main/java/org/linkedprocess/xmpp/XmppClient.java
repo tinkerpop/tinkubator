@@ -140,7 +140,7 @@ public abstract class XmppClient {
         return System.currentTimeMillis() - this.startTime;
     }
 
-    public float getRunningTimeInSecods() {
+    public float getRunningTimeInSeconds() {
         return this.getRunningTime() / 1000.0f;
     }
 
