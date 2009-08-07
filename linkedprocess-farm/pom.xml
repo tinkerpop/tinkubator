@@ -14,10 +14,10 @@
         <version>alpha1</version>
     </parent>
 
-    <properties>
+    <!--<properties>
         <powermock.version>1.2.5</powermock.version>
-    </properties>
-
+    </properties>-->
+                    
     <dependencies>
         <dependency>
             <groupId>org.linkedprocess</groupId>
@@ -34,13 +34,13 @@
             <groupId>org.powermock.modules</groupId>
             <artifactId>powermock-module-junit4
             </artifactId>
-            <version>${powermock.version}</version>
+            <version>1.2.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.powermock.api</groupId>
             <artifactId>powermock-api-easymock</artifactId>
-            <version>${powermock.version}</version>
+            <version>1.2.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -272,6 +272,5 @@
             </plugin>
         </plugins>
     </build>
-
 
 </project>

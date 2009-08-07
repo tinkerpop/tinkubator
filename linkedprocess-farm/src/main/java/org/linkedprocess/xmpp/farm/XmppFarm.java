@@ -218,7 +218,7 @@ public class XmppFarm extends XmppClient {
         String server = props.getProperty(LinkedProcess.FARM_SERVER);
         int port = Integer.valueOf(props.getProperty(LinkedProcess.FARM_PORT));
         String username = props.getProperty(LinkedProcess.FARM_USERNAME);
-        String password = props.getProperty(LinkedProcess.FARM_PASSWORD);
+        String password = props.getProperty(LinkedProcess.FARM_USERPASSWORD);
 
         XmppFarm farm = new XmppFarm(server, port, username, password);
         StatusEventHandler h = new StatusEventHandler(farm);

@@ -237,6 +237,7 @@ public class LinkedProcess {
             FARM_SERVER = "org.linkedprocess.farmServer",
             FARM_PORT = "org.linkedprocess.farmPort",
             FARM_USERNAME = "org.linkedprocess.farmUsername",
+            FARM_USERPASSWORD = "org.linkedprocess.farmUserPassword",
             FARM_PASSWORD = "org.linkedprocess.farmPassword",
             REGISTRY_SERVER = "org.linkedprocess.registryServer",
             REGISTRY_PORT = "org.linkedprocess.registryPort",

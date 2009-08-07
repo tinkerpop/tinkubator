@@ -14,12 +14,8 @@
         <version>alpha1</version>
     </parent>
 
-    <properties>                         
-        <powermock.version>1.2.5</powermock.version>
-    </properties>
-
     <dependencies>
-
+                                       
         <dependency>
             <groupId>jivesoftware</groupId>
             <artifactId>smack</artifactId>
@@ -37,19 +33,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.powermock.modules</groupId>
-            <artifactId>powermock-module-junit4
-            </artifactId>
-            <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock.api</groupId>
-            <artifactId>powermock-api-easymock</artifactId>
-            <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymockclassextension</artifactId>
             <version>2.4</version>
@@ -59,7 +42,6 @@
             <groupId>jdom</groupId>
             <artifactId>jdom</artifactId>
             <version>1.1</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
