@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.logging.Logger;
+import java.text.SimpleDateFormat;
 
 
 public abstract class XmppClient {
@@ -150,6 +151,11 @@ public abstract class XmppClient {
 
     public long getStartTime() {
         return this.startTime;
+    }
+
+    public String getStartTimeAsXsdDateTime() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        return formatter.format(this.getStartTimeAsDate());
     }
 
     public java.util.Date getStartTimeAsDate() {

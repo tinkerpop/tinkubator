@@ -6,6 +6,10 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.packet.DiscoverInfo;
+import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.Job;
 import org.linkedprocess.os.VMBindings;
@@ -65,7 +69,7 @@ public class XmppVirtualMachine extends XmppClient {
         PacketFilter abandonFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter terminateFilter = new AndFilter(new PacketTypeFilter(TerminateVm.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter bindingsFilter = new AndFilter(new PacketTypeFilter(ManageBindings.class), new OrFilter(new IQTypeFilter(IQ.Type.GET), new IQTypeFilter(IQ.Type.SET)));
-
+        
         this.connection.addPacketListener(new SubmitJobListener(this), submitFilter);
         this.connection.addPacketListener(new JobStatusListener(this), statusFilter);
         this.connection.addPacketListener(new AbortJobListener(this), abandonFilter);
@@ -123,6 +127,15 @@ public class XmppVirtualMachine extends XmppClient {
         ServiceDiscoveryManager.setIdentityName(XmppVirtualMachine.RESOURCE_PREFIX);
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
         this.getDiscoManager().addFeature(LinkedProcess.LOP_VM_NAMESPACE);
+
+        DataForm serviceExtension = new DataForm(Form.TYPE_RESULT);
+
+        FormField field = new FormField("vm_start_time");
+        field.setLabel("the xsd:datetime of  when the virtual machine was started");
+        field.setType(FormField.TYPE_LIST_SINGLE);
+        field.addValue(this.getStartTimeAsXsdDateTime());
+        serviceExtension.addField(field);
+        this.getDiscoManager().setExtendedInfo(serviceExtension);
     }
 
     public void terminateSelf() throws VMWorkerNotFoundException {
