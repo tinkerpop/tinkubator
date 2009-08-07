@@ -12,7 +12,6 @@ public abstract class LopIq extends IQ {
     protected String errorMessage;
     protected String vmPassword;
 
-
     public void setVmPassword(String vmPassword) {
         this.vmPassword = vmPassword;
     }

@@ -42,11 +42,12 @@ public class SpawnVmListener extends LopFarmListener {
         String vmSpecies = spawnVm.getVmSpecies();
         String farmPassword = spawnVm.getFarmPassword();
 
+        System.out.println(this.getXmppFarm().getFarmPassword() + "!!!" + farmPassword);
+
         if (vmSpecies == null) {
             returnSpawnVm.setType(IQ.Type.ERROR);
             returnSpawnVm.setError(new LopXmppError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "spawn_vm XML packet is missing the vm_species attribute", LOP_CLIENT_TYPE));
-        } else
-        if (this.getXmppFarm().getFarmPassword() != null && !farmPassword.equals(this.getXmppFarm().getFarmPassword())) {
+        } else if (this.getXmppFarm().getFarmPassword() != null && (farmPassword == null || !farmPassword.equals(this.getXmppFarm().getFarmPassword()))) {
             returnSpawnVm.setType(IQ.Type.ERROR);
             returnSpawnVm.setError(new LopXmppError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_FARM_PASSWORD, null, LOP_CLIENT_TYPE));
         } else {

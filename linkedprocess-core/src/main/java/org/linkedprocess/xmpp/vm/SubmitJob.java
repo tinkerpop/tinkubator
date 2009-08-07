@@ -12,7 +12,6 @@ public class SubmitJob extends VirtualMachineIq {
 
     String expression;
 
-
     public void setExpression(String expression) {
         this.expression = expression;
     }

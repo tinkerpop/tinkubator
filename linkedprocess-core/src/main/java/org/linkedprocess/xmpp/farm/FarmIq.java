@@ -9,13 +9,13 @@ import org.linkedprocess.xmpp.LopIq;
  */
 public abstract class FarmIq extends LopIq {
 
-    protected String vmJid;
+    protected String farmPassword;
 
-    public void setVmJid(String vmJid) {
-        this.vmJid = vmJid;
+    public void setFarmPassword(String farmPassword) {
+        this.farmPassword = farmPassword;
     }
 
-    public String getVmJid() {
-        return this.vmJid;
+    public String getFarmPassword() {
+        return this.farmPassword;
     }
 }

@@ -44,10 +44,10 @@ public abstract class XmppClient {
             this.logout(null);
         }
 
-        // logging into an XMPP server requires a username and password
         ConnectionConfiguration connConfig = new ConnectionConfiguration(server, port);
         connConfig.setRosterLoadedAtLogin(false);
         connConfig.setSendPresence(false);
+        //connConfig.setSASLAuthenticationEnabled(false);
 
         this.connection = new XMPPConnectionWrapper(connConfig);
         this.connection.connect();
