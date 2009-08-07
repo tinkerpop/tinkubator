@@ -42,7 +42,7 @@ public class SpawnVmListener extends LopFarmListener {
         String vmSpecies = spawnVm.getVmSpecies();
         String farmPassword = spawnVm.getFarmPassword();
 
-        System.out.println(this.getXmppFarm().getFarmPassword() + "!!!" + farmPassword);
+        //System.out.println(this.getXmppFarm().getFarmPassword() + "!!!" + farmPassword);
 
         if (vmSpecies == null) {
             returnSpawnVm.setType(IQ.Type.ERROR);
