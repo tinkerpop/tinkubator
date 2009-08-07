@@ -1,6 +1,7 @@
 package org.linkedprocess.xmpp.villein.structs;
 
 import org.jivesoftware.smack.packet.Presence;
+import org.linkedprocess.xmpp.villein.Dispatcher;
 
 /**
  * User: marko
@@ -11,6 +12,11 @@ public class Struct implements Comparable {
 
     protected Presence presence;
     protected String fullJid;
+    protected final Dispatcher dispatcher;
+
+    public Struct(Dispatcher dispatcher) {
+        this.dispatcher = dispatcher;
+    }
 
     public void setPresence(Presence presence) {
         this.presence = presence;

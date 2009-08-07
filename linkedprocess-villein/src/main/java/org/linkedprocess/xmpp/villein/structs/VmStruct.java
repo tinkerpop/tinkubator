@@ -1,12 +1,13 @@
 package org.linkedprocess.xmpp.villein.structs;
 
+import org.jivesoftware.smack.packet.XMPPError;
+import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.os.errors.InvalidValueException;
-import org.linkedprocess.xmpp.villein.structs.CompletedJob;
-import org.linkedprocess.xmpp.villein.structs.Struct;
+import org.linkedprocess.xmpp.villein.Dispatcher;
+import org.linkedprocess.xmpp.villein.Handler;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * User: marko
@@ -17,8 +18,36 @@ public class VmStruct extends Struct {
 
     protected String vmPassword;
     protected String vmSpecies;
-    protected Map<String, CompletedJob> jobs = new HashMap<String, CompletedJob>();
     private VMBindings vmBindings = new VMBindings();
+
+    public VmStruct(final Dispatcher dispatcher) {
+        super(dispatcher);
+    }
+
+
+    public void submitJob(final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<XMPPError> errorHandler) {
+       dispatcher.getSubmitJobOperation().send(this, jobStruct, resultHandler, errorHandler);
+    }
+
+    public void jobStatus(final JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> resultHandler, final Handler<XMPPError> errorHandler) {
+        dispatcher.getJobStatusOperation().send(this, jobStruct, resultHandler, errorHandler);
+    }
+
+    public void abortJob(final JobStruct jobStruct, final Handler<XMPPError> errorHandler) {
+        dispatcher.getAbortJobOperation().send(this, jobStruct, errorHandler);
+    }
+
+    public void getBindings(final Set<String> bindingNames, final Handler<VMBindings> resultHandler, final Handler<XMPPError> errorHandler) {
+        dispatcher.getGetBindingsOperation().send(this, bindingNames, resultHandler, errorHandler);
+    }
+
+    public void setBindings(final VMBindings vmBindings, final Handler<XMPPError> errorHandler) {
+        dispatcher.getSetBindingsOperation().send(this, vmBindings, errorHandler);
+    }
+
+    public void terminateVm(final Handler<XMPPError> errorHandler) {
+        dispatcher.getTerminateVmOperation().send(this, errorHandler);
+    }
 
     public void setVmPassword(final String vmPassword) {
         this.vmPassword = vmPassword;
@@ -36,31 +65,15 @@ public class VmStruct extends Struct {
         return this.vmSpecies;
     }
 
-    public void addJob(CompletedJob completedJob) {
-        this.jobs.put(completedJob.getJobId(), completedJob);
-    }
-
-    public CompletedJob getJob(String jobId) {
-        return this.jobs.get(jobId);
-    }
-
-    public void removeJob(String jobId) {
-        this.jobs.remove(jobId);
-    }
-
-    public void clearJobs() {
-        this.jobs.clear();
-    }
-
     public void addVmBindings(VMBindings bindings) throws InvalidValueException {
-        for(String bindingName : bindings.keySet()) {
-           this.vmBindings.putTyped(bindingName, bindings.getTyped(bindingName));
+        for (String bindingName : bindings.keySet()) {
+            this.vmBindings.putTyped(bindingName, bindings.getTyped(bindingName));
         }
     }
 
     public void removeVmBindings(VMBindings bindings) {
-        for(String bindingName : bindings.keySet()) {
-           this.vmBindings.remove(bindingName);
+        for (String bindingName : bindings.keySet()) {
+            this.vmBindings.remove(bindingName);
         }
     }
 

@@ -1,13 +1,11 @@
-package org.linkedprocess.xmpp.villein.newstuff;
+package org.linkedprocess.xmpp.villein;
 
 /**
  * Created by IntelliJ IDEA.
  * User: josh
  * Date: Aug 6, 2009
- * Time: 4:09:18 PM
+ * Time: 5:58:39 PM
  * To change this template use File | Settings | File Templates.
  */
-public interface Handler<T> {
-    void handle(T t);
+public class NoHandlerForResultException extends Exception {
 }
-

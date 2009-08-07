@@ -4,7 +4,7 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.xmpp.villein.handlers.PresenceHandler;
+import org.linkedprocess.xmpp.villein.PresenceHandler;
 import org.linkedprocess.xmpp.villein.structs.*;
 
 /**
@@ -46,7 +46,7 @@ public class PresenceListener extends LopVilleinListener {
 
             if (LinkedProcess.isBareJid(presence.getFrom())) {
                 //System.out.println("Bare Jid " + packet.getFrom());
-                CountrysideStruct countrysideStruct = new CountrysideStruct();
+                CountrysideStruct countrysideStruct = new CountrysideStruct(this.getXmppVillein().getDispatcher());
                 countrysideStruct.setFullJid(presence.getFrom());
                 countrysideStruct.setPresence(presence);
                 this.getXmppVillein().addCountrysideStruct(countrysideStruct);
@@ -54,7 +54,7 @@ public class PresenceListener extends LopVilleinListener {
 
             } else if (isFarm(discoInfo)) {
                 //System.out.println("Farm Jid " + packet.getFrom());
-                FarmStruct farmStruct = new FarmStruct();
+                FarmStruct farmStruct = new FarmStruct(this.getXmppVillein().getDispatcher());
                 farmStruct.setFullJid(presence.getFrom());
                 farmStruct.setPresence(presence);
                 farmStruct.setSupportedVmSpecies(this.getSupportedVmSpecies(discoInfo));
@@ -65,7 +65,7 @@ public class PresenceListener extends LopVilleinListener {
                     XmppVillein.LOGGER.warning(e.getMessage());
                 }
             } else if (isRegistry(discoInfo)) {
-                RegistryStruct registryStruct = new RegistryStruct();
+                RegistryStruct registryStruct = new RegistryStruct(this.getXmppVillein().getDispatcher());
                 registryStruct.setFullJid(presence.getFrom());
                 registryStruct.setPresence(presence);
                 try {

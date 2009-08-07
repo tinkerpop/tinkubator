@@ -1,4 +1,4 @@
-package org.linkedprocess.xmpp.villein.handlers;
+package org.linkedprocess.xmpp.villein;
 
 import org.jivesoftware.smack.packet.Presence;
 import org.linkedprocess.xmpp.villein.structs.Struct;

@@ -7,9 +7,10 @@ import org.jivesoftware.smack.packet.XMPPError;
  * Date: Jul 28, 2009
  * Time: 12:59:40 PM
  */
-public class CompletedJob implements Comparable {
+public class JobStruct implements Comparable {
     protected String jobId;
     protected String result;
+    protected String expression;
     protected XMPPError error;
 
     public String getJobId() {
@@ -36,9 +37,21 @@ public class CompletedJob implements Comparable {
         this.error = error;
     }
 
+    public String getExpression()  {
+        return this.expression;
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
+    }
+
+    public boolean isComplete() {
+        return (null != error || null != result);
+    }
+
     public int compareTo(Object job) {
-        if (job instanceof CompletedJob) {
-            return this.jobId.compareTo(((CompletedJob) job).getJobId());
+        if (job instanceof JobStruct) {
+            return this.jobId.compareTo(((JobStruct) job).getJobId());
         } else {
             throw new ClassCastException();
         }

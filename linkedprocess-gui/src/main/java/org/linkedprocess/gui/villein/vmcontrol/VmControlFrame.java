@@ -9,7 +9,7 @@ import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.gui.villein.VilleinGui;
 import org.linkedprocess.os.VMBindings;
-import org.linkedprocess.xmpp.villein.structs.CompletedJob;
+import org.linkedprocess.xmpp.villein.structs.JobStruct;
 import org.linkedprocess.xmpp.villein.structs.VmStruct;
 
 import javax.swing.*;
@@ -144,10 +144,10 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         this.manageBindingsPanel.handleIncomingManageBindings(vmBindings);
     }
 
-    public void handleIncomingSubmitJob(CompletedJob completedJob) {
-        String jobId = completedJob.getJobId();
+    public void handleIncomingSubmitJob(JobStruct jobStruct) {
+        String jobId = jobStruct.getJobId();
         if (null == this.jobStatus.get(jobId)) {
-            if (null != completedJob.getError())
+            if (null != jobStruct.getError())
                 this.jobStatus.put(jobId, JobStatus.ERROR);
             else
                 this.jobStatus.put(jobId, JobStatus.COMPLETED);
@@ -156,7 +156,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         for (int i = 0; i < this.jobList.getModel().getSize(); i++) {
             JobPane jobPane = (JobPane) this.jobList.getModel().getElementAt(i);
             if (jobPane.getJobId().equals(jobId)) {
-                jobPane.handleIncomingSubmitJob(completedJob);
+                jobPane.handleIncomingSubmitJob(jobStruct);
             }
         }
         jobList.repaint();

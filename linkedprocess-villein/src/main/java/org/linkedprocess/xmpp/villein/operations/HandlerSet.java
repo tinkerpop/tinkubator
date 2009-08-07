@@ -1,7 +1,7 @@
-package org.linkedprocess.xmpp.villein.newstuff.operations;
+package org.linkedprocess.xmpp.villein.operations;
 
-import org.linkedprocess.xmpp.villein.newstuff.Handler;
-import org.linkedprocess.xmpp.villein.newstuff.NoHandlerForResultException;
+import org.linkedprocess.xmpp.villein.Handler;
+import org.linkedprocess.xmpp.villein.XmppVillein;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -35,14 +35,12 @@ public class HandlerSet<T> {
                 : r.getHandler();
     }
 
-    public void handle(final String id,
-                       final T t) throws NoHandlerForResultException {
+    public void handle(final String id, final T t) {
         HandlerRecord r = handlerRecords.get(id);
-        if (null == r) {
-            // TODO: info about the packet
-            throw new NoHandlerForResultException();
-        } else {
+        if (null != r) {
             r.getHandler().handle(t);
+        } else {
+            XmppVillein.LOGGER.warning("No handler found for " + t + "--" + id);
         }
     }
 

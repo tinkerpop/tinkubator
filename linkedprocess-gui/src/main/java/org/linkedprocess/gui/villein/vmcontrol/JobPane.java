@@ -1,7 +1,7 @@
 package org.linkedprocess.gui.villein.vmcontrol;
 
 import org.jivesoftware.smack.packet.PacketExtension;
-import org.linkedprocess.xmpp.villein.structs.CompletedJob;
+import org.linkedprocess.xmpp.villein.structs.JobStruct;
 import org.linkedprocess.xmpp.vm.AbortJob;
 import org.linkedprocess.xmpp.vm.SubmitJob;
 
@@ -102,25 +102,25 @@ public class JobPane extends JPanel implements ActionListener {
         return abortJob;
     }
 
-    public void handleIncomingSubmitJob(CompletedJob completedJob) {
-        if (completedJob.getError() == null) {
-            this.resultTextArea.setText(completedJob.getResult());
+    public void handleIncomingSubmitJob(JobStruct jobStruct) {
+        if (jobStruct.getError() == null) {
+            this.resultTextArea.setText(jobStruct.getResult());
             this.submitJobButton.setEnabled(false);
         } else {
             StringBuffer errorMessage = new StringBuffer();
-            if (completedJob.getError().getType() != null) {
-                errorMessage.append(completedJob.getError().getType().toString().toLowerCase() + "\n");
+            if (jobStruct.getError().getType() != null) {
+                errorMessage.append(jobStruct.getError().getType().toString().toLowerCase() + "\n");
             }
-            if (completedJob.getError().getCondition() != null) {
-                errorMessage.append(completedJob.getError().getCondition() + "\n");
+            if (jobStruct.getError().getCondition() != null) {
+                errorMessage.append(jobStruct.getError().getCondition() + "\n");
             }
-            if (completedJob.getError().getExtensions() != null) {
-                for (PacketExtension extension : completedJob.getError().getExtensions()) {
+            if (jobStruct.getError().getExtensions() != null) {
+                for (PacketExtension extension : jobStruct.getError().getExtensions()) {
                     errorMessage.append(extension.getElementName() + "\n");
                 }
             }
-            if (completedJob.getError().getMessage() != null) {
-                errorMessage.append(completedJob.getError().getMessage());
+            if (jobStruct.getError().getMessage() != null) {
+                errorMessage.append(jobStruct.getError().getMessage());
             }
             this.resultTextArea.setText(errorMessage.toString().trim());
         }

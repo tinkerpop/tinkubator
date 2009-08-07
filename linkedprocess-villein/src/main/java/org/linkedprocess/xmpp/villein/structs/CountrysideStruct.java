@@ -3,6 +3,7 @@ package org.linkedprocess.xmpp.villein.structs;
 import org.linkedprocess.xmpp.villein.structs.Struct;
 import org.linkedprocess.xmpp.villein.structs.FarmStruct;
 import org.linkedprocess.xmpp.villein.structs.RegistryStruct;
+import org.linkedprocess.xmpp.villein.Dispatcher;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -19,6 +20,9 @@ public class CountrysideStruct extends Struct {
     protected Map<String, FarmStruct> farmStructs = new HashMap<String, FarmStruct>();
     protected Map<String, RegistryStruct> registryStructs = new HashMap<String, RegistryStruct>();
 
+    public CountrysideStruct(Dispatcher dispatcher) {
+        super(dispatcher);
+    }
 
     public FarmStruct getFarmStruct(String farmJid) {
         return this.farmStructs.get(farmJid);

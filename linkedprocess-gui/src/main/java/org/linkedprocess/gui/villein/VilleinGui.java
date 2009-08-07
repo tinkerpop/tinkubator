@@ -3,12 +3,9 @@ package org.linkedprocess.gui.villein;
 import org.linkedprocess.Connection;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
 import org.linkedprocess.os.VMBindings;
-import org.linkedprocess.xmpp.villein.structs.CompletedJob;
+import org.linkedprocess.xmpp.villein.structs.JobStruct;
 import org.linkedprocess.xmpp.villein.structs.VmStruct;
 import org.linkedprocess.xmpp.villein.XmppVillein;
-import org.linkedprocess.xmpp.villein.handlers.AbortJobHandler;
-import org.linkedprocess.xmpp.villein.handlers.ManageBindingsHandler;
-import org.linkedprocess.xmpp.villein.handlers.SubmitJobHandler;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -106,10 +103,10 @@ public class VilleinGui extends JFrame implements SubmitJobHandler, AbortJobHand
         new VilleinGui();
     }
 
-    public void handleSubmitJob(VmStruct vmStruct, CompletedJob completedJob) {
+    public void handleSubmitJob(VmStruct vmStruct, JobStruct jobStruct) {
         VmControlFrame vmControlFrame = this.getVmFrame(vmStruct.getFullJid());
         if (vmControlFrame != null) {
-            vmControlFrame.handleIncomingSubmitJob(completedJob);
+            vmControlFrame.handleIncomingSubmitJob(jobStruct);
         } else {
             XmppVillein.LOGGER.severe("Could not find vmframe for " + vmStruct.getFullJid());
         }

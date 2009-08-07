@@ -2,6 +2,9 @@ package org.linkedprocess.xmpp.villein.structs;
 
 import org.linkedprocess.xmpp.villein.structs.Struct;
 import org.linkedprocess.xmpp.villein.structs.VmStruct;
+import org.linkedprocess.xmpp.villein.Handler;
+import org.linkedprocess.xmpp.villein.Dispatcher;
+import org.jivesoftware.smack.packet.XMPPError;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,6 +21,10 @@ public class FarmStruct extends Struct {
     protected Map<String, VmStruct> vmStructs = new HashMap<String, VmStruct>();
     protected Collection<String> supportedVmSpecies = new HashSet<String>();
     protected String farmPassword;
+
+    public FarmStruct(Dispatcher dispatcher) {
+        super(dispatcher);
+    }
 
     public VmStruct getVmStruct(String vmJid) {
         return vmStructs.get(vmJid);
@@ -53,5 +60,9 @@ public class FarmStruct extends Struct {
 
     public void setFarmPassword(String farmPassword) {
         this.farmPassword = farmPassword;
+    }
+
+    public void spawnVirtualMachine(final String vmSpecies, final Handler<VmStruct> resultHandler, final Handler<XMPPError> errorHandler) {
+        this.dispatcher.getSpawnVmOperation().send(this, vmSpecies, resultHandler, errorHandler);
     }
 }

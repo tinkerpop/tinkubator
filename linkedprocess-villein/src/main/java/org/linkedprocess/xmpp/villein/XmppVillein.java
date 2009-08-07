@@ -3,7 +3,6 @@ package org.linkedprocess.xmpp.villein;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.IQTypeFilter;
 import org.jivesoftware.smack.filter.OrFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
@@ -12,20 +11,12 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.FormField;
-import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.xmpp.XmppClient;
-import org.linkedprocess.xmpp.farm.SpawnVm;
 import org.linkedprocess.xmpp.farm.SpawnVmProvider;
-import org.linkedprocess.xmpp.villein.handlers.AbortJobHandler;
-import org.linkedprocess.xmpp.villein.handlers.ManageBindingsHandler;
-import org.linkedprocess.xmpp.villein.handlers.PresenceHandler;
-import org.linkedprocess.xmpp.villein.handlers.SpawnVmHandler;
-import org.linkedprocess.xmpp.villein.handlers.SubmitJobHandler;
+import org.linkedprocess.xmpp.villein.PresenceHandler;
 import org.linkedprocess.xmpp.villein.structs.*;
+import org.linkedprocess.xmpp.villein.Dispatcher;
 import org.linkedprocess.xmpp.vm.*;
 
 import java.util.Collection;
@@ -46,12 +37,9 @@ public class XmppVillein extends XmppClient {
     public static final String RESOURCE_PREFIX = "LoPVillein";
     public static final String STATUS_MESSAGE = "LoPSideD Villein";
     protected LinkedProcess.VilleinStatus status;
+    protected Dispatcher dispatcher;
 
-    protected Set<SpawnVmHandler> spawnVmHandlers = new HashSet<SpawnVmHandler>();
     protected Set<PresenceHandler> presenceHandlers = new HashSet<PresenceHandler>();
-    protected Set<SubmitJobHandler> submitJobHandlers = new HashSet<SubmitJobHandler>();
-    protected Set<AbortJobHandler> abortJobHandlers = new HashSet<AbortJobHandler>();
-    protected Set<ManageBindingsHandler> manageBindingsHandlers = new HashSet<ManageBindingsHandler>();
 
     public enum StructType {
         COUNTRYSIDE, FARM, REGISTRY, VM
@@ -70,26 +58,20 @@ public class XmppVillein extends XmppClient {
         pm.addIQProvider(LinkedProcess.ABORT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE, new AbortJobProvider());
         pm.addIQProvider(LinkedProcess.MANAGE_BINDINGS_TAG, LinkedProcess.LOP_VM_NAMESPACE, new ManageBindingsProvider());
         this.logon(server, port, username, password, RESOURCE_PREFIX);
+        this.dispatcher = new Dispatcher(this);
         this.initiateFeatures();
         //this.printClientStatistics();
 
         this.roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
 
-        PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-        PacketFilter submitFilter = new AndFilter(new PacketTypeFilter(SubmitJob.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-        PacketFilter abortFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
-        PacketFilter manageFilter = new AndFilter(new PacketTypeFilter(ManageBindings.class), new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR)));
+        PacketFilter lopFilter = new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR));
         PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
 
-        this.connection.addPacketListener(new SpawnVmListener(this), spawnFilter);
         this.connection.addPacketListener(new PresenceListener(this), presenceFilter);
-        this.connection.addPacketListener(new SubmitJobListener(this), submitFilter);
-        this.connection.addPacketListener(new AbortJobListener(this), abortFilter);
-        this.connection.addPacketListener(new ManageBindingsListener(this), manageFilter);
-
+        this.connection.addPacketListener(new LopVilleinListener(this), lopFilter);
         this.countrysideStructs = new HashMap<String, CountrysideStruct>();
         this.status = LinkedProcess.VilleinStatus.ACTIVE;
-        this.connection.sendPacket(this.createPresence(this.status));
+        this.connection.sendPacket(this.createPresence(this.status)); 
     }
 
     public Collection<CountrysideStruct> getCountrysideStructs() {
@@ -118,32 +100,6 @@ public class XmppVillein extends XmppClient {
             vmStructs.addAll(farmStruct.getVmStructs());
         }
         return vmStructs;
-    }
-
-    public Collection<CompletedJob> getJobs(Set<String> jobIds) {
-        Collection<CompletedJob> completedJobs = new HashSet<CompletedJob>();
-        for (VmStruct vmStructs : this.getVmStructs()) {
-            for (String jobId : jobIds) {
-                CompletedJob completedJob = vmStructs.getJob(jobId);
-                if (null != completedJob)
-                    completedJobs.add(completedJob);
-            }
-        }
-        return completedJobs;
-    }
-
-    public void removeJobs(Set<String> jobIds) {
-        for (VmStruct vmStruct : this.getVmStructs()) {
-            for (String jobId : jobIds) {
-                vmStruct.removeJob(jobId);
-            }
-        }
-    }
-
-    public void clearAllJobs() {
-        for (VmStruct vmStruct : this.getVmStructs()) {
-            vmStruct.clearJobs();
-        }
     }
 
     public Struct getStruct(String jid) {
@@ -239,61 +195,11 @@ public class XmppVillein extends XmppClient {
             throw new ParentStructNotFoundException("farm struct null for " + vmStruct.getFullJid());
     }
 
-
-    public void spawnVirtualMachine(FarmStruct farmStruct, String vmSpecies) {
-        SpawnVm spawn = new SpawnVm();
-        spawn.setTo(farmStruct.getFullJid());
-        spawn.setFrom(this.getFullJid());
-        spawn.setVmSpecies(vmSpecies);
-        if(null != farmStruct.getFarmPassword()) {
-            spawn.setFarmPassword(farmStruct.getFarmPassword());
-        }
-        spawn.setType(IQ.Type.GET);
-        this.connection.sendPacket(spawn);
-    }
-
-    public void terminateVirtualMachine(VmStruct vmStruct) {
-        TerminateVm terminate = new TerminateVm();
-        terminate.setTo(vmStruct.getFullJid());
-        terminate.setFrom(this.getFullJid());
-        terminate.setVmPassword(vmStruct.getVmPassword());
-        terminate.setType(IQ.Type.GET);
-        this.connection.sendPacket(terminate);
-    }
-
-    public void submitJob(VmStruct vmStruct, String expression) {
-        submitJob(vmStruct, expression, null);
-    }
-
-    public void submitJob(VmStruct vmStruct, String expression, String jobId) {
-        SubmitJob submitJob = new SubmitJob();
-        submitJob.setTo(vmStruct.getFullJid());
-        submitJob.setFrom(this.getFullJid());
-        submitJob.setExpression(expression);
-        submitJob.setVmPassword(vmStruct.getVmPassword());
-        if (null != jobId) {
-            submitJob.setPacketID(jobId);
-        }
-        submitJob.setType(IQ.Type.GET);
-        this.connection.sendPacket(submitJob);
-    }
-
-    public void manageBindings(VmStruct vmStruct, VMBindings vmBindings, IQ.Type type) {
-        ManageBindings manageBindings = new ManageBindings();
-        manageBindings.setTo(vmStruct.getFullJid());
-        manageBindings.setFrom(this.getFullJid());
-        manageBindings.setType(type);
-        manageBindings.setVmPassword(vmStruct.getVmPassword());
-        manageBindings.setBindings(vmBindings);
-        this.connection.sendPacket(manageBindings);
-    }
-
-
     public synchronized void createCountrysideStructsFromRoster() {
         for (RosterEntry entry : this.getRoster().getEntries()) {
             CountrysideStruct countrysideStruct = this.countrysideStructs.get(entry.getUser());
             if (countrysideStruct == null) {
-                countrysideStruct = new CountrysideStruct();
+                countrysideStruct = new CountrysideStruct(this.dispatcher);
                 countrysideStruct.setFullJid(entry.getUser());
                 this.countrysideStructs.put(countrysideStruct.getFullJid(), countrysideStruct);
             }
@@ -326,7 +232,7 @@ public class XmppVillein extends XmppClient {
             for (FarmStruct farmStruct : countrysideStruct.getFarmStructs()) {
                 for (VmStruct vmStruct : farmStruct.getVmStructs()) {
                     if (vmStruct.getVmPassword() != null) {
-                        terminateVirtualMachine(vmStruct);
+                        //TODO: terminateVirtualMachine(vmStruct);
                     }
                 }
             }
@@ -340,18 +246,8 @@ public class XmppVillein extends XmppClient {
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
     }
 
-    /////////////////////////
-
-    public void addSpawnVmHandler(SpawnVmHandler spawnVmHandler) {
-        this.spawnVmHandlers.add(spawnVmHandler);
-    }
-
-    public Set<SpawnVmHandler> getSpawnVmHandlers() {
-        return this.spawnVmHandlers;
-    }
-
-    public void removeSpawnVmHandler(SpawnVmHandler spawnVmHandler) {
-        this.spawnVmHandlers.remove(spawnVmHandler);
+    public Dispatcher getDispatcher() {
+        return this.dispatcher;
     }
 
     public void addPresenceHandler(PresenceHandler presenceHandler) {
@@ -364,42 +260,6 @@ public class XmppVillein extends XmppClient {
 
     public void removePresenceHandler(PresenceHandler presenceHandler) {
         this.presenceHandlers.remove(presenceHandler);
-    }
-
-    public void addSubmitJobHandler(SubmitJobHandler submitJobHandler) {
-        this.submitJobHandlers.add(submitJobHandler);
-    }
-
-    public Set<SubmitJobHandler> getSubmitJobHandlers() {
-        return this.submitJobHandlers;
-    }
-
-    public void removeSubmitJobHandler(SubmitJobHandler submitJobHandler) {
-        this.submitJobHandlers.remove(submitJobHandler);
-    }
-
-    public void addAbortJobHandler(AbortJobHandler abortJobHandler) {
-        this.abortJobHandlers.add(abortJobHandler);
-    }
-
-    public Set<AbortJobHandler> getAbortJobHandlers() {
-        return this.abortJobHandlers;
-    }
-
-    public void removeAbortJobHandler(AbortJobHandler abortJobHandler) {
-        this.abortJobHandlers.remove(abortJobHandler);
-    }
-
-    public void addManageBindingsHandler(ManageBindingsHandler manageBindingsHandler) {
-        this.manageBindingsHandlers.add(manageBindingsHandler);
-    }
-
-    public Set<ManageBindingsHandler> getManageBindingsHandlers() {
-        return this.manageBindingsHandlers;
-    }
-
-    public void removeManageBindingsHandler(ManageBindingsHandler manageBindingsHandler) {
-        this.manageBindingsHandlers.remove(manageBindingsHandler);
     }
 
 }
