@@ -152,7 +152,6 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
                         handleIncomingManageBindings(vmBindings);
                     }
                 };
-
                 vmControlFrame.getVmStruct().getBindings(bindingNames, resultHandler, new GenericErrorHandler());
             }
         } else if (event.getActionCommand().equals(SET)) {

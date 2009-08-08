@@ -14,18 +14,18 @@ import java.util.Set;
  * Date: Jul 8, 2009
  * Time: 9:13:19 AM
  */
-public class VmStruct extends Struct {
+public class VmProxy extends Proxy {
 
     protected String vmPassword;
     protected String vmSpecies;
     private VMBindings vmBindings = new VMBindings();
 
-    public VmStruct(final Dispatcher dispatcher) {
+    public VmProxy(final Dispatcher dispatcher) {
         super(dispatcher);
     }
 
 
-    public void submitJob(final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<XMPPError> errorHandler) {
+    public void submitJob(final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<JobStruct> errorHandler) {
        dispatcher.getSubmitJobOperation().send(this, jobStruct, resultHandler, errorHandler);
     }
 
@@ -33,8 +33,8 @@ public class VmStruct extends Struct {
         dispatcher.getJobStatusOperation().send(this, jobStruct, resultHandler, errorHandler);
     }
 
-    public void abortJob(final JobStruct jobStruct, final Handler<XMPPError> errorHandler) {
-        dispatcher.getAbortJobOperation().send(this, jobStruct, errorHandler);
+    public void abortJob(final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<XMPPError> errorHandler) {
+        dispatcher.getAbortJobOperation().send(this, jobStruct, resultHandler, errorHandler);
     }
 
     public void getBindings(final Set<String> bindingNames, final Handler<VMBindings> resultHandler, final Handler<XMPPError> errorHandler) {
@@ -45,8 +45,8 @@ public class VmStruct extends Struct {
         dispatcher.getSetBindingsOperation().send(this, vmBindings, errorHandler);
     }
 
-    public void terminateVm(final Handler<XMPPError> errorHandler) {
-        dispatcher.getTerminateVmOperation().send(this, errorHandler);
+    public void terminateVm(final Handler<Object> resultHandler, final Handler<XMPPError> errorHandler) {
+        dispatcher.getTerminateVmOperation().send(this, resultHandler, errorHandler);
     }
 
     public void setVmPassword(final String vmPassword) {

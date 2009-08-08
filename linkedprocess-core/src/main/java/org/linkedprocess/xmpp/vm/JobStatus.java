@@ -11,6 +11,15 @@ import org.linkedprocess.LinkedProcess;
 public class JobStatus extends VirtualMachineIq {
 
     protected LinkedProcess.JobStatus value;
+    protected String jobId;
+
+    public void setJobId(String jobId) {
+        this.jobId = jobId;
+    }
+
+    public String getJobId() {
+        return this.jobId;
+    }
 
     public void setValue(LinkedProcess.JobStatus status) {
         this.value = status;

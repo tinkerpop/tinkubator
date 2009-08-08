@@ -1,7 +1,6 @@
 package org.linkedprocess.gui.villein;
 
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.gui.*;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
@@ -49,7 +48,7 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
     public CountrysideArea(VilleinGui villeinGui) {
         super(new BorderLayout());
         this.villeinGui = villeinGui;
-        CountrysideStruct countrysideStruct = new CountrysideStruct(this.villeinGui.getXmppVillein().getDispatcher());
+        CountrysideProxy countrysideStruct = new CountrysideProxy(this.villeinGui.getXmppVillein().getDispatcher());
         countrysideStruct.setFullJid(LinkedProcess.generateBareJid(this.villeinGui.getXmppVillein().getFullJid()));
         this.treeRoot = new DefaultMutableTreeNode(countrysideStruct);
         this.tree = new JTree(this.treeRoot);
@@ -91,14 +90,14 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
         this.popupMenu.setVisible(false);
 
         if (event.getActionCommand().equals(TERMINATE_VM)) {
-            if (this.popupTreeObject instanceof VmStruct) {
-                VmStruct vmStruct = (VmStruct) this.popupTreeObject;
-                vmStruct.terminateVm(new GenericErrorHandler());
+            if (this.popupTreeObject instanceof VmProxy) {
+                VmProxy vmStruct = (VmProxy) this.popupTreeObject;
+                vmStruct.terminateVm(null, new GenericErrorHandler());
                 this.villeinGui.removeVmFrame(vmStruct);
             }
         } else if (event.getActionCommand().equals(VM_CONTROL)) {
-            if (this.popupTreeObject instanceof VmStruct) {
-                VmStruct vmStruct = (VmStruct) this.popupTreeObject;
+            if (this.popupTreeObject instanceof VmProxy) {
+                VmProxy vmStruct = (VmProxy) this.popupTreeObject;
                 VmControlFrame vmControlFrame = this.villeinGui.getVmFrame(vmStruct.getFullJid());
                 if (vmControlFrame == null) {
                     this.villeinGui.addVmFrame(vmStruct);
@@ -108,13 +107,13 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
             }
 
         } else if (event.getActionCommand().equals(PROBE)) {
-            if (this.popupTreeObject instanceof Struct) {
-                Struct struct = (Struct) this.popupTreeObject;
-                this.villeinGui.getXmppVillein().probeJid(struct.getFullJid());
+            if (this.popupTreeObject instanceof Proxy) {
+                Proxy proxy = (Proxy) this.popupTreeObject;
+                this.villeinGui.getXmppVillein().probeJid(proxy.getFullJid());
             }
         } else if (event.getActionCommand().equals(FARM_CONFIGURATION)) {
-            if (this.popupTreeObject instanceof FarmStruct) {
-                FarmStruct farmStruct = (FarmStruct) this.popupTreeObject;
+            if (this.popupTreeObject instanceof FarmProxy) {
+                FarmProxy farmStruct = (FarmProxy) this.popupTreeObject;
                 JFrame farmFrame = new JFrame(farmStruct.getFullJid());
                 farmFrame.getContentPane().add(new ViewFarmConfigurationPanel(farmStruct, villeinGui));
                 farmFrame.pack();
@@ -123,8 +122,8 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
                 farmFrame.setResizable(true);
             }
         } else if (event.getActionCommand().equals(REGISTRY_COUNTRYSIDES)) {
-            if (this.popupTreeObject instanceof RegistryStruct) {
-                RegistryStruct registryStruct = (RegistryStruct) this.popupTreeObject;
+            if (this.popupTreeObject instanceof RegistryProxy) {
+                RegistryProxy registryStruct = (RegistryProxy) this.popupTreeObject;
                 JFrame farmFrame = new JFrame(registryStruct.getFullJid());
                 farmFrame.getContentPane().add(new ViewRegistryCountrysidesPanel(registryStruct, villeinGui));
                 farmFrame.pack();
@@ -137,10 +136,10 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
         } else {
             for (String vmSpecies : this.supportedVmSpeciesActionCommands) {
                 if (event.getActionCommand().equals(vmSpecies)) {
-                    if (this.popupTreeObject instanceof FarmStruct) {
-                        FarmStruct farmStruct = (FarmStruct) this.popupTreeObject;
-                        Handler<VmStruct> resultHandler = new Handler<VmStruct>() {
-                            public void handle(VmStruct vmStruct) {
+                    if (this.popupTreeObject instanceof FarmProxy) {
+                        FarmProxy farmStruct = (FarmProxy) this.popupTreeObject;
+                        Handler<VmProxy> resultHandler = new Handler<VmProxy>() {
+                            public void handle(VmProxy vmStruct) {
                                 villeinGui.updateHostAreaTree(vmStruct.getFullJid(), false);
                             }
                         };
@@ -155,16 +154,16 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
     public void createTree() {
         treeRoot.removeAllChildren();
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-        for (CountrysideStruct countrysideStruct : this.villeinGui.getXmppVillein().getCountrysideStructs()) {
+        for (CountrysideProxy countrysideStruct : this.villeinGui.getXmppVillein().getCountrysideStructs()) {
             DefaultMutableTreeNode countrysideNode = new DefaultMutableTreeNode(countrysideStruct);
-            for (RegistryStruct registryStruct : countrysideStruct.getRegistryStructs()) {
+            for (RegistryProxy registryStruct : countrysideStruct.getRegistryStructs()) {
                 DefaultMutableTreeNode registryNode = new DefaultMutableTreeNode(registryStruct);
                 model.insertNodeInto(registryNode, countrysideNode, countrysideNode.getChildCount());
                 this.tree.scrollPathToVisible(new TreePath(registryNode.getPath()));
             }
-            for (FarmStruct farmStruct : countrysideStruct.getFarmStructs()) {
+            for (FarmProxy farmStruct : countrysideStruct.getFarmStructs()) {
                 DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(farmStruct);
-                for (VmStruct vmStruct : farmStruct.getVmStructs()) {
+                for (VmProxy vmStruct : farmStruct.getVmStructs()) {
                     DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(vmStruct);
                     model.insertNodeInto(vmNode, farmNode, farmNode.getChildCount());
                     this.tree.scrollPathToVisible(new TreePath(vmNode.getPath()));
@@ -194,8 +193,8 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
     }
 
     private DefaultMutableTreeNode getNode(DefaultMutableTreeNode root, String jid) {
-        if (root.getUserObject() instanceof Struct) {
-            Struct temp = (Struct) root.getUserObject();
+        if (root.getUserObject() instanceof Proxy) {
+            Proxy temp = (Proxy) root.getUserObject();
             if (temp.getFullJid().equals(jid)) {
                 return root;
             }
@@ -218,12 +217,12 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
                 node.removeAllChildren();
                 model.removeNodeFromParent(node);
             } else {
-                if (node.getUserObject() instanceof CountrysideStruct || node.getUserObject() instanceof RegistryStruct || node.getUserObject() instanceof FarmStruct) {
+                if (node.getUserObject() instanceof CountrysideProxy || node.getUserObject() instanceof RegistryProxy || node.getUserObject() instanceof FarmProxy) {
                     this.tree.scrollPathToVisible(new TreePath(node.getPath()));
                     model.reload(node);
-                } else if (node.getUserObject() instanceof VmStruct) {
+                } else if (node.getUserObject() instanceof VmProxy) {
                     node.removeAllChildren();
-                    VmStruct vmStruct = (VmStruct) node.getUserObject();
+                    VmProxy vmStruct = (VmProxy) node.getUserObject();
                     DefaultMutableTreeNode temp;
 
                     if (vmStruct.getPresence() != null) {
@@ -246,38 +245,38 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
             }
         } else {
             if (!remove) {
-                Struct parentStruct = this.villeinGui.getXmppVillein().getParentStruct(jid);
+                Proxy parentProxy = this.villeinGui.getXmppVillein().getParentStruct(jid);
                 DefaultMutableTreeNode parentNode = null;
-                if (parentStruct != null) {
-                    parentNode = this.getNode(this.treeRoot, parentStruct.getFullJid());
+                if (parentProxy != null) {
+                    parentNode = this.getNode(this.treeRoot, parentProxy.getFullJid());
                 }
 
-                Struct struct = this.villeinGui.getXmppVillein().getStruct(jid);
-                if (struct instanceof CountrysideStruct) {
-                    DefaultMutableTreeNode countrysideStruct = new DefaultMutableTreeNode(struct);
+                Proxy proxy = this.villeinGui.getXmppVillein().getStruct(jid);
+                if (proxy instanceof CountrysideProxy) {
+                    DefaultMutableTreeNode countrysideStruct = new DefaultMutableTreeNode(proxy);
                     model.insertNodeInto(countrysideStruct, this.treeRoot, this.treeRoot.getChildCount());
                     this.tree.scrollPathToVisible(new TreePath(countrysideStruct.getPath()));
                     model.reload(countrysideStruct);
-                } else if (struct instanceof RegistryStruct || struct instanceof FarmStruct) {
+                } else if (proxy instanceof RegistryProxy || proxy instanceof FarmProxy) {
                     if (parentNode != null) {
-                        DefaultMutableTreeNode otherNode = new DefaultMutableTreeNode(struct);
+                        DefaultMutableTreeNode otherNode = new DefaultMutableTreeNode(proxy);
                         model.insertNodeInto(otherNode, parentNode, parentNode.getChildCount());
                         this.tree.scrollPathToVisible(new TreePath(otherNode.getPath()));
                         model.reload(otherNode);
                     } else {
-                        parentStruct = this.villeinGui.getXmppVillein().getParentStruct(LinkedProcess.generateBareJid(jid));
-                        parentNode = this.getNode(this.treeRoot, parentStruct.getFullJid());
+                        parentProxy = this.villeinGui.getXmppVillein().getParentStruct(LinkedProcess.generateBareJid(jid));
+                        parentNode = this.getNode(this.treeRoot, parentProxy.getFullJid());
                         if (parentNode != null) {
-                            DefaultMutableTreeNode otherNode = new DefaultMutableTreeNode(struct);
+                            DefaultMutableTreeNode otherNode = new DefaultMutableTreeNode(proxy);
                             model.insertNodeInto(otherNode, parentNode, parentNode.getChildCount());
                             this.tree.scrollPathToVisible(new TreePath(otherNode.getPath()));
                             model.reload(otherNode);
                         }
                     }
-                } else if (struct instanceof VmStruct) {
+                } else if (proxy instanceof VmProxy) {
                     if (parentNode != null) {
-                        VmStruct vmStruct = (VmStruct) struct;
-                        DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(struct);
+                        VmProxy vmStruct = (VmProxy) proxy;
+                        DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(proxy);
                         DefaultMutableTreeNode temp;
 
                         if (vmStruct.getPresence() != null) {
@@ -318,13 +317,13 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
             this.popupTreeObject = selectedNode.getUserObject();
 
             if (event.getButton() == MouseEvent.BUTTON3 && event.getClickCount() == 1) {
-                if (this.popupTreeObject instanceof CountrysideStruct) {
+                if (this.popupTreeObject instanceof CountrysideProxy) {
                     this.createCountrysidePopupMenu();
-                } else if (this.popupTreeObject instanceof RegistryStruct) {
+                } else if (this.popupTreeObject instanceof RegistryProxy) {
                     this.createRegistryPopupMenu();
-                } else if (this.popupTreeObject instanceof FarmStruct) {
-                    this.createFarmPopupMenu((FarmStruct) this.popupTreeObject);
-                } else if (this.popupTreeObject instanceof VmStruct) {
+                } else if (this.popupTreeObject instanceof FarmProxy) {
+                    this.createFarmPopupMenu((FarmProxy) this.popupTreeObject);
+                } else if (this.popupTreeObject instanceof VmProxy) {
                     this.createVmPopupMenu();
                 }
 
@@ -332,8 +331,8 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
                 popupMenu.show(event.getComponent(), event.getX(), event.getY());
 
             } else if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
-                if (this.popupTreeObject instanceof VmStruct) {
-                    VmStruct vmStruct = (VmStruct) this.popupTreeObject;
+                if (this.popupTreeObject instanceof VmProxy) {
+                    VmProxy vmStruct = (VmProxy) this.popupTreeObject;
                     VmControlFrame vmControlFrame = this.villeinGui.getVmFrame(vmStruct.getFullJid());
                     if (vmControlFrame == null) {
                         this.villeinGui.addVmFrame(vmStruct);
@@ -375,7 +374,7 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
         probeResource.addActionListener(this);
     }
 
-    public void createFarmPopupMenu(FarmStruct farmStruct) {
+    public void createFarmPopupMenu(FarmProxy farmStruct) {
         this.popupMenu = new JPopupMenu();
         this.popupMenu.setBorder(new BevelBorder(6));
         JLabel menuLabel = new JLabel("Farm");
@@ -434,11 +433,11 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
 
     }
 
-    public void handlePresenceUpdate(Struct struct, Presence.Type presenceType) {
+    public void handlePresenceUpdate(Proxy proxy, Presence.Type presenceType) {
         if (presenceType == Presence.Type.unavailable || presenceType == Presence.Type.unsubscribe || presenceType == Presence.Type.unsubscribed) {
-            this.villeinGui.updateHostAreaTree(struct.getFullJid(), true);
+            this.villeinGui.updateHostAreaTree(proxy.getFullJid(), true);
         } else {
-            this.villeinGui.updateHostAreaTree(struct.getFullJid(), false);
+            this.villeinGui.updateHostAreaTree(proxy.getFullJid(), false);
         }
     }
 }

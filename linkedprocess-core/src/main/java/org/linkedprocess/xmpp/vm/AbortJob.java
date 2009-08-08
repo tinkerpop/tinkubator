@@ -10,6 +10,16 @@ import org.linkedprocess.LinkedProcess;
  */
 public class AbortJob extends VirtualMachineIq {
 
+    protected String jobId;
+
+    public void setJobId(String jobId) {
+        this.jobId = jobId;
+    }
+
+    public String getJobId() {
+        return this.jobId;
+    }
+
     public String getChildElementXML() {
 
         Element abandonJobElement = new Element(LinkedProcess.ABORT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE);

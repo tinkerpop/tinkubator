@@ -11,7 +11,7 @@ import org.linkedprocess.gui.GenericErrorHandler;
 import org.linkedprocess.gui.villein.VilleinGui;
 import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.xmpp.villein.structs.JobStruct;
-import org.linkedprocess.xmpp.villein.structs.VmStruct;
+import org.linkedprocess.xmpp.villein.structs.VmProxy;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -33,7 +33,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
 
     protected JList jobList;
     protected JSplitPane splitPane;
-    protected VmStruct vmStruct;
+    protected VmProxy vmStruct;
     protected VilleinGui villeinGui;
     protected ManageBindingsPanel manageBindingsPanel;
     protected Map<String, JobStatus> jobStatus = new HashMap<String, JobStatus>();
@@ -48,7 +48,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
     }
 
 
-    public VmControlFrame(VmStruct vmStruct, VilleinGui villeinGui) {
+    public VmControlFrame(VmProxy vmStruct, VilleinGui villeinGui) {
         super(vmStruct.getFullJid());
         this.vmStruct = vmStruct;
         this.villeinGui = villeinGui;
@@ -128,7 +128,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         return Packet.nextID();
     }
 
-    public VmStruct getVmStruct() {
+    public VmProxy getVmStruct() {
         return this.vmStruct;
     }
 
@@ -157,6 +157,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         for (int i = 0; i < this.jobList.getModel().getSize(); i++) {
             JobPane jobPane = (JobPane) this.jobList.getModel().getElementAt(i);
             if (jobPane.getJobId().equals(jobId)) {
+                System.out.println("HERERE!" + jobPane);
                 jobPane.handleIncomingSubmitJob(jobStruct);
             }
         }
@@ -165,12 +166,6 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
 
     public void handleIncomingAbortJob(JobStruct jobStruct) {
         this.jobStatus.put(jobStruct.getJobId(), JobStatus.ABORTED);
-        for (int i = 0; i < this.jobList.getModel().getSize(); i++) {
-            JobPane jobPane = (JobPane) this.jobList.getModel().getElementAt(i);
-            if (jobPane.getJobId().equals(jobStruct.getJobId())) {
-                jobPane.handleIncomingAbortJob(jobStruct.getJobId());
-            }
-        }
         jobList.repaint();
     }
 
@@ -193,7 +188,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
             }
 
         } else if (event.getActionCommand().equals(TERMINATE_VM)) {
-            this.vmStruct.terminateVm(new GenericErrorHandler());
+            this.vmStruct.terminateVm(null, new GenericErrorHandler());
             this.villeinGui.removeVmFrame(this.vmStruct);
         } else if (event.getActionCommand().equals(CLOSE)) {
             this.setVisible(false);

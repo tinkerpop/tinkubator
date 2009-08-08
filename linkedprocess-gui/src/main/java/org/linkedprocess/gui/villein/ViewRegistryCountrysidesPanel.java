@@ -7,7 +7,7 @@ import org.jdom.Namespace;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.xmpp.villein.structs.RegistryStruct;
+import org.linkedprocess.xmpp.villein.structs.RegistryProxy;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 
 import javax.swing.*;
@@ -26,12 +26,12 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
     protected JList farmlandList;
     protected static final String REFRESH = "refresh";
     protected static final String SUBSCRIBE = "subscribe";
-    protected RegistryStruct registryStruct;
+    protected RegistryProxy registryStruct;
     protected VilleinGui villeinGui;
     protected Document discoItemsDocument;
 
 
-    public ViewRegistryCountrysidesPanel(RegistryStruct registryStruct, VilleinGui villeinGui) {
+    public ViewRegistryCountrysidesPanel(RegistryProxy registryStruct, VilleinGui villeinGui) {
         super(new BorderLayout());
         this.registryStruct = registryStruct;
         this.villeinGui = villeinGui;

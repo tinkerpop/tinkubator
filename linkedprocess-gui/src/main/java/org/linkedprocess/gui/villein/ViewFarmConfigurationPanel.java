@@ -8,7 +8,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.xmpp.villein.structs.FarmStruct;
+import org.linkedprocess.xmpp.villein.structs.FarmProxy;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 
 import javax.swing.*;
@@ -33,14 +33,14 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
     protected JTable valuesTable;
     protected int count = 0;
     protected static final String REFRESH = "refresh";
-    protected FarmStruct farmStruct;
+    protected FarmProxy farmStruct;
     protected VilleinGui villeinGui;
     protected Document discoInfoDocument;
     protected DiscoverInfo discoInfo;
     protected JList featuresList;
 
 
-    public ViewFarmConfigurationPanel(FarmStruct farmStruct, VilleinGui villeinGui) {
+    public ViewFarmConfigurationPanel(FarmProxy farmStruct, VilleinGui villeinGui) {
         super(new BorderLayout());
         this.farmStruct = farmStruct;
         this.villeinGui = villeinGui;

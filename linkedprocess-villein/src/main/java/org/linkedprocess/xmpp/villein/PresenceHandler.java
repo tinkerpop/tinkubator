@@ -1,7 +1,7 @@
 package org.linkedprocess.xmpp.villein;
 
 import org.jivesoftware.smack.packet.Presence;
-import org.linkedprocess.xmpp.villein.structs.Struct;
+import org.linkedprocess.xmpp.villein.structs.Proxy;
 
 /**
  * User: marko
@@ -10,5 +10,5 @@ import org.linkedprocess.xmpp.villein.structs.Struct;
  */
 public interface PresenceHandler {
 
-    public void handlePresenceUpdate(Struct struct, Presence.Type presenceType);
+    public void handlePresenceUpdate(Proxy proxy, Presence.Type presenceType);
 }

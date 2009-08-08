@@ -3,10 +3,9 @@ package org.linkedprocess.gui;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.farm.XmppFarm;
 import org.linkedprocess.xmpp.villein.*;
-import org.linkedprocess.xmpp.villein.structs.CountrysideStruct;
-import org.linkedprocess.xmpp.villein.structs.FarmStruct;
-import org.linkedprocess.xmpp.villein.structs.RegistryStruct;
-import org.linkedprocess.xmpp.villein.structs.VmStruct;
+import org.linkedprocess.xmpp.villein.structs.FarmProxy;
+import org.linkedprocess.xmpp.villein.structs.CountrysideProxy;
+import org.linkedprocess.xmpp.villein.structs.*;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 import javax.swing.*;
@@ -42,23 +41,23 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
             this.setText(LinkedProcess.generateResource(((XmppVillein) x).getFullJid()));
             this.setIcon(ImageHolder.villeinIcon);
             this.setToolTipText("villein");
-        } else if (x instanceof RegistryStruct) {
-            RegistryStruct registryStruct = (RegistryStruct) x;
+        } else if (x instanceof RegistryProxy) {
+            RegistryProxy registryStruct = (RegistryProxy) x;
             this.setText(LinkedProcess.generateResource(registryStruct.getFullJid()));
             this.setIcon(ImageHolder.registryIcon);
             this.setToolTipText("registry_jid");
-        } else if (x instanceof FarmStruct) {
-            FarmStruct farmStruct = (FarmStruct) x;
+        } else if (x instanceof FarmProxy) {
+            FarmProxy farmStruct = (FarmProxy) x;
             this.setText(LinkedProcess.generateResource(farmStruct.getFullJid()));
             this.setIcon(ImageHolder.farmIcon);
             this.setToolTipText("farm_jid");
-        } else if (x instanceof VmStruct) {
-            VmStruct vmStruct = (VmStruct) x;
+        } else if (x instanceof VmProxy) {
+            VmProxy vmStruct = (VmProxy) x;
             this.setText(LinkedProcess.generateResource(vmStruct.getFullJid()));
             this.setIcon(ImageHolder.vmIcon);
             this.setToolTipText("vm_jid");
-        } else if (x instanceof CountrysideStruct) {
-            CountrysideStruct countrysideStruct = (CountrysideStruct) x;
+        } else if (x instanceof CountrysideProxy) {
+            CountrysideProxy countrysideStruct = (CountrysideProxy) x;
             this.setText(countrysideStruct.getFullJid());
             this.setIcon(ImageHolder.countrysideIcon);
             this.setToolTipText("countryside_jid");

@@ -24,9 +24,12 @@ public class HandlerSet<T> {
 
     public Handler<T> addHandler(final String id,
                                  final Handler<T> handler) {
-        HandlerRecord r = new HandlerRecord(handler);
-        handlerRecords.put(id, r);
+        if(null != handler) {
+            HandlerRecord r = new HandlerRecord(handler);
+            handlerRecords.put(id, r);
+        }
         return handler;
+
     }
 
     public Handler<T> removeHandler(final String id) {
@@ -41,7 +44,7 @@ public class HandlerSet<T> {
         if (null != r) {
             r.getHandler().handle(t);
         } else {
-            XmppVillein.LOGGER.warning("No handler found for " + t + "--" + id);
+            XmppVillein.LOGGER.warning("No handler found for job " + id);
         }
     }
 

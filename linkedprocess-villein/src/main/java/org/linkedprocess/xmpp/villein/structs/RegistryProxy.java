@@ -7,9 +7,9 @@ import org.linkedprocess.xmpp.villein.Dispatcher;
  * Date: Jul 30, 2009
  * Time: 3:41:36 PM
  */
-public class RegistryStruct extends Struct {
+public class RegistryProxy extends Proxy {
 
-    public RegistryStruct(Dispatcher dispatcher) {
+    public RegistryProxy(Dispatcher dispatcher) {
         super(dispatcher);
     }
 

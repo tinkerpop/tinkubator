@@ -3,7 +3,7 @@ package org.linkedprocess.xmpp.villein.operations;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.XmppVillein;
-import org.linkedprocess.xmpp.villein.structs.VmStruct;
+import org.linkedprocess.xmpp.villein.structs.VmProxy;
 import org.linkedprocess.xmpp.villein.structs.JobStruct;
 import org.linkedprocess.xmpp.vm.JobStatus;
 import org.jivesoftware.smack.packet.IQ;
@@ -19,13 +19,15 @@ import org.jivesoftware.smack.packet.Packet;
  */
 public class JobStatusOperation extends Operation {
     private final HandlerSet<LinkedProcess.JobStatus> resultHandlers;
+    private final HandlerSet<XMPPError> errorHandlers;
 
     public JobStatusOperation(XmppVillein xmppVillein) {
         super(xmppVillein);
-        resultHandlers = new HandlerSet<LinkedProcess.JobStatus>();
+        this.resultHandlers = new HandlerSet<LinkedProcess.JobStatus>();
+        this.errorHandlers = new HandlerSet<XMPPError>();
     }
     
-    public void send(VmStruct vmStruct, JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> statusHandler, final Handler<XMPPError> errorHandler) {
+    public void send(VmProxy vmStruct, JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> statusHandler, final Handler<XMPPError> errorHandler) {
 
         String id = Packet.nextID();
         JobStatus jobStatus = new JobStatus();

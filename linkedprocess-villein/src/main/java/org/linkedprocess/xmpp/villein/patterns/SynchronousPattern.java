@@ -1,7 +1,7 @@
 package org.linkedprocess.xmpp.villein.patterns;
 
 import org.linkedprocess.xmpp.villein.structs.JobStruct;
-import org.linkedprocess.xmpp.villein.structs.VmStruct;
+import org.linkedprocess.xmpp.villein.structs.VmProxy;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.linkedprocess.os.VMBindings;
 import org.jivesoftware.smack.packet.IQ;
@@ -79,7 +79,7 @@ public class SynchronousPattern extends VilleinPattern {
         }
     }
 
-    public JobStruct waitForJob(VmStruct vmStruct, String expression, String jobId, long timeout) throws WaitTimeoutException {
+    public JobStruct waitForJob(VmProxy vmStruct, String expression, String jobId, long timeout) throws WaitTimeoutException {
         //this.xmppVillein.submitJob(vmStruct, expression, jobId);
         long currentTime = System.currentTimeMillis();
         while (true) {
@@ -90,7 +90,7 @@ public class SynchronousPattern extends VilleinPattern {
         }
     }
 
-    public VMBindings waitForBindings(VmStruct vmStruct, VMBindings vmBindings, IQ.Type manageBindingsType, long timeout) throws WaitTimeoutException {
+    public VMBindings waitForBindings(VmProxy vmStruct, VMBindings vmBindings, IQ.Type manageBindingsType, long timeout) throws WaitTimeoutException {
         //this.xmppVillein.manageBindings(vmStruct, vmBindings, manageBindingsType);
         long currentTime = System.currentTimeMillis();
         while(true) {
@@ -99,9 +99,9 @@ public class SynchronousPattern extends VilleinPattern {
         }
     }
 
-    public Collection<JobStruct> distributeJobAndWait(Set<VmStruct> vmStructs, String expression, long timeout) throws WaitTimeoutException {
+    public Collection<JobStruct> distributeJobAndWait(Set<VmProxy> vmStructs, String expression, long timeout) throws WaitTimeoutException {
         Set<String> jobIds = new HashSet<String>();
-        for (VmStruct vmStruct : vmStructs) {
+        for (VmProxy vmStruct : vmStructs) {
             String jobId = XmppVillein.generateRandomJobId();
             jobIds.add(jobId);
             //this.xmppVillein.submitJob(vmStruct, expression, jobId);

@@ -45,7 +45,7 @@ public class XmppVillein extends XmppClient {
         COUNTRYSIDE, FARM, REGISTRY, VM
     }
 
-    protected Map<String, CountrysideStruct> countrysideStructs;
+    protected Map<String, CountrysideProxy> countrysideStructs;
 
     public XmppVillein(final String server, final int port, final String username, final String password) throws XMPPException {
         LOGGER.info("Starting " + STATUS_MESSAGE);
@@ -69,40 +69,40 @@ public class XmppVillein extends XmppClient {
 
         this.connection.addPacketListener(new PresenceListener(this), presenceFilter);
         this.connection.addPacketListener(new LopVilleinListener(this), lopFilter);
-        this.countrysideStructs = new HashMap<String, CountrysideStruct>();
+        this.countrysideStructs = new HashMap<String, CountrysideProxy>();
         this.status = LinkedProcess.VilleinStatus.ACTIVE;
         this.connection.sendPacket(this.createPresence(this.status)); 
     }
 
-    public Collection<CountrysideStruct> getCountrysideStructs() {
+    public Collection<CountrysideProxy> getCountrysideStructs() {
         return this.countrysideStructs.values();
     }
 
-    public Collection<FarmStruct> getFarmStructs() {
-        Collection<FarmStruct> farmStructs = new HashSet<FarmStruct>();
-        for (CountrysideStruct countrysideStruct : this.countrysideStructs.values()) {
+    public Collection<FarmProxy> getFarmStructs() {
+        Collection<FarmProxy> farmStructs = new HashSet<FarmProxy>();
+        for (CountrysideProxy countrysideStruct : this.countrysideStructs.values()) {
             farmStructs.addAll(countrysideStruct.getFarmStructs());
         }
         return farmStructs;
     }
 
-    public Collection<RegistryStruct> getRegistryStructs() {
-        Collection<RegistryStruct> registryStructs = new HashSet<RegistryStruct>();
-        for (CountrysideStruct countrysideStruct : this.countrysideStructs.values()) {
+    public Collection<RegistryProxy> getRegistryStructs() {
+        Collection<RegistryProxy> registryStructs = new HashSet<RegistryProxy>();
+        for (CountrysideProxy countrysideStruct : this.countrysideStructs.values()) {
             registryStructs.addAll(countrysideStruct.getRegistryStructs());
         }
         return registryStructs;
     }
 
-    public Collection<VmStruct> getVmStructs() {
-        Collection<VmStruct> vmStructs = new HashSet<VmStruct>();
-        for (FarmStruct farmStruct : this.getFarmStructs()) {
+    public Collection<VmProxy> getVmStructs() {
+        Collection<VmProxy> vmStructs = new HashSet<VmProxy>();
+        for (FarmProxy farmStruct : this.getFarmStructs()) {
             vmStructs.addAll(farmStruct.getVmStructs());
         }
         return vmStructs;
     }
 
-    public Struct getStruct(String jid) {
+    public Proxy getStruct(String jid) {
         return this.getStruct(jid, null);
     }
 
@@ -113,18 +113,18 @@ public class XmppVillein extends XmppClient {
             return false;
     }
 
-    public Struct getParentStruct(String jid) {
-        for (CountrysideStruct countrysideStruct : this.countrysideStructs.values()) {
+    public Proxy getParentStruct(String jid) {
+        for (CountrysideProxy countrysideStruct : this.countrysideStructs.values()) {
             if (countrysideStruct.getFullJid().equals(jid))
                 return null;
-            for (RegistryStruct registryStruct : countrysideStruct.getRegistryStructs()) {
+            for (RegistryProxy registryStruct : countrysideStruct.getRegistryStructs()) {
                 if (registryStruct.getFullJid().equals(jid))
                     return countrysideStruct;
             }
-            for (FarmStruct farmStruct : countrysideStruct.getFarmStructs()) {
+            for (FarmProxy farmStruct : countrysideStruct.getFarmStructs()) {
                 if (farmStruct.getFullJid().equals(jid))
                     return countrysideStruct;
-                for (VmStruct vmStruct : farmStruct.getVmStructs()) {
+                for (VmProxy vmStruct : farmStruct.getVmStructs()) {
                     if (vmStruct.getFullJid().equals(jid))
                         return farmStruct;
                 }
@@ -133,18 +133,18 @@ public class XmppVillein extends XmppClient {
         return null;
     }
 
-    public Struct getStruct(String jid, StructType type) {
-        for (CountrysideStruct countrysideStruct : this.countrysideStructs.values()) {
+    public Proxy getStruct(String jid, StructType type) {
+        for (CountrysideProxy countrysideStruct : this.countrysideStructs.values()) {
             if (countrysideStruct.getFullJid().equals(jid) && (type == null || type == StructType.COUNTRYSIDE))
                 return countrysideStruct;
-            for (RegistryStruct registryStruct : countrysideStruct.getRegistryStructs()) {
+            for (RegistryProxy registryStruct : countrysideStruct.getRegistryStructs()) {
                 if (registryStruct.getFullJid().equals(jid) && (type == null || type == StructType.REGISTRY))
                     return registryStruct;
             }
-            for (FarmStruct farmStruct : countrysideStruct.getFarmStructs()) {
+            for (FarmProxy farmStruct : countrysideStruct.getFarmStructs()) {
                 if (farmStruct.getFullJid().equals(jid) && (type == null || type == StructType.FARM))
                     return farmStruct;
-                for (VmStruct vmStruct : farmStruct.getVmStructs()) {
+                for (VmProxy vmStruct : farmStruct.getVmStructs()) {
                     if (vmStruct.getFullJid().equals(jid) && (type == null || type == StructType.VM))
                         return vmStruct;
                 }
@@ -154,52 +154,52 @@ public class XmppVillein extends XmppClient {
     }
 
     public void removeStruct(String jid) {
-        Struct parentStruct = this.getParentStruct(jid);
-        if (parentStruct == null) {
+        Proxy parentProxy = this.getParentStruct(jid);
+        if (parentProxy == null) {
             this.countrysideStructs.remove(jid);
-        } else if (parentStruct instanceof CountrysideStruct) {
-            ((CountrysideStruct) parentStruct).removeFarmStruct(jid);
-            ((CountrysideStruct) parentStruct).removeRegistryStruct(jid);
+        } else if (parentProxy instanceof CountrysideProxy) {
+            ((CountrysideProxy) parentProxy).removeFarmStruct(jid);
+            ((CountrysideProxy) parentProxy).removeRegistryStruct(jid);
             LOGGER.info("Removing struct for " + jid);
         } else {
-            ((FarmStruct) parentStruct).removeVmStruct(jid);
+            ((FarmProxy) parentProxy).removeVmStruct(jid);
             LOGGER.info("Removing struct for " + jid);
         }
     }
 
-    public void addCountrysideStruct(CountrysideStruct countrysideStruct) {
+    public void addCountrysideStruct(CountrysideProxy countrysideStruct) {
         this.countrysideStructs.put(countrysideStruct.getFullJid(), countrysideStruct);
     }
 
-    public void addFarmStruct(FarmStruct farmStruct) throws ParentStructNotFoundException {
-        Struct farmlandStruct = this.getStruct(LinkedProcess.generateBareJid(farmStruct.getFullJid()), StructType.COUNTRYSIDE);
-        if (farmlandStruct != null && farmlandStruct instanceof CountrysideStruct)
-            ((CountrysideStruct) farmlandStruct).addFarmStruct(farmStruct);
+    public void addFarmStruct(FarmProxy farmStruct) throws ParentStructNotFoundException {
+        Proxy countrysideProxy = this.getStruct(LinkedProcess.generateBareJid(farmStruct.getFullJid()), StructType.COUNTRYSIDE);
+        if (countrysideProxy != null && countrysideProxy instanceof CountrysideProxy)
+            ((CountrysideProxy) countrysideProxy).addFarmStruct(farmStruct);
         else
             throw new ParentStructNotFoundException("countryside struct null for " + farmStruct.getFullJid());
     }
 
-    public void addRegistryStruct(RegistryStruct registryStruct) throws ParentStructNotFoundException {
-        Struct farmlandStruct = this.getStruct(LinkedProcess.generateBareJid(registryStruct.getFullJid()), StructType.COUNTRYSIDE);
-        if (farmlandStruct != null && farmlandStruct instanceof CountrysideStruct)
-            ((CountrysideStruct) farmlandStruct).addRegistryStruct(registryStruct);
+    public void addRegistryStruct(RegistryProxy registryStruct) throws ParentStructNotFoundException {
+        Proxy countrysideProxy = this.getStruct(LinkedProcess.generateBareJid(registryStruct.getFullJid()), StructType.COUNTRYSIDE);
+        if (countrysideProxy != null && countrysideProxy instanceof CountrysideProxy)
+            ((CountrysideProxy) countrysideProxy).addRegistryStruct(registryStruct);
         else
             throw new ParentStructNotFoundException("countryside struct null for " + registryStruct.getFullJid());
     }
 
-    public void addVmStruct(String farmJid, VmStruct vmStruct) throws ParentStructNotFoundException {
-        Struct farmStruct = this.getStruct(farmJid, StructType.FARM);
-        if (farmStruct != null && farmStruct instanceof FarmStruct)
-            ((FarmStruct) farmStruct).addVmStruct(vmStruct);
+    public void addVmStruct(String farmJid, VmProxy vmStruct) throws ParentStructNotFoundException {
+        Proxy farmProxy = this.getStruct(farmJid, StructType.FARM);
+        if (farmProxy != null && farmProxy instanceof FarmProxy)
+            ((FarmProxy) farmProxy).addVmStruct(vmStruct);
         else
             throw new ParentStructNotFoundException("farm struct null for " + vmStruct.getFullJid());
     }
 
     public synchronized void createCountrysideStructsFromRoster() {
         for (RosterEntry entry : this.getRoster().getEntries()) {
-            CountrysideStruct countrysideStruct = this.countrysideStructs.get(entry.getUser());
+            CountrysideProxy countrysideStruct = this.countrysideStructs.get(entry.getUser());
             if (countrysideStruct == null) {
-                countrysideStruct = new CountrysideStruct(this.dispatcher);
+                countrysideStruct = new CountrysideProxy(this.dispatcher);
                 countrysideStruct.setFullJid(entry.getUser());
                 this.countrysideStructs.put(countrysideStruct.getFullJid(), countrysideStruct);
             }
@@ -227,10 +227,10 @@ public class XmppVillein extends XmppClient {
 
     public void requestUnsubscription(String jid, boolean removeFromRoster) {
         super.requestUnsubscription(jid, removeFromRoster);
-        CountrysideStruct countrysideStruct = this.countrysideStructs.get(jid);
+        CountrysideProxy countrysideStruct = this.countrysideStructs.get(jid);
         if (countrysideStruct != null) {
-            for (FarmStruct farmStruct : countrysideStruct.getFarmStructs()) {
-                for (VmStruct vmStruct : farmStruct.getVmStructs()) {
+            for (FarmProxy farmStruct : countrysideStruct.getFarmStructs()) {
+                for (VmProxy vmStruct : farmStruct.getVmStructs()) {
                     if (vmStruct.getVmPassword() != null) {
                         //TODO: terminateVirtualMachine(vmStruct);
                     }

@@ -6,7 +6,7 @@ import org.linkedprocess.gui.RosterPanel;
 import org.linkedprocess.gui.TreeNodeProperty;
 import org.linkedprocess.gui.TreeRenderer;
 import org.linkedprocess.gui.farm.vmviewer.VmViewerFrame;
-import org.linkedprocess.xmpp.villein.structs.CountrysideStruct;
+import org.linkedprocess.xmpp.villein.structs.CountrysideProxy;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 import javax.swing.*;
@@ -41,7 +41,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
     public VmArea(FarmGui farmGui) {
         super(new BorderLayout());
         this.farmGui = farmGui;
-        CountrysideStruct countrysideStruct = new CountrysideStruct(null);
+        CountrysideProxy countrysideStruct = new CountrysideProxy(null);
         countrysideStruct.setFullJid(LinkedProcess.generateBareJid(farmGui.getXmppFarm().getFullJid()));
         this.treeRoot = new DefaultMutableTreeNode(countrysideStruct);
         this.tree = new JTree(this.treeRoot);

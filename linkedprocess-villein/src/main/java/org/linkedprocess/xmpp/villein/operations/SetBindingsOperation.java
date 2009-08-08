@@ -4,7 +4,7 @@ import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.os.errors.InvalidValueException;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.linkedprocess.xmpp.villein.Handler;
-import org.linkedprocess.xmpp.villein.structs.VmStruct;
+import org.linkedprocess.xmpp.villein.structs.VmProxy;
 import org.linkedprocess.xmpp.vm.ManageBindings;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.packet.Packet;
@@ -17,13 +17,15 @@ import org.jivesoftware.smack.packet.IQ;
  */
 public class SetBindingsOperation extends Operation {
     private final HandlerSet<VMBindings> resultHandlers;
+    private final HandlerSet<XMPPError> errorHandlers;
 
     public SetBindingsOperation(XmppVillein xmppVillein) {
         super(xmppVillein);
-        resultHandlers = new HandlerSet<VMBindings>();
+        this.resultHandlers = new HandlerSet<VMBindings>();
+        this.errorHandlers = new HandlerSet<XMPPError>();
     }
 
-    public void send(final VmStruct vmStruct, VMBindings vmBindings, final Handler<XMPPError> errorHandler) {
+    public void send(final VmProxy vmStruct, VMBindings vmBindings, final Handler<XMPPError> errorHandler) {
 
         String id = Packet.nextID();
         ManageBindings manageBindings = new ManageBindings();
@@ -32,8 +34,9 @@ public class SetBindingsOperation extends Operation {
         manageBindings.setType(IQ.Type.SET);
         manageBindings.setVmPassword(vmStruct.getVmPassword());
         manageBindings.setBindings(vmBindings);
+        manageBindings.setPacketID(id);
 
-        Handler<VMBindings> resultHandler = new Handler<VMBindings>() {
+        Handler<VMBindings> autoResultHandler = new Handler<VMBindings>() {
             public void handle(VMBindings vmBindings) {
                 try {
                     vmStruct.addVmBindings(vmBindings);
@@ -43,7 +46,7 @@ public class SetBindingsOperation extends Operation {
             }
         };
 
-        this.resultHandlers.addHandler(id, resultHandler);
+        this.resultHandlers.addHandler(id, autoResultHandler);
         this.errorHandlers.addHandler(id, errorHandler);
 
         xmppVillein.getConnection().sendPacket(manageBindings);

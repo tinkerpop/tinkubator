@@ -9,13 +9,4 @@ import org.linkedprocess.xmpp.LopIq;
  */
 public abstract class VirtualMachineIq extends LopIq {
 
-    protected String jobId;
-
-    public void setJobId(String jobId) {
-        this.jobId = jobId;
-    }
-
-    public String getJobId() {
-        return this.jobId;
-    }
 }

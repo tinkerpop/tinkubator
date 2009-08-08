@@ -1,8 +1,8 @@
 package org.linkedprocess.xmpp.villein.structs;
 
-import org.linkedprocess.xmpp.villein.structs.Struct;
-import org.linkedprocess.xmpp.villein.structs.FarmStruct;
-import org.linkedprocess.xmpp.villein.structs.RegistryStruct;
+import org.linkedprocess.xmpp.villein.structs.Proxy;
+import org.linkedprocess.xmpp.villein.structs.FarmProxy;
+import org.linkedprocess.xmpp.villein.structs.RegistryProxy;
 import org.linkedprocess.xmpp.villein.Dispatcher;
 
 import java.util.Collection;
@@ -14,29 +14,29 @@ import java.util.Map;
  * Date: Jul 8, 2009
  * Time: 1:02:16 PM
  */
-public class CountrysideStruct extends Struct {
+public class CountrysideProxy extends Proxy {
 
 
-    protected Map<String, FarmStruct> farmStructs = new HashMap<String, FarmStruct>();
-    protected Map<String, RegistryStruct> registryStructs = new HashMap<String, RegistryStruct>();
+    protected Map<String, FarmProxy> farmStructs = new HashMap<String, FarmProxy>();
+    protected Map<String, RegistryProxy> registryStructs = new HashMap<String, RegistryProxy>();
 
-    public CountrysideStruct(Dispatcher dispatcher) {
+    public CountrysideProxy(Dispatcher dispatcher) {
         super(dispatcher);
     }
 
-    public FarmStruct getFarmStruct(String farmJid) {
+    public FarmProxy getFarmStruct(String farmJid) {
         return this.farmStructs.get(farmJid);
     }
 
-    public RegistryStruct getRegistryStruct(String countrysideJid) {
+    public RegistryProxy getRegistryStruct(String countrysideJid) {
         return this.registryStructs.get(countrysideJid);
     }
 
-    public void addFarmStruct(FarmStruct farmStruct) {
+    public void addFarmStruct(FarmProxy farmStruct) {
         this.farmStructs.put(farmStruct.getFullJid(), farmStruct);
     }
 
-    public void addRegistryStruct(RegistryStruct registryStruct) {
+    public void addRegistryStruct(RegistryProxy registryStruct) {
         this.registryStructs.put(registryStruct.getFullJid(), registryStruct);
     }
 
@@ -44,11 +44,11 @@ public class CountrysideStruct extends Struct {
         this.registryStructs.remove(countrysideJid);
     }
 
-    public Collection<FarmStruct> getFarmStructs() {
+    public Collection<FarmProxy> getFarmStructs() {
         return this.farmStructs.values();
     }
 
-    public Collection<RegistryStruct> getRegistryStructs() {
+    public Collection<RegistryProxy> getRegistryStructs() {
         return this.registryStructs.values();
     }
 

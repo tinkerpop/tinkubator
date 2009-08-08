@@ -2,11 +2,10 @@ package org.linkedprocess.xmpp.villein.operations;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.structs.JobStruct;
-import org.linkedprocess.xmpp.villein.structs.VmStruct;
+import org.linkedprocess.xmpp.villein.structs.VmProxy;
 import org.linkedprocess.xmpp.vm.SubmitJob;
 
 /**
@@ -17,13 +16,15 @@ import org.linkedprocess.xmpp.vm.SubmitJob;
 public class SubmitJobOperation extends Operation {
 
     private final HandlerSet<JobStruct> resultHandlers;
+    private final HandlerSet<JobStruct> errorHandlers;
 
     public SubmitJobOperation(XmppVillein xmppVillein) {
         super(xmppVillein);
         this.resultHandlers = new HandlerSet<JobStruct>();
+        this.errorHandlers = new HandlerSet<JobStruct>();
     }
 
-    public void send(final VmStruct vmStruct, final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<XMPPError> errorHandler) {
+    public void send(final VmProxy vmStruct, final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<JobStruct> errorHandler) {
 
         if (null == jobStruct.getJobId())
             jobStruct.setJobId(Packet.nextID());
@@ -45,19 +46,21 @@ public class SubmitJobOperation extends Operation {
     public void receiveNormal(final SubmitJob submitJob) {
         try {
             JobStruct jobStruct = new JobStruct();
-            jobStruct.setResult(submitJob.getExpression());
             jobStruct.setJobId(submitJob.getPacketID());
+            jobStruct.setResult(submitJob.getExpression());
             resultHandlers.handle(submitJob.getPacketID(), jobStruct);
         } finally {
             resultHandlers.removeHandler(submitJob.getPacketID());
             errorHandlers.removeHandler(submitJob.getPacketID());
         }
-
     }
 
     public void receiveError(final SubmitJob submitJob) {
         try {
-            errorHandlers.handle(submitJob.getPacketID(), submitJob.getError());
+            JobStruct jobStruct = new JobStruct();
+            jobStruct.setJobId(submitJob.getPacketID());
+            jobStruct.setError(submitJob.getError());
+            errorHandlers.handle(submitJob.getPacketID(), jobStruct);
         } finally {
             resultHandlers.removeHandler(submitJob.getPacketID());
             errorHandlers.removeHandler(submitJob.getPacketID());

@@ -1,10 +1,9 @@
 package org.linkedprocess.gui.villein.vmcontrol;
 
 import org.jivesoftware.smack.packet.PacketExtension;
+import org.linkedprocess.gui.GenericErrorHandler;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.structs.JobStruct;
-import org.linkedprocess.xmpp.vm.AbortJob;
-import org.linkedprocess.gui.GenericErrorHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -84,14 +83,14 @@ public class JobPane extends JPanel implements ActionListener {
         this.resultTextArea.setText(BLANK_STRING);
     }
 
-    public JobStruct getSubmitJob() {
+    public JobStruct createSubmitJobStruct() {
         JobStruct jobStruct = new JobStruct();
         jobStruct.setExpression(this.expressionTextArea.getText());
         jobStruct.setJobId(this.jobId);
         return jobStruct;
     }
 
-    public JobStruct getAbortJob() {
+    public JobStruct createAbortJobStruct() {
         JobStruct jobStruct = new JobStruct();
         jobStruct.setJobId(this.jobId);
         return jobStruct;
@@ -121,42 +120,18 @@ public class JobPane extends JPanel implements ActionListener {
         }
     }
 
-    public void handleIncomingAbortJob(String jobId) {
-
-        this.resultTextArea.setText("job aborted");
-        /*} else {
-            StringBuffer errorMessage = new StringBuffer();
-            if (abortJob.getError().getType() != null) {
-                errorMessage.append(abortJob.getError().getType().toString().toLowerCase() + "\n");
-            }
-            if (abortJob.getError().getCondition() != null) {
-                errorMessage.append(abortJob.getError().getCondition() + "\n");
-            }
-            if (abortJob.getError().getExtensions() != null) {
-                for (PacketExtension extension : abortJob.getError().getExtensions()) {
-                    errorMessage.append(extension.getElementName() + "\n");
-                }
-            }
-            if (abortJob.getError().getMessage() != null) {
-                errorMessage.append(abortJob.getError().getMessage());
-            }
-            this.resultTextArea.setText(errorMessage.toString().trim());
-        }*/
-    }
-
-
     public String toString() {
         return this.jobId;
     }
 
     public void actionPerformed(ActionEvent event) {
         if (event.getActionCommand().equals(SUBMIT_JOB)) {
-            Handler<JobStruct> resultHandler = new Handler<JobStruct>() {
+            Handler<JobStruct> submitJobHandler = new Handler<JobStruct>() {
                 public void handle(JobStruct jobStruct) {
                     vmControlFrame.handleIncomingSubmitJob(jobStruct);
                 }
             };
-            this.vmControlFrame.getVmStruct().submitJob(this.getSubmitJob(), resultHandler, new GenericErrorHandler());
+            this.vmControlFrame.getVmStruct().submitJob(this.createSubmitJobStruct(), submitJobHandler, submitJobHandler);
             submitJobButton.setText(ABORT_JOB);
             submitJobButton.setActionCommand(ABORT_JOB);
             clearButton.setEnabled(false);
@@ -164,7 +139,12 @@ public class JobPane extends JPanel implements ActionListener {
         } else if (event.getActionCommand().equals(CLEAR)) {
             this.expressionTextArea.setText("");
         } else if (event.getActionCommand().equals(ABORT_JOB)) {
-            this.vmControlFrame.getVmStruct().abortJob(this.getAbortJob(), new GenericErrorHandler());
+            Handler<JobStruct> resultHandler = new Handler<JobStruct>() {
+                public void handle(JobStruct jobStruct) {
+                    vmControlFrame.handleIncomingAbortJob(jobStruct);
+                }
+            };
+            this.vmControlFrame.getVmStruct().abortJob(this.createAbortJobStruct(), resultHandler, new GenericErrorHandler());
             this.expressionTextArea.setEditable(false);
             this.submitJobButton.setEnabled(false);
             this.clearButton.setEnabled(false);

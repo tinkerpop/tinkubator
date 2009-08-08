@@ -7,9 +7,9 @@ import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.xmpp.farm.SpawnVm;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.linkedprocess.xmpp.villein.Handler;
-import org.linkedprocess.xmpp.villein.structs.FarmStruct;
+import org.linkedprocess.xmpp.villein.structs.FarmProxy;
 import org.linkedprocess.xmpp.villein.structs.ParentStructNotFoundException;
-import org.linkedprocess.xmpp.villein.structs.VmStruct;
+import org.linkedprocess.xmpp.villein.structs.VmProxy;
 
 /**
  * User: marko
@@ -17,14 +17,16 @@ import org.linkedprocess.xmpp.villein.structs.VmStruct;
  * Time: 3:50:24 PM
  */
 public class SpawnVmOperation extends Operation {
-    private final HandlerSet<VmStruct> resultHandlers;
+    private final HandlerSet<VmProxy> resultHandlers;
+    private final HandlerSet<XMPPError> errorHandlers;
 
     public SpawnVmOperation(XmppVillein xmppVillein) {
         super(xmppVillein);
-        resultHandlers = new HandlerSet<VmStruct>();
+        this.resultHandlers = new HandlerSet<VmProxy>();
+        this.errorHandlers = new HandlerSet<XMPPError>();
     }
 
-    public void send(final FarmStruct farmStruct, final String vmSpecies, final Handler<VmStruct> resultHandler, final Handler<XMPPError> errorHandler) {
+    public void send(final FarmProxy farmStruct, final String vmSpecies, final Handler<VmProxy> resultHandler, final Handler<XMPPError> errorHandler) {
         String id = Packet.nextID();
         SpawnVm spawnVm = new SpawnVm();
         spawnVm.setTo(farmStruct.getFullJid());
@@ -43,7 +45,7 @@ public class SpawnVmOperation extends Operation {
     }
 
     public void receiveNormal(final SpawnVm spawnVm) {
-        VmStruct vmStruct = new VmStruct(xmppVillein.getDispatcher());
+        VmProxy vmStruct = new VmProxy(xmppVillein.getDispatcher());
         vmStruct.setFullJid(spawnVm.getVmJid());
         vmStruct.setVmPassword(spawnVm.getVmPassword());
         vmStruct.setVmSpecies(spawnVm.getVmSpecies());

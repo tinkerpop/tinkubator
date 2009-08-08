@@ -8,13 +8,13 @@ import org.linkedprocess.xmpp.villein.Dispatcher;
  * Date: Jul 8, 2009
  * Time: 10:55:56 PM
  */
-public class Struct implements Comparable {
+public class Proxy implements Comparable {
 
     protected Presence presence;
     protected String fullJid;
     protected final Dispatcher dispatcher;
 
-    public Struct(Dispatcher dispatcher) {
+    public Proxy(Dispatcher dispatcher) {
         this.dispatcher = dispatcher;
     }
 
@@ -35,8 +35,8 @@ public class Struct implements Comparable {
     }
 
     public int compareTo(Object struct) {
-        if (struct instanceof Struct) {
-            return this.fullJid.compareTo(((Struct) struct).getFullJid());
+        if (struct instanceof Proxy) {
+            return this.fullJid.compareTo(((Proxy) struct).getFullJid());
         } else {
             throw new ClassCastException();
         }

@@ -25,52 +25,52 @@ public class PresenceListener extends LopVilleinListener {
         XmppVillein.LOGGER.info("Presence received from " + presence.getFrom());
         XmppVillein.LOGGER.info(presence.toXML());
 
-        Struct struct = this.getXmppVillein().getStruct(presence.getFrom());
+        Proxy proxy = this.getXmppVillein().getStruct(presence.getFrom());
 
-        if (struct != null && (presence.getType() == Presence.Type.unavailable ||
+        if (proxy != null && (presence.getType() == Presence.Type.unavailable ||
                 presence.getType() == Presence.Type.unsubscribe ||
                 presence.getType() == Presence.Type.unsubscribed)) {
             this.getXmppVillein().removeStruct(presence.getFrom());
             // Handlers
             for (PresenceHandler presenceHandler : this.getXmppVillein().getPresenceHandlers()) {
-                presenceHandler.handlePresenceUpdate(struct, presence.getType());
+                presenceHandler.handlePresenceUpdate(proxy, presence.getType());
             }
             return;
         }
 
 
-        if (null != struct && (struct instanceof CountrysideStruct || struct instanceof FarmStruct || struct instanceof VmStruct)) {
-            struct.setPresence(presence);
+        if (null != proxy && (proxy instanceof CountrysideProxy || proxy instanceof FarmProxy || proxy instanceof VmProxy)) {
+            proxy.setPresence(presence);
         } else {
             DiscoverInfo discoInfo = this.getDiscoInfo(presence.getFrom());
 
             if (LinkedProcess.isBareJid(presence.getFrom())) {
                 //System.out.println("Bare Jid " + packet.getFrom());
-                CountrysideStruct countrysideStruct = new CountrysideStruct(this.getXmppVillein().getDispatcher());
+                CountrysideProxy countrysideStruct = new CountrysideProxy(this.getXmppVillein().getDispatcher());
                 countrysideStruct.setFullJid(presence.getFrom());
                 countrysideStruct.setPresence(presence);
                 this.getXmppVillein().addCountrysideStruct(countrysideStruct);
-                struct = countrysideStruct;
+                proxy = countrysideStruct;
 
             } else if (isFarm(discoInfo)) {
                 //System.out.println("Farm Jid " + packet.getFrom());
-                FarmStruct farmStruct = new FarmStruct(this.getXmppVillein().getDispatcher());
+                FarmProxy farmStruct = new FarmProxy(this.getXmppVillein().getDispatcher());
                 farmStruct.setFullJid(presence.getFrom());
                 farmStruct.setPresence(presence);
                 farmStruct.setSupportedVmSpecies(this.getSupportedVmSpecies(discoInfo));
                 try {
                     this.getXmppVillein().addFarmStruct(farmStruct);
-                    struct = farmStruct;
+                    proxy = farmStruct;
                 } catch (ParentStructNotFoundException e) {
                     XmppVillein.LOGGER.warning(e.getMessage());
                 }
             } else if (isRegistry(discoInfo)) {
-                RegistryStruct registryStruct = new RegistryStruct(this.getXmppVillein().getDispatcher());
+                RegistryProxy registryStruct = new RegistryProxy(this.getXmppVillein().getDispatcher());
                 registryStruct.setFullJid(presence.getFrom());
                 registryStruct.setPresence(presence);
                 try {
                     this.getXmppVillein().addRegistryStruct(registryStruct);
-                    struct = registryStruct;
+                    proxy = registryStruct;
                 } catch (ParentStructNotFoundException e) {
                     XmppVillein.LOGGER.warning(e.getMessage());
                 }
@@ -78,7 +78,7 @@ public class PresenceListener extends LopVilleinListener {
         }
         // Handlers
         for (PresenceHandler presenceHandler : this.getXmppVillein().getPresenceHandlers()) {
-            presenceHandler.handlePresenceUpdate(struct, presence.getType());
+            presenceHandler.handlePresenceUpdate(proxy, presence.getType());
         }
     }
 }

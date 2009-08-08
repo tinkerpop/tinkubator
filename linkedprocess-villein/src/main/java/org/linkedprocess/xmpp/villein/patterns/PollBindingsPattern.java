@@ -1,7 +1,7 @@
 package org.linkedprocess.xmpp.villein.patterns;
 
 import org.linkedprocess.xmpp.villein.XmppVillein;
-import org.linkedprocess.xmpp.villein.structs.VmStruct;
+import org.linkedprocess.xmpp.villein.structs.VmProxy;
 import org.linkedprocess.os.VMBindings;
 
 import java.util.Set;
@@ -14,13 +14,13 @@ import java.util.HashSet;
  */
 public class PollBindingsPattern extends VilleinPattern implements Runnable {
 
-    protected VmStruct vmStruct;
+    protected VmProxy vmStruct;
     protected VMBindings desiredBindings;
     protected long pollingSleepTime;
     protected BindingsChecker bindingsChecker;
     protected Set<PollBindingsHandler> pollBindingsHandlers = new HashSet<PollBindingsHandler>();
 
-    public PollBindingsPattern(XmppVillein xmppVillein, VmStruct vmStruct, VMBindings desiredBindings, BindingsChecker bindingsChecker, long pollingSleepTime) {
+    public PollBindingsPattern(XmppVillein xmppVillein, VmProxy vmStruct, VMBindings desiredBindings, BindingsChecker bindingsChecker, long pollingSleepTime) {
         super(xmppVillein);
         this.vmStruct = vmStruct;
         this.desiredBindings = desiredBindings;
