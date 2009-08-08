@@ -24,7 +24,7 @@ public class VmProxy extends Proxy {
         super(dispatcher);
     }
 
-
+    // FIXME: why Handler<JobStruct> for errors? Seems kind of weird, even if it works.
     public void submitJob(final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<JobStruct> errorHandler) {
        dispatcher.getSubmitJobOperation().send(this, jobStruct, resultHandler, errorHandler);
     }
