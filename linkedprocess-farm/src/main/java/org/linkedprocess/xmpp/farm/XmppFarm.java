@@ -208,25 +208,25 @@ public class XmppFarm extends XmppClient {
 
     // TODO: move this
     private void addConfigurationBasedFields(final DataForm serviceExtension) {
-        this.serviceExtension.addField(
+        serviceExtension.addField(
                 ConfigurationBasedField.FARM_START_TIME.toField(
                         this.getStartTimeAsXsdDateTime()));
 
-        this.serviceExtension.addField(
+        serviceExtension.addField(
                 ConfigurationBasedField.FARM_PASSWORD_REQUIRED.toField(
                         "" + (null != this.farmPassword)));
 
         Properties p = LinkedProcess.getConfiguration();
-        this.serviceExtension.addField(
+        serviceExtension.addField(
                 ConfigurationBasedField.MAX_CONCURRENT_VIRTUAL_MACHINES.toField(
                         p.getProperty(LinkedProcess.MAX_CONCURRENT_VIRTUAL_MACHINES)));
-        this.serviceExtension.addField(
+        serviceExtension.addField(
                 ConfigurationBasedField.JOB_QUEUE_CAPACITY.toField(
                         p.getProperty(LinkedProcess.JOB_QUEUE_CAPACITY)));
-        this.serviceExtension.addField(
+        serviceExtension.addField(
                 ConfigurationBasedField.JOB_TIMEOUT.toField(
                         p.getProperty(LinkedProcess.JOB_TIMEOUT)));
-        this.serviceExtension.addField(
+        serviceExtension.addField(
                 ConfigurationBasedField.VIRTUAL_MACHINE_TIME_TO_LIVE.toField(
                         p.getProperty(LinkedProcess.VIRTUAL_MACHINE_TIME_TO_LIVE)));
     }
