@@ -15,7 +15,7 @@ import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.farm.SpawnVmProvider;
 import org.linkedprocess.xmpp.villein.PresenceHandler;
-import org.linkedprocess.xmpp.villein.structs.*;
+import org.linkedprocess.xmpp.villein.proxies.*;
 import org.linkedprocess.xmpp.villein.Dispatcher;
 import org.linkedprocess.xmpp.vm.*;
 
@@ -41,11 +41,11 @@ public class XmppVillein extends XmppClient {
 
     protected Set<PresenceHandler> presenceHandlers = new HashSet<PresenceHandler>();
 
-    public enum StructType {
+    public enum ProxyType {
         COUNTRYSIDE, FARM, REGISTRY, VM
     }
 
-    protected Map<String, CountrysideProxy> countrysideStructs;
+    protected Map<String, CountrysideProxy> countrysideProxies;
 
     public XmppVillein(final String server, final int port, final String username, final String password) throws XMPPException {
         LOGGER.info("Starting " + STATUS_MESSAGE);
@@ -69,139 +69,139 @@ public class XmppVillein extends XmppClient {
 
         this.connection.addPacketListener(new PresenceListener(this), presenceFilter);
         this.connection.addPacketListener(new LopVilleinListener(this), lopFilter);
-        this.countrysideStructs = new HashMap<String, CountrysideProxy>();
+        this.countrysideProxies = new HashMap<String, CountrysideProxy>();
         this.status = LinkedProcess.VilleinStatus.ACTIVE;
         this.connection.sendPacket(this.createPresence(this.status)); 
     }
 
-    public Collection<CountrysideProxy> getCountrysideStructs() {
-        return this.countrysideStructs.values();
+    public Collection<CountrysideProxy> getCountrysideProxies() {
+        return this.countrysideProxies.values();
     }
 
-    public Collection<FarmProxy> getFarmStructs() {
-        Collection<FarmProxy> farmStructs = new HashSet<FarmProxy>();
-        for (CountrysideProxy countrysideStruct : this.countrysideStructs.values()) {
-            farmStructs.addAll(countrysideStruct.getFarmStructs());
+    public Collection<FarmProxy> getFarmProxies() {
+        Collection<FarmProxy> farmProxies = new HashSet<FarmProxy>();
+        for (CountrysideProxy countrysideProxy : this.countrysideProxies.values()) {
+            farmProxies.addAll(countrysideProxy.getFarmProxies());
         }
-        return farmStructs;
+        return farmProxies;
     }
 
-    public Collection<RegistryProxy> getRegistryStructs() {
-        Collection<RegistryProxy> registryStructs = new HashSet<RegistryProxy>();
-        for (CountrysideProxy countrysideStruct : this.countrysideStructs.values()) {
-            registryStructs.addAll(countrysideStruct.getRegistryStructs());
+    public Collection<RegistryProxy> getRegistryProxies() {
+        Collection<RegistryProxy> registryProxies = new HashSet<RegistryProxy>();
+        for (CountrysideProxy countrysideProxy : this.countrysideProxies.values()) {
+            registryProxies.addAll(countrysideProxy.getRegistryProxies());
         }
-        return registryStructs;
+        return registryProxies;
     }
 
-    public Collection<VmProxy> getVmStructs() {
-        Collection<VmProxy> vmStructs = new HashSet<VmProxy>();
-        for (FarmProxy farmStruct : this.getFarmStructs()) {
-            vmStructs.addAll(farmStruct.getVmStructs());
+    public Collection<VmProxy> getVmProxies() {
+        Collection<VmProxy> vmProxies = new HashSet<VmProxy>();
+        for (FarmProxy farmProxy : this.getFarmProxies()) {
+            vmProxies.addAll(farmProxy.getVmProxies());
         }
-        return vmStructs;
+        return vmProxies;
     }
 
-    public Proxy getStruct(String jid) {
-        return this.getStruct(jid, null);
+    public Proxy getProxy(String jid) {
+        return this.getProxy(jid, null);
     }
 
-    public boolean structExists(String jid) {
-        if (this.getStruct(jid) != null)
+    public boolean proxyExists(String jid) {
+        if (this.getProxy(jid) != null)
             return true;
         else
             return false;
     }
 
-    public Proxy getParentStruct(String jid) {
-        for (CountrysideProxy countrysideStruct : this.countrysideStructs.values()) {
-            if (countrysideStruct.getFullJid().equals(jid))
+    public Proxy getParentProxy(String jid) {
+        for (CountrysideProxy countrysideProxy : this.countrysideProxies.values()) {
+            if (countrysideProxy.getFullJid().equals(jid))
                 return null;
-            for (RegistryProxy registryStruct : countrysideStruct.getRegistryStructs()) {
-                if (registryStruct.getFullJid().equals(jid))
-                    return countrysideStruct;
+            for (RegistryProxy registryProxy : countrysideProxy.getRegistryProxies()) {
+                if (registryProxy.getFullJid().equals(jid))
+                    return countrysideProxy;
             }
-            for (FarmProxy farmStruct : countrysideStruct.getFarmStructs()) {
-                if (farmStruct.getFullJid().equals(jid))
-                    return countrysideStruct;
-                for (VmProxy vmStruct : farmStruct.getVmStructs()) {
-                    if (vmStruct.getFullJid().equals(jid))
-                        return farmStruct;
+            for (FarmProxy farmProxy : countrysideProxy.getFarmProxies()) {
+                if (farmProxy.getFullJid().equals(jid))
+                    return countrysideProxy;
+                for (VmProxy vmProxy : farmProxy.getVmProxies()) {
+                    if (vmProxy.getFullJid().equals(jid))
+                        return farmProxy;
                 }
             }
         }
         return null;
     }
 
-    public Proxy getStruct(String jid, StructType type) {
-        for (CountrysideProxy countrysideStruct : this.countrysideStructs.values()) {
-            if (countrysideStruct.getFullJid().equals(jid) && (type == null || type == StructType.COUNTRYSIDE))
-                return countrysideStruct;
-            for (RegistryProxy registryStruct : countrysideStruct.getRegistryStructs()) {
-                if (registryStruct.getFullJid().equals(jid) && (type == null || type == StructType.REGISTRY))
-                    return registryStruct;
+    public Proxy getProxy(String jid, ProxyType type) {
+        for (CountrysideProxy countrysideProxy : this.countrysideProxies.values()) {
+            if (countrysideProxy.getFullJid().equals(jid) && (type == null || type == ProxyType.COUNTRYSIDE))
+                return countrysideProxy;
+            for (RegistryProxy registryProxy : countrysideProxy.getRegistryProxies()) {
+                if (registryProxy.getFullJid().equals(jid) && (type == null || type == ProxyType.REGISTRY))
+                    return registryProxy;
             }
-            for (FarmProxy farmStruct : countrysideStruct.getFarmStructs()) {
-                if (farmStruct.getFullJid().equals(jid) && (type == null || type == StructType.FARM))
-                    return farmStruct;
-                for (VmProxy vmStruct : farmStruct.getVmStructs()) {
-                    if (vmStruct.getFullJid().equals(jid) && (type == null || type == StructType.VM))
-                        return vmStruct;
+            for (FarmProxy farmProxy : countrysideProxy.getFarmProxies()) {
+                if (farmProxy.getFullJid().equals(jid) && (type == null || type == ProxyType.FARM))
+                    return farmProxy;
+                for (VmProxy vmProxy : farmProxy.getVmProxies()) {
+                    if (vmProxy.getFullJid().equals(jid) && (type == null || type == ProxyType.VM))
+                        return vmProxy;
                 }
             }
         }
         return null;
     }
 
-    public void removeStruct(String jid) {
-        Proxy parentProxy = this.getParentStruct(jid);
+    public void removeProxy(String jid) {
+        Proxy parentProxy = this.getParentProxy(jid);
         if (parentProxy == null) {
-            this.countrysideStructs.remove(jid);
+            this.countrysideProxies.remove(jid);
         } else if (parentProxy instanceof CountrysideProxy) {
-            ((CountrysideProxy) parentProxy).removeFarmStruct(jid);
-            ((CountrysideProxy) parentProxy).removeRegistryStruct(jid);
-            LOGGER.info("Removing struct for " + jid);
+            ((CountrysideProxy) parentProxy).removeFarmProxy(jid);
+            ((CountrysideProxy) parentProxy).removeRegistryProxy(jid);
+            LOGGER.info("Removing proxy for " + jid);
         } else {
-            ((FarmProxy) parentProxy).removeVmStruct(jid);
-            LOGGER.info("Removing struct for " + jid);
+            ((FarmProxy) parentProxy).removeVmProxy(jid);
+            LOGGER.info("Removing proxy for " + jid);
         }
     }
 
-    public void addCountrysideStruct(CountrysideProxy countrysideStruct) {
-        this.countrysideStructs.put(countrysideStruct.getFullJid(), countrysideStruct);
+    public void addCountrysideProxy(CountrysideProxy countrysideProxy) {
+        this.countrysideProxies.put(countrysideProxy.getFullJid(), countrysideProxy);
     }
 
-    public void addFarmStruct(FarmProxy farmStruct) throws ParentStructNotFoundException {
-        Proxy countrysideProxy = this.getStruct(LinkedProcess.generateBareJid(farmStruct.getFullJid()), StructType.COUNTRYSIDE);
+    public void addFarmProxy(FarmProxy farmProxy) throws ParentProxyNotFoundException {
+        Proxy countrysideProxy = this.getProxy(LinkedProcess.generateBareJid(farmProxy.getFullJid()), ProxyType.COUNTRYSIDE);
         if (countrysideProxy != null && countrysideProxy instanceof CountrysideProxy)
-            ((CountrysideProxy) countrysideProxy).addFarmStruct(farmStruct);
+            ((CountrysideProxy) countrysideProxy).addFarmProxy(farmProxy);
         else
-            throw new ParentStructNotFoundException("countryside struct null for " + farmStruct.getFullJid());
+            throw new ParentProxyNotFoundException("countryside proxy null for " + farmProxy.getFullJid());
     }
 
-    public void addRegistryStruct(RegistryProxy registryStruct) throws ParentStructNotFoundException {
-        Proxy countrysideProxy = this.getStruct(LinkedProcess.generateBareJid(registryStruct.getFullJid()), StructType.COUNTRYSIDE);
+    public void addRegistryProxy(RegistryProxy registryProxy) throws ParentProxyNotFoundException {
+        Proxy countrysideProxy = this.getProxy(LinkedProcess.generateBareJid(registryProxy.getFullJid()), ProxyType.COUNTRYSIDE);
         if (countrysideProxy != null && countrysideProxy instanceof CountrysideProxy)
-            ((CountrysideProxy) countrysideProxy).addRegistryStruct(registryStruct);
+            ((CountrysideProxy) countrysideProxy).addRegistryProxy(registryProxy);
         else
-            throw new ParentStructNotFoundException("countryside struct null for " + registryStruct.getFullJid());
+            throw new ParentProxyNotFoundException("countryside proxy null for " + registryProxy.getFullJid());
     }
 
-    public void addVmStruct(String farmJid, VmProxy vmStruct) throws ParentStructNotFoundException {
-        Proxy farmProxy = this.getStruct(farmJid, StructType.FARM);
+    public void addVmProxy(String farmJid, VmProxy vmProxy) throws ParentProxyNotFoundException {
+        Proxy farmProxy = this.getProxy(farmJid, ProxyType.FARM);
         if (farmProxy != null && farmProxy instanceof FarmProxy)
-            ((FarmProxy) farmProxy).addVmStruct(vmStruct);
+            ((FarmProxy) farmProxy).addVmProxy(vmProxy);
         else
-            throw new ParentStructNotFoundException("farm struct null for " + vmStruct.getFullJid());
+            throw new ParentProxyNotFoundException("farm proxy null for " + vmProxy.getFullJid());
     }
 
-    public synchronized void createCountrysideStructsFromRoster() {
+    public synchronized void createCountrysideProxiesFromRoster() {
         for (RosterEntry entry : this.getRoster().getEntries()) {
-            CountrysideProxy countrysideStruct = this.countrysideStructs.get(entry.getUser());
-            if (countrysideStruct == null) {
-                countrysideStruct = new CountrysideProxy(this.dispatcher);
-                countrysideStruct.setFullJid(entry.getUser());
-                this.countrysideStructs.put(countrysideStruct.getFullJid(), countrysideStruct);
+            CountrysideProxy countrysideProxy = this.countrysideProxies.get(entry.getUser());
+            if (countrysideProxy == null) {
+                countrysideProxy = new CountrysideProxy(this.dispatcher);
+                countrysideProxy.setFullJid(entry.getUser());
+                this.countrysideProxies.put(countrysideProxy.getFullJid(), countrysideProxy);
             }
         }
     }
@@ -227,17 +227,17 @@ public class XmppVillein extends XmppClient {
 
     public void requestUnsubscription(String jid, boolean removeFromRoster) {
         super.requestUnsubscription(jid, removeFromRoster);
-        CountrysideProxy countrysideStruct = this.countrysideStructs.get(jid);
-        if (countrysideStruct != null) {
-            for (FarmProxy farmStruct : countrysideStruct.getFarmStructs()) {
-                for (VmProxy vmStruct : farmStruct.getVmStructs()) {
-                    if (vmStruct.getVmPassword() != null) {
-                        //TODO: terminateVirtualMachine(vmStruct);
+        CountrysideProxy countrysideProxy = this.countrysideProxies.get(jid);
+        if (countrysideProxy != null) {
+            for (FarmProxy farmProxy : countrysideProxy.getFarmProxies()) {
+                for (VmProxy vmProxy : farmProxy.getVmProxies()) {
+                    if (vmProxy.getVmPassword() != null) {
+                        vmProxy.terminateVm(null, null);
                     }
                 }
             }
         }
-        this.countrysideStructs.remove(jid);
+        this.countrysideProxies.remove(jid);
     }
 
      protected void initiateFeatures() {

@@ -6,7 +6,7 @@ import org.linkedprocess.gui.RosterPanel;
 import org.linkedprocess.gui.TreeNodeProperty;
 import org.linkedprocess.gui.TreeRenderer;
 import org.linkedprocess.gui.farm.vmviewer.VmViewerFrame;
-import org.linkedprocess.xmpp.villein.structs.CountrysideProxy;
+import org.linkedprocess.xmpp.villein.proxies.CountrysideProxy;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 import javax.swing.*;
@@ -41,9 +41,9 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
     public VmArea(FarmGui farmGui) {
         super(new BorderLayout());
         this.farmGui = farmGui;
-        CountrysideProxy countrysideStruct = new CountrysideProxy(null);
-        countrysideStruct.setFullJid(LinkedProcess.generateBareJid(farmGui.getXmppFarm().getFullJid()));
-        this.treeRoot = new DefaultMutableTreeNode(countrysideStruct);
+        CountrysideProxy countrysideProxy = new CountrysideProxy(null);
+        countrysideProxy.setFullJid(LinkedProcess.generateBareJid(farmGui.getXmppFarm().getFullJid()));
+        this.treeRoot = new DefaultMutableTreeNode(countrysideProxy);
         this.tree = new JTree(this.treeRoot);
         this.tree.setCellRenderer(new TreeRenderer());
         this.tree.setModel(new DefaultTreeModel(treeRoot));
@@ -63,12 +63,9 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
         this.farmGui.getXmppFarm().getConnection().addPacketListener(packetSnifferPanel, null);
         this.farmGui.getXmppFarm().getConnection().addPacketWriterInterceptor(packetSnifferPanel, null);
 
-
         RosterPanel rosterPanel = new RosterPanel(this.farmGui.getXmppFarm().getRoster());
 
         JTabbedPane tabbedPane = new JTabbedPane();
-
-
         tabbedPane.addTab("virtual machines", treePanel);
         //tabbedPane.addTab("farm security", securityPanel);
         tabbedPane.addTab("roster", rosterPanel);

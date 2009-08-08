@@ -2,7 +2,7 @@ package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.Connection;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
-import org.linkedprocess.xmpp.villein.structs.VmProxy;
+import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 
 import javax.swing.*;
@@ -55,13 +55,13 @@ public class VilleinGui extends JFrame {
 
     }
 
-    public void addVmFrame(VmProxy vmStruct) {
-        VmControlFrame vmControlFrame = new VmControlFrame(vmStruct, this);
-        this.vmFrames.put(vmStruct.getFullJid(), vmControlFrame);
+    public void addVmFrame(VmProxy vmProxy) {
+        VmControlFrame vmControlFrame = new VmControlFrame(vmProxy, this);
+        this.vmFrames.put(vmProxy.getFullJid(), vmControlFrame);
     }
 
-    public void removeVmFrame(VmProxy vmStruct) {
-        VmControlFrame vmControlFrame = this.vmFrames.remove(vmStruct.getFullJid());
+    public void removeVmFrame(VmProxy vmProxy) {
+        VmControlFrame vmControlFrame = this.vmFrames.remove(vmProxy.getFullJid());
         if (vmControlFrame != null) {
             vmControlFrame.setVisible(false);
         }

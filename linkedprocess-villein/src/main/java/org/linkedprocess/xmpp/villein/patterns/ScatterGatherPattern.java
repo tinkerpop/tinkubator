@@ -8,11 +8,7 @@ import org.linkedprocess.xmpp.villein.XmppVillein;
  *         deploying worker code on several, non-specific supporting LoPVMs, and execute it in another
  *         job referencing the worker method of the main script.
  */
-public class ScatterGatherPattern extends VilleinPattern {
-
-    public ScatterGatherPattern(XmppVillein xmppVillein) {
-        super(xmppVillein);
-    }
+public class ScatterGatherPattern  {
 
 }
 

@@ -5,7 +5,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.villein.PresenceHandler;
-import org.linkedprocess.xmpp.villein.structs.*;
+import org.linkedprocess.xmpp.villein.proxies.*;
 
 /**
  * User: marko
@@ -25,12 +25,12 @@ public class PresenceListener extends LopVilleinListener {
         XmppVillein.LOGGER.info("Presence received from " + presence.getFrom());
         XmppVillein.LOGGER.info(presence.toXML());
 
-        Proxy proxy = this.getXmppVillein().getStruct(presence.getFrom());
+        Proxy proxy = this.getXmppVillein().getProxy(presence.getFrom());
 
         if (proxy != null && (presence.getType() == Presence.Type.unavailable ||
                 presence.getType() == Presence.Type.unsubscribe ||
                 presence.getType() == Presence.Type.unsubscribed)) {
-            this.getXmppVillein().removeStruct(presence.getFrom());
+            this.getXmppVillein().removeProxy(presence.getFrom());
             // Handlers
             for (PresenceHandler presenceHandler : this.getXmppVillein().getPresenceHandlers()) {
                 presenceHandler.handlePresenceUpdate(proxy, presence.getType());
@@ -46,32 +46,32 @@ public class PresenceListener extends LopVilleinListener {
 
             if (LinkedProcess.isBareJid(presence.getFrom())) {
                 //System.out.println("Bare Jid " + packet.getFrom());
-                CountrysideProxy countrysideStruct = new CountrysideProxy(this.getXmppVillein().getDispatcher());
-                countrysideStruct.setFullJid(presence.getFrom());
-                countrysideStruct.setPresence(presence);
-                this.getXmppVillein().addCountrysideStruct(countrysideStruct);
-                proxy = countrysideStruct;
+                CountrysideProxy countrysideProxy = new CountrysideProxy(this.getXmppVillein().getDispatcher());
+                countrysideProxy.setFullJid(presence.getFrom());
+                countrysideProxy.setPresence(presence);
+                this.getXmppVillein().addCountrysideProxy(countrysideProxy);
+                proxy = countrysideProxy;
 
             } else if (isFarm(discoInfo)) {
                 //System.out.println("Farm Jid " + packet.getFrom());
-                FarmProxy farmStruct = new FarmProxy(this.getXmppVillein().getDispatcher());
-                farmStruct.setFullJid(presence.getFrom());
-                farmStruct.setPresence(presence);
-                farmStruct.setSupportedVmSpecies(this.getSupportedVmSpecies(discoInfo));
+                FarmProxy farmProxy = new FarmProxy(this.getXmppVillein().getDispatcher());
+                farmProxy.setFullJid(presence.getFrom());
+                farmProxy.setPresence(presence);
+                farmProxy.setSupportedVmSpecies(this.getSupportedVmSpecies(discoInfo));
                 try {
-                    this.getXmppVillein().addFarmStruct(farmStruct);
-                    proxy = farmStruct;
-                } catch (ParentStructNotFoundException e) {
+                    this.getXmppVillein().addFarmProxy(farmProxy);
+                    proxy = farmProxy;
+                } catch (ParentProxyNotFoundException e) {
                     XmppVillein.LOGGER.warning(e.getMessage());
                 }
             } else if (isRegistry(discoInfo)) {
-                RegistryProxy registryStruct = new RegistryProxy(this.getXmppVillein().getDispatcher());
-                registryStruct.setFullJid(presence.getFrom());
-                registryStruct.setPresence(presence);
+                RegistryProxy registryProxy = new RegistryProxy(this.getXmppVillein().getDispatcher());
+                registryProxy.setFullJid(presence.getFrom());
+                registryProxy.setPresence(presence);
                 try {
-                    this.getXmppVillein().addRegistryStruct(registryStruct);
-                    proxy = registryStruct;
-                } catch (ParentStructNotFoundException e) {
+                    this.getXmppVillein().addRegistryProxy(registryProxy);
+                    proxy = registryProxy;
+                } catch (ParentProxyNotFoundException e) {
                     XmppVillein.LOGGER.warning(e.getMessage());
                 }
             }

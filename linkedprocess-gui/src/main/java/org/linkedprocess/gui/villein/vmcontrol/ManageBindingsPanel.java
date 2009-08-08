@@ -1,13 +1,11 @@
 package org.linkedprocess.gui.villein.vmcontrol;
 
-import org.jivesoftware.smack.packet.IQ;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.GenericErrorHandler;
 import org.linkedprocess.os.TypedValue;
 import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.os.errors.InvalidValueException;
-import org.linkedprocess.xmpp.vm.ManageBindings;
 import org.linkedprocess.xmpp.villein.Handler;
 
 import javax.swing.*;
@@ -152,12 +150,12 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
                         handleIncomingManageBindings(vmBindings);
                     }
                 };
-                vmControlFrame.getVmStruct().getBindings(bindingNames, resultHandler, new GenericErrorHandler());
+                vmControlFrame.getVmProxy().getBindings(bindingNames, resultHandler, new GenericErrorHandler());
             }
         } else if (event.getActionCommand().equals(SET)) {
             VMBindings vmBindings = this.getSetManageBindings();
             if (vmBindings != null && vmBindings.size() > 0) {
-                vmControlFrame.getVmStruct().setBindings(vmBindings, new GenericErrorHandler());
+                vmControlFrame.getVmProxy().setBindings(vmBindings, new GenericErrorHandler());
             }
         } else if (event.getActionCommand().equals(NULL)) {
             int row = this.bindingsTable.getSelectedRow();

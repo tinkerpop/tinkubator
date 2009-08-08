@@ -1,7 +1,7 @@
 package org.linkedprocess.xmpp.villein;
 
 import org.jivesoftware.smack.packet.Presence;
-import org.linkedprocess.xmpp.villein.structs.Proxy;
+import org.linkedprocess.xmpp.villein.proxies.Proxy;
 
 /**
  * User: marko

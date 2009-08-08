@@ -7,7 +7,7 @@ import org.jdom.Namespace;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.xmpp.villein.structs.RegistryProxy;
+import org.linkedprocess.xmpp.villein.proxies.RegistryProxy;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 
 import javax.swing.*;
@@ -26,14 +26,14 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
     protected JList farmlandList;
     protected static final String REFRESH = "refresh";
     protected static final String SUBSCRIBE = "subscribe";
-    protected RegistryProxy registryStruct;
+    protected RegistryProxy registryProxy;
     protected VilleinGui villeinGui;
     protected Document discoItemsDocument;
 
 
-    public ViewRegistryCountrysidesPanel(RegistryProxy registryStruct, VilleinGui villeinGui) {
+    public ViewRegistryCountrysidesPanel(RegistryProxy registryProxy, VilleinGui villeinGui) {
         super(new BorderLayout());
-        this.registryStruct = registryStruct;
+        this.registryProxy = registryProxy;
         this.villeinGui = villeinGui;
 
         this.farmlandList = new JList(new DefaultListModel());
@@ -82,7 +82,7 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
 
     private void generateDiscoItemsDocument() throws XMPPException, JDOMException, IOException {
         ServiceDiscoveryManager discoManager = this.villeinGui.getXmppVillein().getDiscoManager();
-        this.discoItemsDocument = LinkedProcess.createXMLDocument(discoManager.discoverItems(this.registryStruct.getFullJid()).toXML());
+        this.discoItemsDocument = LinkedProcess.createXMLDocument(discoManager.discoverItems(this.registryProxy.getFullJid()).toXML());
         //PacketCollector collector = this.villeinGui.getXmppVillein().getConnection().createPacketCollector(new PacketTypeFilter(DiscoverItems.class));
         //this.discoItemsDocument = LinkedProcess.createXMLDocument(collector.nextResult().toXML());
         //collector.cancel();

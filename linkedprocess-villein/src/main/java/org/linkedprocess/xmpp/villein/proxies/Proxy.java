@@ -1,4 +1,4 @@
-package org.linkedprocess.xmpp.villein.structs;
+package org.linkedprocess.xmpp.villein.proxies;
 
 import org.jivesoftware.smack.packet.Presence;
 import org.linkedprocess.xmpp.villein.Dispatcher;
@@ -34,9 +34,9 @@ public class Proxy implements Comparable {
         return this.fullJid;
     }
 
-    public int compareTo(Object struct) {
-        if (struct instanceof Proxy) {
-            return this.fullJid.compareTo(((Proxy) struct).getFullJid());
+    public int compareTo(Object proxy) {
+        if (proxy instanceof Proxy) {
+            return this.fullJid.compareTo(((Proxy) proxy).getFullJid());
         } else {
             throw new ClassCastException();
         }

@@ -7,9 +7,9 @@ import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.xmpp.farm.SpawnVm;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.linkedprocess.xmpp.villein.Handler;
-import org.linkedprocess.xmpp.villein.structs.FarmProxy;
-import org.linkedprocess.xmpp.villein.structs.ParentStructNotFoundException;
-import org.linkedprocess.xmpp.villein.structs.VmProxy;
+import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
+import org.linkedprocess.xmpp.villein.proxies.ParentProxyNotFoundException;
+import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 
 /**
  * User: marko
@@ -45,15 +45,15 @@ public class SpawnVmOperation extends Operation {
     }
 
     public void receiveNormal(final SpawnVm spawnVm) {
-        VmProxy vmStruct = new VmProxy(xmppVillein.getDispatcher());
-        vmStruct.setFullJid(spawnVm.getVmJid());
-        vmStruct.setVmPassword(spawnVm.getVmPassword());
-        vmStruct.setVmSpecies(spawnVm.getVmSpecies());
-        vmStruct.setPresence(new Presence(Presence.Type.available));
+        VmProxy vmProxy = new VmProxy(xmppVillein.getDispatcher());
+        vmProxy.setFullJid(spawnVm.getVmJid());
+        vmProxy.setVmPassword(spawnVm.getVmPassword());
+        vmProxy.setVmSpecies(spawnVm.getVmSpecies());
+        vmProxy.setPresence(new Presence(Presence.Type.available));
         try {
-            this.xmppVillein.addVmStruct(spawnVm.getFrom(), vmStruct);
-            resultHandlers.handle(spawnVm.getPacketID(), vmStruct);
-        } catch (ParentStructNotFoundException e) {
+            this.xmppVillein.addVmProxy(spawnVm.getFrom(), vmProxy);
+            resultHandlers.handle(spawnVm.getPacketID(), vmProxy);
+        } catch (ParentProxyNotFoundException e) {
             XmppVillein.LOGGER.warning(e.getMessage());
         } finally {
             resultHandlers.removeHandler(spawnVm.getPacketID());

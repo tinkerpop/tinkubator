@@ -1,4 +1,4 @@
-package org.linkedprocess.xmpp.villein.structs;
+package org.linkedprocess.xmpp.villein.proxies;
 
 import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.LinkedProcess;

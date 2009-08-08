@@ -1,7 +1,7 @@
-package org.linkedprocess.xmpp.villein.structs;
+package org.linkedprocess.xmpp.villein.proxies;
 
-import org.linkedprocess.xmpp.villein.structs.Proxy;
-import org.linkedprocess.xmpp.villein.structs.VmProxy;
+import org.linkedprocess.xmpp.villein.proxies.Proxy;
+import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.Dispatcher;
 import org.jivesoftware.smack.packet.XMPPError;
@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class FarmProxy extends Proxy {
 
-    protected Map<String, VmProxy> vmStructs = new HashMap<String, VmProxy>();
+    protected Map<String, VmProxy> vmProxies = new HashMap<String, VmProxy>();
     protected Collection<String> supportedVmSpecies = new HashSet<String>();
     protected String farmPassword;
 
@@ -26,20 +26,20 @@ public class FarmProxy extends Proxy {
         super(dispatcher);
     }
 
-    public VmProxy getVmStruct(String vmJid) {
-        return vmStructs.get(vmJid);
+    public VmProxy getVmProxy(String vmJid) {
+        return vmProxies.get(vmJid);
     }
 
-    public void addVmStruct(VmProxy vmStruct) {
-        this.vmStructs.put(vmStruct.getFullJid(), vmStruct);
+    public void addVmProxy(VmProxy vmProxy) {
+        this.vmProxies.put(vmProxy.getFullJid(), vmProxy);
     }
 
-    public Collection<VmProxy> getVmStructs() {
-        return this.vmStructs.values();
+    public Collection<VmProxy> getVmProxies() {
+        return this.vmProxies.values();
     }
 
-    public void removeVmStruct(String vmJid) {
-        this.vmStructs.remove(vmJid);
+    public void removeVmProxy(String vmJid) {
+        this.vmProxies.remove(vmJid);
     }
 
     public Collection<String> getSupportedVmSpecies() {
@@ -62,7 +62,7 @@ public class FarmProxy extends Proxy {
         this.farmPassword = farmPassword;
     }
 
-    public void spawnVirtualMachine(final String vmSpecies, final Handler<VmProxy> resultHandler, final Handler<XMPPError> errorHandler) {
+    public void spawnVm(final String vmSpecies, final Handler<VmProxy> resultHandler, final Handler<XMPPError> errorHandler) {
         this.dispatcher.getSpawnVmOperation().send(this, vmSpecies, resultHandler, errorHandler);
     }
 }

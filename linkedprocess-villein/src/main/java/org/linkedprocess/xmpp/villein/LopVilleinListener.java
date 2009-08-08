@@ -73,8 +73,6 @@ public class LopVilleinListener extends LopListener {
                     this.getXmppVillein().getDispatcher().getGetBindingsOperation().receiveError(manageBindings);
                 }
             }
-
-
         } else if (packet instanceof TerminateVm) {
             TerminateVm terminateVm = (TerminateVm) packet;
             if (terminateVm.getType() == IQ.Type.RESULT) {

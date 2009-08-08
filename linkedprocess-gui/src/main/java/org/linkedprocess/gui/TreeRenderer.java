@@ -3,9 +3,9 @@ package org.linkedprocess.gui;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.farm.XmppFarm;
 import org.linkedprocess.xmpp.villein.*;
-import org.linkedprocess.xmpp.villein.structs.FarmProxy;
-import org.linkedprocess.xmpp.villein.structs.CountrysideProxy;
-import org.linkedprocess.xmpp.villein.structs.*;
+import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
+import org.linkedprocess.xmpp.villein.proxies.CountrysideProxy;
+import org.linkedprocess.xmpp.villein.proxies.*;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 import javax.swing.*;

@@ -8,7 +8,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.xmpp.villein.structs.FarmProxy;
+import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 
 import javax.swing.*;
@@ -33,16 +33,16 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
     protected JTable valuesTable;
     protected int count = 0;
     protected static final String REFRESH = "refresh";
-    protected FarmProxy farmStruct;
+    protected FarmProxy farmProxy;
     protected VilleinGui villeinGui;
     protected Document discoInfoDocument;
     protected DiscoverInfo discoInfo;
     protected JList featuresList;
 
 
-    public ViewFarmConfigurationPanel(FarmProxy farmStruct, VilleinGui villeinGui) {
+    public ViewFarmConfigurationPanel(FarmProxy farmProxy, VilleinGui villeinGui) {
         super(new BorderLayout());
-        this.farmStruct = farmStruct;
+        this.farmProxy = farmProxy;
         this.villeinGui = villeinGui;
 
         DefaultTableModel tableModel1 = new DefaultTableModel(new Object[][]{}, new Object[]{LinkedProcess.VAR_ATTRIBUTE, LinkedProcess.LABEL_ATTRIBUTE, LinkedProcess.TYPE_ATTRIBUTE});
@@ -150,7 +150,7 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
 
     private void generateDiscoInfoDocument() throws XMPPException, JDOMException, IOException {
         ServiceDiscoveryManager discoManager = this.villeinGui.getXmppVillein().getDiscoManager();
-        this.discoInfo = discoManager.discoverInfo(farmStruct.getFullJid());
+        this.discoInfo = discoManager.discoverInfo(farmProxy.getFullJid());
         this.discoInfoDocument = LinkedProcess.createXMLDocument(this.discoInfo.toXML());
     }
 

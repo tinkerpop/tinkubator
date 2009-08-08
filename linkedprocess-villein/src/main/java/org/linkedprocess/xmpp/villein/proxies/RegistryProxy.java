@@ -1,4 +1,4 @@
-package org.linkedprocess.xmpp.villein.structs;
+package org.linkedprocess.xmpp.villein.proxies;
 
 import org.linkedprocess.xmpp.villein.Dispatcher;
 

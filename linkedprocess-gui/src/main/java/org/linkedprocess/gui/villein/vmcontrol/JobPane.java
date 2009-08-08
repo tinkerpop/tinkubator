@@ -3,7 +3,7 @@ package org.linkedprocess.gui.villein.vmcontrol;
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.linkedprocess.gui.GenericErrorHandler;
 import org.linkedprocess.xmpp.villein.Handler;
-import org.linkedprocess.xmpp.villein.structs.JobStruct;
+import org.linkedprocess.xmpp.villein.proxies.JobStruct;
 
 import javax.swing.*;
 import java.awt.*;
@@ -131,7 +131,7 @@ public class JobPane extends JPanel implements ActionListener {
                     vmControlFrame.handleIncomingSubmitJob(jobStruct);
                 }
             };
-            this.vmControlFrame.getVmStruct().submitJob(this.createSubmitJobStruct(), submitJobHandler, submitJobHandler);
+            this.vmControlFrame.getVmProxy().submitJob(this.createSubmitJobStruct(), submitJobHandler, submitJobHandler);
             submitJobButton.setText(ABORT_JOB);
             submitJobButton.setActionCommand(ABORT_JOB);
             clearButton.setEnabled(false);
@@ -144,7 +144,7 @@ public class JobPane extends JPanel implements ActionListener {
                     vmControlFrame.handleIncomingAbortJob(jobStruct);
                 }
             };
-            this.vmControlFrame.getVmStruct().abortJob(this.createAbortJobStruct(), resultHandler, new GenericErrorHandler());
+            this.vmControlFrame.getVmProxy().abortJob(this.createAbortJobStruct(), resultHandler, new GenericErrorHandler());
             this.expressionTextArea.setEditable(false);
             this.submitJobButton.setEnabled(false);
             this.clearButton.setEnabled(false);

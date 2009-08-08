@@ -10,8 +10,8 @@ import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.gui.GenericErrorHandler;
 import org.linkedprocess.gui.villein.VilleinGui;
 import org.linkedprocess.os.VMBindings;
-import org.linkedprocess.xmpp.villein.structs.JobStruct;
-import org.linkedprocess.xmpp.villein.structs.VmProxy;
+import org.linkedprocess.xmpp.villein.proxies.JobStruct;
+import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -33,7 +33,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
 
     protected JList jobList;
     protected JSplitPane splitPane;
-    protected VmProxy vmStruct;
+    protected VmProxy vmProxy;
     protected VilleinGui villeinGui;
     protected ManageBindingsPanel manageBindingsPanel;
     protected Map<String, JobStatus> jobStatus = new HashMap<String, JobStatus>();
@@ -48,9 +48,9 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
     }
 
 
-    public VmControlFrame(VmProxy vmStruct, VilleinGui villeinGui) {
-        super(vmStruct.getFullJid());
-        this.vmStruct = vmStruct;
+    public VmControlFrame(VmProxy vmProxy, VilleinGui villeinGui) {
+        super(vmProxy.getFullJid());
+        this.vmProxy = vmProxy;
         this.villeinGui = villeinGui;
 
         DefaultListModel listModel = new DefaultListModel();
@@ -102,7 +102,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         this.jobList.setSelectedValue(jobPane, true);
 
         PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel(this.villeinGui.getXmppVillein().getFullJid());
-        PacketFilter fromToFilter = new OrFilter(new FromContainsFilter(vmStruct.getFullJid()), new ToContainsFilter(vmStruct.getFullJid()));
+        PacketFilter fromToFilter = new OrFilter(new FromContainsFilter(vmProxy.getFullJid()), new ToContainsFilter(vmProxy.getFullJid()));
         this.villeinGui.getXmppVillein().getConnection().addPacketListener(packetSnifferPanel, fromToFilter);
         this.villeinGui.getXmppVillein().getConnection().addPacketWriterInterceptor(packetSnifferPanel, fromToFilter);
 
@@ -128,8 +128,8 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         return Packet.nextID();
     }
 
-    public VmProxy getVmStruct() {
-        return this.vmStruct;
+    public VmProxy getVmProxy() {
+        return this.vmProxy;
     }
 
     public void valueChanged(ListSelectionEvent event) {
@@ -188,8 +188,8 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
             }
 
         } else if (event.getActionCommand().equals(TERMINATE_VM)) {
-            this.vmStruct.terminateVm(null, new GenericErrorHandler());
-            this.villeinGui.removeVmFrame(this.vmStruct);
+            this.vmProxy.terminateVm(null, new GenericErrorHandler());
+            this.villeinGui.removeVmFrame(this.vmProxy);
         } else if (event.getActionCommand().equals(CLOSE)) {
             this.setVisible(false);
         }

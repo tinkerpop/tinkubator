@@ -38,7 +38,7 @@ public class PrimeFinder {
      }
 
      private void printProgress() {
-         for(VmStruct vm : scatter.getVillein().getVmStructs()) {
+         for(VmStruct vm : scatter.getVillein().getVmProxies()) {
              System.out.println(vm.getFullJid() + "\t" + vm.getBindings().get(PROGRESS) + "%");
          }
      }
