@@ -16,7 +16,7 @@ import java.util.Map;
  * Date: Jul 7, 2009
  * Time: 10:33:02 PM
  */
-public class VilleinGui extends JFrame implements SubmitJobHandler, AbortJobHandler, ManageBindingsHandler {
+public class VilleinGui extends JFrame {
 
     protected static final String FRAME_TITLE = "Simple Linked Process Villein";
 
@@ -49,11 +49,7 @@ public class VilleinGui extends JFrame implements SubmitJobHandler, AbortJobHand
         this.getContentPane().removeAll();
         this.countrysideArea = new CountrysideArea(this);
         this.countrysideArea.createTree();
-        this.xmppVillein.addSpawnVmHandler(this.countrysideArea);
         this.xmppVillein.addPresenceHandler(this.countrysideArea);
-        this.xmppVillein.addSubmitJobHandler(this);
-        this.xmppVillein.addAbortJobHandler(this);
-        this.xmppVillein.addManageBindingsHandler(this);
         this.getContentPane().add(countrysideArea);
         this.setResizable(true);
         this.pack();
@@ -101,32 +97,5 @@ public class VilleinGui extends JFrame implements SubmitJobHandler, AbortJobHand
 
     public static void main(String[] args) {
         new VilleinGui();
-    }
-
-    public void handleSubmitJob(VmStruct vmStruct, JobStruct jobStruct) {
-        VmControlFrame vmControlFrame = this.getVmFrame(vmStruct.getFullJid());
-        if (vmControlFrame != null) {
-            vmControlFrame.handleIncomingSubmitJob(jobStruct);
-        } else {
-            XmppVillein.LOGGER.severe("Could not find vmframe for " + vmStruct.getFullJid());
-        }
-    }
-
-    public void handleAbortJobResult(VmStruct vmStruct, String jobId) {
-        VmControlFrame vmControlFrame = this.getVmFrame(vmStruct.getFullJid());
-        if (vmControlFrame != null) {
-            vmControlFrame.handleIncomingAbortJob(jobId);
-        } else {
-            XmppVillein.LOGGER.severe("Could not find vmframe for " + vmStruct.getFullJid());
-        }
-    }
-
-    public void handleManageBindingsResult(VmStruct vmStruct, VMBindings vmBindings) {
-        VmControlFrame vmControlFrame = this.getVmFrame(vmStruct.getFullJid());
-        if (vmControlFrame != null) {
-            vmControlFrame.handleIncomingManageBindings(vmBindings);
-        } else {
-            XmppVillein.LOGGER.severe("Could not find vmframe for " + vmStruct.getFullJid());
-        }
     }
 }

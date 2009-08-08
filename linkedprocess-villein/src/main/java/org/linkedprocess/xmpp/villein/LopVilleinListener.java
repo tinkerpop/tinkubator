@@ -58,6 +58,22 @@ public class LopVilleinListener extends LopListener {
                 this.getXmppVillein().getDispatcher().getAbortJobOperation().receiveError(abortJob);
             }
         } else if (packet instanceof ManageBindings) {
+            ManageBindings manageBindings = (ManageBindings) packet;
+            // TODO: NOT GUARENTEED SET/GET DETERMINANT
+            if (null == manageBindings.getBindings()) {
+                if (manageBindings.getType() == IQ.Type.RESULT) {
+                    this.getXmppVillein().getDispatcher().getSetBindingsOperation().receiveNormal(manageBindings);
+                } else if (manageBindings.getType() == IQ.Type.ERROR) {
+                    this.getXmppVillein().getDispatcher().getSetBindingsOperation().receiveError(manageBindings);
+                }
+            } else {
+                if (manageBindings.getType() == IQ.Type.RESULT) {
+                    this.getXmppVillein().getDispatcher().getGetBindingsOperation().receiveNormal(manageBindings);
+                } else if (manageBindings.getType() == IQ.Type.ERROR) {
+                    this.getXmppVillein().getDispatcher().getGetBindingsOperation().receiveError(manageBindings);
+                }
+            }
+
 
         } else if (packet instanceof TerminateVm) {
             TerminateVm terminateVm = (TerminateVm) packet;

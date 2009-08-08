@@ -261,5 +261,4 @@ public class XmppVillein extends XmppClient {
     public void removePresenceHandler(PresenceHandler presenceHandler) {
         this.presenceHandlers.remove(presenceHandler);
     }
-
 }

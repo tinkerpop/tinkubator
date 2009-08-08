@@ -1,9 +1,10 @@
 package org.linkedprocess.gui.villein.vmcontrol;
 
 import org.jivesoftware.smack.packet.PacketExtension;
+import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.structs.JobStruct;
 import org.linkedprocess.xmpp.vm.AbortJob;
-import org.linkedprocess.xmpp.vm.SubmitJob;
+import org.linkedprocess.gui.GenericErrorHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -83,23 +84,17 @@ public class JobPane extends JPanel implements ActionListener {
         this.resultTextArea.setText(BLANK_STRING);
     }
 
-    public SubmitJob getSubmitJob() {
-        SubmitJob submitJob = new SubmitJob();
-        submitJob.setTo(this.vmControlFrame.getVmStruct().getFullJid());
-        submitJob.setFrom(this.vmControlFrame.getVilleinGui().getXmppVillein().getFullJid());
-        submitJob.setExpression(this.expressionTextArea.getText());
-        submitJob.setVmPassword(this.vmControlFrame.getVmStruct().getVmPassword());
-        submitJob.setPacketID(this.jobId);
-        return submitJob;
+    public JobStruct getSubmitJob() {
+        JobStruct jobStruct = new JobStruct();
+        jobStruct.setExpression(this.expressionTextArea.getText());
+        jobStruct.setJobId(this.jobId);
+        return jobStruct;
     }
 
-    public AbortJob getAbortJob() {
-        AbortJob abortJob = new AbortJob();
-        abortJob.setTo(this.vmControlFrame.getVmStruct().getFullJid());
-        abortJob.setFrom(this.vmControlFrame.getVilleinGui().getXmppVillein().getFullJid());
-        abortJob.setVmPassword(this.vmControlFrame.getVmStruct().getVmPassword());
-        abortJob.setJobId(this.jobId);
-        return abortJob;
+    public JobStruct getAbortJob() {
+        JobStruct jobStruct = new JobStruct();
+        jobStruct.setJobId(this.jobId);
+        return jobStruct;
     }
 
     public void handleIncomingSubmitJob(JobStruct jobStruct) {
@@ -156,7 +151,12 @@ public class JobPane extends JPanel implements ActionListener {
 
     public void actionPerformed(ActionEvent event) {
         if (event.getActionCommand().equals(SUBMIT_JOB)) {
-            this.vmControlFrame.getVilleinGui().getConnection().sendPacket(this.getSubmitJob());
+            Handler<JobStruct> resultHandler = new Handler<JobStruct>() {
+                public void handle(JobStruct jobStruct) {
+                    vmControlFrame.handleIncomingSubmitJob(jobStruct);
+                }
+            };
+            this.vmControlFrame.getVmStruct().submitJob(this.getSubmitJob(), resultHandler, new GenericErrorHandler());
             submitJobButton.setText(ABORT_JOB);
             submitJobButton.setActionCommand(ABORT_JOB);
             clearButton.setEnabled(false);
@@ -164,7 +164,7 @@ public class JobPane extends JPanel implements ActionListener {
         } else if (event.getActionCommand().equals(CLEAR)) {
             this.expressionTextArea.setText("");
         } else if (event.getActionCommand().equals(ABORT_JOB)) {
-            this.vmControlFrame.getVilleinGui().getConnection().sendPacket(this.getAbortJob());
+            this.vmControlFrame.getVmStruct().abortJob(this.getAbortJob(), new GenericErrorHandler());
             this.expressionTextArea.setEditable(false);
             this.submitJobButton.setEnabled(false);
             this.clearButton.setEnabled(false);

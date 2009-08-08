@@ -7,6 +7,7 @@ import org.jivesoftware.smack.filter.ToContainsFilter;
 import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.PacketSnifferPanel;
+import org.linkedprocess.gui.GenericErrorHandler;
 import org.linkedprocess.gui.villein.VilleinGui;
 import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.xmpp.villein.structs.JobStruct;
@@ -162,12 +163,12 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         jobList.repaint();
     }
 
-    public void handleIncomingAbortJob(String jobId) {
-        this.jobStatus.put(jobId, JobStatus.ABORTED);
+    public void handleIncomingAbortJob(JobStruct jobStruct) {
+        this.jobStatus.put(jobStruct.getJobId(), JobStatus.ABORTED);
         for (int i = 0; i < this.jobList.getModel().getSize(); i++) {
             JobPane jobPane = (JobPane) this.jobList.getModel().getElementAt(i);
-            if (jobPane.getJobId().equals(jobId)) {
-                jobPane.handleIncomingAbortJob(jobId);
+            if (jobPane.getJobId().equals(jobStruct.getJobId())) {
+                jobPane.handleIncomingAbortJob(jobStruct.getJobId());
             }
         }
         jobList.repaint();
@@ -192,12 +193,11 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
             }
 
         } else if (event.getActionCommand().equals(TERMINATE_VM)) {
-            this.villeinGui.getXmppVillein().terminateVirtualMachine(this.vmStruct);
+            this.vmStruct.terminateVm(new GenericErrorHandler());
             this.villeinGui.removeVmFrame(this.vmStruct);
         } else if (event.getActionCommand().equals(CLOSE)) {
             this.setVisible(false);
         }
-
     }
 
     public VilleinGui getVilleinGui() {

@@ -1,12 +1,14 @@
 package org.linkedprocess.gui.villein;
 
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.gui.*;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
-import org.linkedprocess.xmpp.villein.*;
-import org.linkedprocess.xmpp.villein.structs.*;
+import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.PresenceHandler;
+import org.linkedprocess.xmpp.villein.XmppVillein;
+import org.linkedprocess.xmpp.villein.structs.*;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -26,7 +28,7 @@ import java.util.Set;
  * Date: Jul 7, 2009
  * Time: 11:13:22 PM
  */
-public class CountrysideArea extends JPanel implements ActionListener, MouseListener, SpawnVmHandler, PresenceHandler {
+public class CountrysideArea extends JPanel implements ActionListener, MouseListener, PresenceHandler {
 
     protected VilleinGui villeinGui;
     protected JTree tree;
@@ -47,7 +49,7 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
     public CountrysideArea(VilleinGui villeinGui) {
         super(new BorderLayout());
         this.villeinGui = villeinGui;
-        CountrysideStruct countrysideStruct = new CountrysideStruct();
+        CountrysideStruct countrysideStruct = new CountrysideStruct(this.villeinGui.getXmppVillein().getDispatcher());
         countrysideStruct.setFullJid(LinkedProcess.generateBareJid(this.villeinGui.getXmppVillein().getFullJid()));
         this.treeRoot = new DefaultMutableTreeNode(countrysideStruct);
         this.tree = new JTree(this.treeRoot);
@@ -91,7 +93,7 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
         if (event.getActionCommand().equals(TERMINATE_VM)) {
             if (this.popupTreeObject instanceof VmStruct) {
                 VmStruct vmStruct = (VmStruct) this.popupTreeObject;
-                this.villeinGui.getXmppVillein().terminateVirtualMachine(vmStruct);
+                vmStruct.terminateVm(new GenericErrorHandler());
                 this.villeinGui.removeVmFrame(vmStruct);
             }
         } else if (event.getActionCommand().equals(VM_CONTROL)) {
@@ -136,7 +138,13 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
             for (String vmSpecies : this.supportedVmSpeciesActionCommands) {
                 if (event.getActionCommand().equals(vmSpecies)) {
                     if (this.popupTreeObject instanceof FarmStruct) {
-                        this.villeinGui.getXmppVillein().spawnVirtualMachine(((FarmStruct) this.popupTreeObject), vmSpecies);
+                        FarmStruct farmStruct = (FarmStruct) this.popupTreeObject;
+                        Handler<VmStruct> resultHandler = new Handler<VmStruct>() {
+                            public void handle(VmStruct vmStruct) {
+                                villeinGui.updateHostAreaTree(vmStruct.getFullJid(), false);
+                            }
+                        };
+                        farmStruct.spawnVirtualMachine(vmSpecies, resultHandler, new GenericErrorHandler());
                         break;
                     }
                 }
@@ -424,10 +432,6 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
 
     public void mousePressed(MouseEvent event) {
 
-    }
-
-    public void handleSuccessfulSpawnVm(VmStruct vmStruct) {
-        villeinGui.updateHostAreaTree(vmStruct.getFullJid(), false);
     }
 
     public void handlePresenceUpdate(Struct struct, Presence.Type presenceType) {
