@@ -157,7 +157,6 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         for (int i = 0; i < this.jobList.getModel().getSize(); i++) {
             JobPane jobPane = (JobPane) this.jobList.getModel().getElementAt(i);
             if (jobPane.getJobId().equals(jobId)) {
-                System.out.println("HERERE!" + jobPane);
                 jobPane.handleIncomingSubmitJob(jobStruct);
             }
         }
