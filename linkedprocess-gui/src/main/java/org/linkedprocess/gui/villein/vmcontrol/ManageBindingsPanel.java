@@ -3,10 +3,12 @@ package org.linkedprocess.gui.villein.vmcontrol;
 import org.jivesoftware.smack.packet.IQ;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.gui.ImageHolder;
+import org.linkedprocess.gui.GenericErrorHandler;
 import org.linkedprocess.os.TypedValue;
 import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.os.errors.InvalidValueException;
 import org.linkedprocess.xmpp.vm.ManageBindings;
+import org.linkedprocess.xmpp.villein.Handler;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -17,6 +19,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * User: marko
@@ -141,13 +145,21 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
             }
 
         } else if (event.getActionCommand().equals(GET)) {
-            ManageBindings manageBindings = this.getManageBindings(IQ.Type.GET);
-            if (manageBindings != null)
-                vmControlFrame.getVilleinGui().getXmppVillein().getConnection().sendPacket(manageBindings);
+            Set<String> bindingNames = this.getGetManageBindings();
+            if (bindingNames != null && bindingNames.size() > 0) {
+                Handler<VMBindings> resultHandler = new Handler<VMBindings>() {
+                    public void handle(VMBindings vmBindings) {
+                        handleIncomingManageBindings(vmBindings);
+                    }
+                };
+
+                vmControlFrame.getVmStruct().getBindings(bindingNames, resultHandler, new GenericErrorHandler());
+            }
         } else if (event.getActionCommand().equals(SET)) {
-            ManageBindings manageBindings = this.getManageBindings(IQ.Type.SET);
-            if (manageBindings != null)
-                vmControlFrame.getVilleinGui().getXmppVillein().getConnection().sendPacket(manageBindings);
+            VMBindings vmBindings = this.getSetManageBindings();
+            if (vmBindings != null && vmBindings.size() > 0) {
+                vmControlFrame.getVmStruct().setBindings(vmBindings, new GenericErrorHandler());
+            }
         } else if (event.getActionCommand().equals(NULL)) {
             int row = this.bindingsTable.getSelectedRow();
             if ((Boolean) tableModel.getValueAt(row, 3)) {
@@ -161,46 +173,40 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
         }
     }
 
-    public ManageBindings getManageBindings(IQ.Type setOrGet) {
+    public Set<String> getGetManageBindings() {
         DefaultTableModel tableModel = (DefaultTableModel) this.bindingsTable.getModel();
-        ManageBindings manageBindings = new ManageBindings();
-        manageBindings.setType(setOrGet);
-        manageBindings.setTo(this.vmControlFrame.getVmStruct().getFullJid());
-        manageBindings.setFrom(this.vmControlFrame.getVilleinGui().getXmppVillein().getFullJid());
-        manageBindings.setVmPassword(this.vmControlFrame.getVmStruct().getVmPassword());
+        Set<String> bindingsName = new HashSet<String>();
+        for (int row : this.bindingsTable.getSelectedRows()) {
+            bindingsName.add((String) tableModel.getValueAt(row, 0));
+        }
+        return bindingsName;
+    }
+
+    public VMBindings getSetManageBindings() {
+        VMBindings vmBindings = new VMBindings();
+        DefaultTableModel tableModel = (DefaultTableModel) this.bindingsTable.getModel();
         for (int row : this.bindingsTable.getSelectedRows()) {
             String name = (String) tableModel.getValueAt(row, 0);
             String value = (String) tableModel.getValueAt(row, 1);
             boolean isNull = (Boolean) tableModel.getValueAt(row, 3);
 
-            if (setOrGet == IQ.Type.SET)
-                if ((tableModel.getValueAt(row, 2) == null || ((String) tableModel.getValueAt(row, 2)).length() == 0) && !isNull)
-                    JOptionPane.showMessageDialog(null, "select a datatype for the binding", "datatype error", JOptionPane.ERROR_MESSAGE);
-                else {
-                    try {
-                        if (!isNull) {
-                            String datatype = VMBindings.XMLSchemaDatatype.expandDatatypeAbbreviation((String) tableModel.getValueAt(row, 2));
-                            manageBindings.addBinding(name, value, datatype);
-                        } else {
-                            manageBindings.addBinding(name, null, null);
-                        }
-                    } catch (InvalidValueException e) {
-                        JOptionPane.showMessageDialog(null, "illegal argument for the specified datatype", "illegal type conversion error", JOptionPane.ERROR_MESSAGE);
-                        return null;
-                    }
-                }
-            else {
+            if ((tableModel.getValueAt(row, 2) == null || ((String) tableModel.getValueAt(row, 2)).length() == 0) && !isNull) {
+                JOptionPane.showMessageDialog(null, "select a datatype for the binding", "datatype error", JOptionPane.ERROR_MESSAGE);
+            } else {
                 try {
-                    manageBindings.addBinding(name, null, null);
+                    if (!isNull) {
+                        String datatype = VMBindings.XMLSchemaDatatype.expandDatatypeAbbreviation((String) tableModel.getValueAt(row, 2));
+                        vmBindings.putTyped(name, new TypedValue(VMBindings.XMLSchemaDatatype.valueByURI(datatype), value));
+                    } else {
+                        vmBindings.putTyped(name, null);
+                    }
                 } catch (InvalidValueException e) {
-                    // This won't happen because this is a GET
-                    e.printStackTrace();
-                    System.exit(1);
+                    JOptionPane.showMessageDialog(null, "illegal argument for the specified datatype", "illegal type conversion error", JOptionPane.ERROR_MESSAGE);
+                    return null;
                 }
             }
-
         }
-        return manageBindings;
+        return vmBindings;
     }
 
     public void handleIncomingManageBindings(VMBindings vmBindings) {

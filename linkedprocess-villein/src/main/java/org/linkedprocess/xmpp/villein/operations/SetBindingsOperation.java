@@ -32,7 +32,6 @@ public class SetBindingsOperation extends Operation {
         manageBindings.setType(IQ.Type.SET);
         manageBindings.setVmPassword(vmStruct.getVmPassword());
         manageBindings.setBindings(vmBindings);
-        xmppVillein.getConnection().sendPacket(manageBindings);
 
         Handler<VMBindings> resultHandler = new Handler<VMBindings>() {
             public void handle(VMBindings vmBindings) {

@@ -25,7 +25,7 @@ public class GetBindingsOperation extends Operation {
         resultHandlers = new HandlerSet<VMBindings>();
     }
 
-    public void send(VmStruct vmStruct, Set<String> bindingNames, final Handler<VMBindings> statusHandler, final Handler<XMPPError> errorHandler) {
+    public void send(VmStruct vmStruct, Set<String> bindingNames, final Handler<VMBindings> resultHandler, final Handler<XMPPError> errorHandler) {
 
         String id = Packet.nextID();
         ManageBindings manageBindings = new ManageBindings();
@@ -38,9 +38,8 @@ public class GetBindingsOperation extends Operation {
             vmBindings.put(bindingName, null);
         }
         manageBindings.setBindings(vmBindings);
-        xmppVillein.getConnection().sendPacket(manageBindings);
 
-        this.resultHandlers.addHandler(id, statusHandler);
+        this.resultHandlers.addHandler(id, resultHandler);
         this.errorHandlers.addHandler(id, errorHandler);
 
         xmppVillein.getConnection().sendPacket(manageBindings);

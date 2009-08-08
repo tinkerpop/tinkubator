@@ -25,7 +25,8 @@ public class HandlerSet<T> {
     public Handler<T> addHandler(final String id,
                                  final Handler<T> handler) {
         HandlerRecord r = new HandlerRecord(handler);
-        return handlerRecords.put(id, r).getHandler();
+        handlerRecords.put(id, r);
+        return handler;
     }
 
     public Handler<T> removeHandler(final String id) {
