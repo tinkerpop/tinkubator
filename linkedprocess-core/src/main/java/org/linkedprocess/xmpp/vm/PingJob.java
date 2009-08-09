@@ -31,16 +31,16 @@ public class PingJob extends VirtualMachineIq {
 
     public String getChildElementXML() {
 
-        Element jobStatusElement = new Element(LinkedProcess.PING_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE);
+        Element pingJobElement = new Element(LinkedProcess.PING_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE);
         if (this.vmPassword != null) {
-            jobStatusElement.setAttribute(LinkedProcess.VM_PASSWORD_ATTRIBUTE, this.vmPassword);
+            pingJobElement.setAttribute(LinkedProcess.VM_PASSWORD_ATTRIBUTE, this.vmPassword);
         }
         if (this.jobId != null) {
-            jobStatusElement.setAttribute(LinkedProcess.JOB_ID_ATTRIBUTE, this.jobId);
+            pingJobElement.setAttribute(LinkedProcess.JOB_ID_ATTRIBUTE, this.jobId);
         }
         if (this.value != null) {
-            jobStatusElement.setAttribute(LinkedProcess.VALUE_ATTRIBUTE, this.value.toString());
+            pingJobElement.setAttribute(LinkedProcess.VALUE_ATTRIBUTE, this.value.toString());
         }
-        return LinkedProcess.xmlOut.outputString(jobStatusElement);
+        return LinkedProcess.xmlOut.outputString(pingJobElement);
     }
 }
