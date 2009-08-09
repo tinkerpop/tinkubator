@@ -8,7 +8,6 @@ import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
-import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.Job;
@@ -50,7 +49,7 @@ public class XmppVirtualMachine extends XmppClient {
         // Registering the types of IQ packets/stanzas the the Lop VM can respond to.
         ProviderManager pm = ProviderManager.getInstance();
         pm.addIQProvider(LinkedProcess.SUBMIT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE, new SubmitJobProvider());
-        pm.addIQProvider(LinkedProcess.JOB_STATUS_TAG, LinkedProcess.LOP_VM_NAMESPACE, new JobStatusProvider());
+        pm.addIQProvider(LinkedProcess.PING_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE, new PingJobProvider());
         pm.addIQProvider(LinkedProcess.ABORT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE, new AbortJobProvider());
         pm.addIQProvider(LinkedProcess.TERMINATE_VM_TAG, LinkedProcess.LOP_VM_NAMESPACE, new TerminateVmProvider());
         pm.addIQProvider(LinkedProcess.MANAGE_BINDINGS_TAG, LinkedProcess.LOP_VM_NAMESPACE, new ManageBindingsProvider());
@@ -65,13 +64,13 @@ public class XmppVirtualMachine extends XmppClient {
         }
 
         PacketFilter submitFilter = new AndFilter(new PacketTypeFilter(SubmitJob.class), new IQTypeFilter(IQ.Type.GET));
-        PacketFilter statusFilter = new AndFilter(new PacketTypeFilter(JobStatus.class), new IQTypeFilter(IQ.Type.GET));
+        PacketFilter statusFilter = new AndFilter(new PacketTypeFilter(PingJob.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter abandonFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter terminateFilter = new AndFilter(new PacketTypeFilter(TerminateVm.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter bindingsFilter = new AndFilter(new PacketTypeFilter(ManageBindings.class), new OrFilter(new IQTypeFilter(IQ.Type.GET), new IQTypeFilter(IQ.Type.SET)));
         
         this.connection.addPacketListener(new SubmitJobListener(this), submitFilter);
-        this.connection.addPacketListener(new JobStatusListener(this), statusFilter);
+        this.connection.addPacketListener(new PingJobListener(this), statusFilter);
         this.connection.addPacketListener(new AbortJobListener(this), abandonFilter);
         this.connection.addPacketListener(new TerminateVmListener(this), terminateFilter);
         this.connection.addPacketListener(new ManageBindingsListener(this), bindingsFilter);

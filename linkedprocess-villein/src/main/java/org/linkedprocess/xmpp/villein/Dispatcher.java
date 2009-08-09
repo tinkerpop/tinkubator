@@ -11,7 +11,7 @@ import org.linkedprocess.xmpp.villein.XmppVillein;
  * To change this template use File | Settings | File Templates.
  */
 public class Dispatcher {
-    private final JobStatusOperation jobStatusOperation;
+    private final PingJobOperation pingJobOperation;
     private final SpawnVmOperation spawnVmOperation;
     private final SubmitJobOperation submitJobOperation;
     private final AbortJobOperation abortJobOperation;
@@ -20,7 +20,7 @@ public class Dispatcher {
     private final SetBindingsOperation setBindingsOperation;
 
     public Dispatcher(XmppVillein xmppVillein) {
-        this.jobStatusOperation = new JobStatusOperation(xmppVillein);
+        this.pingJobOperation = new PingJobOperation(xmppVillein);
         this.spawnVmOperation = new SpawnVmOperation(xmppVillein);
         this.submitJobOperation = new SubmitJobOperation(xmppVillein);
         this.abortJobOperation = new AbortJobOperation(xmppVillein);
@@ -29,8 +29,8 @@ public class Dispatcher {
         this.setBindingsOperation = new SetBindingsOperation(xmppVillein);
     }
 
-    public JobStatusOperation getJobStatusOperation() {
-        return this.jobStatusOperation;
+    public PingJobOperation getPingJobOperation() {
+        return this.pingJobOperation;
     }
     
     public SpawnVmOperation getSpawnVmOperation() {

@@ -30,7 +30,7 @@ public class VmProxy extends Proxy {
     }
 
     public void jobStatus(final JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> resultHandler, final Handler<XMPPError> errorHandler) {
-        dispatcher.getJobStatusOperation().send(this, jobStruct, resultHandler, errorHandler);
+        dispatcher.getPingJobOperation().send(this, jobStruct, resultHandler, errorHandler);
     }
 
     public void abortJob(final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<XMPPError> errorHandler) {

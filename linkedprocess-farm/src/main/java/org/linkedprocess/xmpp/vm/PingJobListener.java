@@ -13,33 +13,33 @@ import org.linkedprocess.xmpp.LopXmppError;
  * Date: Jun 25, 2009
  * Time: 12:54:11 PM
  */
-public class JobStatusListener extends LopVmListener {
+public class PingJobListener extends LopVmListener {
 
-    public JobStatusListener(XmppVirtualMachine xmppVirtualMachine) {
+    public PingJobListener(XmppVirtualMachine xmppVirtualMachine) {
         super(xmppVirtualMachine);
     }
 
     public void processPacket(Packet packet) {
         try {
-            processJobStatusPacket((JobStatus) packet);
+            processJobStatusPacket((PingJob) packet);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void processJobStatusPacket(JobStatus jobStatus) {
+    public void processJobStatusPacket(PingJob pingJob) {
 
-        XmppVirtualMachine.LOGGER.fine("Arrived " + JobStatusListener.class.getName());
-        XmppVirtualMachine.LOGGER.fine(jobStatus.toXML());
+        XmppVirtualMachine.LOGGER.fine("Arrived " + PingJobListener.class.getName());
+        XmppVirtualMachine.LOGGER.fine(pingJob.toXML());
 
-        JobStatus returnJobStatus = new JobStatus();
-        returnJobStatus.setTo(jobStatus.getFrom());
+        PingJob returnJobStatus = new PingJob();
+        returnJobStatus.setTo(pingJob.getFrom());
         returnJobStatus.setFrom(this.getXmppVm().getFullJid());
-        returnJobStatus.setPacketID(jobStatus.getPacketID());
+        returnJobStatus.setPacketID(pingJob.getPacketID());
 
 
-        String jobId = jobStatus.getJobId();
-        String vmPassword = jobStatus.getVmPassword();
+        String jobId = pingJob.getJobId();
+        String vmPassword = pingJob.getVmPassword();
 
         if (null == vmPassword || null == jobId) {
             String errorMessage = "";
@@ -72,7 +72,7 @@ public class JobStatusListener extends LopVmListener {
             }
         }
 
-        XmppVirtualMachine.LOGGER.fine("Sent " + JobStatusListener.class.getName());
+        XmppVirtualMachine.LOGGER.fine("Sent " + PingJobListener.class.getName());
         XmppVirtualMachine.LOGGER.fine(returnJobStatus.toXML());
         this.getXmppVm().getConnection().sendPacket(returnJobStatus);
 

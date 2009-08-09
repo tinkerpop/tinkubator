@@ -84,7 +84,7 @@ public class SubmitJobListener extends LopVmListener {
         }
 
         if (submitJob != null) {
-            XmppVirtualMachine.LOGGER.fine("Sent " + JobStatusListener.class.getName());
+            XmppVirtualMachine.LOGGER.fine("Sent " + PingJobListener.class.getName());
             XmppVirtualMachine.LOGGER.fine(returnSubmitJob.toXML());
             this.getXmppVm().getConnection().sendPacket(returnSubmitJob);
         }

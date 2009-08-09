@@ -8,7 +8,7 @@ import org.linkedprocess.LinkedProcess;
  * Date: Jun 25, 2009
  * Time: 12:54:02 PM
  */
-public class JobStatus extends VirtualMachineIq {
+public class PingJob extends VirtualMachineIq {
 
     protected LinkedProcess.JobStatus value;
     protected String jobId;
@@ -31,7 +31,7 @@ public class JobStatus extends VirtualMachineIq {
 
     public String getChildElementXML() {
 
-        Element jobStatusElement = new Element(LinkedProcess.JOB_STATUS_TAG, LinkedProcess.LOP_VM_NAMESPACE);
+        Element jobStatusElement = new Element(LinkedProcess.PING_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE);
         if (this.vmPassword != null) {
             jobStatusElement.setAttribute(LinkedProcess.VM_PASSWORD_ATTRIBUTE, this.vmPassword);
         }

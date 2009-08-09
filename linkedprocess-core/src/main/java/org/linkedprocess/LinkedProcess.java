@@ -210,7 +210,7 @@ public class LinkedProcess {
     // tag names
     public static final String SUBMIT_JOB_TAG = "submit_job";
     public static final String MANAGE_BINDINGS_TAG = "manage_bindings";
-    public static final String JOB_STATUS_TAG = "job_status";
+    public static final String PING_JOB_TAG = "ping_job";
     public static final String ABORT_JOB_TAG = "abort_job";
     public static final String TERMINATE_VM_TAG = "terminate_vm";
     // attribute names

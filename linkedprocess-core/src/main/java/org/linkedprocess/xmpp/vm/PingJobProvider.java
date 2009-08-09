@@ -10,19 +10,19 @@ import org.xmlpull.v1.XmlPullParser;
  * Date: Jun 25, 2009
  * Time: 12:54:19 PM
  */
-public class JobStatusProvider implements IQProvider {
+public class PingJobProvider implements IQProvider {
 
     public IQ parseIQ(XmlPullParser parser) throws Exception {
-        JobStatus jobStatus = new JobStatus();
+        PingJob pingJob = new PingJob();
         String jobId = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.JOB_ID_ATTRIBUTE);
         if (null != jobId) {
-            jobStatus.setJobId(jobId);
+            pingJob.setJobId(jobId);
         }
         String vmPassword = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VM_PASSWORD_ATTRIBUTE);
         if (null != vmPassword) {
-            jobStatus.setVmPassword(vmPassword);
+            pingJob.setVmPassword(vmPassword);
         }
         parser.next();
-        return jobStatus;
+        return pingJob;
     }
 }

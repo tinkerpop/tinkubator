@@ -1,26 +1,7 @@
 package org.linkedprocess;
 
-import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertEquals;
 import static org.powermock.api.easymock.PowerMock.expectNew;
-import static org.powermock.api.easymock.PowerMock.replayAll;
-
-import java.util.ArrayList;
-
-import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.Presence;
-import org.junit.Test;
-import org.linkedprocess.xmpp.XMPPConnectionWrapper;
-import org.linkedprocess.xmpp.farm.SpawnVm;
-import org.linkedprocess.xmpp.farm.XmppFarm;
-import org.linkedprocess.xmpp.vm.AbortJobListener;
-import org.linkedprocess.xmpp.vm.JobStatusListener;
-import org.linkedprocess.xmpp.vm.ManageBindingsListener;
-import org.linkedprocess.xmpp.vm.SubmitJobListener;
-import org.linkedprocess.xmpp.vm.TerminateVmListener;
 
 public class VmXmppTest extends XMPPSpecificationTest {
 	//

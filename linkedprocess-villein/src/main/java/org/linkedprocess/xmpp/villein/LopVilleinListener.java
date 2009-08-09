@@ -43,12 +43,12 @@ public class LopVilleinListener extends LopListener {
             } else if (submitJob.getType() == IQ.Type.ERROR) {
                 this.getXmppVillein().getDispatcher().getSubmitJobOperation().receiveError(submitJob);
             }
-        } else if (packet instanceof JobStatus) {
-            JobStatus jobStatus = (JobStatus) packet;
-            if (jobStatus.getType() == IQ.Type.RESULT) {
-                this.getXmppVillein().getDispatcher().getJobStatusOperation().receiveNormal(jobStatus);
-            } else if (jobStatus.getType() == IQ.Type.ERROR) {
-                this.getXmppVillein().getDispatcher().getJobStatusOperation().receiveError(jobStatus);
+        } else if (packet instanceof PingJob) {
+            PingJob pingJob = (PingJob) packet;
+            if (pingJob.getType() == IQ.Type.RESULT) {
+                this.getXmppVillein().getDispatcher().getPingJobOperation().receiveNormal(pingJob);
+            } else if (pingJob.getType() == IQ.Type.ERROR) {
+                this.getXmppVillein().getDispatcher().getPingJobOperation().receiveError(pingJob);
             }
         } else if (packet instanceof AbortJob) {
             AbortJob abortJob = (AbortJob) packet;
