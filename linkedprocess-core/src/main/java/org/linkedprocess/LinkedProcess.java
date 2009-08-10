@@ -107,6 +107,7 @@ public class LinkedProcess {
         WRONG_VM_PASSWORD("wrong_vm_password"),
         MALFORMED_PACKET("malformed_packet"), // when a received packet is not as expected
         EVALUATION_ERROR("evaluation_error"),
+        PERMISSION_DENIED("permission_denied"),
         FARM_IS_BUSY("farm_is_busy"), // VMSchedulerIsFullException
         INTERNAL_ERROR("internal_error"), // VMAlreadyExistsException, VMWorkerNotFoundException
         INVALID_VALUE("invalid_value"), // InvalidValueException

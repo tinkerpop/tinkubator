@@ -17,7 +17,7 @@ public class JobResult {
     private static final Logger LOGGER = LinkedProcess.getLogger(JobResult.class);
 
     public enum ResultType {
-        NORMAL_RESULT, ERROR, ABORTED, TIMED_OUT
+        NORMAL_RESULT, ERROR, PERMISSION_DENIED, ABORTED, TIMED_OUT
     }
 
     private final Job job;
@@ -96,6 +96,10 @@ public class JobResult {
         } else if (this.type == ResultType.ERROR) {
             returnSubmitJob.setType(IQ.Type.ERROR);
             returnSubmitJob.setError(new LopXmppError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.EVALUATION_ERROR, exception.getMessage(), LinkedProcess.ClientType.VM));
+            return returnSubmitJob;
+        } else if(this.type == ResultType.PERMISSION_DENIED) {
+            returnSubmitJob.setType(IQ.Type.ERROR);
+            returnSubmitJob.setError(new LopXmppError(XMPPError.Condition.forbidden, LinkedProcess.LopErrorType.PERMISSION_DENIED, exception.getMessage(), LinkedProcess.ClientType.VM));
             return returnSubmitJob;
         } else if (this.type == ResultType.NORMAL_RESULT) {
             returnSubmitJob.setType(IQ.Type.RESULT);
