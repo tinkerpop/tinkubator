@@ -123,7 +123,9 @@ public class VMSecurityManager extends SecurityManager {
     }
 
     private void addClassPath(final PathPermissions perms) {
-        String[] paths = System.getProperty("java.class.path").split(":");
+        String classpath = System.getProperty("java.class.path");
+        LOGGER.info("adding elements of classpath as read-permitted paths: " + classpath);
+        String[] paths = classpath.split(":");
         for (String p : paths) {
             perms.addPermitRule(p);
         }
