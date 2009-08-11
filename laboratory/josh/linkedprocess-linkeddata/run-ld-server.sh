@@ -20,7 +20,7 @@ if [ $# -ge 1 ] ; then
 fi
 
 # Launch the application
-$JAVA $JAVA_OPTIONS -cp $JAR org.linkedprocess.linkeddata.tools.CreateDemoTripleStore
+$JAVA $JAVA_OPTIONS -cp $JAR org.linkedprocess.linkeddata.server.DemoServer
 
 # Return the program's exit code
 exit $?

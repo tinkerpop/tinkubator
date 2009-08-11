@@ -10,6 +10,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>net.fortytwo.rdfwiki</groupId>
+            <artifactId>rdfwiki</artifactId>
+            <version>alpha1</version>
+        </dependency>
+        <dependency>
             <groupId>org.linkedprocess</groupId>
             <artifactId>linkedprocess-farm</artifactId>
             <version>alpha1</version>
@@ -148,13 +153,13 @@
                     <descriptors>
                         <descriptor>src/assembly/full.xml</descriptor>
                     </descriptors>
-                    <finalName>linkedprocess-linkedprocess-${project.version}</finalName>
+                    <finalName>linkedprocess-linkeddata-${project.version}</finalName>
                     <outputDirectory>target</outputDirectory>
                     <workDirectory>target/assembly/work</workDirectory>
                     <tarLongFileMode>warn</tarLongFileMode>
                     <archive>
                         <manifest>
-                            <mainClass>org.linkedprocess.linkeddata.LinkedData</mainClass>
+                            <mainClass>org.linkedprocess.linkeddata.server.DemoServer</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

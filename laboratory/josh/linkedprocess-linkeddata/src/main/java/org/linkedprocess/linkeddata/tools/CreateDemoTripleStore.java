@@ -2,6 +2,7 @@ package org.linkedprocess.linkeddata.tools;
 
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.linkeddata.nquads.NQuadsParser;
+import org.linkedprocess.linkeddata.server.DemoServer;
 import org.openrdf.rio.RDFParser;
 import org.openrdf.rio.RDFHandler;
 import org.openrdf.rio.RDFHandlerException;
@@ -36,11 +37,10 @@ public class CreateDemoTripleStore {
     }
 
     private void addData() throws Exception {
-        File storeDir = new File("/opt/linkedprocess/linkeddatademo/btc-2009-small-nativestore");
         File btcSmallDataSet = new File("/opt/linkedprocess/linkeddatademo/btc-2009-small.nq");
         String baseURI = "http://example.org/bogusBaseURI#";
 
-        Sail sail = new NativeStore(storeDir);
+        Sail sail = new NativeStore(DemoServer.DEMO_STORE_DIRECTORY);
         sail.initialize();
 
         try {
