@@ -2,7 +2,13 @@ package org.linkedprocess.linkeddata.server;
 
 import net.fortytwo.rdfwiki.RDFWiki;
 import net.fortytwo.rdfwiki.SailSelector;
+import net.fortytwo.ripple.Ripple;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.linkeddata.server.rewriter.RewriterSail;
+import org.linkedprocess.linkeddata.server.rewriter.RewritingSchema;
+import org.linkedprocess.linkeddata.server.rewriter.URIRewriter;
+import org.openrdf.model.URI;
+import org.openrdf.model.ValueFactory;
 import org.openrdf.sail.Sail;
 import org.openrdf.sail.SailException;
 import org.openrdf.sail.nativerdf.NativeStore;
@@ -24,11 +30,17 @@ public class DemoServer {
             = new File("/opt/linkedprocess/linkeddatademo/btc-2009-small-nativestore");
     //= new File("/opt/nativestore/linkedData");
 
+    private static final String PREFIX = "http://lanl.linkedprocess.org:8182/ns/";
+    //private static final String PREFIX = "http://localhost:8182/ns/";
+
     private static final Logger LOGGER = LinkedProcess.getLogger(DemoServer.class);
 
     public static void main(final String[] args) throws Exception {
-        final Sail sail = new NativeStore(DEMO_STORE_DIRECTORY);
-        sail.initialize();
+        Ripple.initialize();
+
+        Sail baseSail = new NativeStore(DEMO_STORE_DIRECTORY);
+        baseSail.initialize();
+        final Sail sail = createRewriterSail(baseSail);
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
@@ -46,12 +58,50 @@ public class DemoServer {
             }
         };
 
-        new RDFWiki(selector);
+        RDFWiki w = new RDFWiki(selector);
 
         Object monitor = "";
         synchronized (monitor) {
             monitor.wait();
         }
+    }
+
+    private static Sail createRewriterSail(final Sail baseSail) {
+        RewritingSchema s = new RewritingSchema();
+        final ValueFactory valueFactory = baseSail.getValueFactory();
+
+        URIRewriter fromStoreRewriter = new URIRewriter() {
+            public URI rewrite(final URI original) {
+                String s = original.toString();
+                if (s.startsWith("http://")) {
+                    s = s.replaceFirst("http://", PREFIX);
+                    return valueFactory.createURI(s);
+                } else {
+                    return original;
+                }
+            }
+        };
+
+        URIRewriter toStoreRewriter = new URIRewriter() {
+            public URI rewrite(final URI original) {
+                System.out.println("rewriting: " + original);
+
+                String s = original.toString();
+                if (s.startsWith(PREFIX)) {
+                    s = s.replaceFirst(PREFIX, "http://");
+                    return valueFactory.createURI(s);
+                } else {
+                    return original;
+                }
+            }
+        };
+
+        s.setRewriter(RewritingSchema.PartOfSpeech.SUBJECT, RewritingSchema.Action.FROM_STORE, fromStoreRewriter);
+        s.setRewriter(RewritingSchema.PartOfSpeech.OBJECT, RewritingSchema.Action.FROM_STORE, fromStoreRewriter);
+        s.setRewriter(RewritingSchema.PartOfSpeech.SUBJECT, RewritingSchema.Action.TO_STORE, toStoreRewriter);
+        s.setRewriter(RewritingSchema.PartOfSpeech.OBJECT, RewritingSchema.Action.TO_STORE, toStoreRewriter);
+
+        return new RewriterSail(baseSail, s);
     }
 
     /*
