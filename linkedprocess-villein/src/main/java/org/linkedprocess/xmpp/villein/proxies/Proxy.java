@@ -154,5 +154,20 @@ public class Proxy implements Comparable {
         public Set<String> getValues() {
             return this.values;
         }
+
+        public String getValue() {
+            if(null != this.values && this.values.size() > 0)
+                return this.values.iterator().next();
+            else
+                return null;
+        }
+
+        public int getIntegerValue() {
+            return Integer.valueOf(this.getValue());
+        }
+
+        public boolean getBooleanValue() {
+            return Boolean.valueOf(this.getValue());
+        }
     }
 }

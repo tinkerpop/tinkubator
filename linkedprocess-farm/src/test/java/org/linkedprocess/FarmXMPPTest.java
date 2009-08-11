@@ -175,7 +175,7 @@ public class FarmXMPPTest extends XMPPSpecificationTest {
 	@Test
 	public void tryingToSpawnAVMFromFarmWithPWDShouldCheckPwd()
 			throws Exception {
-		LinkedProcess.getConfiguration().put(LinkedProcess.FARM_PASSWORD,
+		LinkedProcess.getConfiguration().put(LinkedProcess.FARM_PASSWORD_PROPERTY,
 				password);
 		startFarm();
 
@@ -216,7 +216,7 @@ public class FarmXMPPTest extends XMPPSpecificationTest {
 	public void sendingWrongSpawnRequestsShouldReturnErrorPackets()
 			throws Exception {
 		// make sure farm is not PWD protected
-		LinkedProcess.getConfiguration().remove(LinkedProcess.FARM_PASSWORD);
+		LinkedProcess.getConfiguration().remove(LinkedProcess.FARM_PASSWORD_PROPERTY);
 
 		startFarm();
 

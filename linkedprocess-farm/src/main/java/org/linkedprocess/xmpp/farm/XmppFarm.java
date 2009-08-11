@@ -12,7 +12,6 @@ import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.ReportedData;
 import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.LinkedProcessFarm;
@@ -72,7 +71,7 @@ public class XmppFarm extends XmppClient {
         this.connection.addPacketListener(new SpawnVmListener(this), spawnFilter);
         this.connection.addPacketListener(new PresenceSubscriptionListener(this), subscribeFilter);
 
-        this.farmPassword = LinkedProcess.getConfiguration().getProperty(LinkedProcess.FARM_PASSWORD);
+        this.farmPassword = LinkedProcess.getConfiguration().getProperty(LinkedProcess.FARM_PASSWORD_PROPERTY);
         if (null != this.farmPassword) {
             this.farmPassword = this.farmPassword.trim();
         }
@@ -219,26 +218,26 @@ public class XmppFarm extends XmppClient {
         Properties p = LinkedProcess.getConfiguration();
         serviceExtension.addField(
                 ConfigurationBasedField.MAX_CONCURRENT_VIRTUAL_MACHINES.toField(
-                        p.getProperty(LinkedProcess.MAX_CONCURRENT_VIRTUAL_MACHINES)));
+                        p.getProperty(LinkedProcess.MAX_CONCURRENT_VIRTUAL_MACHINES_PROPERTY)));
         serviceExtension.addField(
                 ConfigurationBasedField.JOB_QUEUE_CAPACITY.toField(
-                        p.getProperty(LinkedProcess.JOB_QUEUE_CAPACITY)));
+                        p.getProperty(LinkedProcess.JOB_QUEUE_CAPACITY_PROPERTY)));
         serviceExtension.addField(
                 ConfigurationBasedField.JOB_TIMEOUT.toField(
-                        p.getProperty(LinkedProcess.JOB_TIMEOUT)));
+                        p.getProperty(LinkedProcess.JOB_TIMEOUT_PROPERTY)));
         serviceExtension.addField(
                 ConfigurationBasedField.VIRTUAL_MACHINE_TIME_TO_LIVE.toField(
-                        p.getProperty(LinkedProcess.VIRTUAL_MACHINE_TIME_TO_LIVE)));
+                        p.getProperty(LinkedProcess.VIRTUAL_MACHINE_TIME_TO_LIVE_PROPERTY)));
     }
 
     // TODO: move this
     private enum ConfigurationBasedField {
-        MAX_CONCURRENT_VIRTUAL_MACHINES(FormField.TYPE_TEXT_SINGLE, "max_concurrent_virtual_machines", "the number of concurrent virtual machines which this farm can support before it rejects a request to spawn a new virtual machine"),
-        JOB_QUEUE_CAPACITY(FormField.TYPE_TEXT_SINGLE, "job_queue_capacity", "the number of jobs which a virtual machine can hold in its queue before it rejects requests to submit additional jobs"),
-        JOB_TIMEOUT(FormField.TYPE_TEXT_SINGLE, "job_timeout", "the number of milliseconds for which a job may execute before it is aborted by this farm"),
-        VIRTUAL_MACHINE_TIME_TO_LIVE(FormField.TYPE_TEXT_SINGLE, "vm_time_to_live", "the number of milliseconds for which a virtual machine may exist before it is terminated by this farm"),
-        FARM_PASSWORD_REQUIRED(FormField.TYPE_BOOLEAN, "farm_password_required", "whether a password is required to spawn additional virtual machines on this farm"),
-        FARM_START_TIME(FormField.TYPE_TEXT_SINGLE, "farm_start_time", "the xsd:dateTime at which this farm was started");
+        MAX_CONCURRENT_VIRTUAL_MACHINES(FormField.TYPE_TEXT_SINGLE, LinkedProcess.MAX_CONCURRENT_VIRTUAL_MACHINES, "the number of concurrent virtual machines which this farm can support before it rejects a request to spawn a new virtual machine"),
+        JOB_QUEUE_CAPACITY(FormField.TYPE_TEXT_SINGLE, LinkedProcess.JOB_QUEUE_CAPACITY, "the number of jobs which a virtual machine can hold in its queue before it rejects requests to submit additional jobs"),
+        JOB_TIMEOUT(FormField.TYPE_TEXT_SINGLE, LinkedProcess.JOB_TIMEOUT, "the number of milliseconds for which a job may execute before it is aborted by this farm"),
+        VIRTUAL_MACHINE_TIME_TO_LIVE(FormField.TYPE_TEXT_SINGLE, LinkedProcess.VM_TIME_TO_LIVE, "the number of milliseconds for which a virtual machine may exist before it is terminated by this farm"),
+        FARM_PASSWORD_REQUIRED(FormField.TYPE_BOOLEAN, LinkedProcess.FARM_PASSWORD_REQUIRED, "whether a password is required to spawn additional virtual machines on this farm"),
+        FARM_START_TIME(FormField.TYPE_TEXT_SINGLE, LinkedProcess.FARM_START_TIME, "the xsd:dateTime at which this farm was started");
 
         private final String formType;
         private final String specName;
@@ -284,10 +283,10 @@ public class XmppFarm extends XmppClient {
 
     public static void main(final String[] args) throws Exception {
         Properties props = LinkedProcess.getConfiguration();
-        String server = props.getProperty(LinkedProcess.FARM_SERVER);
-        int port = Integer.valueOf(props.getProperty(LinkedProcess.FARM_PORT));
-        String username = props.getProperty(LinkedProcess.FARM_USERNAME);
-        String password = props.getProperty(LinkedProcess.FARM_USERPASSWORD);
+        String server = props.getProperty(LinkedProcess.FARM_SERVER_PROPERTY);
+        int port = Integer.valueOf(props.getProperty(LinkedProcess.FARM_PORT_PROPERTY));
+        String username = props.getProperty(LinkedProcess.FARM_USERNAME_PROPERTY);
+        String password = props.getProperty(LinkedProcess.FARM_USERPASSWORD_PROPERTY);
 
         XmppFarm farm = new XmppFarm(server, port, username, password);
         StatusEventHandler h = new StatusEventHandler(farm);

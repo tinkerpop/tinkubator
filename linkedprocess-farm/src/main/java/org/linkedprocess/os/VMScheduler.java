@@ -26,11 +26,11 @@ public class VMScheduler {
         Properties props = LinkedProcess.getConfiguration();
 
         MAX_VM = new Integer(props.getProperty(
-                LinkedProcess.MAX_CONCURRENT_VIRTUAL_MACHINES));
+                LinkedProcess.MAX_CONCURRENT_VIRTUAL_MACHINES_PROPERTY));
         VM_TIMEOUT = new Long(props.getProperty(
-                LinkedProcess.VIRTUAL_MACHINE_TIME_TO_LIVE));
+                LinkedProcess.VIRTUAL_MACHINE_TIME_TO_LIVE_PROPERTY));
         SCHEDULER_CLEANUP_INTERVAL = new Long(props.getProperty(
-                LinkedProcess.SCHEDULER_CLEANUP_INTERVAL));
+                LinkedProcess.SCHEDULER_CLEANUP_INTERVAL_PROPERTY));
     }
 
     private final SimpleBlockingQueue<VMWorker> workerQueue;
@@ -60,7 +60,7 @@ public class VMScheduler {
         Properties conf = LinkedProcess.getConfiguration();
 
         long timeSlice = new Long(conf.getProperty(
-                LinkedProcess.ROUND_ROBIN_TIME_SLICE));
+                LinkedProcess.ROUND_ROBIN_TIME_SLICE_PROPERTY));
 
         workerQueue = new SimpleBlockingQueue<VMWorker>();
         workersByJID = new HashMap<String, VMWorker>();
@@ -69,7 +69,7 @@ public class VMScheduler {
         VMSequencerHelper source = createSequencerHelper();
 
         numberOfSequencers = new Integer(conf.getProperty(
-                LinkedProcess.CONCURRENT_WORKER_THREADS));
+                LinkedProcess.CONCURRENT_WORKER_THREADS_PROPERTY));
 
         // Note: if numberOfSequencers is less than 1, strange things may happen.
         for (int i = 0; i < numberOfSequencers; i++) {

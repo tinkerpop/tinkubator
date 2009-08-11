@@ -93,10 +93,10 @@ public class VMWorker {
         this.resultHandler = resultHandler;
 
         maxTimeSpentPerJob = new Long(LinkedProcess.getConfiguration().getProperty(
-                LinkedProcess.JOB_TIMEOUT));
+                LinkedProcess.JOB_TIMEOUT_PROPERTY));
 
         int capacity = new Integer(LinkedProcess.getConfiguration().getProperty(
-                LinkedProcess.JOB_QUEUE_CAPACITY));
+                LinkedProcess.JOB_QUEUE_CAPACITY_PROPERTY));
         // A negative capacity is interpreted as infinite capacity.
         // A zero-valued capacity is just stupid.
         jobQueue = capacity < 0

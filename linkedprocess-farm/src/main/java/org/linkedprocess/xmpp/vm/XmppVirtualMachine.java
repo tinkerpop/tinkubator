@@ -129,7 +129,7 @@ public class XmppVirtualMachine extends XmppClient {
 
         DataForm serviceExtension = new DataForm(Form.TYPE_RESULT);
 
-        FormField field = new FormField("vm_start_time");
+        FormField field = new FormField(LinkedProcess.VM_START_TIME);
         field.setLabel("the xsd:dateTime at which this virtual machine was started");
         field.setType(FormField.TYPE_LIST_SINGLE);
         field.addValue(this.getStartTimeAsXsdDateTime());

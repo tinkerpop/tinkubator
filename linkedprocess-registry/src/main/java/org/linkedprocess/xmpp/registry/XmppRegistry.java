@@ -98,10 +98,10 @@ public class XmppRegistry extends XmppClient {
 
     public static void main(final String[] args) throws Exception {
         Properties props = LinkedProcess.getConfiguration();
-        String server = props.getProperty(LinkedProcess.REGISTRY_SERVER);
-        int port = Integer.valueOf(props.getProperty(LinkedProcess.REGISTRY_PORT));
-        String username = props.getProperty(LinkedProcess.REGISTRY_USERNAME);
-        String password = props.getProperty(LinkedProcess.REGISTRY_PASSWORD);
+        String server = props.getProperty(LinkedProcess.REGISTRY_SERVER_PROPERTY);
+        int port = Integer.valueOf(props.getProperty(LinkedProcess.REGISTRY_PORT_PROPERTY));
+        String username = props.getProperty(LinkedProcess.REGISTRY_USERNAME_PROPERTY);
+        String password = props.getProperty(LinkedProcess.REGISTRY_PASSWORD_PROPERTY);
 
         XmppRegistry xmppRegistry = new XmppRegistry(server, port, username, password);
 

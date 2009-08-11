@@ -229,28 +229,38 @@ public class LinkedProcess {
 
     ///////////////////////////////////////////////////////
 
+    public static final String MAX_CONCURRENT_VIRTUAL_MACHINES = "max_concurrent_vms";
+    public static final String JOB_QUEUE_CAPACITY = "job_queue_capacity";
+    public static final String JOB_TIMEOUT = "job_timeout";
+    public static final String VM_TIME_TO_LIVE = "vm_time_to_live";
+    public static final String FARM_PASSWORD_REQUIRED = "farm_password_required";
+    public static final String FARM_START_TIME = "farm_start_time";
+    public static final String VM_START_TIME = "vm_start_time";
+
+    ///////////////////////////////////////////////////////
+
     public static final int LOWEST_PRIORITY = -128;
     public static final int HIGHEST_PRIORITY = 127;
 
     // Configuration properties
     public static final String
-            CONFIGURATION_PROPERTIES = "org.linkedprocess.configurationProperties",
-            FARM_SERVER = "org.linkedprocess.farmServer",
-            FARM_PORT = "org.linkedprocess.farmPort",
-            FARM_USERNAME = "org.linkedprocess.farmUsername",
-            FARM_USERPASSWORD = "org.linkedprocess.farmUserPassword",
-            FARM_PASSWORD = "org.linkedprocess.farmPassword",
-            REGISTRY_SERVER = "org.linkedprocess.registryServer",
-            REGISTRY_PORT = "org.linkedprocess.registryPort",
-            REGISTRY_USERNAME = "org.linkedprocess.registryUsername",
-            REGISTRY_PASSWORD = "org.linkedprocess.registryPassword",
-            CONCURRENT_WORKER_THREADS = "org.linkedprocess.concurrentWorkerThreads",
-            JOB_TIMEOUT = "org.linkedprocess.jobTimeout",
-            MAX_CONCURRENT_VIRTUAL_MACHINES = "org.linkedprocess.maxConcurrentVirtualMachines",
-            JOB_QUEUE_CAPACITY = "org.linkedprocess.jobQueueCapacity",
-            ROUND_ROBIN_TIME_SLICE = "org.linkedprocess.roundRobinTimeSlice",
-            VIRTUAL_MACHINE_TIME_TO_LIVE = "org.linkedprocess.virtualMachineTimeToLive",
-            SCHEDULER_CLEANUP_INTERVAL = "org.linkedprocess.schedulerCleanupInterval";
+            CONFIGURATION_PROPERTIES_PROPERTY = "org.linkedprocess.configurationProperties",
+            FARM_SERVER_PROPERTY = "org.linkedprocess.farmServer",
+            FARM_PORT_PROPERTY = "org.linkedprocess.farmPort",
+            FARM_USERNAME_PROPERTY = "org.linkedprocess.farmUsername",
+            FARM_USERPASSWORD_PROPERTY = "org.linkedprocess.farmUserPassword",
+            FARM_PASSWORD_PROPERTY = "org.linkedprocess.farmPassword",
+            REGISTRY_SERVER_PROPERTY = "org.linkedprocess.registryServer",
+            REGISTRY_PORT_PROPERTY = "org.linkedprocess.registryPort",
+            REGISTRY_USERNAME_PROPERTY = "org.linkedprocess.registryUsername",
+            REGISTRY_PASSWORD_PROPERTY = "org.linkedprocess.registryPassword",
+            CONCURRENT_WORKER_THREADS_PROPERTY = "org.linkedprocess.concurrentWorkerThreads",
+            JOB_TIMEOUT_PROPERTY = "org.linkedprocess.jobTimeout",
+            MAX_CONCURRENT_VIRTUAL_MACHINES_PROPERTY = "org.linkedprocess.maxConcurrentVirtualMachines",
+            JOB_QUEUE_CAPACITY_PROPERTY = "org.linkedprocess.jobQueueCapacity",
+            ROUND_ROBIN_TIME_SLICE_PROPERTY = "org.linkedprocess.roundRobinTimeSlice",
+            VIRTUAL_MACHINE_TIME_TO_LIVE_PROPERTY = "org.linkedprocess.virtualMachineTimeToLive",
+            SCHEDULER_CLEANUP_INTERVAL_PROPERTY = "org.linkedprocess.schedulerCleanupInterval";
 
     private static final Properties PROPERTIES;
     private static final Logger LOGGER;
@@ -270,7 +280,7 @@ public class LinkedProcess {
         LOGGER = getLogger(LinkedProcess.class);
 
         PROPERTIES = new Properties();
-        String file = System.getProperty(CONFIGURATION_PROPERTIES);
+        String file = System.getProperty(CONFIGURATION_PROPERTIES_PROPERTY);
         try {
             if (null == file) {
                 file = LOP_DEFAULT_PROPERTIES;

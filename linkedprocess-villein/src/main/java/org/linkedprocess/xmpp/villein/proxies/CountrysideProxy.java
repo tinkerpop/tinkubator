@@ -4,10 +4,9 @@ import org.linkedprocess.xmpp.villein.proxies.Proxy;
 import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
 import org.linkedprocess.xmpp.villein.proxies.RegistryProxy;
 import org.linkedprocess.xmpp.villein.Dispatcher;
+import org.linkedprocess.LinkedProcess;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * User: marko
@@ -54,6 +53,41 @@ public class CountrysideProxy extends Proxy {
 
     public void removeFarmProxy(String farmJid) {
         this.farmProxies.remove(farmJid);
+    }
+
+    public Collection<FarmProxy> filterFarmProxiesByVmSpeciesSupport(Collection<FarmProxy> farmProxies, String supportsVmSpecies) {
+        Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
+        for(FarmProxy farmProxy : farmProxies) {
+            Field field = farmProxy.getField(LinkedProcess.VM_SPECIES_ATTRIBUTE);
+            if(field.getValues().contains(supportsVmSpecies))
+                returnFarmProxies.add(farmProxy);
+
+        }
+        return returnFarmProxies;
+    }
+
+    public Collection<FarmProxy> filterFarmProxiesByVmTimeToLive(Collection<FarmProxy> farmProxies, int minimumVmTimeToLive) {
+        Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
+        for(FarmProxy farmProxy : farmProxies) {
+            Field field = farmProxy.getField(LinkedProcess.VM_TIME_TO_LIVE);
+            int vmTimeToLive = field.getIntegerValue();
+            if(vmTimeToLive >= minimumVmTimeToLive) {
+                returnFarmProxies.add(farmProxy);
+            }
+        }
+        return returnFarmProxies;
+    }
+
+    public Collection<FarmProxy> filterFarmProxiesByJobTimeout(Collection<FarmProxy> farmProxies, int minimumJobTimeout) {
+        Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
+        for(FarmProxy farmProxy : farmProxies) {
+            Field field = farmProxy.getField(LinkedProcess.JOB_TIMEOUT);
+            int jobTimeout = field.getIntegerValue();
+            if(jobTimeout >= minimumJobTimeout) {
+                returnFarmProxies.add(farmProxy);
+            }
+        }
+        return returnFarmProxies;
     }
 
 }
