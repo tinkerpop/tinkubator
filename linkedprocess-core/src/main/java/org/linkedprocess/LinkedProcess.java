@@ -244,7 +244,7 @@ public class LinkedProcess {
             REGISTRY_PORT = "org.linkedprocess.registryPort",
             REGISTRY_USERNAME = "org.linkedprocess.registryUsername",
             REGISTRY_PASSWORD = "org.linkedprocess.registryPassword",
-            MAX_CONCURRENT_WORKER_THREADS = "org.linkedprocess.maxConcurrentWorkerThreads",
+            CONCURRENT_WORKER_THREADS = "org.linkedprocess.concurrentWorkerThreads",
             JOB_TIMEOUT = "org.linkedprocess.jobTimeout",
             MAX_CONCURRENT_VIRTUAL_MACHINES = "org.linkedprocess.maxConcurrentVirtualMachines",
             JOB_QUEUE_CAPACITY = "org.linkedprocess.jobQueueCapacity",

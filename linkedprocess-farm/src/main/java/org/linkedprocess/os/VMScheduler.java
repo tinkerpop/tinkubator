@@ -57,9 +57,9 @@ public class VMScheduler {
         this.resultHandler = new ResultCounter(resultHandler);
         this.eventHandler = eventHandler;
 
-        Properties props = LinkedProcess.getConfiguration();
+        Properties conf = LinkedProcess.getConfiguration();
 
-        long timeSlice = new Long(props.getProperty(
+        long timeSlice = new Long(conf.getProperty(
                 LinkedProcess.ROUND_ROBIN_TIME_SLICE));
 
         workerQueue = new SimpleBlockingQueue<VMWorker>();
@@ -68,9 +68,10 @@ public class VMScheduler {
         // A single source for workers.
         VMSequencerHelper source = createSequencerHelper();
 
-        numberOfSequencers = new Integer(props.getProperty(
-                LinkedProcess.MAX_CONCURRENT_WORKER_THREADS));
+        numberOfSequencers = new Integer(conf.getProperty(
+                LinkedProcess.CONCURRENT_WORKER_THREADS));
 
+        // Note: if numberOfSequencers is less than 1, strange things may happen.
         for (int i = 0; i < numberOfSequencers; i++) {
             new VMSequencer(source, timeSlice);
         }
@@ -373,6 +374,11 @@ public class VMScheduler {
     //       value.
 
     private void cleanup() {
+        // A negative timeout indicates no timeout at all.
+        if (VM_TIMEOUT < 0) {
+            return;
+        }
+
         long time = System.currentTimeMillis();
 
         Collection<String> toShutDown = new LinkedList<String>();

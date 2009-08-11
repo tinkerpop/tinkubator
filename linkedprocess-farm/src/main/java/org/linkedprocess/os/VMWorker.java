@@ -97,7 +97,11 @@ public class VMWorker {
 
         int capacity = new Integer(LinkedProcess.getConfiguration().getProperty(
                 LinkedProcess.JOB_QUEUE_CAPACITY));
-        jobQueue = new LinkedBlockingQueue<Job>(capacity);
+        // A negative capacity is interpreted as infinite capacity.
+        // A zero-valued capacity is just stupid.
+        jobQueue = capacity < 0
+                ? new LinkedBlockingQueue<Job>()
+                : new LinkedBlockingQueue<Job>(capacity);
 
         workerThread = createWorkerThread();
 
@@ -357,7 +361,9 @@ public class VMWorker {
                 //       the "time spent" value will never be used.
                 latestJob.increaseTimeSpent(timeout);
 
-                if (latestJob.getTimeSpent() >= maxTimeSpentPerJob) {
+                // If it's possible to time out (i.e. if maxTimeSpentPerJob is non-negative),
+                // check for timeout.
+                if (maxTimeSpentPerJob >= 0 && latestJob.getTimeSpent() >= maxTimeSpentPerJob) {
                     yieldTimeoutResult(latestJob, maxTimeSpentPerJob);
                     resultHandler.handleResult(latestResult);
                     status = Status.IDLE_WAITING;
