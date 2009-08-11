@@ -17,11 +17,11 @@ import org.jivesoftware.smack.packet.Packet;
  * Time: 5:50:56 PM
  * To change this template use File | Settings | File Templates.
  */
-public class PingJobOperation extends Operation {
+public class PingJobCommand extends Command {
     private final HandlerSet<LinkedProcess.JobStatus> resultHandlers;
     private final HandlerSet<XMPPError> errorHandlers;
 
-    public PingJobOperation(XmppVillein xmppVillein) {
+    public PingJobCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
         this.resultHandlers = new HandlerSet<LinkedProcess.JobStatus>();
         this.errorHandlers = new HandlerSet<XMPPError>();

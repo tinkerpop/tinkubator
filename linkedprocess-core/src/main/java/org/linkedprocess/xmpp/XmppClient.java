@@ -216,17 +216,6 @@ public abstract class XmppClient {
         unsubscribe.setTo(jid);
         unsubscribe.setFrom(this.getFullJid());
         this.connection.sendPacket(unsubscribe);
-        if (removeFromRoster) {
-            try {
-                this.roster.removeEntry(this.roster.getEntry(jid));
-            } catch (XMPPException e) {
-                LOGGER.severe(e.getMessage());
-            }
-        }
-        Presence unsubscribed = new Presence(Presence.Type.unsubscribed);
-        unsubscribed.setTo(jid);
-        unsubscribed.setFrom(this.getFullJid());
-        this.connection.sendPacket(unsubscribed);
     }
 
     public void probeJid(String jid) {

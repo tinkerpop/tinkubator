@@ -32,53 +32,53 @@ public class LopVilleinListener extends LopListener {
         if (packet instanceof SpawnVm) {
             SpawnVm spawnVm = (SpawnVm) packet;
             if (spawnVm.getType() == IQ.Type.RESULT) {
-                this.getXmppVillein().getDispatcher().getSpawnVmOperation().receiveNormal(spawnVm);
+                this.getXmppVillein().getDispatcher().getSpawnVmCommand().receiveNormal(spawnVm);
             } else if (spawnVm.getType() == IQ.Type.ERROR) {
-                this.getXmppVillein().getDispatcher().getSpawnVmOperation().receiveError(spawnVm);
+                this.getXmppVillein().getDispatcher().getSpawnVmCommand().receiveError(spawnVm);
             }
         } else if (packet instanceof SubmitJob) {
             SubmitJob submitJob = (SubmitJob) packet;
             if (submitJob.getType() == IQ.Type.RESULT) {
-                this.getXmppVillein().getDispatcher().getSubmitJobOperation().receiveNormal(submitJob);
+                this.getXmppVillein().getDispatcher().getSubmitJobCommand().receiveNormal(submitJob);
             } else if (submitJob.getType() == IQ.Type.ERROR) {
-                this.getXmppVillein().getDispatcher().getSubmitJobOperation().receiveError(submitJob);
+                this.getXmppVillein().getDispatcher().getSubmitJobCommand().receiveError(submitJob);
             }
         } else if (packet instanceof PingJob) {
             PingJob pingJob = (PingJob) packet;
             if (pingJob.getType() == IQ.Type.RESULT) {
-                this.getXmppVillein().getDispatcher().getPingJobOperation().receiveNormal(pingJob);
+                this.getXmppVillein().getDispatcher().getPingJobCommand().receiveNormal(pingJob);
             } else if (pingJob.getType() == IQ.Type.ERROR) {
-                this.getXmppVillein().getDispatcher().getPingJobOperation().receiveError(pingJob);
+                this.getXmppVillein().getDispatcher().getPingJobCommand().receiveError(pingJob);
             }
         } else if (packet instanceof AbortJob) {
             AbortJob abortJob = (AbortJob) packet;
             if (abortJob.getType() == IQ.Type.RESULT) {
-                this.getXmppVillein().getDispatcher().getAbortJobOperation().receiveNormal(abortJob);
+                this.getXmppVillein().getDispatcher().getAbortJobCommand().receiveNormal(abortJob);
             } else if (abortJob.getType() == IQ.Type.ERROR) {
-                this.getXmppVillein().getDispatcher().getAbortJobOperation().receiveError(abortJob);
+                this.getXmppVillein().getDispatcher().getAbortJobCommand().receiveError(abortJob);
             }
         } else if (packet instanceof ManageBindings) {
             ManageBindings manageBindings = (ManageBindings) packet;
             // TODO: NOT GUARENTEED SET/GET DETERMINANT
             if (null == manageBindings.getBindings()) {
                 if (manageBindings.getType() == IQ.Type.RESULT) {
-                    this.getXmppVillein().getDispatcher().getSetBindingsOperation().receiveNormal(manageBindings);
+                    this.getXmppVillein().getDispatcher().getSetBindingsCommand().receiveNormal(manageBindings);
                 } else if (manageBindings.getType() == IQ.Type.ERROR) {
-                    this.getXmppVillein().getDispatcher().getSetBindingsOperation().receiveError(manageBindings);
+                    this.getXmppVillein().getDispatcher().getSetBindingsCommand().receiveError(manageBindings);
                 }
             } else {
                 if (manageBindings.getType() == IQ.Type.RESULT) {
-                    this.getXmppVillein().getDispatcher().getGetBindingsOperation().receiveNormal(manageBindings);
+                    this.getXmppVillein().getDispatcher().getGetBindingsCommand().receiveNormal(manageBindings);
                 } else if (manageBindings.getType() == IQ.Type.ERROR) {
-                    this.getXmppVillein().getDispatcher().getGetBindingsOperation().receiveError(manageBindings);
+                    this.getXmppVillein().getDispatcher().getGetBindingsCommand().receiveError(manageBindings);
                 }
             }
         } else if (packet instanceof TerminateVm) {
             TerminateVm terminateVm = (TerminateVm) packet;
             if (terminateVm.getType() == IQ.Type.RESULT) {
-                this.getXmppVillein().getDispatcher().getTerminateVmOperation().receiveNormal(terminateVm);
+                this.getXmppVillein().getDispatcher().getTerminateVmCommand().receiveNormal(terminateVm);
             } else if (terminateVm.getType() == IQ.Type.ERROR) {
-                this.getXmppVillein().getDispatcher().getTerminateVmOperation().receiveError(terminateVm);
+                this.getXmppVillein().getDispatcher().getTerminateVmCommand().receiveError(terminateVm);
             }
         }
     }

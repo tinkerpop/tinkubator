@@ -14,12 +14,12 @@ import org.jivesoftware.smack.packet.IQ;
  * Date: Aug 7, 2009
  * Time: 4:45:56 PM
  */
-public class AbortJobOperation extends Operation {
+public class AbortJobCommand extends Command {
 
     private final HandlerSet<JobStruct> resultHandlers;
     private final HandlerSet<XMPPError> errorHandlers;
 
-    public AbortJobOperation(XmppVillein xmppVillein) {
+    public AbortJobCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
         this.resultHandlers = new HandlerSet<JobStruct>();
         this.errorHandlers = new HandlerSet<XMPPError>();

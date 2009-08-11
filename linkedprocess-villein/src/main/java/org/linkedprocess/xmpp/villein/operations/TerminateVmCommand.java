@@ -13,12 +13,12 @@ import org.jivesoftware.smack.packet.IQ;
  * Date: Aug 7, 2009
  * Time: 4:53:16 PM
  */
-public class TerminateVmOperation extends Operation {
+public class TerminateVmCommand extends Command {
 
     private final HandlerSet<Object> resultHandlers;
     private final HandlerSet<XMPPError> errorHandlers;
 
-    public TerminateVmOperation(XmppVillein xmppVillein) {
+    public TerminateVmCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
         this.resultHandlers = new HandlerSet<Object>();
         this.errorHandlers = new HandlerSet<XMPPError>();

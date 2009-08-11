@@ -26,27 +26,27 @@ public class VmProxy extends Proxy {
 
     // FIXME: why Handler<JobStruct> for errors? Seems kind of weird, even if it works.
     public void submitJob(final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<JobStruct> errorHandler) {
-       dispatcher.getSubmitJobOperation().send(this, jobStruct, resultHandler, errorHandler);
+       dispatcher.getSubmitJobCommand().send(this, jobStruct, resultHandler, errorHandler);
     }
 
-    public void jobStatus(final JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> resultHandler, final Handler<XMPPError> errorHandler) {
-        dispatcher.getPingJobOperation().send(this, jobStruct, resultHandler, errorHandler);
+    public void pingJob(final JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> resultHandler, final Handler<XMPPError> errorHandler) {
+        dispatcher.getPingJobCommand().send(this, jobStruct, resultHandler, errorHandler);
     }
 
     public void abortJob(final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<XMPPError> errorHandler) {
-        dispatcher.getAbortJobOperation().send(this, jobStruct, resultHandler, errorHandler);
+        dispatcher.getAbortJobCommand().send(this, jobStruct, resultHandler, errorHandler);
     }
 
     public void getBindings(final Set<String> bindingNames, final Handler<VMBindings> resultHandler, final Handler<XMPPError> errorHandler) {
-        dispatcher.getGetBindingsOperation().send(this, bindingNames, resultHandler, errorHandler);
+        dispatcher.getGetBindingsCommand().send(this, bindingNames, resultHandler, errorHandler);
     }
 
     public void setBindings(final VMBindings vmBindings, final Handler<XMPPError> errorHandler) {
-        dispatcher.getSetBindingsOperation().send(this, vmBindings, errorHandler);
+        dispatcher.getSetBindingsCommand().send(this, vmBindings, errorHandler);
     }
 
     public void terminateVm(final Handler<Object> resultHandler, final Handler<XMPPError> errorHandler) {
-        dispatcher.getTerminateVmOperation().send(this, resultHandler, errorHandler);
+        dispatcher.getTerminateVmCommand().send(this, resultHandler, errorHandler);
     }
 
     public void setVmPassword(final String vmPassword) {

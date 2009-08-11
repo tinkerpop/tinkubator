@@ -8,11 +8,11 @@ import org.jivesoftware.smack.packet.XMPPError;
  * Date: Aug 7, 2009
  * Time: 3:50:57 PM
  */
-public abstract class Operation {
+public abstract class Command {
 
     protected final XmppVillein xmppVillein;
 
-    public Operation(final XmppVillein xmppVillein) {
+    public Command(final XmppVillein xmppVillein) {
         this.xmppVillein = xmppVillein;
     }
 

@@ -11,49 +11,49 @@ import org.linkedprocess.xmpp.villein.XmppVillein;
  * To change this template use File | Settings | File Templates.
  */
 public class Dispatcher {
-    private final PingJobOperation pingJobOperation;
-    private final SpawnVmOperation spawnVmOperation;
-    private final SubmitJobOperation submitJobOperation;
-    private final AbortJobOperation abortJobOperation;
-    private final TerminateVmOperation terminateVmOperation;
-    private final GetBindingsOperation getBindingsOperation;
-    private final SetBindingsOperation setBindingsOperation;
+    private final PingJobCommand pingJobCommand;
+    private final SpawnVmCommand spawnVmCommand;
+    private final SubmitJobCommand submitJobCommand;
+    private final AbortJobCommand abortJobCommand;
+    private final TerminateVmCommand terminateVmCommand;
+    private final GetBindingsCommand getBindingsCommand;
+    private final SetBindingsCommand setBindingsCommand;
 
     public Dispatcher(XmppVillein xmppVillein) {
-        this.pingJobOperation = new PingJobOperation(xmppVillein);
-        this.spawnVmOperation = new SpawnVmOperation(xmppVillein);
-        this.submitJobOperation = new SubmitJobOperation(xmppVillein);
-        this.abortJobOperation = new AbortJobOperation(xmppVillein);
-        this.terminateVmOperation = new TerminateVmOperation(xmppVillein);
-        this.getBindingsOperation = new GetBindingsOperation(xmppVillein);
-        this.setBindingsOperation = new SetBindingsOperation(xmppVillein);
+        this.pingJobCommand = new PingJobCommand(xmppVillein);
+        this.spawnVmCommand = new SpawnVmCommand(xmppVillein);
+        this.submitJobCommand = new SubmitJobCommand(xmppVillein);
+        this.abortJobCommand = new AbortJobCommand(xmppVillein);
+        this.terminateVmCommand = new TerminateVmCommand(xmppVillein);
+        this.getBindingsCommand = new GetBindingsCommand(xmppVillein);
+        this.setBindingsCommand = new SetBindingsCommand(xmppVillein);
     }
 
-    public PingJobOperation getPingJobOperation() {
-        return this.pingJobOperation;
+    public PingJobCommand getPingJobCommand() {
+        return this.pingJobCommand;
     }
     
-    public SpawnVmOperation getSpawnVmOperation() {
-        return this.spawnVmOperation;
+    public SpawnVmCommand getSpawnVmCommand() {
+        return this.spawnVmCommand;
     }
 
-    public SubmitJobOperation getSubmitJobOperation() {
-        return this.submitJobOperation;    
+    public SubmitJobCommand getSubmitJobCommand() {
+        return this.submitJobCommand;
     }
 
-    public AbortJobOperation getAbortJobOperation() {
-        return this.abortJobOperation;
+    public AbortJobCommand getAbortJobCommand() {
+        return this.abortJobCommand;
     }
 
-    public TerminateVmOperation getTerminateVmOperation() {
-        return this.terminateVmOperation;
+    public TerminateVmCommand getTerminateVmCommand() {
+        return this.terminateVmCommand;
     }
 
-    public GetBindingsOperation getGetBindingsOperation() {
-        return this.getBindingsOperation;
+    public GetBindingsCommand getGetBindingsCommand() {
+        return this.getBindingsCommand;
     }
 
-    public SetBindingsOperation getSetBindingsOperation() {
-        return this.setBindingsOperation;
+    public SetBindingsCommand getSetBindingsCommand() {
+        return this.setBindingsCommand;
     }
 }

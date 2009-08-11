@@ -13,12 +13,12 @@ import org.linkedprocess.xmpp.vm.SubmitJob;
  * Date: Aug 7, 2009
  * Time: 4:30:42 PM
  */
-public class SubmitJobOperation extends Operation {
+public class SubmitJobCommand extends Command {
 
     private final HandlerSet<JobStruct> resultHandlers;
     private final HandlerSet<JobStruct> errorHandlers;
 
-    public SubmitJobOperation(XmppVillein xmppVillein) {
+    public SubmitJobCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
         this.resultHandlers = new HandlerSet<JobStruct>();
         this.errorHandlers = new HandlerSet<JobStruct>();

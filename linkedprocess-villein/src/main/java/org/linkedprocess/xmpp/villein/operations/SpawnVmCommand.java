@@ -16,11 +16,11 @@ import org.linkedprocess.xmpp.villein.proxies.VmProxy;
  * Date: Aug 7, 2009
  * Time: 3:50:24 PM
  */
-public class SpawnVmOperation extends Operation {
+public class SpawnVmCommand extends Command {
     private final HandlerSet<VmProxy> resultHandlers;
     private final HandlerSet<XMPPError> errorHandlers;
 
-    public SpawnVmOperation(XmppVillein xmppVillein) {
+    public SpawnVmCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
         this.resultHandlers = new HandlerSet<VmProxy>();
         this.errorHandlers = new HandlerSet<XMPPError>();
