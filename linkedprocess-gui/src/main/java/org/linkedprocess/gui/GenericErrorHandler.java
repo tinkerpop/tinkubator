@@ -2,6 +2,7 @@ package org.linkedprocess.gui;
 
 import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.xmpp.villein.Handler;
+import org.linkedprocess.xmpp.LopError;
 
 import javax.swing.*;
 
@@ -10,9 +11,9 @@ import javax.swing.*;
 * Date: Aug 7, 2009
 * Time: 6:05:59 PM
 */
-public class GenericErrorHandler implements Handler<XMPPError> {
+public class GenericErrorHandler implements Handler<LopError> {
     
-    public void handle(XMPPError xmppError) {
-         JOptionPane.showMessageDialog(null, xmppError.toXML(), "error processing command", JOptionPane.ERROR_MESSAGE);
+    public void handle(LopError lopError) {
+         JOptionPane.showMessageDialog(null, lopError.getMessage(), "error: " + lopError.getLopErrorType().toString(), JOptionPane.ERROR_MESSAGE);
     }
 }

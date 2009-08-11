@@ -6,6 +6,7 @@ import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.os.errors.InvalidValueException;
 import org.linkedprocess.xmpp.villein.Dispatcher;
 import org.linkedprocess.xmpp.villein.Handler;
+import org.linkedprocess.xmpp.LopError;
 
 import java.util.Set;
 
@@ -29,23 +30,23 @@ public class VmProxy extends Proxy {
        dispatcher.getSubmitJobCommand().send(this, jobStruct, resultHandler, errorHandler);
     }
 
-    public void pingJob(final JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> resultHandler, final Handler<XMPPError> errorHandler) {
+    public void pingJob(final JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> resultHandler, final Handler<LopError> errorHandler) {
         dispatcher.getPingJobCommand().send(this, jobStruct, resultHandler, errorHandler);
     }
 
-    public void abortJob(final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<XMPPError> errorHandler) {
+    public void abortJob(final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<LopError> errorHandler) {
         dispatcher.getAbortJobCommand().send(this, jobStruct, resultHandler, errorHandler);
     }
 
-    public void getBindings(final Set<String> bindingNames, final Handler<VMBindings> resultHandler, final Handler<XMPPError> errorHandler) {
+    public void getBindings(final Set<String> bindingNames, final Handler<VMBindings> resultHandler, final Handler<LopError> errorHandler) {
         dispatcher.getGetBindingsCommand().send(this, bindingNames, resultHandler, errorHandler);
     }
 
-    public void setBindings(final VMBindings vmBindings, final Handler<XMPPError> errorHandler) {
+    public void setBindings(final VMBindings vmBindings, final Handler<LopError> errorHandler) {
         dispatcher.getSetBindingsCommand().send(this, vmBindings, errorHandler);
     }
 
-    public void terminateVm(final Handler<Object> resultHandler, final Handler<XMPPError> errorHandler) {
+    public void terminateVm(final Handler<Object> resultHandler, final Handler<LopError> errorHandler) {
         dispatcher.getTerminateVmCommand().send(this, resultHandler, errorHandler);
     }
 

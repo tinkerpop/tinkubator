@@ -6,6 +6,7 @@ import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.villein.proxies.JobStruct;
 import org.linkedprocess.xmpp.vm.PingJob;
+import org.linkedprocess.xmpp.LopError;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.packet.Packet;
@@ -19,15 +20,15 @@ import org.jivesoftware.smack.packet.Packet;
  */
 public class PingJobCommand extends Command {
     private final HandlerSet<LinkedProcess.JobStatus> resultHandlers;
-    private final HandlerSet<XMPPError> errorHandlers;
+    private final HandlerSet<LopError> errorHandlers;
 
     public PingJobCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
         this.resultHandlers = new HandlerSet<LinkedProcess.JobStatus>();
-        this.errorHandlers = new HandlerSet<XMPPError>();
+        this.errorHandlers = new HandlerSet<LopError>();
     }
     
-    public void send(VmProxy vmStruct, JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> statusHandler, final Handler<XMPPError> errorHandler) {
+    public void send(VmProxy vmStruct, JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> statusHandler, final Handler<LopError> errorHandler) {
 
         String id = Packet.nextID();
         PingJob pingJob = new PingJob();
@@ -55,7 +56,7 @@ public class PingJobCommand extends Command {
 
     public void receiveError(final PingJob pingJob) {
         try {
-            errorHandlers.handle(pingJob.getPacketID(), pingJob.getError());
+            errorHandlers.handle(pingJob.getPacketID(), pingJob.getLopError());
         } finally {
             resultHandlers.removeHandler(pingJob.getPacketID());
             errorHandlers.removeHandler(pingJob.getPacketID());

@@ -1,6 +1,7 @@
 package org.linkedprocess.xmpp.villein.patterns;
 
 import org.jivesoftware.smack.packet.XMPPError;
+import org.linkedprocess.xmpp.LopError;
 
 /**
  * User: marko
@@ -8,13 +9,13 @@ import org.jivesoftware.smack.packet.XMPPError;
  * Time: 10:17:19 AM
  */
 public class OperationException extends Exception {
-    protected XMPPError xmppError;
+    protected LopError lopError;
 
-    public OperationException(XMPPError xmppError) {
-        this.xmppError = xmppError;
+    public OperationException(LopError lopError) {
+        this.lopError = lopError;
     }
 
     public XMPPError getXMPPError() {
-        return this.xmppError;
+        return this.lopError;
     }
 }

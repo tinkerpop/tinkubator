@@ -3,13 +3,12 @@ package org.linkedprocess.xmpp.villein.patterns;
 import org.linkedprocess.xmpp.villein.proxies.JobStruct;
 import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
-import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.linkedprocess.xmpp.villein.Handler;
+import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.LinkedProcess;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.XMPPError;
 
-import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -26,7 +25,7 @@ public class SynchronousPattern {
     // TODO: private boolean timedOut;
     private JobStruct jobStructTemp;
     private VmProxy vmProxyTemp;
-    private XMPPError xmppErrorTemp;
+    private LopError lopErrorTemp;
 
     private final Object pollingMonitor = new Object();
 
@@ -45,7 +44,7 @@ public class SynchronousPattern {
     private void nullifyTemps() {
         this.jobStructTemp = null;
         this.vmProxyTemp = null;
-        this.xmppErrorTemp = null;
+        this.lopErrorTemp = null;
     }
 
     private void checkTimeout(final long startTime, final long timeout) throws WaitTimeoutException {
@@ -100,9 +99,9 @@ public class SynchronousPattern {
                 }
             }
         };
-        Handler<XMPPError> errorHandler = new Handler<XMPPError>() {
-            public void handle(XMPPError xmppError) {
-                xmppErrorTemp = xmppError;
+        Handler<LopError> errorHandler = new Handler<LopError>() {
+            public void handle(LopError lopError) {
+                lopErrorTemp = lopError;
                 synchronized (pollingMonitor) {
                     pollingMonitor.notify();
                 }
@@ -111,12 +110,12 @@ public class SynchronousPattern {
 
         farmProxy.spawnVm(vmSpecies, resultHandler, errorHandler);
         long startTime = System.currentTimeMillis();
-        while(null == this.vmProxyTemp && null == this.xmppErrorTemp) {
+        while(null == this.vmProxyTemp && null == this.lopErrorTemp) {
             this.checkTimeout(startTime, timeout);
             this.pollingSleep();
         }
-        if(this.xmppErrorTemp != null) {
-            throw new OperationException(this.xmppErrorTemp);
+        if(this.lopErrorTemp != null) {
+            throw new OperationException(this.lopErrorTemp);
         } else {
             return this.vmProxyTemp;
         }
@@ -132,9 +131,9 @@ public class SynchronousPattern {
                 }
             }
         };
-        Handler<XMPPError> errorHandler = new Handler<XMPPError>() {
-            public void handle(XMPPError xmppError) {
-                xmppErrorTemp = xmppError;
+        Handler<LopError> errorHandler = new Handler<LopError>() {
+            public void handle(LopError lopError) {
+                lopErrorTemp = lopError;
                 synchronized (pollingMonitor) {
                     pollingMonitor.notify();
                 }
@@ -143,12 +142,12 @@ public class SynchronousPattern {
 
         vmProxy.abortJob(jobStruct, resultHandler, errorHandler);
         long startTime = System.currentTimeMillis();
-        while(null == this.jobStructTemp && null == this.xmppErrorTemp) {
+        while(null == this.jobStructTemp && null == this.lopErrorTemp) {
             this.checkTimeout(startTime, timeout);
             this.pollingSleep();
         }
-        if(this.xmppErrorTemp != null) {
-            throw new OperationException(this.xmppErrorTemp);
+        if(this.lopErrorTemp != null) {
+            throw new OperationException(this.lopErrorTemp);
         } else {
             return this.jobStructTemp;
         }  

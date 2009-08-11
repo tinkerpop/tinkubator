@@ -5,6 +5,7 @@ import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.Dispatcher;
 import org.linkedprocess.xmpp.villein.XmppVillein;
+import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.LinkedProcess;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.XMPPException;
@@ -71,7 +72,7 @@ public class FarmProxy extends Proxy {
         this.farmPassword = farmPassword;
     }
 
-    public void spawnVm(final String vmSpecies, final Handler<VmProxy> resultHandler, final Handler<XMPPError> errorHandler) {
+    public void spawnVm(final String vmSpecies, final Handler<VmProxy> resultHandler, final Handler<LopError> errorHandler) {
         this.dispatcher.getSpawnVmCommand().send(this, vmSpecies, resultHandler, errorHandler);
     }
 }

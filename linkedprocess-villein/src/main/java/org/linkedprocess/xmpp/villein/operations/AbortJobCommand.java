@@ -5,7 +5,7 @@ import org.linkedprocess.xmpp.villein.proxies.JobStruct;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.vm.AbortJob;
-import org.jivesoftware.smack.packet.XMPPError;
+import org.linkedprocess.xmpp.LopError;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
 
@@ -17,15 +17,15 @@ import org.jivesoftware.smack.packet.IQ;
 public class AbortJobCommand extends Command {
 
     private final HandlerSet<JobStruct> resultHandlers;
-    private final HandlerSet<XMPPError> errorHandlers;
+    private final HandlerSet<LopError> errorHandlers;
 
     public AbortJobCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
         this.resultHandlers = new HandlerSet<JobStruct>();
-        this.errorHandlers = new HandlerSet<XMPPError>();
+        this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(final VmProxy vmStruct, final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<XMPPError> errorHandler) {
+    public void send(final VmProxy vmStruct, final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<LopError> errorHandler) {
         String id = Packet.nextID();
         AbortJob abortJob = new AbortJob();
         abortJob.setTo(vmStruct.getFullJid());
@@ -53,7 +53,7 @@ public class AbortJobCommand extends Command {
 
     public void receiveError(final AbortJob abortJob) {
         try {
-            this.errorHandlers.handle(abortJob.getPacketID(), abortJob.getError());
+            this.errorHandlers.handle(abortJob.getPacketID(), abortJob.getLopError());
         } finally {
             this.resultHandlers.removeHandler(abortJob.getPacketID());
             this.errorHandlers.removeHandler(abortJob.getPacketID());

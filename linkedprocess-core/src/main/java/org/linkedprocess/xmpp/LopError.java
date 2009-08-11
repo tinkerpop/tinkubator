@@ -13,13 +13,14 @@ import java.util.Map;
  * Date: Jul 24, 2009
  * Time: 9:52:06 AM
  */
-public class LopXmppError extends XMPPError {
+public class LopError extends XMPPError {
 
     protected LinkedProcess.LopErrorType lopErrorType;
     protected LinkedProcess.ClientType clientType;
 
     public static final Map<Condition, Integer> conditionCodeMap = new HashMap<Condition, Integer>();
     public static final Map<Condition, XMPPError.Type> conditionErrorMap = new HashMap<Condition, XMPPError.Type>();
+    public static final Map<String, Condition> stringConditionMap = new HashMap<String, Condition>();
 
     static {
         conditionCodeMap.put(Condition.interna_server_error, 500);
@@ -75,11 +76,46 @@ public class LopXmppError extends XMPPError {
         conditionErrorMap.put(Condition.request_timeout, XMPPError.Type.CANCEL);
     }
 
+    static {
+        stringConditionMap.put(Condition.interna_server_error.toString(), Condition.interna_server_error);
+        stringConditionMap.put(Condition.forbidden.toString(), Condition.forbidden);
+        stringConditionMap.put(Condition.bad_request.toString(), Condition.bad_request);
+        stringConditionMap.put(Condition.item_not_found.toString(), Condition.item_not_found);
+        stringConditionMap.put(Condition.conflict.toString(), Condition.conflict);
+        stringConditionMap.put(Condition.feature_not_implemented.toString(), Condition.feature_not_implemented);
+        stringConditionMap.put(Condition.gone.toString(), Condition.gone);
+        stringConditionMap.put(Condition.jid_malformed.toString(), Condition.jid_malformed);
+        stringConditionMap.put(Condition.no_acceptable.toString(), Condition.no_acceptable);
+        stringConditionMap.put(Condition.not_allowed.toString(), Condition.not_allowed);
+        stringConditionMap.put(Condition.not_authorized.toString(), Condition.not_authorized);
+        stringConditionMap.put(Condition.payment_required.toString(), Condition.payment_required);
+        stringConditionMap.put(Condition.recipient_unavailable.toString(), Condition.recipient_unavailable);
+        stringConditionMap.put(Condition.redirect.toString(), Condition.redirect);
+        stringConditionMap.put(Condition.registration_required.toString(), Condition.registration_required);
+        stringConditionMap.put(Condition.remote_server_not_found.toString(), Condition.remote_server_not_found);
+        stringConditionMap.put(Condition.remote_server_timeout.toString(), Condition.remote_server_timeout);
+        stringConditionMap.put(Condition.remote_server_error.toString(), Condition.remote_server_error);
+        stringConditionMap.put(Condition.resource_constraint.toString(), Condition.resource_constraint);
+        stringConditionMap.put(Condition.service_unavailable.toString(), Condition.service_unavailable);
+        stringConditionMap.put(Condition.subscription_required.toString(), Condition.subscription_required);
+        stringConditionMap.put(Condition.undefined_condition.toString(), Condition.undefined_condition);
+        stringConditionMap.put(Condition.unexpected_request.toString(), Condition.unexpected_request);
+        stringConditionMap.put(Condition.request_timeout.toString(), Condition.request_timeout);
+    }
 
-    public LopXmppError(XMPPError.Condition condition, LinkedProcess.LopErrorType lopErrorType, String errorMessage, LinkedProcess.ClientType clientType) {
-        super(LopXmppError.conditionCodeMap.get(condition), LopXmppError.conditionErrorMap.get(condition), condition.toString().toLowerCase(), errorMessage, null);
+
+    public LopError(XMPPError.Condition condition, LinkedProcess.LopErrorType lopErrorType, String errorMessage, LinkedProcess.ClientType clientType) {
+        super(LopError.conditionCodeMap.get(condition), LopError.conditionErrorMap.get(condition), condition.toString().toLowerCase(), errorMessage, null);
         this.lopErrorType = lopErrorType;
         this.clientType = clientType;
+    }
+
+    public LinkedProcess.LopErrorType getLopErrorType() {
+        return this.lopErrorType;
+    }
+
+    public LinkedProcess.ClientType getClientType() {
+        return this.clientType;
     }
 
     public String toXML() {

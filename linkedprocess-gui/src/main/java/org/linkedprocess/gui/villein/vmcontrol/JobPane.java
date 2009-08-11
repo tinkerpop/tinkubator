@@ -97,26 +97,27 @@ public class JobPane extends JPanel implements ActionListener {
     }
 
     public void handleIncomingSubmitJob(JobStruct jobStruct) {
-        if (jobStruct.getError() == null) {
+        if (jobStruct.getLopError() == null) {
             this.resultTextArea.setText(jobStruct.getResult());
             this.submitJobButton.setEnabled(false);
         } else {
             StringBuffer errorMessage = new StringBuffer();
-            if (jobStruct.getError().getType() != null) {
-                errorMessage.append(jobStruct.getError().getType().toString().toLowerCase() + "\n");
+            if (jobStruct.getLopError().getType() != null) {
+                errorMessage.append(jobStruct.getLopError().getType().toString().toLowerCase() + "\n");
             }
-            if (jobStruct.getError().getCondition() != null) {
-                errorMessage.append(jobStruct.getError().getCondition() + "\n");
+            if (jobStruct.getLopError().getCondition() != null) {
+                errorMessage.append(jobStruct.getLopError().getCondition() + "\n");
             }
-            if (jobStruct.getError().getExtensions() != null) {
-                for (PacketExtension extension : jobStruct.getError().getExtensions()) {
+            if (jobStruct.getLopError().getExtensions() != null) {
+                for (PacketExtension extension : jobStruct.getLopError().getExtensions()) {
                     errorMessage.append(extension.getElementName() + "\n");
                 }
             }
-            if (jobStruct.getError().getMessage() != null) {
-                errorMessage.append(jobStruct.getError().getMessage());
+            if (jobStruct.getLopError().getMessage() != null) {
+                errorMessage.append(jobStruct.getLopError().getMessage());
             }
             this.resultTextArea.setText(errorMessage.toString().trim());
+            this.submitJobButton.setEnabled(false);
         }
     }
 

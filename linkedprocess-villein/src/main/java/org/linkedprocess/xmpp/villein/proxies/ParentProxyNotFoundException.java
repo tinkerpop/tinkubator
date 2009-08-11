@@ -6,7 +6,7 @@ package org.linkedprocess.xmpp.villein.proxies;
  * Time: 2:30:56 PM
  */
 public class ParentProxyNotFoundException extends Exception {
-    public ParentProxyNotFoundException(final String msg) {
-        super(msg);
+    public ParentProxyNotFoundException(final String message) {
+        super(message);
     }
 }

@@ -148,7 +148,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
     public void handleIncomingSubmitJob(JobStruct jobStruct) {
         String jobId = jobStruct.getJobId();
         if (null == this.jobStatus.get(jobId)) {
-            if (null != jobStruct.getError())
+            if (null != jobStruct.getLopError())
                 this.jobStatus.put(jobId, JobStatus.ERROR);
             else
                 this.jobStatus.put(jobId, JobStatus.COMPLETED);

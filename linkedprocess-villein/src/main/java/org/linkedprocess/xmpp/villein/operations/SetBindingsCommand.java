@@ -6,6 +6,7 @@ import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.vm.ManageBindings;
+import org.linkedprocess.xmpp.LopError;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
@@ -17,15 +18,15 @@ import org.jivesoftware.smack.packet.IQ;
  */
 public class SetBindingsCommand extends Command {
     private final HandlerSet<VMBindings> resultHandlers;
-    private final HandlerSet<XMPPError> errorHandlers;
+    private final HandlerSet<LopError> errorHandlers;
 
     public SetBindingsCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
         this.resultHandlers = new HandlerSet<VMBindings>();
-        this.errorHandlers = new HandlerSet<XMPPError>();
+        this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(final VmProxy vmStruct, VMBindings vmBindings, final Handler<XMPPError> errorHandler) {
+    public void send(final VmProxy vmStruct, VMBindings vmBindings, final Handler<LopError> errorHandler) {
 
         String id = Packet.nextID();
         ManageBindings manageBindings = new ManageBindings();
@@ -63,7 +64,7 @@ public class SetBindingsCommand extends Command {
 
     public void receiveError(final ManageBindings manageBindings) {
         try {
-            errorHandlers.handle(manageBindings.getPacketID(), manageBindings.getError());
+            errorHandlers.handle(manageBindings.getPacketID(), manageBindings.getLopError());
         } finally {
             resultHandlers.removeHandler(manageBindings.getPacketID());
             errorHandlers.removeHandler(manageBindings.getPacketID());

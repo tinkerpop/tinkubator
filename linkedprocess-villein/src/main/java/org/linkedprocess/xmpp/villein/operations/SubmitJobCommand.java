@@ -59,7 +59,7 @@ public class SubmitJobCommand extends Command {
         try {
             JobStruct jobStruct = new JobStruct();
             jobStruct.setJobId(submitJob.getPacketID());
-            jobStruct.setError(submitJob.getError());
+            jobStruct.setLopError(submitJob.getLopError());
             errorHandlers.handle(submitJob.getPacketID(), jobStruct);
         } finally {
             resultHandlers.removeHandler(submitJob.getPacketID());

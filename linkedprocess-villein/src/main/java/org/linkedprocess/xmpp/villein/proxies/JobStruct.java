@@ -1,6 +1,8 @@
 package org.linkedprocess.xmpp.villein.proxies;
 
 import org.jivesoftware.smack.packet.XMPPError;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.LopError;
 
 /**
  * User: marko
@@ -11,7 +13,7 @@ public class JobStruct implements Comparable {
     protected String jobId;
     protected String result;
     protected String expression;
-    protected XMPPError error;
+    protected LopError lopError;
 
     public String getJobId() {
         return jobId;
@@ -29,12 +31,12 @@ public class JobStruct implements Comparable {
         this.result = result;
     }
 
-    public XMPPError getError() {
-        return error;
+    public LopError getLopError() {
+        return lopError;
     }
 
-    public void setError(XMPPError error) {
-        this.error = error;
+    public void setLopError(LopError lopError) {
+        this.lopError = lopError;
     }
 
     public String getExpression()  {
@@ -46,7 +48,11 @@ public class JobStruct implements Comparable {
     }
 
     public boolean isComplete() {
-        return (null != error || null != result);
+        return (null != lopError || null != result);
+    }
+
+    public boolean wasAborted() {
+        return(null != lopError && LinkedProcess.LopErrorType.JOB_ABORTED != lopError.getLopErrorType());
     }
 
     public int compareTo(Object job) {

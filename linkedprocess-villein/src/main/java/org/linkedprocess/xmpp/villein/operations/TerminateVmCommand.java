@@ -4,6 +4,7 @@ import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.vm.TerminateVm;
+import org.linkedprocess.xmpp.LopError;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
@@ -16,15 +17,15 @@ import org.jivesoftware.smack.packet.IQ;
 public class TerminateVmCommand extends Command {
 
     private final HandlerSet<Object> resultHandlers;
-    private final HandlerSet<XMPPError> errorHandlers;
+    private final HandlerSet<LopError> errorHandlers;
 
     public TerminateVmCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
         this.resultHandlers = new HandlerSet<Object>();
-        this.errorHandlers = new HandlerSet<XMPPError>();
+        this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(final VmProxy vmStruct, final Handler<Object> resultHandler, final Handler<XMPPError> errorHandler) {
+    public void send(final VmProxy vmStruct, final Handler<Object> resultHandler, final Handler<LopError> errorHandler) {
         String id = Packet.nextID();
         TerminateVm terminateVm = new TerminateVm();
         terminateVm.setTo(vmStruct.getFullJid());
@@ -50,7 +51,7 @@ public class TerminateVmCommand extends Command {
 
     public void receiveError(final TerminateVm terminateVm) {
         try {
-            this.errorHandlers.handle(terminateVm.getPacketID(), terminateVm.getError());
+            this.errorHandlers.handle(terminateVm.getPacketID(), terminateVm.getLopError());
         } finally {
             this.errorHandlers.removeHandler(terminateVm.getPacketID());
             this.resultHandlers.removeHandler(terminateVm.getPacketID());

@@ -10,6 +10,7 @@ import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
 import org.linkedprocess.xmpp.villein.proxies.ParentProxyNotFoundException;
 import org.linkedprocess.xmpp.villein.proxies.VmProxy;
+import org.linkedprocess.xmpp.LopError;
 
 /**
  * User: marko
@@ -18,15 +19,15 @@ import org.linkedprocess.xmpp.villein.proxies.VmProxy;
  */
 public class SpawnVmCommand extends Command {
     private final HandlerSet<VmProxy> resultHandlers;
-    private final HandlerSet<XMPPError> errorHandlers;
+    private final HandlerSet<LopError> errorHandlers;
 
     public SpawnVmCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
         this.resultHandlers = new HandlerSet<VmProxy>();
-        this.errorHandlers = new HandlerSet<XMPPError>();
+        this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(final FarmProxy farmStruct, final String vmSpecies, final Handler<VmProxy> resultHandler, final Handler<XMPPError> errorHandler) {
+    public void send(final FarmProxy farmStruct, final String vmSpecies, final Handler<VmProxy> resultHandler, final Handler<LopError> errorHandler) {
         String id = Packet.nextID();
         SpawnVm spawnVm = new SpawnVm();
         spawnVm.setTo(farmStruct.getFullJid());
@@ -64,7 +65,7 @@ public class SpawnVmCommand extends Command {
 
     public void receiveError(final SpawnVm spawnVm) {
         try {
-            errorHandlers.handle(spawnVm.getPacketID(), spawnVm.getError());
+            errorHandlers.handle(spawnVm.getPacketID(), spawnVm.getLopError());
         } finally { 
             resultHandlers.removeHandler(spawnVm.getPacketID());
             errorHandlers.removeHandler(spawnVm.getPacketID());

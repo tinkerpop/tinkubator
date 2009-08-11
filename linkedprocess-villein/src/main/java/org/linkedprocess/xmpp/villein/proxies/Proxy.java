@@ -107,6 +107,7 @@ public class Proxy implements Comparable {
                                         field.addValue(val);
                                 }
                             }
+                            return field;
                         }
                     }
                 }
