@@ -4,6 +4,7 @@ import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.errors.JobAlreadyExistsException;
 import org.linkedprocess.os.errors.JobNotFoundException;
 import org.linkedprocess.security.VMSandboxedThread;
+import org.mozilla.javascript.WrappedException;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
@@ -460,28 +461,45 @@ public class VMWorker {
 
             yieldResult(request, returnvalue);
         } catch (ScriptException e) {
-            yieldError(request, e);
+            SecurityException se = findSecurityException(e);
+            if (null != se) {
+                yieldError(request, se);
+            } else {
+                yieldError(request, e);
+            }
         } catch (MissingResourceException e) {
             // These are associated with previous SecurityExceptions.
             // TODO: it would be better to avoid them than handle them...
             yieldError(request, e);
         } catch (RuntimeException e) {
-            // If the error can be traced back to a security exception, handle
-            // the error result using that exception rather than the top-level
-            // exception.
-            Throwable c = e;
-            while (null != c) {
-                if (c instanceof SecurityException) {
-                    yieldError(request, c);
-                    return;
-                } else {
-                    c = c.getCause();
-                }
+            SecurityException se = findSecurityException(e);
+            if (null != se) {
+                yieldError(request, se);
+            } else {
+                // If the exception is something else (e.g. ThreadDeath), let it through unmolested.
+                throw e;
             }
+        }// catch (Throwable t) { System.out.println("this is what we caught: " + t );  }
+    }
 
-            // If the exception is something else (e.g. ThreadDeath), let it through unmolested.
-            throw e;
+    // If the error can be traced back to a security exception, handle
+    // the error result using that exception rather than the top-level
+    // exception.
+    private SecurityException findSecurityException(Throwable c) {
+        while (null != c) {
+            System.out.println("c = " + c);
+            if (c instanceof SecurityException) {
+                return (SecurityException) c;
+            } else {
+                // WrappedExceptions are a special case, as they don't follow the convention of
+                // new Throwable(cause).
+                c = c instanceof WrappedException
+                        ? ((WrappedException) c).getWrappedException()
+                        : c.getCause();
+            }
         }
+
+        return null;
     }
 
     private void yieldError(final Job job,

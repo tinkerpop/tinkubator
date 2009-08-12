@@ -391,7 +391,7 @@ public class VMSchedulerTest extends TestCase {
         scheduler.scheduleJob(vm1, job1);
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
-        assertErrorResult(job1);
+        assertPermissionDeniedResult(job1);
 //        assertEquals("foo", resultsByID.get(job1.getJobId()).getException().getMessage());
 //        assertEquals("foo", resultsByID.get(job1.getJobId()).getExpression());
 
@@ -436,6 +436,15 @@ public class VMSchedulerTest extends TestCase {
         JobResult result = resultsByID.get(job.getJobId());
         assertEquals(JobResult.ResultType.ERROR, result.getType());
         assertNotNull(result.getException());
+        assertNull(result.getExpression());
+    }
+
+    private void assertPermissionDeniedResult(final Job job) {
+        JobResult result = resultsByID.get(job.getJobId());
+        assertEquals(JobResult.ResultType.ERROR, result.getType());
+        assertNotNull(result.getException());
+        System.out.println("" + result.getException());
+        assertTrue(result.getException() instanceof SecurityException);
         assertNull(result.getExpression());
     }
 

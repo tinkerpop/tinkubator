@@ -391,7 +391,7 @@ public class VMScheduler {
                     }
                 }
             }
-
+                            
             for (String jid : toShutDown) {
                 try {
                     terminateVirtualMachine(jid);

@@ -13,10 +13,10 @@
         <artifactId>linkedprocess</artifactId>
         <version>alpha1</version>
     </parent>
-
+                                     
     <dependencies>
                                        
-        <dependency>
+        <dependency>             
             <groupId>jivesoftware</groupId>
             <artifactId>smack</artifactId>
             <version>3.1.0</version>

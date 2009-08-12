@@ -95,9 +95,14 @@ public class JobResult {
             return returnSubmitJob;
         } else if (this.type == ResultType.ERROR) {
             returnSubmitJob.setType(IQ.Type.ERROR);
-            returnSubmitJob.setError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.EVALUATION_ERROR, exception.getMessage(), LinkedProcess.ClientType.VM));
+            if (this.exception instanceof SecurityException) {
+                // SecurityExceptions are handled differently than all other errors.
+                returnSubmitJob.setError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.PERMISSION_DENIED, exception.getMessage(), LinkedProcess.ClientType.VM));
+            } else {
+                returnSubmitJob.setError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.EVALUATION_ERROR, exception.getMessage(), LinkedProcess.ClientType.VM));
+            }
             return returnSubmitJob;
-        } else if(this.type == ResultType.PERMISSION_DENIED) {
+        } else if (this.type == ResultType.PERMISSION_DENIED) {
             returnSubmitJob.setType(IQ.Type.ERROR);
             returnSubmitJob.setError(new LopError(XMPPError.Condition.forbidden, LinkedProcess.LopErrorType.PERMISSION_DENIED, exception.getMessage(), LinkedProcess.ClientType.VM));
             return returnSubmitJob;
