@@ -75,7 +75,7 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
         this.villeinGui.getXmppVillein().getConnection().addPacketWriterInterceptor(packetSnifferPanel, null);
 
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("countrysides", treePanel);
+        tabbedPane.addTab("cloud", treePanel);
         tabbedPane.addTab("roster", rosterPanel);
         tabbedPane.addTab("packets", packetSnifferPanel);
 
