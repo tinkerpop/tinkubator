@@ -81,7 +81,7 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
 
         this.add(tabbedPane, BorderLayout.CENTER);
 
-        this.villeinGui.getXmppVillein().createCountrysideProxiesFromRoster();
+        this.villeinGui.getXmppVillein().createLopCloudFromRoster();
         this.createTree();
     }
 
@@ -160,7 +160,7 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
     public void createTree() {
         treeRoot.removeAllChildren();
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-        for (CountrysideProxy countrysideProxy : this.villeinGui.getXmppVillein().getCountrysideProxies()) {
+        for (CountrysideProxy countrysideProxy : this.villeinGui.getXmppVillein().getLopCloud().getCountrysideProxies()) {
             DefaultMutableTreeNode countrysideNode = new DefaultMutableTreeNode(countrysideProxy);
             for (RegistryProxy registryProxy : countrysideProxy.getRegistryProxies()) {
                 DefaultMutableTreeNode registryNode = new DefaultMutableTreeNode(registryProxy);
@@ -251,13 +251,13 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
             }
         } else {
             if (!remove) {
-                Proxy parentProxy = this.villeinGui.getXmppVillein().getParentProxy(jid);
+                Proxy parentProxy = this.villeinGui.getXmppVillein().getLopCloud().getParentProxy(jid);
                 DefaultMutableTreeNode parentNode = null;
                 if (parentProxy != null) {
                     parentNode = this.getNode(this.treeRoot, parentProxy.getFullJid());
                 }
 
-                Proxy proxy = this.villeinGui.getXmppVillein().getProxy(jid);
+                Proxy proxy = this.villeinGui.getXmppVillein().getLopCloud().getProxy(jid);
                 if (proxy instanceof CountrysideProxy) {
                     DefaultMutableTreeNode countrysideNode = new DefaultMutableTreeNode(proxy);
                     model.insertNodeInto(countrysideNode, this.treeRoot, this.treeRoot.getChildCount());
@@ -270,7 +270,7 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
                         this.tree.scrollPathToVisible(new TreePath(otherNode.getPath()));
                         model.reload(otherNode);
                     } else {
-                        parentProxy = this.villeinGui.getXmppVillein().getParentProxy(LinkedProcess.generateBareJid(jid));
+                        parentProxy = this.villeinGui.getXmppVillein().getLopCloud().getParentProxy(LinkedProcess.generateBareJid(jid));
                         parentNode = this.getNode(this.treeRoot, parentProxy.getFullJid());
                         if (parentNode != null) {
                             DefaultMutableTreeNode otherNode = new DefaultMutableTreeNode(proxy);

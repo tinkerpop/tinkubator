@@ -25,12 +25,12 @@ public class PresenceListener extends LopVilleinListener {
         XmppVillein.LOGGER.info("Presence received from " + presence.getFrom());
         XmppVillein.LOGGER.info(presence.toXML());
 
-        Proxy proxy = this.getXmppVillein().getProxy(presence.getFrom());
+        Proxy proxy = this.getXmppVillein().getLopCloud().getProxy(presence.getFrom());
 
         if (proxy != null && (presence.getType() == Presence.Type.unavailable ||
                 presence.getType() == Presence.Type.unsubscribe ||
                 presence.getType() == Presence.Type.unsubscribed)) {
-            this.getXmppVillein().removeProxy(presence.getFrom());
+            this.getXmppVillein().getLopCloud().removeProxy(presence.getFrom());
             // Handlers
             for (PresenceHandler presenceHandler : this.getXmppVillein().getPresenceHandlers()) {
                 presenceHandler.handlePresenceUpdate(proxy, presence.getType());
@@ -45,7 +45,7 @@ public class PresenceListener extends LopVilleinListener {
             if (LinkedProcess.isBareJid(presence.getFrom())) {
                 CountrysideProxy countrysideProxy = new CountrysideProxy(presence.getFrom(), this.getXmppVillein().getDispatcher());
                 countrysideProxy.setPresence(presence);
-                this.getXmppVillein().addCountrysideProxy(countrysideProxy);
+                this.getXmppVillein().getLopCloud().addCountrysideProxy(countrysideProxy);
                 proxy = countrysideProxy;
             } else {
                 DiscoverInfo discoInfo = this.getDiscoInfo(presence.getFrom());
@@ -60,7 +60,7 @@ public class PresenceListener extends LopVilleinListener {
                     FarmProxy farmProxy = new FarmProxy(presence.getFrom(), this.getXmppVillein().getDispatcher(), discoInfoDocument);
                     farmProxy.setPresence(presence);
                     try {
-                        this.getXmppVillein().addFarmProxy(farmProxy);
+                        this.getXmppVillein().getLopCloud().addFarmProxy(farmProxy);
                         proxy = farmProxy;
                     } catch (ParentProxyNotFoundException e) {
                         XmppVillein.LOGGER.warning("Parent proxy was not found: " + e.getMessage());
@@ -69,7 +69,7 @@ public class PresenceListener extends LopVilleinListener {
                     RegistryProxy registryProxy = new RegistryProxy(presence.getFrom(), this.getXmppVillein().getDispatcher(), discoInfoDocument);
                     registryProxy.setPresence(presence);
                     try {
-                        this.getXmppVillein().addRegistryProxy(registryProxy);
+                        this.getXmppVillein().getLopCloud().addRegistryProxy(registryProxy);
                         proxy = registryProxy;
                     } catch (ParentProxyNotFoundException e) {
                         XmppVillein.LOGGER.warning("Parent proxy was not found: " + e.getMessage());

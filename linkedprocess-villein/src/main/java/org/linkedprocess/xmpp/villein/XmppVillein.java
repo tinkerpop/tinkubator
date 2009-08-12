@@ -14,15 +14,13 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.farm.SpawnVmProvider;
-import org.linkedprocess.xmpp.villein.PresenceHandler;
-import org.linkedprocess.xmpp.villein.proxies.*;
-import org.linkedprocess.xmpp.villein.Dispatcher;
+import org.linkedprocess.xmpp.villein.proxies.CountrysideProxy;
+import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
+import org.linkedprocess.xmpp.villein.proxies.LopCloud;
+import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.vm.*;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -40,12 +38,7 @@ public class XmppVillein extends XmppClient {
     protected Dispatcher dispatcher;
 
     protected Set<PresenceHandler> presenceHandlers = new HashSet<PresenceHandler>();
-
-    public enum ProxyType {
-        COUNTRYSIDE, FARM, REGISTRY, VM
-    }
-
-    protected Map<String, CountrysideProxy> countrysideProxies;
+    protected LopCloud lopCloud = new LopCloud();
 
     public XmppVillein(final String server, final int port, final String username, final String password) throws XMPPException {
         LOGGER.info("Starting " + STATUS_MESSAGE);
@@ -69,140 +62,8 @@ public class XmppVillein extends XmppClient {
 
         this.connection.addPacketListener(new PresenceListener(this), presenceFilter);
         this.connection.addPacketListener(new LopVilleinListener(this), lopFilter);
-        this.countrysideProxies = new HashMap<String, CountrysideProxy>();
         this.status = LinkedProcess.VilleinStatus.ACTIVE;
-        this.connection.sendPacket(this.createPresence(this.status)); 
-    }
-
-    public Collection<CountrysideProxy> getCountrysideProxies() {
-        return this.countrysideProxies.values();
-    }
-
-    public Collection<FarmProxy> getFarmProxies() {
-        Collection<FarmProxy> farmProxies = new HashSet<FarmProxy>();
-        for (CountrysideProxy countrysideProxy : this.countrysideProxies.values()) {
-            farmProxies.addAll(countrysideProxy.getFarmProxies());
-        }
-        return farmProxies;
-    }
-
-    public Collection<RegistryProxy> getRegistryProxies() {
-        Collection<RegistryProxy> registryProxies = new HashSet<RegistryProxy>();
-        for (CountrysideProxy countrysideProxy : this.countrysideProxies.values()) {
-            registryProxies.addAll(countrysideProxy.getRegistryProxies());
-        }
-        return registryProxies;
-    }
-
-    public Collection<VmProxy> getVmProxies() {
-        Collection<VmProxy> vmProxies = new HashSet<VmProxy>();
-        for (FarmProxy farmProxy : this.getFarmProxies()) {
-            vmProxies.addAll(farmProxy.getVmProxies());
-        }
-        return vmProxies;
-    }
-
-    public Proxy getProxy(String jid) {
-        return this.getProxy(jid, null);
-    }
-
-    public boolean proxyExists(String jid) {
-        if (this.getProxy(jid) != null)
-            return true;
-        else
-            return false;
-    }
-
-    public Proxy getParentProxy(String jid) {
-        for (CountrysideProxy countrysideProxy : this.countrysideProxies.values()) {
-            if (countrysideProxy.getFullJid().equals(jid))
-                return null;
-            for (RegistryProxy registryProxy : countrysideProxy.getRegistryProxies()) {
-                if (registryProxy.getFullJid().equals(jid))
-                    return countrysideProxy;
-            }
-            for (FarmProxy farmProxy : countrysideProxy.getFarmProxies()) {
-                if (farmProxy.getFullJid().equals(jid))
-                    return countrysideProxy;
-                for (VmProxy vmProxy : farmProxy.getVmProxies()) {
-                    if (vmProxy.getFullJid().equals(jid))
-                        return farmProxy;
-                }
-            }
-        }
-        return null;
-    }
-
-    public Proxy getProxy(String jid, ProxyType type) {
-        for (CountrysideProxy countrysideProxy : this.countrysideProxies.values()) {
-            if (countrysideProxy.getFullJid().equals(jid) && (type == null || type == ProxyType.COUNTRYSIDE))
-                return countrysideProxy;
-            for (RegistryProxy registryProxy : countrysideProxy.getRegistryProxies()) {
-                if (registryProxy.getFullJid().equals(jid) && (type == null || type == ProxyType.REGISTRY))
-                    return registryProxy;
-            }
-            for (FarmProxy farmProxy : countrysideProxy.getFarmProxies()) {
-                if (farmProxy.getFullJid().equals(jid) && (type == null || type == ProxyType.FARM))
-                    return farmProxy;
-                for (VmProxy vmProxy : farmProxy.getVmProxies()) {
-                    if (vmProxy.getFullJid().equals(jid) && (type == null || type == ProxyType.VM))
-                        return vmProxy;
-                }
-            }
-        }
-        return null;
-    }
-
-    public void removeProxy(String jid) {
-        Proxy parentProxy = this.getParentProxy(jid);
-        if (parentProxy == null) {
-            this.countrysideProxies.remove(jid);
-        } else if (parentProxy instanceof CountrysideProxy) {
-            ((CountrysideProxy) parentProxy).removeFarmProxy(jid);
-            ((CountrysideProxy) parentProxy).removeRegistryProxy(jid);
-            LOGGER.info("Removing proxy for " + jid);
-        } else {
-            ((FarmProxy) parentProxy).removeVmProxy(jid);
-            LOGGER.info("Removing proxy for " + jid);
-        }
-    }
-
-    public void addCountrysideProxy(CountrysideProxy countrysideProxy) {
-        this.countrysideProxies.put(countrysideProxy.getFullJid(), countrysideProxy);
-    }
-
-    public void addFarmProxy(FarmProxy farmProxy) throws ParentProxyNotFoundException {
-        Proxy countrysideProxy = this.getProxy(LinkedProcess.generateBareJid(farmProxy.getFullJid()), ProxyType.COUNTRYSIDE);
-        if (countrysideProxy != null && countrysideProxy instanceof CountrysideProxy)
-            ((CountrysideProxy) countrysideProxy).addFarmProxy(farmProxy);
-        else
-            throw new ParentProxyNotFoundException("countryside proxy null for " + farmProxy.getFullJid());
-    }
-
-    public void addRegistryProxy(RegistryProxy registryProxy) throws ParentProxyNotFoundException {
-        Proxy countrysideProxy = this.getProxy(LinkedProcess.generateBareJid(registryProxy.getFullJid()), ProxyType.COUNTRYSIDE);
-        if (countrysideProxy != null && countrysideProxy instanceof CountrysideProxy)
-            ((CountrysideProxy) countrysideProxy).addRegistryProxy(registryProxy);
-        else
-            throw new ParentProxyNotFoundException("countryside proxy null for " + registryProxy.getFullJid());
-    }
-
-    public void addVmProxy(String farmJid, VmProxy vmProxy) throws ParentProxyNotFoundException {
-        Proxy farmProxy = this.getProxy(farmJid, ProxyType.FARM);
-        if (farmProxy != null && farmProxy instanceof FarmProxy)
-            ((FarmProxy) farmProxy).addVmProxy(vmProxy);
-        else
-            throw new ParentProxyNotFoundException("farm proxy null for " + vmProxy.getFullJid());
-    }
-
-    public synchronized void createCountrysideProxiesFromRoster() {
-        for (RosterEntry entry : this.getRoster().getEntries()) {
-            CountrysideProxy countrysideProxy = this.countrysideProxies.get(entry.getUser());
-            if (countrysideProxy == null) {
-                countrysideProxy = new CountrysideProxy(entry.getUser(), this.dispatcher);
-                this.countrysideProxies.put(countrysideProxy.getFullJid(), countrysideProxy);
-            }
-        }
+        this.connection.sendPacket(this.createPresence(this.status));
     }
 
     public final Presence createPresence(final LinkedProcess.VilleinStatus status) {
@@ -224,9 +85,23 @@ public class XmppVillein extends XmppClient {
         return this.status;
     }
 
-    public void requestUnsubscription(String jid, boolean removeFromRoster) {
-        super.requestUnsubscription(jid, removeFromRoster);
-        CountrysideProxy countrysideProxy = this.countrysideProxies.get(jid);
+    public LopCloud getLopCloud() {
+        return this.lopCloud;
+    }
+
+    public void createLopCloudFromRoster() {
+        for (RosterEntry entry : this.getRoster().getEntries()) {
+            CountrysideProxy countrysideProxy = this.lopCloud.getCountrysideProxy(entry.getUser());
+            if (countrysideProxy == null) {
+                countrysideProxy = new CountrysideProxy(entry.getUser(), this.dispatcher);
+                this.lopCloud.addCountrysideProxy(countrysideProxy);
+            }
+        }
+    }
+
+    public void requestUnsubscription(String jid) {
+        super.requestUnsubscription(jid);
+        CountrysideProxy countrysideProxy = this.lopCloud.getCountrysideProxy(jid);
         if (countrysideProxy != null) {
             for (FarmProxy farmProxy : countrysideProxy.getFarmProxies()) {
                 for (VmProxy vmProxy : farmProxy.getVmProxies()) {
@@ -236,10 +111,10 @@ public class XmppVillein extends XmppClient {
                 }
             }
         }
-        this.countrysideProxies.remove(jid);
+        this.lopCloud.removeCountrysideProxy(jid);
     }
 
-     protected void initiateFeatures() {
+    protected void initiateFeatures() {
         super.initiateFeatures();
         ServiceDiscoveryManager.setIdentityName(XmppVillein.RESOURCE_PREFIX);
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);

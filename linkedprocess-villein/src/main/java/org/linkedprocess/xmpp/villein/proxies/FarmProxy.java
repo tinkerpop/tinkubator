@@ -56,7 +56,11 @@ public class FarmProxy extends Proxy {
     }
 
     public Collection<String> getSupportedVmSpecies() {
-        return this.getField(LinkedProcess.VM_SPECIES_ATTRIBUTE).getValues();
+        Field field = this.getField(LinkedProcess.VM_SPECIES_ATTRIBUTE);
+        if(null != field)
+            return field.getValues();
+        else
+            return new HashSet<String>();
     }
 
     public String getFarmPassword() {

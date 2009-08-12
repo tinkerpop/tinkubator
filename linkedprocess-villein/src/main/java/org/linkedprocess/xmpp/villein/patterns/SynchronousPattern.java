@@ -3,6 +3,7 @@ package org.linkedprocess.xmpp.villein.patterns;
 import org.linkedprocess.xmpp.villein.proxies.JobStruct;
 import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
+import org.linkedprocess.xmpp.villein.proxies.LopCloud;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.LinkedProcess;
@@ -19,49 +20,67 @@ import java.util.logging.Logger;
 public class SynchronousPattern {
     private static final Logger LOGGER = LinkedProcess.getLogger(SynchronousPattern.class);
 
-    protected long pollingInterval;
-    protected long totalTime = 0;
-
-    // TODO: private boolean timedOut;
     private JobStruct jobStructTemp;
     private VmProxy vmProxyTemp;
     private LopError lopErrorTemp;
+    private boolean timedout;
 
     private final Object pollingMonitor = new Object();
-
-    public SynchronousPattern(final long pollingInterval) {
-        this.pollingInterval = pollingInterval;
-    }
-
-    public void setPollingInterval(final long pollingInterval) {
-        this.pollingInterval = pollingInterval;
-    }
-
-    public long getPollingInterval() {
-        return this.pollingInterval;
-    }
 
     private void nullifyTemps() {
         this.jobStructTemp = null;
         this.vmProxyTemp = null;
         this.lopErrorTemp = null;
+        this.timedout = true;
     }
 
-    private void checkTimeout(final long startTime, final long timeout) throws WaitTimeoutException {
-        long runningTime = System.currentTimeMillis() - startTime;
-        if (runningTime > timeout && timeout != -1)
-            throw new WaitTimeoutException("Waiting timed out at " + runningTime + " of " + timeout + ".");
-    }
 
-    private void pollingSleep() {
-        if (this.pollingInterval > 0) {
+    private void pollingSleep(final long timeout) {
             try {
                 synchronized (pollingMonitor) {
-                    pollingMonitor.wait(this.pollingInterval);
+                    if(timeout > 0)
+                        pollingMonitor.wait(timeout);
+                    else
+                        pollingMonitor.wait();
                 }
             } catch (InterruptedException e) {
                 LOGGER.warning(e.getMessage());
             }
+    }
+
+    public VmProxy spawnVm(final FarmProxy farmProxy, final String vmSpecies, final long timeout) throws WaitTimeoutException, OperationException {
+        this.nullifyTemps();
+        Handler<VmProxy> resultHandler = new Handler<VmProxy>() {
+            public void handle(VmProxy vmProxy) {
+                vmProxyTemp = vmProxy;
+                farmProxy.addVmProxy(vmProxy);
+                timedout = false;
+                synchronized (pollingMonitor) {
+                    pollingMonitor.notify();
+                }
+            }
+        };
+        Handler<LopError> errorHandler = new Handler<LopError>() {
+            public void handle(LopError lopError) {
+                lopErrorTemp = lopError;
+                timedout = false;
+                synchronized (pollingMonitor) {
+                    pollingMonitor.notify();
+                }
+            }
+        };
+
+        farmProxy.spawnVm(vmSpecies, resultHandler, errorHandler);
+
+        while(null == this.vmProxyTemp && null == this.lopErrorTemp) {
+            this.pollingSleep(timeout);
+            if(timedout)
+                throw new WaitTimeoutException("spawn_vm timed out.");
+        }
+        if(this.lopErrorTemp != null) {
+            throw new OperationException(this.lopErrorTemp);
+        } else {
+            return this.vmProxyTemp;
         }
     }
 
@@ -70,6 +89,7 @@ public class SynchronousPattern {
         Handler<JobStruct> submitJobHandler = new Handler<JobStruct>() {
             public void handle(JobStruct jobStruct) {
                 jobStructTemp = jobStruct;
+                timedout = false;
                 synchronized (pollingMonitor) {
                     pollingMonitor.notify();
                 }
@@ -80,45 +100,12 @@ public class SynchronousPattern {
         }
 
         vmProxy.submitJob(jobStruct, submitJobHandler, submitJobHandler);
-        long startTime = System.currentTimeMillis();
         while (null == this.jobStructTemp) {
-            this.checkTimeout(startTime, timeout);
-            this.pollingSleep();
+            this.pollingSleep(timeout);
+            if(timedout)
+                throw new WaitTimeoutException("submit_job timed out.");
         }
         return this.jobStructTemp;
-    }
-
-    public VmProxy spawnVm(final FarmProxy farmProxy, final String vmSpecies, final long timeout) throws WaitTimeoutException, OperationException {
-        this.nullifyTemps();
-        Handler<VmProxy> resultHandler = new Handler<VmProxy>() {
-            public void handle(VmProxy vmProxy) {
-                vmProxyTemp = vmProxy;
-                farmProxy.addVmProxy(vmProxy);
-                synchronized (pollingMonitor) {
-                    pollingMonitor.notify();
-                }
-            }
-        };
-        Handler<LopError> errorHandler = new Handler<LopError>() {
-            public void handle(LopError lopError) {
-                lopErrorTemp = lopError;
-                synchronized (pollingMonitor) {
-                    pollingMonitor.notify();
-                }
-            }
-        };
-
-        farmProxy.spawnVm(vmSpecies, resultHandler, errorHandler);
-        long startTime = System.currentTimeMillis();
-        while(null == this.vmProxyTemp && null == this.lopErrorTemp) {
-            this.checkTimeout(startTime, timeout);
-            this.pollingSleep();
-        }
-        if(this.lopErrorTemp != null) {
-            throw new OperationException(this.lopErrorTemp);
-        } else {
-            return this.vmProxyTemp;
-        }
     }
 
     public JobStruct abortJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws WaitTimeoutException, OperationException {
@@ -126,6 +113,7 @@ public class SynchronousPattern {
         Handler<JobStruct> resultHandler = new Handler<JobStruct>() {
             public void handle(JobStruct jobStruct) {
                 jobStructTemp = jobStruct;
+                timedout = false;
                 synchronized (pollingMonitor) {
                     pollingMonitor.notify();
                 }
@@ -134,6 +122,7 @@ public class SynchronousPattern {
         Handler<LopError> errorHandler = new Handler<LopError>() {
             public void handle(LopError lopError) {
                 lopErrorTemp = lopError;
+                timedout = false;
                 synchronized (pollingMonitor) {
                     pollingMonitor.notify();
                 }
@@ -141,16 +130,36 @@ public class SynchronousPattern {
         };
 
         vmProxy.abortJob(jobStruct, resultHandler, errorHandler);
-        long startTime = System.currentTimeMillis();
         while(null == this.jobStructTemp && null == this.lopErrorTemp) {
-            this.checkTimeout(startTime, timeout);
-            this.pollingSleep();
+            this.pollingSleep(timeout);
+            if(timedout)
+                throw new WaitTimeoutException("abort_job timed out.");
         }
         if(this.lopErrorTemp != null) {
             throw new OperationException(this.lopErrorTemp);
         } else {
             return this.jobStructTemp;
         }  
+    }
+
+    private void checkTimeout(long startTime, long timeout) throws WaitTimeoutException {
+        if((System.currentTimeMillis() - startTime) > timeout) {
+            throw new WaitTimeoutException("timeout.");
+        }
+    }
+
+    public void waitForFarms(final LopCloud lopCloud, final int minimumFarms, final long timeout) throws WaitTimeoutException {
+        long startTime = System.currentTimeMillis();
+        while(true) {
+            checkTimeout(startTime, timeout);
+            if(lopCloud.getFarmProxies().size() >= minimumFarms)
+                return;
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+                LOGGER.warning(e.getMessage());
+            }
+        }
     }
 
 

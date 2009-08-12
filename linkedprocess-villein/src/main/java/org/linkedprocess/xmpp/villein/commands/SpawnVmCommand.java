@@ -50,7 +50,7 @@ public class SpawnVmCommand extends Command {
         vmProxy.setVmSpecies(spawnVm.getVmSpecies());
         vmProxy.setPresence(new Presence(Presence.Type.available));
         try {
-            this.xmppVillein.addVmProxy(spawnVm.getFrom(), vmProxy);
+            this.xmppVillein.getLopCloud().addVmProxy(spawnVm.getFrom(), vmProxy);
             resultHandlers.handle(spawnVm.getPacketID(), vmProxy);
         } catch (ParentProxyNotFoundException e) {
             XmppVillein.LOGGER.warning(e.getMessage());
