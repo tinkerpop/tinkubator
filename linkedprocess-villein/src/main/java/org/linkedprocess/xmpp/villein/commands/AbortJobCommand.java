@@ -1,4 +1,4 @@
-package org.linkedprocess.xmpp.villein.operations;
+package org.linkedprocess.xmpp.villein.commands;
 
 import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.villein.proxies.JobStruct;

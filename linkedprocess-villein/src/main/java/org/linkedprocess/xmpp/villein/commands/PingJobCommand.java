@@ -1,4 +1,4 @@
-package org.linkedprocess.xmpp.villein.operations;
+package org.linkedprocess.xmpp.villein.commands;
 
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.villein.Handler;
@@ -8,7 +8,6 @@ import org.linkedprocess.xmpp.villein.proxies.JobStruct;
 import org.linkedprocess.xmpp.vm.PingJob;
 import org.linkedprocess.xmpp.LopError;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.packet.Packet;
 
 /**

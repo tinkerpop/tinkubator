@@ -1,9 +1,8 @@
-package org.linkedprocess.xmpp.villein.operations;
+package org.linkedprocess.xmpp.villein.commands;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.xmpp.farm.SpawnVm;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.linkedprocess.xmpp.villein.Handler;

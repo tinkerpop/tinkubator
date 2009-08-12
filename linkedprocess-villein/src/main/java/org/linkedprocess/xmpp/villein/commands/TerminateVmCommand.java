@@ -1,11 +1,10 @@
-package org.linkedprocess.xmpp.villein.operations;
+package org.linkedprocess.xmpp.villein.commands;
 
 import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.vm.TerminateVm;
 import org.linkedprocess.xmpp.LopError;
-import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
 

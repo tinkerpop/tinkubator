@@ -1,6 +1,6 @@
 package org.linkedprocess.xmpp.villein;
 
-import org.linkedprocess.xmpp.villein.operations.*;
+import org.linkedprocess.xmpp.villein.commands.*;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 

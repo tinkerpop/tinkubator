@@ -1,53 +1,48 @@
-package org.linkedprocess.xmpp.villein.operations;
+package org.linkedprocess.xmpp.villein.commands;
 
 import org.linkedprocess.os.VMBindings;
-import org.linkedprocess.os.errors.InvalidValueException;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.vm.ManageBindings;
 import org.linkedprocess.xmpp.LopError;
-import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
+
+import java.util.Set;
 
 /**
  * User: marko
  * Date: Aug 7, 2009
- * Time: 5:38:55 PM
+ * Time: 5:33:09 PM
  */
-public class SetBindingsCommand extends Command {
+public class GetBindingsCommand extends Command {
+
     private final HandlerSet<VMBindings> resultHandlers;
     private final HandlerSet<LopError> errorHandlers;
 
-    public SetBindingsCommand(XmppVillein xmppVillein) {
+    public GetBindingsCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
         this.resultHandlers = new HandlerSet<VMBindings>();
         this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(final VmProxy vmStruct, VMBindings vmBindings, final Handler<LopError> errorHandler) {
+    public void send(VmProxy vmStruct, Set<String> bindingNames, final Handler<VMBindings> resultHandler, final Handler<LopError> errorHandler) {
 
         String id = Packet.nextID();
         ManageBindings manageBindings = new ManageBindings();
         manageBindings.setTo(vmStruct.getFullJid());
         manageBindings.setFrom(xmppVillein.getFullJid());
-        manageBindings.setType(IQ.Type.SET);
+        manageBindings.setType(IQ.Type.GET);
         manageBindings.setVmPassword(vmStruct.getVmPassword());
-        manageBindings.setBindings(vmBindings);
         manageBindings.setPacketID(id);
+        VMBindings vmBindings = new VMBindings();
+        for(String bindingName : bindingNames) {
+            vmBindings.put(bindingName, null);
+        }
+        manageBindings.setBindings(vmBindings);
 
-        Handler<VMBindings> autoResultHandler = new Handler<VMBindings>() {
-            public void handle(VMBindings vmBindings) {
-                try {
-                    vmStruct.addVmBindings(vmBindings);
-                } catch(InvalidValueException e) {
-                    XmppVillein.LOGGER.severe(e.getMessage());
-                }  
-            }
-        };
-
-        this.resultHandlers.addHandler(id, autoResultHandler);
+        this.resultHandlers.addHandler(id, resultHandler);
         this.errorHandlers.addHandler(id, errorHandler);
 
         xmppVillein.getConnection().sendPacket(manageBindings);
