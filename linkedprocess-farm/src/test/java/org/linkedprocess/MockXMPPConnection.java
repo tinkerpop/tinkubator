@@ -1,8 +1,11 @@
 package org.linkedprocess;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.easymock.Capture;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
@@ -11,11 +14,16 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.xmpp.XMPPConnectionWrapper;
 import org.linkedprocess.xmpp.farm.PresenceSubscriptionListener;
 import org.linkedprocess.xmpp.farm.SpawnVm;
 import org.linkedprocess.xmpp.farm.SpawnVmListener;
-import org.linkedprocess.xmpp.farm.SpawnVmProvider;
+import org.linkedprocess.xmpp.vm.AbortJobListener;
+import org.linkedprocess.xmpp.vm.ManageBindingsListener;
+import org.linkedprocess.xmpp.vm.PingJobListener;
+import org.linkedprocess.xmpp.vm.SubmitJobListener;
+import org.linkedprocess.xmpp.vm.TerminateVmListener;
 import org.xmlpull.v1.XmlPullParserException;
 
 
@@ -32,8 +40,9 @@ public class MockXMPPConnection extends XMPPConnectionWrapper {
     public ArrayList<PacketListener> packetListeners = new ArrayList<PacketListener>();
     private XMPPConnection xmppConnection;
     private final String id;
-	public PacketListener spawn, subscribe;
-	private SpawnVmProvider spawnProvider = new SpawnVmProvider();
+	public PacketListener spawn, subscribe, submitJob, manageBindings, terminateVm, pingJob, abortJob;
+	public Vector<String> disc_info_features;
+	public Capture<DataForm> dataformCapture = new Capture<DataForm>();
 
     public MockXMPPConnection(ConnectionConfiguration connConfig, String id) {
         this.id = id;
@@ -41,16 +50,50 @@ public class MockXMPPConnection extends XMPPConnectionWrapper {
         host = connConfig.getHost();
         port = connConfig.getPort();
         sentPackets = new ArrayList<Packet>();
+        disc_info_features = new Vector<String>();
+        
     }
 
+    public void waitForResponse(int timeout) {
+		int currentSize = sentPackets.size();
+		long startTime = System.currentTimeMillis();
+		while (System.currentTimeMillis() < startTime + timeout) {
+			if (sentPackets.size() > currentSize) {
+				return;
+			}
+			try {
+				Thread.sleep(50);
+				// System.out.println(watching.size() + " > " + currentSize);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+	}
     @Override
     public void addPacketListener(PacketListener listener, PacketFilter filter) {
-        logger.info("registering " + listener);
+        logger.info(id + ": registering " + listener);
         if(listener instanceof SpawnVmListener) {
         	spawn = listener;
         }
         if(listener instanceof PresenceSubscriptionListener) {
         	subscribe = listener;
+        }
+        if(listener instanceof SubmitJobListener) {
+        	submitJob = listener;
+        }
+        if(listener instanceof ManageBindingsListener) {
+        	manageBindings = listener;
+        }
+        if(listener instanceof TerminateVmListener) {
+        	terminateVm = listener;
+        }
+        if(listener instanceof AbortJobListener) {
+        	abortJob = listener;
+        }
+        if(listener instanceof PingJobListener) {
+        	pingJob = listener;
         }
         packetListeners.add(listener);
 
@@ -58,7 +101,7 @@ public class MockXMPPConnection extends XMPPConnectionWrapper {
 
     @Override
     public void connect() throws XMPPException {
-        logger.fine("connecting");
+        logger.fine(id + ": connecting");
 
     }
 
@@ -74,7 +117,7 @@ public class MockXMPPConnection extends XMPPConnectionWrapper {
 
     @Override
     public XMPPConnection getDelegate() {
-        logger.fine(id + "returning" + xmppConnection);
+        logger.fine(id + ": returning" + xmppConnection);
         return xmppConnection;
     }
 
@@ -151,7 +194,7 @@ public class MockXMPPConnection extends XMPPConnectionWrapper {
 
     public void clearPackets() {
         sentPackets.clear();
-        logger.fine("clearing packets");
+        logger.fine(id + "clearing packets");
     }
 
 	public void receiveSpawn(SpawnVm spawnPacket) throws Exception, XmlPullParserException {
@@ -165,6 +208,14 @@ public class MockXMPPConnection extends XMPPConnectionWrapper {
 	public Packet getLastPacket() {
 		return sentPackets.get(sentPackets.size()-1);
 	}
+
+	public Collection<String> getDiscInfoFeatures() {
+		ArrayList<String> result = new ArrayList<String>();
+		result.addAll(disc_info_features);
+		return result;
+	}
+
+
 
 
 }

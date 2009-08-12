@@ -76,6 +76,7 @@ public class ScriptEngineTest extends TestCase {
         engine = manager.getEngineByName(LinkedProcess.JAVASCRIPT);
         System.out.println("" + engine.getClass());
         assertNotNull(engine);
+        //TODO this breaks on OS X, returns null!
         assertEquals("42.0", engine.eval("42").toString());
     }
 
