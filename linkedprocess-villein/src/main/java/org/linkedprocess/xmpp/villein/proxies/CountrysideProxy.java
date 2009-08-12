@@ -1,10 +1,6 @@
 package org.linkedprocess.xmpp.villein.proxies;
 
-import org.linkedprocess.xmpp.villein.proxies.Proxy;
-import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
-import org.linkedprocess.xmpp.villein.proxies.RegistryProxy;
 import org.linkedprocess.xmpp.villein.Dispatcher;
-import org.linkedprocess.LinkedProcess;
 
 import java.util.*;
 
@@ -55,45 +51,40 @@ public class CountrysideProxy extends Proxy {
         this.farmProxies.remove(farmJid);
     }
 
-    public Collection<FarmProxy> filterFarmProxiesByVmSpeciesSupport(Collection<FarmProxy> farmProxies, String supportsVmSpecies) {
+    public Collection<FarmProxy> filterFarmProxiesByVmSpeciesSupport(Collection<FarmProxy> farmProxies, String vmSpecies) {
         Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
-        for(FarmProxy farmProxy : farmProxies) {
-            Field field = farmProxy.getField(LinkedProcess.VM_SPECIES_ATTRIBUTE);
-            if(field.getValues().contains(supportsVmSpecies))
+        for (FarmProxy farmProxy : farmProxies) {
+            if (farmProxy.supportsSpecies(vmSpecies))
                 returnFarmProxies.add(farmProxy);
-
         }
         return returnFarmProxies;
     }
 
-    public Collection<FarmProxy> filterFarmProxiesByVmTimeToLive(Collection<FarmProxy> farmProxies, int minimumVmTimeToLive) {
+    public Collection<FarmProxy> filterFarmProxiesByVmTimeToLive(Collection<FarmProxy> farmProxies, long minimumVmTimeToLive) {
         Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
-        for(FarmProxy farmProxy : farmProxies) {
-            Field field = farmProxy.getField(LinkedProcess.VM_TIME_TO_LIVE);
-            int vmTimeToLive = field.getIntegerValue();
-            if(vmTimeToLive >= minimumVmTimeToLive) {
+        for (FarmProxy farmProxy : farmProxies) {
+            if (farmProxy.getVmTimeToLive() >= minimumVmTimeToLive) {
                 returnFarmProxies.add(farmProxy);
             }
         }
         return returnFarmProxies;
     }
 
-    public Collection<FarmProxy> filterFarmProxiesByJobTimeout(Collection<FarmProxy> farmProxies, int minimumJobTimeout) {
+    public Collection<FarmProxy> filterFarmProxiesByJobTimeout(Collection<FarmProxy> farmProxies, long minimumJobTimeout) {
         Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
-        for(FarmProxy farmProxy : farmProxies) {
-            Field field = farmProxy.getField(LinkedProcess.JOB_TIMEOUT);
-            int jobTimeout = field.getIntegerValue();
-            if(jobTimeout >= minimumJobTimeout) {
+        for (FarmProxy farmProxy : farmProxies) {
+            if (farmProxy.getJobTimeout() >= minimumJobTimeout) {
                 returnFarmProxies.add(farmProxy);
             }
         }
         return returnFarmProxies;
     }
 
-    public Collection<FarmProxy> filterFarmProxiesByPasswordRequired(Collection<FarmProxy> farmProxies, boolean passwordRequired) {
+    public Collection<FarmProxy> filterFarmProxiesByPasswordRequired(Collection<FarmProxy> farmProxies, boolean wantPasswordRequired) {
         Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
-        for(FarmProxy farmProxy : farmProxies) {
-
+        for (FarmProxy farmProxy : farmProxies) {
+            if (farmProxy.requiresPassword() == wantPasswordRequired)
+                farmProxies.add(farmProxy);           
         }
         return returnFarmProxies;
     }

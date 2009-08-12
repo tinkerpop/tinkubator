@@ -36,8 +36,9 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
     protected DefaultMutableTreeNode treeRoot;
     protected Set<String> supportedVmSpeciesActionCommands = new HashSet<String>();
 
-    protected final static String FARM_CONFIGURATION = "farm configuration";
-    protected final static String REGISTRY_COUNTRYSIDES = "countrysides";
+    protected final static String DISCOVER_INFORMATION = "discover information";
+    protected final static String DISCOVER_COUNTRYSIDES = "discover countrysides";
+    protected final static String SET_FARM_PASSWORD = "set farm password";
     protected final static String TERMINATE_VM = "terminate vm";
     protected final static String SPAWN_VM = "spawn vm";
     protected final static String ADD_COUNTRYSIDE = "add countryside";
@@ -110,7 +111,7 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
                 Proxy proxy = (Proxy) this.popupTreeObject;
                 this.villeinGui.getXmppVillein().probeJid(proxy.getFullJid());
             }
-        } else if (event.getActionCommand().equals(FARM_CONFIGURATION)) {
+        } else if (event.getActionCommand().equals(DISCOVER_INFORMATION)) {
             if (this.popupTreeObject instanceof FarmProxy) {
                 FarmProxy farmProxy = (FarmProxy) this.popupTreeObject;
                 JFrame farmFrame = new JFrame(farmProxy.getFullJid());
@@ -120,7 +121,7 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
                 farmFrame.setVisible(true);
                 farmFrame.setResizable(true);
             }
-        } else if (event.getActionCommand().equals(REGISTRY_COUNTRYSIDES)) {
+        } else if (event.getActionCommand().equals(DISCOVER_COUNTRYSIDES)) {
             if (this.popupTreeObject instanceof RegistryProxy) {
                 RegistryProxy registryProxy = (RegistryProxy) this.popupTreeObject;
                 JFrame farmFrame = new JFrame(registryProxy.getFullJid());
@@ -129,6 +130,12 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
                 farmFrame.setVisible(true);
                 farmFrame.setResizable(true);
             }
+        } else if(event.getActionCommand().equals(SET_FARM_PASSWORD)) {
+            if (this.popupTreeObject instanceof FarmProxy) {
+                FarmProxy farmProxy = (FarmProxy) this.popupTreeObject;
+                farmProxy.setFarmPassword(JOptionPane.showInputDialog(null, "enter farm password", "set farm password", JOptionPane.QUESTION_MESSAGE).trim());
+            }
+
         } else if (event.getActionCommand().equals(SHUTDOWN)) {
             this.villeinGui.getXmppVillein().shutDown(null);
             this.villeinGui.loadLoginFrame();
@@ -362,7 +369,7 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
         this.popupMenu.setBorder(new BevelBorder(6));
         JLabel menuLabel = new JLabel("Registry");
         JMenuItem probeResource = new JMenuItem(PROBE);
-        JMenuItem discoItems = new JMenuItem(REGISTRY_COUNTRYSIDES);
+        JMenuItem discoItems = new JMenuItem(DISCOVER_COUNTRYSIDES);
 
         menuLabel.setHorizontalTextPosition(JLabel.CENTER);
         this.popupMenu.add(menuLabel);
@@ -378,7 +385,12 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
         this.popupMenu.setBorder(new BevelBorder(6));
         JLabel menuLabel = new JLabel("Farm");
         JMenuItem probeResource = new JMenuItem(PROBE);
-        JMenuItem discoInfo = new JMenuItem(FARM_CONFIGURATION);
+        JMenuItem discoInfo = new JMenuItem(DISCOVER_INFORMATION);
+        JMenuItem addFarmPassword = null;
+        if(farmProxy.requiresPassword()) {
+            addFarmPassword = new JMenuItem(SET_FARM_PASSWORD);
+            addFarmPassword.addActionListener(this);
+        }
         JMenu spawnMenu = new JMenu(SPAWN_VM);
 
         for (String vmSpecies : farmProxy.getSupportedVmSpecies()) {
@@ -393,6 +405,8 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
         this.popupMenu.addSeparator();
         this.popupMenu.add(probeResource);
         this.popupMenu.add(discoInfo);
+        if(null != addFarmPassword)
+            this.popupMenu.add(addFarmPassword);
         this.popupMenu.add(spawnMenu);
         discoInfo.addActionListener(this);
         probeResource.addActionListener(this);

@@ -28,7 +28,6 @@ import java.io.IOException;
 public class FarmProxy extends Proxy {
 
     protected Map<String, VmProxy> vmProxies = new HashMap<String, VmProxy>();
-    protected Collection<String> supportedVmSpecies = new HashSet<String>();
     protected String farmPassword;
 
 
@@ -57,15 +56,7 @@ public class FarmProxy extends Proxy {
     }
 
     public Collection<String> getSupportedVmSpecies() {
-        return this.supportedVmSpecies;
-    }
-
-    public void addSupportedVmSpecies(String supportedVmSpecies) {
-        this.supportedVmSpecies.add(supportedVmSpecies);
-    }
-
-    public void setSupportedVmSpecies(Collection<String> supportedVmSpecies) {
-        this.supportedVmSpecies = supportedVmSpecies;
+        return this.getField(LinkedProcess.VM_SPECIES_ATTRIBUTE).getValues();
     }
 
     public String getFarmPassword() {
@@ -76,7 +67,7 @@ public class FarmProxy extends Proxy {
         this.farmPassword = farmPassword;
     }
 
-    public boolean isFarmPasswordRequired() {
+    public boolean requiresPassword() {
         Field field = this.getField(LinkedProcess.FARM_PASSWORD_REQUIRED);
         if(null != field) {
             return field.getBooleanValue();
@@ -102,6 +93,10 @@ public class FarmProxy extends Proxy {
         } else {
             return -1;
         }
+    }
+
+    public boolean supportsSpecies(String vmSpecies) {
+        return this.getSupportedVmSpecies().contains(vmSpecies);
     }
 
     public void spawnVm(final String vmSpecies, final Handler<VmProxy> resultHandler, final Handler<LopError> errorHandler) {

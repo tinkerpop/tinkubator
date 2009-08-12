@@ -156,7 +156,7 @@ public class RosterPanel extends JPanel implements ActionListener, ListSelection
     public void actionPerformed(ActionEvent event) {
         if (event.getActionCommand().equals(ADD)) {
             DefaultTableModel tableModel = (DefaultTableModel) this.rosterTable.getModel();
-            String value = JOptionPane.showInputDialog(null, "enter host jid", "add host", JOptionPane.QUESTION_MESSAGE);
+            String value = JOptionPane.showInputDialog(null, "enter countryside jid", "add countryside", JOptionPane.QUESTION_MESSAGE);
             if (value != null && value.length() > 0) {
                 try {
                     this.roster.createEntry(value, null, null);

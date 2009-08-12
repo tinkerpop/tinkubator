@@ -20,6 +20,7 @@ public abstract class LoginArea extends JPanel implements ActionListener {
     protected JTextField passwordField;
     protected JTextField serverField;
     protected JTextField portField;
+    protected JTextField farmPasswordField;
     protected JCheckBox rememberBox;
     protected Image backgroundImage;
     protected String BORDER_SPACE = "    ";
@@ -27,73 +28,8 @@ public abstract class LoginArea extends JPanel implements ActionListener {
     protected final String QUIT = "quit";
     protected final String LOGIN = "login";
 
-    public LoginArea(Image backgroundImage, String propertiesFile) {
-        super(new BorderLayout());
-        this.backgroundImage = backgroundImage;
-        this.propertiesFile = propertiesFile;
-        this.setOpaque(false);
-
-        this.usernameField = new JTextField("", 15);
-        this.passwordField = new JPasswordField("", 15);
-        this.serverField = new JTextField("", 15);
-        this.portField = new JTextField("5222", 15);
-        this.rememberBox = new JCheckBox("remember");
-        this.rememberBox.setSelected(true);
-
-        try {
-            Properties props = new Properties();
-            props.load(new FileInputStream(this.propertiesFile));
-            this.usernameField.setText(props.getProperty("username"));
-            this.passwordField.setText(props.getProperty("password"));
-            this.serverField.setText(props.getProperty("server"));
-            this.portField.setText(props.getProperty("port"));
-        } catch (Exception e) {
-            System.out.println("Could not load " + this.propertiesFile + " file.");
-
-        }
-
-        JPanel mainPanel = new JPanel(new GridLayout(6, 2, 0, 0));
-
-        mainPanel.add(new JLabel());
-        mainPanel.add(new JLabel());
-
-        mainPanel.add(new JLabel(BORDER_SPACE + "username:"));
-        mainPanel.add(usernameField);
-
-        mainPanel.add(new JLabel(BORDER_SPACE + "password:"));
-        mainPanel.add(passwordField);
-
-        mainPanel.add(new JLabel(BORDER_SPACE + "server:"));
-        mainPanel.add(serverField);
-
-        mainPanel.add(new JLabel(BORDER_SPACE + "port:"));
-        mainPanel.add(portField);
-
-        mainPanel.add(new JLabel());
-        mainPanel.add(this.rememberBox);
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton loginButton = new JButton(LOGIN);
-        JButton quitButton = new JButton(QUIT);
-
-        buttonPanel.add(loginButton);
-        buttonPanel.add(quitButton);
-        JLabel copyright = new JLabel("developed by linkedprocess.org" + BORDER_SPACE + BORDER_SPACE);
-        copyright.setFont(new Font(Font.SERIF, Font.PLAIN, 12));
-        buttonPanel.add(copyright);
-        buttonPanel.add(new JLabel(ImageHolder.lopIcon));
-
-        mainPanel.setOpaque(false);
-        buttonPanel.setOpaque(false);
-        this.add(mainPanel, BorderLayout.CENTER);
-        this.add(buttonPanel, BorderLayout.SOUTH);
-
-        loginButton.addActionListener(this);
-        quitButton.addActionListener(this);
-
-        this.setBorder(BorderFactory.createLineBorder(ImageHolder.GRAY_COLOR, 2));
-
-
+    public LoginArea(BorderLayout borderLayout) {
+        super(borderLayout);
     }
 
     public void doRememberedProperties() {
@@ -103,6 +39,8 @@ public abstract class LoginArea extends JPanel implements ActionListener {
             props.put("password", this.passwordField.getText());
             props.put("server", this.serverField.getText());
             props.put("port", this.portField.getText());
+            if(this.farmPasswordField != null)
+                props.put("farmPassword", this.farmPasswordField.getText());
 
             try {
                 props.store(new FileOutputStream(this.propertiesFile), "remembered properties.");

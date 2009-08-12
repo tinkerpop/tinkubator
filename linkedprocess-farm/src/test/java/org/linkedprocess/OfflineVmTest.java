@@ -44,7 +44,7 @@ public class OfflineVmTest extends XMPPSpecificationTest {
 		sentPackets = connection.sentPackets;
 		replayAll();
 		// start the farm
-		farm = new XmppFarm(server, port, username, password);
+		farm = new XmppFarm(server, port, username, password, null);
 		vm = farm.spawnVirtualMachine(CLIENT_JID, JAVASCRIPT);
 
 	}

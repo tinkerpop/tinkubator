@@ -55,7 +55,7 @@ public class OfflineFarmTest extends XMPPSpecificationTest {
 				.andReturn(createMockVM(username + "LoPVM/2")).times(0,1);
 		replayAll();
 		// start the farm
-		farm = new XmppFarm(server, port, username, password);
+		farm = new XmppFarm(server, port, username, password, null);
 		connection.clearPackets();
 	}
 
@@ -285,7 +285,7 @@ public class OfflineFarmTest extends XMPPSpecificationTest {
 		replayAll();
 
 		// start the farm
-		farm = new XmppFarm(server, port, username, password);
+		farm = new XmppFarm(server, port, username, password, null);
 		assertEquals(1, sentPackets.size());
 		// Farm started
 		Presence presence = (Presence) connection.getLastPacket();

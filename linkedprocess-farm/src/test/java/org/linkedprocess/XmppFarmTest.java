@@ -38,7 +38,7 @@ public class XmppFarmTest extends TestCase {
     @Before
     public void setup() throws Exception {
 
-        xmppFarm = new XmppFarm(server1, port, username1, password1);
+        xmppFarm = new XmppFarm(server1, port, username1, password1, null);
         Thread.sleep(1000);
 
     }

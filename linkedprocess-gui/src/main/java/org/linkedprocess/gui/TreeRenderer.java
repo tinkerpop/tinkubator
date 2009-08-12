@@ -30,7 +30,10 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
         Object x = ((DefaultMutableTreeNode) value).getUserObject();
         if (x instanceof XmppFarm) {
             this.setText(LinkedProcess.generateResource(((XmppFarm) x).getFullJid()));
-            this.setIcon(ImageHolder.farmIcon);
+            if(null == ((XmppFarm)x).getFarmPassword())
+                this.setIcon(ImageHolder.farmIcon);
+            else
+                this.setIcon(ImageHolder.farmPasswordIcon);
             this.setToolTipText("farm");
         } else if (x instanceof XmppVirtualMachine) {
             XmppVirtualMachine vm = (XmppVirtualMachine) x;
@@ -42,23 +45,26 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
             this.setIcon(ImageHolder.villeinIcon);
             this.setToolTipText("villein");
         } else if (x instanceof RegistryProxy) {
-            RegistryProxy registryStruct = (RegistryProxy) x;
-            this.setText(LinkedProcess.generateResource(registryStruct.getFullJid()));
+            RegistryProxy registryProxy = (RegistryProxy) x;
+            this.setText(LinkedProcess.generateResource(registryProxy.getFullJid()));
             this.setIcon(ImageHolder.registryIcon);
             this.setToolTipText("registry_jid");
         } else if (x instanceof FarmProxy) {
-            FarmProxy farmStruct = (FarmProxy) x;
-            this.setText(LinkedProcess.generateResource(farmStruct.getFullJid()));
-            this.setIcon(ImageHolder.farmIcon);
+            FarmProxy farmProxy = (FarmProxy) x;
+            this.setText(LinkedProcess.generateResource(farmProxy.getFullJid()));
+            if(farmProxy.requiresPassword())
+                this.setIcon(ImageHolder.farmPasswordIcon);
+            else
+                this.setIcon(ImageHolder.farmIcon);
             this.setToolTipText("farm_jid");
         } else if (x instanceof VmProxy) {
-            VmProxy vmStruct = (VmProxy) x;
-            this.setText(LinkedProcess.generateResource(vmStruct.getFullJid()));
+            VmProxy vmProxy = (VmProxy) x;
+            this.setText(LinkedProcess.generateResource(vmProxy.getFullJid()));
             this.setIcon(ImageHolder.vmIcon);
             this.setToolTipText("vm_jid");
         } else if (x instanceof CountrysideProxy) {
-            CountrysideProxy countrysideStruct = (CountrysideProxy) x;
-            this.setText(countrysideStruct.getFullJid());
+            CountrysideProxy countrysideProxy = (CountrysideProxy) x;
+            this.setText(countrysideProxy.getFullJid());
             this.setIcon(ImageHolder.countrysideIcon);
             this.setToolTipText("countryside_jid");
         } else if (x instanceof TreeNodeProperty) {

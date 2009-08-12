@@ -14,6 +14,6 @@ import javax.swing.*;
 public class GenericErrorHandler implements Handler<LopError> {
     
     public void handle(LopError lopError) {
-         JOptionPane.showMessageDialog(null, lopError.getMessage(), "error: " + lopError.getLopErrorType().toString(), JOptionPane.ERROR_MESSAGE);
+         JOptionPane.showMessageDialog(null, lopError.getLopErrorType().toString() + "\n" + lopError.getMessage(), "error", JOptionPane.ERROR_MESSAGE);
     }
 }

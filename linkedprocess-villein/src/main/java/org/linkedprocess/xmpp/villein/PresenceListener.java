@@ -59,7 +59,6 @@ public class PresenceListener extends LopVilleinListener {
                 if (isFarm(discoInfo)) {
                     FarmProxy farmProxy = new FarmProxy(presence.getFrom(), this.getXmppVillein().getDispatcher(), discoInfoDocument);
                     farmProxy.setPresence(presence);
-                    farmProxy.setSupportedVmSpecies(this.getSupportedVmSpecies(discoInfo));
                     try {
                         this.getXmppVillein().addFarmProxy(farmProxy);
                         proxy = farmProxy;

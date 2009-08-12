@@ -13,6 +13,7 @@ public class ImageHolder {
     public static final ImageIcon farmBackground = new ImageIcon(ImageHolder.class.getResource("farm-background.png"));
     public static final ImageIcon cowBackground = new ImageIcon(ImageHolder.class.getResource("cow-background.png"));
     public static final ImageIcon farmIcon = new ImageIcon(ImageHolder.class.getResource("farm.png"));
+    public static final ImageIcon farmPasswordIcon = new ImageIcon(ImageHolder.class.getResource("farm-password.png"));
     public static final ImageIcon registryIcon = new ImageIcon(ImageHolder.class.getResource("registry.png"));
     public static final ImageIcon lopIcon = new ImageIcon(ImageHolder.class.getResource("lop-logo.png"));
     public static final ImageIcon speciesIcon = new ImageIcon(ImageHolder.class.getResource("species.png"));

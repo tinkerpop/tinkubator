@@ -51,8 +51,17 @@ public class XmppFarm extends XmppClient {
     protected final VMScheduler vmScheduler;
     protected DataForm serviceExtension;
 
-    public XmppFarm(final String server, final int port, final String username, final String password) throws XMPPException {
+    public XmppFarm(final String server, final int port, final String username, final String password, final String farmPassword) throws XMPPException {
         LOGGER.info("Starting " + STATUS_MESSAGE);
+        if(null == farmPassword) {
+            this.farmPassword = LinkedProcess.getConfiguration().getProperty(LinkedProcess.FARM_PASSWORD_PROPERTY);
+            if (null != this.farmPassword) {
+                this.farmPassword = this.farmPassword.trim();
+            }
+        } else {
+            this.farmPassword = farmPassword;
+        }
+        LOGGER.info("LoPSideD Farm Password: " + this.farmPassword);
 
         ProviderManager pm = ProviderManager.getInstance();
         pm.addIQProvider(LinkedProcess.SPAWN_VM_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new SpawnVmProvider());
@@ -70,11 +79,6 @@ public class XmppFarm extends XmppClient {
 
         this.connection.addPacketListener(new SpawnVmListener(this), spawnFilter);
         this.connection.addPacketListener(new PresenceSubscriptionListener(this), subscribeFilter);
-
-        this.farmPassword = LinkedProcess.getConfiguration().getProperty(LinkedProcess.FARM_PASSWORD_PROPERTY);
-        if (null != this.farmPassword) {
-            this.farmPassword = this.farmPassword.trim();
-        }
     }
 
     private void logon(String server, int port, String username, String password) throws XMPPException {
@@ -288,7 +292,7 @@ public class XmppFarm extends XmppClient {
         String username = props.getProperty(LinkedProcess.FARM_USERNAME_PROPERTY);
         String password = props.getProperty(LinkedProcess.FARM_USERPASSWORD_PROPERTY);
 
-        XmppFarm farm = new XmppFarm(server, port, username, password);
+        XmppFarm farm = new XmppFarm(server, port, username, password, null);
         StatusEventHandler h = new StatusEventHandler(farm);
         farm.setStatusEventHandler(h);
 

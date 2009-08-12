@@ -53,25 +53,4 @@ public abstract class LopListener implements PacketListener {
         else
             return false;
     }
-
-    protected Collection<String> getSupportedVmSpecies(DiscoverInfo discoInfo) {
-        if (discoInfo != null) {
-            List<String> supportedVmSpecies = new LinkedList<String>();
-            DataForm extension = (DataForm) discoInfo.getExtension(LinkedProcess.X_JABBER_DATA_NAMESPACE);
-            Iterator<FormField> fields = extension.getFields();
-            while (fields.hasNext()) {
-                FormField field = fields.next();
-                if (field.getVariable().equals(LinkedProcess.VM_SPECIES_ATTRIBUTE)) {
-                    Iterator<Option> vms = field.getOptions();
-                    while (vms.hasNext()) {
-                        Option next = vms.next();
-                        supportedVmSpecies.add(next.getValue());
-                    }
-                }
-            }
-            return supportedVmSpecies;
-        } else {
-            return new HashSet<String>();
-        }
-    }
 }

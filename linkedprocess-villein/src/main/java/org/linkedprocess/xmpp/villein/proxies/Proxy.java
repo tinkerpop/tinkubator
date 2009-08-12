@@ -62,14 +62,6 @@ public class Proxy implements Comparable {
         return this.fullJid;
     }
 
-    public int compareTo(Object proxy) {
-        if (proxy instanceof Proxy) {
-            return this.fullJid.compareTo(((Proxy) proxy).getFullJid());
-        } else {
-            throw new ClassCastException();
-        }
-    }
-
     public void refreshDiscoInfo() throws XMPPException, JDOMException, IOException {
         ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();
         DiscoverInfo discoInfo = discoManager.discoverInfo(this.getFullJid());
@@ -133,6 +125,14 @@ public class Proxy implements Comparable {
             }
         }
         return proxyFields;
+    }
+
+    public int compareTo(Object proxy) {
+        if (proxy instanceof Proxy) {
+            return this.fullJid.compareTo(((Proxy) proxy).getFullJid());
+        } else {
+            throw new ClassCastException();
+        }
     }
 
 
