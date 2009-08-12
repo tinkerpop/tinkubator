@@ -32,8 +32,12 @@ public class FarmProxy extends Proxy {
     protected String farmPassword;
 
 
-    public FarmProxy(Dispatcher dispatcher) {
-        super(dispatcher);
+    public FarmProxy(final String fullJid, final Dispatcher dispatcher) {
+        super(fullJid, dispatcher);
+    }
+
+    public FarmProxy(final String fullJid, final Dispatcher dispatcher, final Document discoInfoDocument) {
+        super(fullJid, dispatcher, discoInfoDocument);
     }
 
     public VmProxy getVmProxy(String vmJid) {
@@ -70,6 +74,34 @@ public class FarmProxy extends Proxy {
 
     public void setFarmPassword(String farmPassword) {
         this.farmPassword = farmPassword;
+    }
+
+    public boolean isFarmPasswordRequired() {
+        Field field = this.getField(LinkedProcess.FARM_PASSWORD_REQUIRED);
+        if(null != field) {
+            return field.getBooleanValue();
+        }
+        else {
+            return false;
+        }
+    }
+
+    public long getVmTimeToLive() {
+        Field field = this.getField(LinkedProcess.VM_TIME_TO_LIVE);
+        if(null != field) {
+            return field.getLongValue();
+        } else {
+            return -1;
+        }
+    }
+
+    public long getJobTimeout() {
+        Field field = this.getField(LinkedProcess.JOB_TIMEOUT);
+        if(null != field) {
+            return field.getLongValue();
+        } else {
+            return -1;
+        }
     }
 
     public void spawnVm(final String vmSpecies, final Handler<VmProxy> resultHandler, final Handler<LopError> errorHandler) {

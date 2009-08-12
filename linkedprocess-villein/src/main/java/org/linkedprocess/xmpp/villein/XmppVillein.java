@@ -199,8 +199,7 @@ public class XmppVillein extends XmppClient {
         for (RosterEntry entry : this.getRoster().getEntries()) {
             CountrysideProxy countrysideProxy = this.countrysideProxies.get(entry.getUser());
             if (countrysideProxy == null) {
-                countrysideProxy = new CountrysideProxy(this.dispatcher);
-                countrysideProxy.setFullJid(entry.getUser());
+                countrysideProxy = new CountrysideProxy(entry.getUser(), this.dispatcher);
                 this.countrysideProxies.put(countrysideProxy.getFullJid(), countrysideProxy);
             }
         }

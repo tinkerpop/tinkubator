@@ -17,4 +17,8 @@ public class LinkedProcessTest extends TestCase {
         assertEquals(LinkedProcess.generateBareJid("linked.process.1@xmpp.linkedprocess.org/LoPFarm/123456"),
                 "linked.process.1@xmpp.linkedprocess.org");
     }
+
+    public void testGenerateResource() {
+        assertEquals(LinkedProcess.generateResource("lop1@xmpp.linkedprocess.org/test/"), "test/");
+    }
 }

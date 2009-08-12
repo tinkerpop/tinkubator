@@ -19,8 +19,8 @@ public class CountrysideProxy extends Proxy {
     protected Map<String, FarmProxy> farmProxies = new HashMap<String, FarmProxy>();
     protected Map<String, RegistryProxy> registryProxies = new HashMap<String, RegistryProxy>();
 
-    public CountrysideProxy(Dispatcher dispatcher) {
-        super(dispatcher);
+    public CountrysideProxy(final String fullJid, final Dispatcher dispatcher) {
+        super(fullJid, dispatcher);
     }
 
     public FarmProxy getFarmProxy(String farmJid) {
@@ -86,6 +86,14 @@ public class CountrysideProxy extends Proxy {
             if(jobTimeout >= minimumJobTimeout) {
                 returnFarmProxies.add(farmProxy);
             }
+        }
+        return returnFarmProxies;
+    }
+
+    public Collection<FarmProxy> filterFarmProxiesByPasswordRequired(Collection<FarmProxy> farmProxies, boolean passwordRequired) {
+        Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
+        for(FarmProxy farmProxy : farmProxies) {
+
         }
         return returnFarmProxies;
     }

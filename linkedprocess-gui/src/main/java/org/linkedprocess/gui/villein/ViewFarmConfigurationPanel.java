@@ -9,6 +9,7 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
+import org.linkedprocess.xmpp.villein.proxies.Proxy;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 
 import javax.swing.*;
@@ -35,8 +36,6 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
     protected static final String REFRESH = "refresh";
     protected FarmProxy farmProxy;
     protected VilleinGui villeinGui;
-    protected Document discoInfoDocument;
-    protected DiscoverInfo discoInfo;
     protected JList featuresList;
 
 
@@ -83,13 +82,10 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
         this.featuresList.setVisibleRowCount(3);
         this.featuresList.setBorder(BorderFactory.createTitledBorder("Farm Features"));
 
-        try {
-            this.generateDiscoInfoDocument();
-            this.refreshFarmConfiguration();
-            this.refreshFarmFeatures();
-        } catch (Exception e) {
-            XmppVillein.LOGGER.severe(e.getMessage());
-        }
+
+        this.refreshFarmFeatures();
+        this.refreshFarmConfiguration();
+
 
 
         JScrollPane scrollPane1 = new JScrollPane(this.configurationTable);
@@ -103,26 +99,20 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
         this.add(scrollPane3, BorderLayout.NORTH);
         this.add(splitPane, BorderLayout.CENTER);
         this.add(buttonPanel, BorderLayout.SOUTH);
-
-
     }
+
 
     public void valueChanged(ListSelectionEvent event) {
         ListSelectionModel listModel = (ListSelectionModel) event.getSource();
         if (this.configurationTable.getSelectedRow() > -1) {
             String fieldVar = this.configurationTable.getValueAt(listModel.getMinSelectionIndex(), 0).toString();
-            Element fieldElement = getFieldElement(fieldVar);
-            if (null != fieldElement) {
+            Proxy.Field field = farmProxy.getField(fieldVar);
+            if (null != field) {
                 DefaultTableModel tableModel = (DefaultTableModel) this.valuesTable.getModel();
                 this.clearAllRows(this.valuesTable);
-                java.util.List<Element> valuesList = (java.util.List<Element>) fieldElement.getChildren(LinkedProcess.VALUE_TAG, Namespace.getNamespace(LinkedProcess.X_JABBER_DATA_NAMESPACE));
-                for (Element valueElement : valuesList) {
-                    tableModel.addRow(new Object[]{valueElement.getText(), null, false});
-                }
-                for (Element optionElement : (java.util.List<Element>) fieldElement.getChildren(LinkedProcess.OPTION_TAG, Namespace.getNamespace(LinkedProcess.X_JABBER_DATA_NAMESPACE))) {
-                    for (Element valueElement : (java.util.List<Element>) optionElement.getChildren(LinkedProcess.VALUE_TAG, Namespace.getNamespace(LinkedProcess.X_JABBER_DATA_NAMESPACE))) {
-                        tableModel.addRow(new Object[]{valueElement.getText(), optionElement.getAttributeValue(LinkedProcess.LABEL_ATTRIBUTE), true});
-                    }
+                Set<String> values = field.getValues();
+                for (String value : values) {
+                    tableModel.addRow(new Object[]{value, field.getLabel(), field.getOption()});
                 }
             }
         }
@@ -131,11 +121,11 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
     public void actionPerformed(ActionEvent event) {
         if (event.getActionCommand().equals(REFRESH)) {
             try {
-                this.generateDiscoInfoDocument();
-                this.refreshFarmConfiguration();
+                this.farmProxy.refreshDiscoInfo();
                 this.refreshFarmFeatures();
+                this.refreshFarmConfiguration();
             } catch (Exception e) {
-                XmppVillein.LOGGER.severe(e.getMessage());
+                XmppVillein.LOGGER.warning(e.getMessage());
             }
         }
 
@@ -148,68 +138,23 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
         }
     }
 
-    private void generateDiscoInfoDocument() throws XMPPException, JDOMException, IOException {
-        ServiceDiscoveryManager discoManager = this.villeinGui.getXmppVillein().getDiscoManager();
-        this.discoInfo = discoManager.discoverInfo(farmProxy.getFullJid());
-        this.discoInfoDocument = LinkedProcess.createXMLDocument(this.discoInfo.toXML());
-    }
-
-    private Set<String> getFeatures() {
-        Set<String> features = new HashSet<String>();
-        if (null != this.discoInfoDocument) {
-            Element queryElement = this.discoInfoDocument.getRootElement().getChild(LinkedProcess.QUERY_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
-            if (null != queryElement) {
-                for (Element featureElement : (java.util.List<Element>) queryElement.getChildren(LinkedProcess.FEATURE_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE))) {
-                    features.add(featureElement.getAttributeValue(LinkedProcess.VAR_ATTRIBUTE));
-                }
-            }
-        }
-        return features;
-    }
-
-    private Element getFieldElement(String fieldVar) {
-        if (null != this.discoInfoDocument) {
-            Element queryElement = discoInfoDocument.getRootElement().getChild(LinkedProcess.QUERY_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
-            if (null != queryElement) {
-                Namespace xNamespace = Namespace.getNamespace(LinkedProcess.X_JABBER_DATA_NAMESPACE);
-                Element xElement = queryElement.getChild(LinkedProcess.X_TAG, xNamespace);
-                if (null != xElement) {
-                    for (Element fieldElement : (java.util.List<Element>) xElement.getChildren(LinkedProcess.FIELD_TAG, xNamespace)) {
-                        String var = fieldElement.getAttributeValue(LinkedProcess.VAR_ATTRIBUTE);
-                        if (null != var && var.equals(fieldVar)) {
-                            return fieldElement;
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private void refreshFarmConfiguration() {
-        this.clearAllRows(this.configurationTable);
-        if (null != this.discoInfoDocument) {
-            Element queryElement = discoInfoDocument.getRootElement().getChild(LinkedProcess.QUERY_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
-            if (null != queryElement) {
-                Namespace xNamespace = Namespace.getNamespace(LinkedProcess.X_JABBER_DATA_NAMESPACE);
-                Element xElement = queryElement.getChild(LinkedProcess.X_TAG, xNamespace);
-                if (null != xElement) {
-                    DefaultTableModel tableModel = (DefaultTableModel) this.configurationTable.getModel();
-                    for (Element fieldElement : (java.util.List<Element>) xElement.getChildren(LinkedProcess.FIELD_TAG, xNamespace)) {
-                        tableModel.addRow(new Object[]{fieldElement.getAttributeValue(LinkedProcess.VAR_ATTRIBUTE), fieldElement.getAttributeValue(LinkedProcess.LABEL_ATTRIBUTE), fieldElement.getAttributeValue(LinkedProcess.TYPE_ATTRIBUTE)});
-                    }
-                }
-            }
-        }
-    }
-
     private void refreshFarmFeatures() {
         DefaultListModel listModel = (DefaultListModel) this.featuresList.getModel();
         listModel.clear();
-        for (String feature : this.getFeatures()) {
+        for (String feature : this.farmProxy.getFeatures()) {
             listModel.addElement(feature);
         }
     }
+
+    private void refreshFarmConfiguration() {
+        DefaultTableModel tableModel = (DefaultTableModel) this.configurationTable.getModel();
+        this.clearAllRows(this.configurationTable);
+        java.util.List<Proxy.Field> fields = this.farmProxy.getFields();
+        for(Proxy.Field field : fields) {
+            tableModel.addRow(new Object[]{field.getVariable(), field.getLabel(), field.getType()});
+        }
+    }
+
 
 
 }

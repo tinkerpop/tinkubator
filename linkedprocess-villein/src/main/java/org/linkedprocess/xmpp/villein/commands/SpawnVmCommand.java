@@ -45,8 +45,7 @@ public class SpawnVmCommand extends Command {
     }
 
     public void receiveNormal(final SpawnVm spawnVm) {
-        VmProxy vmProxy = new VmProxy(xmppVillein.getDispatcher());
-        vmProxy.setFullJid(spawnVm.getVmJid());
+        VmProxy vmProxy = new VmProxy(spawnVm.getVmJid(), xmppVillein.getDispatcher());
         vmProxy.setVmPassword(spawnVm.getVmPassword());
         vmProxy.setVmSpecies(spawnVm.getVmSpecies());
         vmProxy.setPresence(new Presence(Presence.Type.available));

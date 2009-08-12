@@ -55,6 +55,10 @@ public class JobStruct implements Comparable {
         return(null != lopError && LinkedProcess.LopErrorType.JOB_ABORTED != lopError.getLopErrorType());
     }
 
+    public boolean wasSuccessful() {
+        return(null == lopError && null != result);
+    }
+
     public int compareTo(Object job) {
         if (job instanceof JobStruct) {
             return this.jobId.compareTo(((JobStruct) job).getJobId());

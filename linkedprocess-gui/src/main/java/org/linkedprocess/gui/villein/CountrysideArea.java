@@ -48,8 +48,7 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
     public CountrysideArea(VilleinGui villeinGui) {
         super(new BorderLayout());
         this.villeinGui = villeinGui;
-        CountrysideProxy countrysideStruct = new CountrysideProxy(this.villeinGui.getXmppVillein().getDispatcher());
-        countrysideStruct.setFullJid(LinkedProcess.generateBareJid(this.villeinGui.getXmppVillein().getFullJid()));
+        CountrysideProxy countrysideStruct = new CountrysideProxy(LinkedProcess.generateBareJid(this.villeinGui.getXmppVillein().getFullJid()), this.villeinGui.getXmppVillein().getDispatcher());
         this.treeRoot = new DefaultMutableTreeNode(countrysideStruct);
         this.tree = new JTree(this.treeRoot);
         this.tree.setCellRenderer(new TreeRenderer());

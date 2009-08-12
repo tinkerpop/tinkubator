@@ -7,6 +7,7 @@ import org.linkedprocess.os.errors.InvalidValueException;
 import org.linkedprocess.xmpp.villein.Dispatcher;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.LopError;
+import org.jdom.Document;
 
 import java.util.Set;
 
@@ -21,8 +22,12 @@ public class VmProxy extends Proxy {
     protected String vmSpecies;
     private VMBindings vmBindings = new VMBindings();
 
-    public VmProxy(final Dispatcher dispatcher) {
-        super(dispatcher);
+    public VmProxy(final String fullJid, final Dispatcher dispatcher) {
+        super(fullJid, dispatcher);
+    }
+
+    public VmProxy(final String fullJid, final Dispatcher dispatcher, final Document discoInfoDocument) {
+        super(fullJid, dispatcher, discoInfoDocument);
     }
 
     // FIXME: why Handler<JobStruct> for errors? Seems kind of weird, even if it works.

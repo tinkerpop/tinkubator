@@ -8,6 +8,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.villein.proxies.RegistryProxy;
+import org.linkedprocess.xmpp.villein.proxies.CountrysideProxy;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 
 import javax.swing.*;
@@ -28,7 +29,7 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
     protected static final String SUBSCRIBE = "subscribe";
     protected RegistryProxy registryProxy;
     protected VilleinGui villeinGui;
-    protected Document discoItemsDocument;
+    //protected Document discoItemsDocument;
 
 
     public ViewRegistryCountrysidesPanel(RegistryProxy registryProxy, VilleinGui villeinGui) {
@@ -49,12 +50,7 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
         refreshButton.addActionListener(this);
 
 
-        try {
-            this.generateDiscoItemsDocument();
-            this.refreshCountrysideFarms();
-        } catch (Exception e) {
-            XmppVillein.LOGGER.severe(e.getMessage());
-        }
+        this.refreshCountrysideFarms();
 
         JScrollPane scrollPane1 = new JScrollPane(this.farmlandList);
 
@@ -67,7 +63,7 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
     public void actionPerformed(ActionEvent event) {
         if (event.getActionCommand().equals(REFRESH)) {
             try {
-                this.generateDiscoItemsDocument();
+                this.registryProxy.refreshDiscoItems();
                 this.refreshCountrysideFarms();
             } catch (Exception e) {
                 XmppVillein.LOGGER.severe(e.getMessage());
@@ -80,24 +76,19 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
 
     }
 
-    private void generateDiscoItemsDocument() throws XMPPException, JDOMException, IOException {
+    /*private void generateDiscoItemsDocument() throws XMPPException, JDOMException, IOException {
         ServiceDiscoveryManager discoManager = this.villeinGui.getXmppVillein().getDiscoManager();
         this.discoItemsDocument = LinkedProcess.createXMLDocument(discoManager.discoverItems(this.registryProxy.getFullJid()).toXML());
         //PacketCollector collector = this.villeinGui.getXmppVillein().getConnection().createPacketCollector(new PacketTypeFilter(DiscoverItems.class));
         //this.discoItemsDocument = LinkedProcess.createXMLDocument(collector.nextResult().toXML());
         //collector.cancel();
-    }
+    }*/
 
     private void refreshCountrysideFarms() {
         DefaultListModel listModel = (DefaultListModel) this.farmlandList.getModel();
         listModel.removeAllElements();
-        if (null != this.discoItemsDocument) {
-            Element queryElement = discoItemsDocument.getRootElement().getChild(LinkedProcess.QUERY_TAG, Namespace.getNamespace(LinkedProcess.DISCO_ITEMS_NAMESPACE));
-            if (null != queryElement) {
-                for (Element itemElement : (java.util.List<Element>) queryElement.getChildren(LinkedProcess.ITEM_TAG, Namespace.getNamespace(LinkedProcess.DISCO_ITEMS_NAMESPACE))) {
-                    listModel.addElement(itemElement.getAttributeValue(LinkedProcess.JID_ATTRIBUTE));
-                }
-            }
+        for(CountrysideProxy countrysideProxy : registryProxy.getActiveCountrysides()) {
+            listModel.addElement(countrysideProxy.getFullJid());
         }
     }
 }

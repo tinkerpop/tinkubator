@@ -13,17 +13,6 @@ import java.util.Set;
  */
 public class XmppClientTest extends TestCase {
 
-    private static String username = "linked.process.1@gmail.com";
-    private static String password = "linked12";
-    private static String server = "talk1.l.google.com";
-    private static int port = 5222;
-
-    public void testJidConversion() {
-        assertEquals(LinkedProcess.generateBareJid("linked.process.1@gmail.com/test/12345"), username);
-        assertEquals(LinkedProcess.generateBareJid("lop1@xmpp.linkedprocess.org/test/" + XmppClient.generateRandomResourceId()), "lop1@xmpp.linkedprocess.org");
-        assertEquals(LinkedProcess.generateResource("lop1@xmpp.linkedprocess.org/test/"), "test/");
-    }
-
     public void testRandomIDGenerator() {
         // 1,000,000 random IDs are generated without conflict.
         Set<String> uniques = new HashSet<String>();
@@ -32,5 +21,10 @@ public class XmppClientTest extends TestCase {
             uniques.add(XmppClient.generateRandomResourceId());
         }
         assertEquals(uniques.size(), 100000);
+    }
+
+    public void testBoolean() {
+        assertTrue(Boolean.valueOf("true"));
+        assertFalse(Boolean.valueOf("false"));
     }
 }
