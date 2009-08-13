@@ -5,8 +5,8 @@ package org.linkedprocess.xmpp.villein.patterns;
  * Date: Aug 4, 2009
  * Time: 2:04:27 PM
  */
-public class WaitTimeoutException extends Exception {
-    public WaitTimeoutException(final String message) {
+public class TimeoutException extends Exception {
+    public TimeoutException(final String message) {
         super(message);
     }
 }

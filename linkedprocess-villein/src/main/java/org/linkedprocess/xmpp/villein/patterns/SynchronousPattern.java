@@ -8,7 +8,6 @@ import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.LinkedProcess;
 import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.XMPPError;
 
 import java.util.logging.Logger;
 
@@ -47,7 +46,7 @@ public class SynchronousPattern {
             }
     }
 
-    public VmProxy spawnVm(final FarmProxy farmProxy, final String vmSpecies, final long timeout) throws WaitTimeoutException, OperationException {
+    public VmProxy spawnVm(final FarmProxy farmProxy, final String vmSpecies, final long timeout) throws TimeoutException, OperationException {
         this.nullifyTemps();
         Handler<VmProxy> resultHandler = new Handler<VmProxy>() {
             public void handle(VmProxy vmProxy) {
@@ -74,7 +73,7 @@ public class SynchronousPattern {
         while(null == this.vmProxyTemp && null == this.lopErrorTemp) {
             this.pollingSleep(timeout);
             if(timedout)
-                throw new WaitTimeoutException("spawn_vm timed out.");
+                throw new TimeoutException("spawn_vm timed out.");
         }
         if(this.lopErrorTemp != null) {
             throw new OperationException(this.lopErrorTemp);
@@ -83,7 +82,7 @@ public class SynchronousPattern {
         }
     }
 
-    public JobStruct submitJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws WaitTimeoutException {
+    public JobStruct submitJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws TimeoutException {
         this.nullifyTemps();
         Handler<JobStruct> submitJobHandler = new Handler<JobStruct>() {
             public void handle(JobStruct jobStruct) {
@@ -102,12 +101,12 @@ public class SynchronousPattern {
         while (null == this.jobStructTemp) {
             this.pollingSleep(timeout);
             if(timedout)
-                throw new WaitTimeoutException("submit_job timed out.");
+                throw new TimeoutException("submit_job timed out.");
         }
         return this.jobStructTemp;
     }
 
-    public JobStruct abortJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws WaitTimeoutException, OperationException {
+    public JobStruct abortJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws TimeoutException, OperationException {
         this.nullifyTemps();
         Handler<JobStruct> resultHandler = new Handler<JobStruct>() {
             public void handle(JobStruct jobStruct) {
@@ -132,7 +131,7 @@ public class SynchronousPattern {
         while(null == this.jobStructTemp && null == this.lopErrorTemp) {
             this.pollingSleep(timeout);
             if(timedout)
-                throw new WaitTimeoutException("abort_job timed out.");
+                throw new TimeoutException("abort_job timed out.");
         }
         if(this.lopErrorTemp != null) {
             throw new OperationException(this.lopErrorTemp);
@@ -141,20 +140,20 @@ public class SynchronousPattern {
         }  
     }
 
-    private void checkTimeout(long startTime, long timeout) throws WaitTimeoutException {
+    private void checkTimeout(long startTime, long timeout) throws TimeoutException {
         if((System.currentTimeMillis() - startTime) > timeout) {
-            throw new WaitTimeoutException("timeout occured after " + (System.currentTimeMillis() - startTime) + "ms");
+            throw new TimeoutException("timeout occured after " + (System.currentTimeMillis() - startTime) + "ms.");
         }
     }
 
-    public void waitForFarms(final LopCloud lopCloud, final int minimumFarms, final long timeout) throws WaitTimeoutException {
+    public void waitForFarms(final LopCloud lopCloud, final int minimumFarms, final long timeout) throws TimeoutException {
         long startTime = System.currentTimeMillis();
         while(true) {
             checkTimeout(startTime, timeout);
             if(lopCloud.getFarmProxies().size() >= minimumFarms)
                 return;
             try {
-                Thread.sleep(250);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 LOGGER.warning(e.getMessage());
             }

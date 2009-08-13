@@ -4,6 +4,8 @@ import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.LopError;
 
+import java.util.Collection;
+
 /**
  * User: marko
  * Date: Jul 28, 2009
@@ -14,7 +16,7 @@ public class JobStruct implements Comparable {
     protected String result;
     protected String expression;
     protected LopError lopError;
-    protected boolean complete;
+    protected boolean complete = false;
 
     public String getJobId() {
         return jobId;
@@ -73,7 +75,10 @@ public class JobStruct implements Comparable {
     }
 
     public String toString() {
-        return "job id[" + jobId + "], complete[" + complete + "], result[" + result + "], error[" + lopError + "]";
+        if(null == lopError)
+            return "job id[" + jobId + "], complete[" + complete + "], result[" + result + "]";
+        else
+            return "job id[" + jobId + "], complete[" + complete + "], error[" + lopError.getLopErrorType().toString() + "]";
     }
 
 

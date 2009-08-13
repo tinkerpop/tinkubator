@@ -13,10 +13,13 @@ import java.util.logging.Logger;
 public class ScatterGatherPattern {
 
     private static final Logger LOGGER = LinkedProcess.getLogger(SynchronousPattern.class);
+    private final Object monitor = new Object();
+    private boolean timedout;
 
-    public Set<VmProxy> scatterSpawnVm(Collection<FarmProxy> farmProxies, String vmSpecies, int vmsPerFarm) {
+    public Set<VmProxy> scatterSpawnVm(final Collection<FarmProxy> farmProxies, final String vmSpecies, final int vmsPerFarm, final long timeout) throws TimeoutException {
         final Set<VmProxy> vmProxies = new HashSet<VmProxy>();
         final List<Object> counter = new ArrayList<Object>();
+
 
         for (FarmProxy farmProxy : farmProxies) {
             for (int i = 0; i < vmsPerFarm; i++) {
@@ -24,21 +27,43 @@ public class ScatterGatherPattern {
                     public void handle(VmProxy vmProxy) {
                         vmProxies.add(vmProxy);
                         counter.add(new Object());
+                        if (counter.size() == (farmProxies.size() * vmsPerFarm)) {
+                            synchronized (monitor) {
+                                timedout = false;
+                                monitor.notify();
+                            }
+                        }
                     }
                 };
 
                 Handler<LopError> errorHandler = new Handler<LopError>() {
                     public void handle(LopError lopError) {
                         counter.add(new Object());
+                        if (counter.size() == (farmProxies.size() * vmsPerFarm)) {
+                            synchronized (monitor) {
+                                timedout = false;
+                                monitor.notify();
+                            }
+                        }
                     }
                 };
                 farmProxy.spawnVm(vmSpecies, resultHandler, errorHandler);
             }
         }
 
+        this.timedout = true;
         while (counter.size() < (farmProxies.size() * vmsPerFarm)) {
             try {
-                Thread.sleep(250);
+                synchronized (monitor) {
+                    if (timeout > 0) {
+                        monitor.wait(timeout);
+                        if (this.timedout) {
+                            throw new TimeoutException("scatter spawn_vm timedout after " + timeout + "ms.");
+                        }
+                    } else {
+                        monitor.wait();
+                    }
+                }
             } catch (InterruptedException e) {
                 LOGGER.warning(e.getMessage());
             }
@@ -46,20 +71,41 @@ public class ScatterGatherPattern {
         return vmProxies;
     }
 
+    public void scatterTerminateVm(Collection<VmProxy> vmProxies) {
+        for (VmProxy vmProxy : vmProxies) {
+            vmProxy.terminateVm(null, null);
+        }
+    }
 
-    public Map<VmProxy, JobStruct> scatterSubmitJob(final Map<VmProxy, JobStruct> vmJobMap) {
+    public Map<VmProxy, JobStruct> scatterSubmitJob(final Map<VmProxy, JobStruct> vmJobMap, long timeout) throws TimeoutException {
 
         for (final VmProxy vmProxy : vmJobMap.keySet()) {
             Handler<JobStruct> submitJobHandler = new Handler<JobStruct>() {
                 public void handle(JobStruct jobStruct) {
                     vmJobMap.put(vmProxy, jobStruct);
+                    if (ScatterGatherPattern.areComplete(vmJobMap.values())) {
+                        synchronized (monitor) {
+                            timedout = false;
+                            monitor.notify();
+                        }
+                    }
                 }
             };
             vmProxy.submitJob(vmJobMap.get(vmProxy), submitJobHandler, submitJobHandler);
         }
+        this.timedout = true;
         while (!ScatterGatherPattern.areComplete(vmJobMap.values())) {
             try {
-                Thread.sleep(250);
+                synchronized (monitor) {
+                    if (timeout > 0) {
+                        monitor.wait(timeout);
+                        if (this.timedout) {
+                            throw new TimeoutException("scatter submit_job timedout after " + timeout + "ms.");
+                        }
+                    } else {
+                        monitor.wait();
+                    }
+                }
             } catch (InterruptedException e) {
                 LOGGER.warning(e.getMessage());
             }

@@ -33,12 +33,19 @@ public class PrimeFinder {
         for (FarmProxy farm : villein.getLopCloud().getFarmProxies()) {
 			System.out.println("found farm: " + farm.getFullJid());
 		}
+        Set<FarmProxy> farmProxies = new HashSet<FarmProxy>();
+        int i = 0;
+        for(FarmProxy farmProxy :  villein.getLopCloud().getFarmProxies()) {
+            farmProxies.add(farmProxy);
+            if(i == farmCount) {
+                break;
+            }
+        }
 
         //////////////// SPAWN VIRTUAL MACHINES ON ACTIVE FARMS
 
-        Set<VmProxy> vmProxies = sg.scatterSpawnVm(villein.getLopCloud().getFarmProxies(), "groovy", vmsPerFarm);
+        Set<VmProxy> vmProxies = sg.scatterSpawnVm(farmProxies, "groovy", vmsPerFarm, -1);
         System.out.println(vmProxies.size() + " virtual machines have been spawned...");
-
 
         //////////////// DISTRIBUTE PRIME FINDER FUNCTION DEFINITION
 
@@ -50,7 +57,7 @@ public class PrimeFinder {
         }
 
         System.out.println("Scattering find primes function definition jobs...");
-        vmJobMap = sg.scatterSubmitJob(vmJobMap);
+        vmJobMap = sg.scatterSubmitJob(vmJobMap, -1);
 
 
         //////////////// DISTRIBUTE PRIME FINDER FUNCTION CALLS
@@ -67,16 +74,13 @@ public class PrimeFinder {
             currentStartInteger = currentEndInteger + 1;
         }
         System.out.println("Scattering find primes function call jobs...");
-        vmJobMap = sg.scatterSubmitJob(vmJobMap);
+        vmJobMap = sg.scatterSubmitJob(vmJobMap, -1);
 
 
         //////////////// TERMINATE ALL SPAWNED VIRTUAL MACHINES
 
         System.out.println("Terminating virtual machines...");
-        for(VmProxy vmProxy : vmJobMap.keySet()) {
-            vmProxy.terminateVm(null, null);
-        }
-
+        sg.scatterTerminateVm(vmJobMap.keySet());
 
         //////////////// SORT AND DISPLAY JOB RESULT PRIME VALUES
 
@@ -96,26 +100,19 @@ public class PrimeFinder {
         return primes;
     }
 
-    public static Object findPrimesUsingLocalMachine(int startInteger, int endInteger) throws Exception {
-        ScriptEngineManager sm = new ScriptEngineManager();
-        ScriptEngine groovy = sm.getEngineByName("groovy");
-        groovy.eval(LinkedProcess.convertStreamToString(PrimeFinder.class.getResourceAsStream("findPrimes.groovy")));
-        return groovy.eval("findPrimes(" + startInteger + ", " + endInteger +  ")");
-    }
 
     public static void main(String[] args) throws Exception {
-
         int startInteger = 1;
-        int endInteger = 1000;
+        int endInteger = 10000;
         int farmCount = 3;
-        int vmsPerFarm = 1;
+        int vmsPerFarm = 2;
+        String username = "linked.process.1";
+        String password = "linked12";
+        String server = "lanl.linkedprocess.org";
         
         long startTime = System.currentTimeMillis();
-        System.out.println("Prime LoP results: " + PrimeFinder.findPrimesUsingLop(startInteger, endInteger, farmCount, vmsPerFarm, "linked.process.1", "linked12", "lanl.linkedprocess.org", 5222));
-        System.out.println("Running time: " + ((float)System.currentTimeMillis() - (float)startTime)/1000.0f + " seconds.");
-        startTime = System.currentTimeMillis();
-        System.out.println("Prime local results: " + PrimeFinder.findPrimesUsingLocalMachine(startInteger, endInteger));
-        System.out.println("Running time: " + ((float)System.currentTimeMillis() - (float)startTime)/1000.0f + " seconds.");
+        System.out.println("Prime LoP results: " + PrimeFinder.findPrimesUsingLop(startInteger, endInteger, farmCount, vmsPerFarm, username, password, server, 5222));
+        System.out.println("Running time: " + (System.currentTimeMillis() - startTime)/1000.0f + " seconds.");
     }
 
 
