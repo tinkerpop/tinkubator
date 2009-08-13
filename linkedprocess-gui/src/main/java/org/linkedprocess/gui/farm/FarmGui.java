@@ -16,7 +16,7 @@ import java.awt.event.ActionListener;
  */
 public class FarmGui extends JFrame implements ActionListener {
 
-    protected static final String FRAME_TITLE = "Simple Linked Process Farm Manager";
+    protected static final String FRAME_TITLE = "LoPSideD Farm";
     protected static final String SHOW_MANAGER = "show manager";
     protected static final String HIDE_MANAGER = "hide manager";
     protected static final String QUIT_MANAGER = "quit manager";

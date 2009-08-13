@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class VilleinGui extends JFrame {
 
-    protected static final String FRAME_TITLE = "Simple Linked Process Villein";
+    protected static final String FRAME_TITLE = "LoPSideD Villein";
 
     protected XmppVillein xmppVillein;
     protected CountrysideArea countrysideArea;
