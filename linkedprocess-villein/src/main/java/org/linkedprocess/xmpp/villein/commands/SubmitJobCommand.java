@@ -48,6 +48,7 @@ public class SubmitJobCommand extends Command {
             JobStruct jobStruct = new JobStruct();
             jobStruct.setJobId(submitJob.getPacketID());
             jobStruct.setResult(submitJob.getExpression());
+            jobStruct.setComplete(true);
             resultHandlers.handle(submitJob.getPacketID(), jobStruct);
         } finally {
             resultHandlers.removeHandler(submitJob.getPacketID());
@@ -60,6 +61,7 @@ public class SubmitJobCommand extends Command {
             JobStruct jobStruct = new JobStruct();
             jobStruct.setJobId(submitJob.getPacketID());
             jobStruct.setLopError(submitJob.getLopError());
+            jobStruct.setComplete(true);
             errorHandlers.handle(submitJob.getPacketID(), jobStruct);
         } finally {
             resultHandlers.removeHandler(submitJob.getPacketID());

@@ -1,7 +1,6 @@
 package org.linkedprocess;
 
 import junit.framework.TestCase;
-import org.linkedprocess.xmpp.XmppClient;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +17,7 @@ public class XmppClientTest extends TestCase {
         Set<String> uniques = new HashSet<String>();
         for (int i = 0; i < 100000; i++) {
             //System.out.println(XmppClient.generateRandomResourceId());
-            uniques.add(XmppClient.generateRandomResourceId());
+            uniques.add(LinkedProcess.generateRandomResourceId());
         }
         assertEquals(uniques.size(), 100000);
     }

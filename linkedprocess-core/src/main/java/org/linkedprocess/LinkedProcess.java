@@ -6,12 +6,11 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.linkedprocess.security.VMSecurityManager;
+import org.jivesoftware.smack.packet.Packet;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Properties;
+import java.util.Random;
 import java.util.logging.Logger;
 import java.util.logging.LogManager;
 
@@ -26,6 +25,40 @@ public class LinkedProcess {
             JAVASCRIPT = "JavaScript",
             PYTHON = "jython",
             RUBY = "jruby";
+
+    public static String generateRandomResourceId() {
+        // e.g. from gtalk 6D56433B
+        Random random = new Random();
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < 8; i++) {
+            int x = random.nextInt(36);
+            if (x < 10)
+                b.append(x);
+            else
+                b.append(((char) (x + 55)));
+
+        }
+        return b.toString();
+    }
+
+    public static String generateRandomPassword() {
+        return generateRandomResourceId();
+    }
+
+    public static String generateRandomJobId() {
+        return Packet.nextID();
+    }
+
+    public static String convertStreamToString(InputStream inputStream) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        StringBuilder stringBuilder = new StringBuilder();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            stringBuilder.append(line + "\n");
+        }
+        inputStream.close();
+        return stringBuilder.toString();
+    }
 
     public enum ClientType {
         VM, FARM, REGISTRY, VILLEIN

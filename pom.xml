@@ -8,7 +8,7 @@
     <artifactId>linkedprocess</artifactId>
     <version>alpha1</version>
     <packaging>pom</packaging>
-    <name>Linked Process</name>
+    <name>LoPSideD: An Implementation of the Linked Process Protocol</name>
     <description>Web-Scale Distributed Computing</description>
     <url>http://linkedprocess.org/</url>
     <inceptionYear>2009</inceptionYear>

@@ -6,7 +6,7 @@
     <artifactId>linkedprocess-villein</artifactId>
     <version>alpha1</version>
     <packaging>jar</packaging>
-    <name>Linked Process Villein</name>
+    <name>LoPSideD Villein</name>
 
     <parent>
         <groupId>org.linkedprocess</groupId>
@@ -29,16 +29,7 @@
             <artifactId>smack</artifactId>
             <version>3.1.0</version>
         </dependency>
-        <dependency>
-            <groupId>jivesoftware</groupId>
-            <artifactId>smackx</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>jivesoftware</groupId>
-            <artifactId>smackx-debug</artifactId>
-            <version>3.1.0</version>
-        </dependency>
+        
         <dependency>
             <groupId>jdom</groupId>
             <artifactId>jdom</artifactId>
@@ -50,6 +41,11 @@
             <artifactId>junit</artifactId>
             <version>4.5</version>
             <!--<scope>test</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>1.1-rc-1</version>
         </dependency>
 
     </dependencies>

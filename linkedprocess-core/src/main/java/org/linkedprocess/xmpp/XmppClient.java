@@ -3,18 +3,12 @@ package org.linkedprocess.xmpp;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.Connection;
 import org.linkedprocess.LinkedProcess;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Iterator;
-import java.util.Random;
 import java.util.logging.Logger;
 import java.text.SimpleDateFormat;
 
@@ -54,7 +48,7 @@ public abstract class XmppClient {
         this.connection.connect();
 
         LOGGER.info("Connected to " + connection.getHost());
-        connection.login(username, password, resource + LinkedProcess.FORWARD_SLASH + XmppClient.generateRandomResourceId());
+        connection.login(username, password, resource + LinkedProcess.FORWARD_SLASH + LinkedProcess.generateRandomResourceId());
         LOGGER.info("Logged in as " + connection.getUser());
 
         Thread shutdownHook = new Thread(new Runnable() {
@@ -162,29 +156,6 @@ public abstract class XmppClient {
         return new java.util.Date(this.startTime);
     }
 
-    public static String generateRandomResourceId() {
-        // e.g. from gtalk 6D56433B
-        Random random = new Random();
-        StringBuilder b = new StringBuilder();
-        for (int i = 0; i < 8; i++) {
-            int x = random.nextInt(36);
-            if (x < 10)
-                b.append(x);
-            else
-                b.append(((char) (x + 55)));
-
-        }
-        return b.toString();
-    }
-
-    public static String generateRandomPassword() {
-        return XmppClient.generateRandomResourceId();
-    }
-
-    public static String generateRandomJobId() {
-        return Packet.nextID();
-    }
-
     public ServiceDiscoveryManager getDiscoManager() {
         return ServiceDiscoveryManager.getInstanceFor(this.connection.getDelegate());
     }
@@ -225,14 +196,4 @@ public abstract class XmppClient {
         this.connection.sendPacket(probe);
     }
 
-    public static String convertStreamToString(InputStream inputStream) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        StringBuilder stringBuilder = new StringBuilder();
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            stringBuilder.append(line + "\n");
-        }
-        inputStream.close();
-        return stringBuilder.toString();
-    }
 }

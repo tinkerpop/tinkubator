@@ -14,6 +14,7 @@ public class JobStruct implements Comparable {
     protected String result;
     protected String expression;
     protected LopError lopError;
+    protected boolean complete;
 
     public String getJobId() {
         return jobId;
@@ -39,7 +40,7 @@ public class JobStruct implements Comparable {
         this.lopError = lopError;
     }
 
-    public String getExpression()  {
+    public String getExpression() {
         return this.expression;
     }
 
@@ -48,15 +49,19 @@ public class JobStruct implements Comparable {
     }
 
     public boolean isComplete() {
-        return (null != lopError || null != result);
+        return complete;
+    }
+
+    public void setComplete(boolean complete) {
+        this.complete = complete;
     }
 
     public boolean wasAborted() {
-        return(null != lopError && LinkedProcess.LopErrorType.JOB_ABORTED != lopError.getLopErrorType());
+        return (null != lopError && LinkedProcess.LopErrorType.JOB_ABORTED != lopError.getLopErrorType());
     }
 
     public boolean wasSuccessful() {
-        return(null == lopError && null != result);
+        return (complete && null == lopError);
     }
 
     public int compareTo(Object job) {
@@ -65,6 +70,10 @@ public class JobStruct implements Comparable {
         } else {
             throw new ClassCastException();
         }
+    }
+
+    public String toString() {
+        return "job id[" + jobId + "], complete[" + complete + "], result[" + result + "], error[" + lopError + "]";
     }
 
 

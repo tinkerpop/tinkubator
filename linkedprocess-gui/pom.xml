@@ -6,7 +6,7 @@
     <artifactId>linkedprocess-gui</artifactId>
     <version>alpha1</version>
     <packaging>jar</packaging>
-    <name>Linked Process GUIs</name>
+    <name>LoPSideD GUIs</name>
 
     <parent>
         <groupId>org.linkedprocess</groupId>
@@ -32,16 +32,6 @@
         <dependency>
             <groupId>jivesoftware</groupId>
             <artifactId>smack</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>jivesoftware</groupId>
-            <artifactId>smackx</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>jivesoftware</groupId>
-            <artifactId>smackx-debug</artifactId>
             <version>3.1.0</version>
         </dependency>
         <dependency>
