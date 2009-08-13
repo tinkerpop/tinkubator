@@ -25,7 +25,7 @@ public class SetBindingsCommand extends Command {
         this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(final VmProxy vmStruct, VMBindings vmBindings, final Handler<LopError> errorHandler) {
+    public void send(final VmProxy vmStruct, VMBindings vmBindings, final Handler<VMBindings> resultHandler, final Handler<LopError> errorHandler) {
 
         String id = Packet.nextID();
         ManageBindings manageBindings = new ManageBindings();
@@ -42,8 +42,9 @@ public class SetBindingsCommand extends Command {
                     vmStruct.addVmBindings(vmBindings);
                 } catch(InvalidValueException e) {
                     XmppVillein.LOGGER.severe(e.getMessage());
-                }  
-            }
+                }
+                resultHandler.handle(vmBindings);
+            } 
         };
 
         this.resultHandlers.addHandler(id, autoResultHandler);

@@ -47,8 +47,8 @@ public class VmProxy extends Proxy {
         dispatcher.getGetBindingsCommand().send(this, bindingNames, resultHandler, errorHandler);
     }
 
-    public void setBindings(final VMBindings vmBindings, final Handler<LopError> errorHandler) {
-        dispatcher.getSetBindingsCommand().send(this, vmBindings, errorHandler);
+    public void setBindings(final VMBindings vmBindings, final Handler<VMBindings> resultHandler, final Handler<LopError> errorHandler) {
+        dispatcher.getSetBindingsCommand().send(this, vmBindings, resultHandler, errorHandler);
     }
 
     public void terminateVm(final Handler<Object> resultHandler, final Handler<LopError> errorHandler) {
