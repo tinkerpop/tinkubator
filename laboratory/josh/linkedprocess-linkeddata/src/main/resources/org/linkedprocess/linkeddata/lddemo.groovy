@@ -12,99 +12,125 @@ import org.openrdf.sail.SailConnection;
 import org.openrdf.sail.SailException;
 import org.openrdf.sail.memory.MemoryStore;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+public class WeightedValue implements Comparable<WeightedValue> {
+    public WeightedValue(final Resource value,
+                         final long weight) {
+        this.value = value;
+        this.weight = weight;
+    }
+
+    public Resource value;
+    public long weight;
+
+    public int compareTo(WeightedValue other) {
+        return -((Long) weight).compareTo(other.weight);
+    }
+}
+
 public class GroovyLinkedDataDemo {
-  public static final URI FOAF_KNOWS = new URIImpl("http://xmlns.com/foaf/0.1/knows");
-  public static final URI TIMBL = new URIImpl("http://www.w3.org/People/Berners-Lee/card#i");
+    public static final URI FOAF_KNOWS = new URIImpl("http://xmlns.com/foaf/0.1/knows");
+    public static final URI TIMBL = new URIImpl("http://www.w3.org/People/Berners-Lee/card#i");
 
-  private Random random = new Random();
+    private Random random = new Random();
 
-  public Set<Resource> getKnown(final Sail sail,
-                             final Resource subject) throws SailException {
-      Set<Resource> result = new HashSet<Resource>();
-      SailConnection c = sail.getConnection();
-      try {
-          CloseableIteration<? extends Statement, SailException> iter = c.getStatements(subject, FOAF_KNOWS, null, false);
-          try {
-              while (iter.hasNext()) {
-                  Value obj = iter.next().getObject();
-                  if (obj instanceof Resource)
-                  result.add((Resource) obj);
-              }
-          } finally {
-              iter.close();
-          }
-          iter = c.getStatements(null, FOAF_KNOWS, subject, false);
-          try {
-              while (iter.hasNext()) {
-                  result.add(iter.next().getSubject());
-              }
-          } finally {
-              iter.close();
-          }
-      } finally {
-          c.close();
-      }
+    public Set<Resource> getKnown(final Sail sail,
+                                  final Resource subject) throws SailException {
+        Set<Resource> result = new HashSet<Resource>();
+        SailConnection c = sail.getConnection();
+        try {
+            CloseableIteration<? extends Statement, SailException> iter = c.getStatements(subject, FOAF_KNOWS, null, false);
+            try {
+                while (iter.hasNext()) {
+                    Value obj = iter.next().getObject();
+                    if (obj instanceof Resource)
+                        result.add((Resource) obj);
+                }
+            } finally {
+                iter.close();
+            }
+            iter = c.getStatements(null, FOAF_KNOWS, subject, false);
+            try {
+                while (iter.hasNext()) {
+                    result.add(iter.next().getSubject());
+                }
+            } finally {
+                iter.close();
+            }
+        } finally {
+            c.close();
+        }
 
-      return result;
-  }
+        return result;
+    }
 
-  public Map<Resource, Long> foafWalk(final Sail sail,
-                                   final int walkers,
-                                   final int steps) throws SailException {
-      Map<Resource, Long> vector = new HashMap<Resource, Long>();
+    public Map<Resource, Long> foafWalk(final Sail sail,
+                                        final int walkers,
+                                        final int steps) throws SailException {
+        Map<Resource, Long> vector = new HashMap<Resource, Long>();
 
-      for (int i = 0; i < walkers; i++) {
-          Resource cur = TIMBL;
-          for (int j = 0; j < steps; j++) {
-              Long weight = vector.get(cur);
-              weight = null == weight ? 1l : 1l + weight;
-              vector.put(cur, weight);
+        for (int i = 0; i < walkers; i++) {
+            Resource cur = TIMBL;
+            for (int j = 0; j < steps; j++) {
+                Long weight = vector.get(cur);
+                weight = null == weight ? 1l : 1l + weight;
+                vector.put(cur, weight);
 
-              Set<Resource> candidates = getKnown(sail, cur);
-              if (0 == candidates.size()) {
-                  System.err.println("this shouldn't happen");
-                  break;
-              } else {
-                  cur = (Resource) candidates.toArray()[random.nextInt(candidates.size())];
-              }
-          }
-      }
+                Set<Resource> candidates = getKnown(sail, cur);
+                if (0 == candidates.size()) {
+                    System.err.println("this shouldn't happen");
+                    break;
+                } else {
+                    cur = (Resource) candidates.toArray()[random.nextInt(candidates.size())];
+                }
+            }
+        }
 
-      return vector;
-  }
+        return vector;
+    }
 
-  public void simpleDemo() throws Exception {
-      Ripple.initialize();
+    public void simpleDemo() throws Exception {
+        Ripple.initialize();
 
-      Sail baseSail = new MemoryStore();
-      baseSail.initialize();
-      URIMap uriMap = new URIMap();
-      Sail sail = new LinkedDataSail(baseSail, uriMap);
-      sail.initialize();
+        Sail baseSail = new MemoryStore();
+        baseSail.initialize();
+        URIMap uriMap = new URIMap();
+        Sail sail = new LinkedDataSail(baseSail, uriMap);
+        sail.initialize();
 
-      Map<Resource, Long> results = foafWalk(sail, 100, 2);
-      for (Resource r : results.keySet()) {
-          System.out.println("" + results.get(r) + " -- " + r);
-      }
+        Map<Resource, Long> results = foafWalk(sail, 100, 2);
+        List<WeightedValue> sorted = new LinkedList<WeightedValue>();
+        for (Resource r : results.keySet()) {
+            sorted.add(new WeightedValue(r, results.get(r)));
+        }
+        Collections.sort(sorted);
+        for (WeightedValue v : sorted) {
+            System.out.println("" + v.weight + "\t" + v.value);
+        }
+        //for (Resource r : results.keySet()) {
+        //    System.out.println("" + results.get(r) + " -- " + r);
+        //}
 
-      //Set<Resource> known = getKnown(sail, TIMBL);
-      //System.out.println("results:");
-      //for (Value v : known) {
-      //    System.out.println("    " + v);
-      //}
+        //Set<Resource> known = getKnown(sail, TIMBL);
+        //System.out.println("results:");
+        //for (Value v : known) {
+        //    System.out.println("    " + v);
+        //}
 
-      sail.shutDown();
-  }
+        sail.shutDown();
+    }
 
-  public static void main(final String[] args) throws Exception {
-      new GroovyLinkedDataDemo().simpleDemo();
-  }
+    public static void main(final String[] args) throws Exception {
+        new GroovyLinkedDataDemo().simpleDemo();
+    }
 }
 
 GroovyLinkedDataDemo.main();

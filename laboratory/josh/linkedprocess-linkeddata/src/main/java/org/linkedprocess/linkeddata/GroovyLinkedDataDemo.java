@@ -14,8 +14,11 @@ import org.openrdf.sail.SailConnection;
 import org.openrdf.sail.SailException;
 import org.openrdf.sail.memory.MemoryStore;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -26,8 +29,23 @@ public class GroovyLinkedDataDemo {
 
     private Random random = new Random();
 
+    private class WeightedValue implements Comparable<WeightedValue> {
+        public WeightedValue(final Resource value,
+                             final long weight) {
+            this.value = value;
+            this.weight = weight;
+        }
+
+        public Resource value;
+        public long weight;
+
+        public int compareTo(WeightedValue other) {
+            return - ((Long) weight).compareTo(other.weight);
+        }
+    }
+
     public Set<Resource> getKnown(final Sail sail,
-                               final Resource subject) throws SailException {
+                                  final Resource subject) throws SailException {
         Set<Resource> result = new HashSet<Resource>();
         SailConnection c = sail.getConnection();
         try {
@@ -36,7 +54,7 @@ public class GroovyLinkedDataDemo {
                 while (iter.hasNext()) {
                     Value obj = iter.next().getObject();
                     if (obj instanceof Resource)
-                    result.add((Resource) obj);
+                        result.add((Resource) obj);
                 }
             } finally {
                 iter.close();
@@ -57,10 +75,10 @@ public class GroovyLinkedDataDemo {
     }
 
     public Map<Resource, Long> foafWalk(final Sail sail,
-                                     final int walkers,
-                                     final int steps) throws SailException {
+                                        final int walkers,
+                                        final int steps) throws SailException {
         Map<Resource, Long> vector = new HashMap<Resource, Long>();
-        
+
         for (int i = 0; i < walkers; i++) {
             Resource cur = TIMBL;
             for (int j = 0; j < steps; j++) {
@@ -80,7 +98,7 @@ public class GroovyLinkedDataDemo {
 
         return vector;
     }
-    
+
     public void simpleDemo() throws Exception {
         Ripple.initialize();
 
@@ -91,9 +109,17 @@ public class GroovyLinkedDataDemo {
         sail.initialize();
 
         Map<Resource, Long> results = foafWalk(sail, 100, 2);
+        List<WeightedValue> sorted = new LinkedList<WeightedValue>();
         for (Resource r : results.keySet()) {
-            System.out.println("" + results.get(r) + " -- " + r);
+            sorted.add(new WeightedValue(r, results.get(r)));
         }
+        Collections.sort(sorted);
+        for (WeightedValue v : sorted) {
+            System.out.println("" + v.weight + "\t" + v.value);
+        }
+        //for (Resource r : results.keySet()) {
+        //    System.out.println("" + results.get(r) + " -- " + r);
+        //}
 
         //Set<Resource> known = getKnown(sail, TIMBL);
         //System.out.println("results:");
