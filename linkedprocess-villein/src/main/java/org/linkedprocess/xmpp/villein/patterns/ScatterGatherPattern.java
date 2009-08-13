@@ -1,14 +1,18 @@
 package org.linkedprocess.xmpp.villein.patterns;
 
-import org.linkedprocess.xmpp.villein.XmppVillein;
+import org.linkedprocess.xmpp.villein.proxies.JobStruct;
+import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 
-/**
- * @author peter, marko
- *         This class abstracts the pattern of splitting a job into minor parts,
- *         deploying worker code on several, non-specific supporting LoPVMs, and execute it in another
- *         job referencing the worker method of the main script.
- */
+
+import java.util.List;
+import java.util.Map;
+
 public class ScatterGatherPattern  {
+
+
+    public List<JobStruct> scatterJobs(Map<VmProxy, JobStruct> vmJobMap) {
+        return null;
+    }
 
 }
 

@@ -7,6 +7,7 @@ import org.jdom.Namespace;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.xmpp.villein.proxies.RegistryProxy;
 import org.linkedprocess.xmpp.villein.proxies.CountrysideProxy;
 import org.linkedprocess.xmpp.villein.XmppVillein;
@@ -87,8 +88,18 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
     private void refreshCountrysideFarms() {
         DefaultListModel listModel = (DefaultListModel) this.farmlandList.getModel();
         listModel.removeAllElements();
-        for(CountrysideProxy countrysideProxy : registryProxy.getActiveCountrysides()) {
+        for (CountrysideProxy countrysideProxy : registryProxy.getActiveCountrysides()) {
             listModel.addElement(countrysideProxy.getFullJid());
         }
     }
+
+    private class CountrysideListRenderer extends DefaultListCellRenderer {
+
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            label.setIcon(ImageHolder.countrysideIcon);
+            return label;
+        }
+    }
+
 }

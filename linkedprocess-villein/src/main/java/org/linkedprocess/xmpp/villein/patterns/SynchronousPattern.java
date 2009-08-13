@@ -34,7 +34,6 @@ public class SynchronousPattern {
         this.timedout = true;
     }
 
-
     private void pollingSleep(final long timeout) {
             try {
                 synchronized (pollingMonitor) {
@@ -144,7 +143,7 @@ public class SynchronousPattern {
 
     private void checkTimeout(long startTime, long timeout) throws WaitTimeoutException {
         if((System.currentTimeMillis() - startTime) > timeout) {
-            throw new WaitTimeoutException("timeout.");
+            throw new WaitTimeoutException("timeout occured after " + (System.currentTimeMillis() - startTime) + "ms");
         }
     }
 
@@ -161,6 +160,5 @@ public class SynchronousPattern {
             }
         }
     }
-
 
 }

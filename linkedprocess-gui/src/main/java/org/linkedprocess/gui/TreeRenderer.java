@@ -30,7 +30,7 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
         Object x = ((DefaultMutableTreeNode) value).getUserObject();
         if (x instanceof XmppFarm) {
             this.setText(LinkedProcess.generateResource(((XmppFarm) x).getFullJid()));
-            if(null == ((XmppFarm)x).getFarmPassword())
+            if (null == ((XmppFarm) x).getFarmPassword())
                 this.setIcon(ImageHolder.farmIcon);
             else
                 this.setIcon(ImageHolder.farmPasswordIcon);
@@ -52,7 +52,7 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
         } else if (x instanceof FarmProxy) {
             FarmProxy farmProxy = (FarmProxy) x;
             this.setText(LinkedProcess.generateResource(farmProxy.getFullJid()));
-            if(farmProxy.requiresPassword())
+            if (farmProxy.requiresPassword())
                 this.setIcon(ImageHolder.farmPasswordIcon);
             else
                 this.setIcon(ImageHolder.farmIcon);
@@ -91,5 +91,25 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
             }
         }
         return this;
+    }
+
+    public static class TreeNodeProperty {
+
+        private final String key;
+        private final String value;
+
+        public TreeNodeProperty(final String key, final String value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
     }
 }

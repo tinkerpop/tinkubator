@@ -44,7 +44,7 @@ public class HandlerSet<T> {
         if (null != r) {
             r.getHandler().handle(t);
         } else {
-            XmppVillein.LOGGER.warning("No handler found for job " + id);
+            XmppVillein.LOGGER.warning("No handler found for packet " + id);
         }
     }
 

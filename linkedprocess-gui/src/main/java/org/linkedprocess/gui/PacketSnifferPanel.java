@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -150,6 +151,21 @@ public class PacketSnifferPanel extends JPanel implements ListSelectionListener,
 
     public void processPacket(Packet packet) {
         this.addPacket(packet);
+    }
+
+    private class PacketSnifferTableCellRenderer extends DefaultTableCellRenderer {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+
+            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            if ((Integer) table.getValueAt(row, 0) == 0)
+                this.setIcon(ImageHolder.letterIcon);
+            else
+                this.setIcon(ImageHolder.mailboxIcon);
+            this.setName("");
+            this.setText("");
+
+            return this;
+        }
     }
 
 }

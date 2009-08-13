@@ -176,11 +176,11 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
                     DefaultMutableTreeNode temp;
 
                     if (vmProxy.getPresence() != null) {
-                        temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", vmProxy.getPresence().getType().toString()));
+                        temp = new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", vmProxy.getPresence().getType().toString()));
                         model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
                     }
                     if (vmProxy.getVmSpecies() != null) {
-                        temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", vmProxy.getVmSpecies()));
+                        temp = new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", vmProxy.getVmSpecies()));
                         model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
                     }
                     /*if (vmProxy.getVmPassword() != null) {
@@ -232,11 +232,11 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
                     DefaultMutableTreeNode temp;
 
                     if (vmProxy.getPresence() != null) {
-                        temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", vmProxy.getPresence().getType().toString()));
+                        temp = new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", vmProxy.getPresence().getType().toString()));
                         model.insertNodeInto(temp, node, node.getChildCount());
                     }
                     if (vmProxy.getVmSpecies() != null) {
-                        temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", vmProxy.getVmSpecies()));
+                        temp = new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", vmProxy.getVmSpecies()));
                         model.insertNodeInto(temp, node, node.getChildCount());
                     }
                     /*if (vmProxy.getVmPassword() != null) {
@@ -286,12 +286,12 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
                         DefaultMutableTreeNode temp;
 
                         if (vmProxy.getPresence() != null) {
-                            temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", vmProxy.getPresence().getType().toString()));
+                            temp = new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", vmProxy.getPresence().getType().toString()));
                             model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
                             this.tree.scrollPathToVisible(new TreePath(temp.getPath()));
                         }
                         if (vmProxy.getVmSpecies() != null) {
-                            temp = new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", vmProxy.getVmSpecies()));
+                            temp = new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", vmProxy.getVmSpecies()));
                             model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
                             this.tree.scrollPathToVisible(new TreePath(temp.getPath()));
                         }

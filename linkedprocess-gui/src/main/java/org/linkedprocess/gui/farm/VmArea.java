@@ -3,7 +3,6 @@ package org.linkedprocess.gui.farm;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.gui.RosterPanel;
-import org.linkedprocess.gui.TreeNodeProperty;
 import org.linkedprocess.gui.TreeRenderer;
 import org.linkedprocess.gui.farm.vmviewer.VmViewerFrame;
 import org.linkedprocess.xmpp.villein.proxies.CountrysideProxy;
@@ -96,9 +95,9 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
         for (XmppVirtualMachine xmppVm : this.farmGui.getXmppFarm().getVirtualMachines()) {
             DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(xmppVm);
             this.treeMap.put(xmppVm.getFullJid(), vmNode);
-            vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("villein_jid", xmppVm.getVilleinJid())));
-            vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", xmppVm.getVmStatus().toString())));
-            vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", xmppVm.getVmSpecies())));
+            vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", xmppVm.getVilleinJid())));
+            vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", xmppVm.getVmStatus().toString())));
+            vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", xmppVm.getVmSpecies())));
             //vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", xmppVm.getVmPassword())));
             //vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", xmppVm.getRunningTimeInSeconds() + " seconds")));
             model.insertNodeInto(vmNode, farmNode, farmNode.getChildCount());
@@ -117,9 +116,9 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
             try {
                 XmppVirtualMachine xmppVm = this.farmGui.getXmppFarm().getVirtualMachine(vmJid);
                 DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(xmppVm);
-                vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("villein_jid", xmppVm.getVilleinJid())));
-                vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", xmppVm.getVmStatus().toString())));
-                vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", xmppVm.getVmSpecies())));
+                vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", xmppVm.getVilleinJid())));
+                vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", xmppVm.getVmStatus().toString())));
+                vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", xmppVm.getVmSpecies())));
                 //vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", xmppVm.getVmPassword())));
                 //vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", xmppVm.getRunningTimeInSeconds() + " seconds")));
                 model.insertNodeInto(vmNode, farmNode, farmNode.getChildCount());
@@ -133,9 +132,9 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
         if (node != null && (status == LinkedProcess.VmStatus.ACTIVE || status == LinkedProcess.VmStatus.ACTIVE_FULL)) {
             node.removeAllChildren();
             XmppVirtualMachine xmppVm = (XmppVirtualMachine) node.getUserObject();
-            node.add(new DefaultMutableTreeNode(new TreeNodeProperty("villein_jid", xmppVm.getVilleinJid())));
-            node.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_status", xmppVm.getVmStatus().toString())));
-            node.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_species", xmppVm.getVmSpecies())));
+            node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", xmppVm.getVilleinJid())));
+            node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", xmppVm.getVmStatus().toString())));
+            node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", xmppVm.getVmSpecies())));
             //node.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", xmppVm.getVmPassword())));
             //node.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", xmppVm.getRunningTimeInSeconds() + " seconds")));
             model.reload(node);

@@ -2,6 +2,7 @@ package org.linkedprocess.gui.villein.vmcontrol;
 
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.linkedprocess.gui.GenericErrorHandler;
+import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.proxies.JobStruct;
 
