@@ -29,7 +29,7 @@ public class PrimeFinder {
         //////////////// WAIT FOR ACTIVE FARMS
 
         System.out.println("Waiting for " + farmCount + " available farms...");
-        sp.waitForFarms(villein.getLopCloud(), farmCount, 10000);
+        sp.waitForFarms(villein.getLopCloud(), farmCount, 20000);
         for (FarmProxy farm : villein.getLopCloud().getFarmProxies()) {
 			System.out.println("found farm: " + farm.getFullJid());
 		}
@@ -103,8 +103,8 @@ public class PrimeFinder {
 
     public static void main(String[] args) throws Exception {
         int startInteger = 1;
-        int endInteger = 10000;
-        int farmCount = 3;
+        int endInteger = 5000;
+        int farmCount = 2;
         int vmsPerFarm = 2;
         String username = "linked.process.1";
         String password = "linked12";

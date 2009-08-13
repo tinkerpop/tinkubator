@@ -13,10 +13,8 @@ import java.util.logging.Logger;
 public class ScatterGatherPattern {
 
     private static final Logger LOGGER = LinkedProcess.getLogger(SynchronousPattern.class);
-    private final Object monitor = new Object();
-    private boolean timedout;
 
-    private void monitorSleep(final long timeout) {
+    private void monitorSleep(final Object monitor, final long timeout) {
         try {
             synchronized (monitor) {
                 if (timeout > 0)
@@ -32,7 +30,7 @@ public class ScatterGatherPattern {
     public Set<VmProxy> scatterSpawnVm(final Collection<FarmProxy> farmProxies, final String vmSpecies, final int vmsPerFarm, final long timeout) throws TimeoutException {
         final Set<VmProxy> vmProxies = new HashSet<VmProxy>();
         final List<Object> counter = new ArrayList<Object>();
-
+        final Object monitor = new Object();
 
         for (FarmProxy farmProxy : farmProxies) {
             for (int i = 0; i < vmsPerFarm; i++) {
@@ -42,7 +40,6 @@ public class ScatterGatherPattern {
                         counter.add(new Object());
                         if (counter.size() == (farmProxies.size() * vmsPerFarm)) {
                             synchronized (monitor) {
-                                timedout = false;
                                 monitor.notify();
                             }
                         }
@@ -54,7 +51,6 @@ public class ScatterGatherPattern {
                         counter.add(new Object());
                         if (counter.size() == (farmProxies.size() * vmsPerFarm)) {
                             synchronized (monitor) {
-                                timedout = false;
                                 monitor.notify();
                             }
                         }
@@ -64,12 +60,10 @@ public class ScatterGatherPattern {
             }
         }
 
-        this.timedout = true;
-        while (counter.size() < (farmProxies.size() * vmsPerFarm)) {
-            this.monitorSleep(timeout);
-            if (this.timedout)
-                throw new TimeoutException("scatter spawn_vm timedout after " + timeout + "ms.");
-        }
+        this.monitorSleep(monitor, timeout);
+        if (counter.size() != (farmProxies.size() * vmsPerFarm))
+            throw new TimeoutException("scatter spawn_vm timedout after " + timeout + "ms.");
+
         return vmProxies;
     }
 
@@ -80,6 +74,7 @@ public class ScatterGatherPattern {
     }
 
     public Map<VmProxy, JobStruct> scatterSubmitJob(final Map<VmProxy, JobStruct> vmJobMap, long timeout) throws TimeoutException {
+        final Object monitor = new Object();
 
         for (final VmProxy vmProxy : vmJobMap.keySet()) {
             Handler<JobStruct> submitJobHandler = new Handler<JobStruct>() {
@@ -87,7 +82,6 @@ public class ScatterGatherPattern {
                     vmJobMap.put(vmProxy, jobStruct);
                     if (ScatterGatherPattern.areComplete(vmJobMap.values())) {
                         synchronized (monitor) {
-                            timedout = false;
                             monitor.notify();
                         }
                     }
@@ -95,13 +89,11 @@ public class ScatterGatherPattern {
             };
             vmProxy.submitJob(vmJobMap.get(vmProxy), submitJobHandler, submitJobHandler);
         }
-        this.timedout = true;
-        while (!ScatterGatherPattern.areComplete(vmJobMap.values())) {
-            this.monitorSleep(timeout);
-            if (this.timedout)
-                throw new TimeoutException("scatter submit_job timedout after " + timeout + "ms.");
 
-        }
+        this.monitorSleep(monitor, timeout);
+        if (!ScatterGatherPattern.areComplete(vmJobMap.values()))
+            throw new TimeoutException("scatter submit_job timedout after " + timeout + "ms.");
+
         return vmJobMap;
     }
 
@@ -111,7 +103,7 @@ public class ScatterGatherPattern {
                 public void handle(JobStruct jobStruct) {
                     vmJobMap.put(vmProxy, jobStruct);
                     if (ScatterGatherPattern.areComplete(vmJobMap.values())) {
-                       resultHandler.handle(vmJobMap);
+                        resultHandler.handle(vmJobMap);
                     }
                 }
             };
