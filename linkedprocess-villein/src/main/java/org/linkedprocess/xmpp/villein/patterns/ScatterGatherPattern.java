@@ -105,6 +105,20 @@ public class ScatterGatherPattern {
         return vmJobMap;
     }
 
+    public void scatterSubmitJob(final Map<VmProxy, JobStruct> vmJobMap, final Handler<Map<VmProxy, JobStruct>> resultHandler) {
+        for (final VmProxy vmProxy : vmJobMap.keySet()) {
+            Handler<JobStruct> submitJobHandler = new Handler<JobStruct>() {
+                public void handle(JobStruct jobStruct) {
+                    vmJobMap.put(vmProxy, jobStruct);
+                    if (ScatterGatherPattern.areComplete(vmJobMap.values())) {
+                       resultHandler.handle(vmJobMap);
+                    }
+                }
+            };
+            vmProxy.submitJob(vmJobMap.get(vmProxy), submitJobHandler, submitJobHandler);
+        }
+    }
+
     private static boolean areComplete(Collection<JobStruct> jobStructs) {
         for (JobStruct jobStruct : jobStructs) {
             if (!jobStruct.isComplete())
