@@ -155,7 +155,7 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
         } else if (event.getActionCommand().equals(SET)) {
             VMBindings vmBindings = this.getSetManageBindings();
             if (vmBindings != null && vmBindings.size() > 0) {
-                vmControlFrame.getVmProxy().setBindings(vmBindings, new GenericErrorHandler());
+                vmControlFrame.getVmProxy().setBindings(vmBindings, null, new GenericErrorHandler());
             }
         } else if (event.getActionCommand().equals(NULL)) {
             int row = this.bindingsTable.getSelectedRow();
