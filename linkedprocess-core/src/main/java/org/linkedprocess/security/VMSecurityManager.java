@@ -77,6 +77,7 @@ public class VMSecurityManager extends SecurityManager {
 
     private void permissionDenied(final PermissionType type, final String resource) {
         LOGGER.info("denying permission '" + type.getSpecName() + "' to resource '" + resource + "'");
+new Exception().printStackTrace();
         SecurityException e = new SecurityException("permission '" + type + "' is not granted for resource: " + resource);
         alertListeners(e, type, resource);
         throw e;
