@@ -18,4 +18,8 @@ public class CommandException extends Exception {
     public LopError getLopError() {
         return this.lopError;
     }
+
+    public String getMessage() {
+        return this.lopError.toString();
+    }
 }

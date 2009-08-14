@@ -3,6 +3,8 @@ package org.linkedprocess.xmpp.villein.patterns;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.villein.proxies.LopCloud;
 import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
+import org.linkedprocess.xmpp.villein.proxies.FarmHolder;
+import org.linkedprocess.xmpp.villein.proxies.CountrysideProxy;
 
 import java.util.logging.Logger;
 import java.util.Set;
@@ -18,19 +20,19 @@ public class ResourceAllocationPattern {
     private static final Logger LOGGER = LinkedProcess.getLogger(ResourceAllocationPattern.class);
 
     private static void checkTimeout(long startTime, long timeout) throws TimeoutException {
-        if ((System.currentTimeMillis() - startTime) > timeout) {
+        if (timeout > 0 && (System.currentTimeMillis() - startTime) > timeout) {
             throw new TimeoutException("timeout occured after " + (System.currentTimeMillis() - startTime) + "ms.");
         }
     }
 
-    public static Set<FarmProxy> allocateFarms(final LopCloud lopCloud, final int numberOfFarms, final long timeout) throws TimeoutException {
+    public static Set<FarmProxy> allocateFarms(final FarmHolder farmHolder, final int numberOfFarms, final long timeout) throws TimeoutException {
         Set<FarmProxy> farmProxies = new HashSet<FarmProxy>();
         long startTime = System.currentTimeMillis();
         while (true) {
             checkTimeout(startTime, timeout);
-            if (lopCloud.getFarmProxies().size() >= numberOfFarms) {
+            if (farmHolder.getFarmProxies().size() >= numberOfFarms) {
                 int i = 0;
-                for(FarmProxy farmProxy : lopCloud.getFarmProxies()){
+                for(FarmProxy farmProxy : farmHolder.getFarmProxies()){
                     farmProxies.add(farmProxy);
                     i++;
                     if(i == numberOfFarms)
@@ -45,4 +47,21 @@ public class ResourceAllocationPattern {
             }
         }
     }
+
+    public static CountrysideProxy allocateCountryside(final LopCloud lopCloud, final String countrysideJid, final long timeout) throws TimeoutException {
+        CountrysideProxy countrysideProxy = null;
+        long startTime = System.currentTimeMillis();
+        while (true) {
+            checkTimeout(startTime, timeout);
+            countrysideProxy = lopCloud.getCountrysideProxy(countrysideJid);
+            if(null != countrysideProxy)
+                return countrysideProxy;
+            try {
+                Thread.sleep(150);
+            } catch (InterruptedException e) {
+                LOGGER.warning(e.getMessage());
+            }
+        }
+    }
+
 }

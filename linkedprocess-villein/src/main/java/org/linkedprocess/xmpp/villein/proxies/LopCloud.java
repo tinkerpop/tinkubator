@@ -11,7 +11,7 @@ import java.util.*;
  * Date: Aug 12, 2009
  * Time: 2:15:04 PM
  */
-public class LopCloud {
+public class LopCloud implements FarmHolder {
 
     public enum ProxyType {
         COUNTRYSIDE, FARM, REGISTRY, VM
@@ -148,7 +148,7 @@ public class LopCloud {
             throw new ParentProxyNotFoundException("farm proxy null for " + vmProxy.getFullJid());
     }
 
-    public static Collection<FarmProxy> filterFarmProxiesByVmSpeciesSupport(Collection<FarmProxy> farmProxies, String vmSpecies) {
+    public static Set<FarmProxy> filterFarmProxiesByVmSpeciesSupport(Collection<FarmProxy> farmProxies, String vmSpecies) {
         Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
         for (FarmProxy farmProxy : farmProxies) {
             if (farmProxy.supportsSpecies(vmSpecies))
@@ -157,7 +157,7 @@ public class LopCloud {
         return returnFarmProxies;
     }
 
-    public static Collection<FarmProxy> filterFarmProxiesByVmTimeToLive(Collection<FarmProxy> farmProxies, long minimumVmTimeToLive) {
+    public static Set<FarmProxy> filterFarmProxiesByVmTimeToLive(Collection<FarmProxy> farmProxies, long minimumVmTimeToLive) {
         Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
         for (FarmProxy farmProxy : farmProxies) {
             if (farmProxy.getVmTimeToLive() >= minimumVmTimeToLive) {
@@ -167,7 +167,7 @@ public class LopCloud {
         return returnFarmProxies;
     }
 
-    public static Collection<FarmProxy> filterFarmProxiesByJobTimeout(Collection<FarmProxy> farmProxies, long minimumJobTimeout) {
+    public static Set<FarmProxy> filterFarmProxiesByJobTimeout(Collection<FarmProxy> farmProxies, long minimumJobTimeout) {
         Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
         for (FarmProxy farmProxy : farmProxies) {
             if (farmProxy.getJobTimeout() >= minimumJobTimeout) {
@@ -177,11 +177,11 @@ public class LopCloud {
         return returnFarmProxies;
     }
 
-    public static Collection<FarmProxy> filterFarmProxiesByPasswordRequired(Collection<FarmProxy> farmProxies, boolean wantPasswordRequired) {
+    public static Set<FarmProxy> filterFarmProxiesByPasswordRequired(Collection<FarmProxy> farmProxies, boolean wantPasswordRequired) {
         Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
         for (FarmProxy farmProxy : farmProxies) {
             if (farmProxy.requiresPassword() == wantPasswordRequired)
-                farmProxies.add(farmProxy);
+                returnFarmProxies.add(farmProxy);
         }
         return returnFarmProxies;
     }

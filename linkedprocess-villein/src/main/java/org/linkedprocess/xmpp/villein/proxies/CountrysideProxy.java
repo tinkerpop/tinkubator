@@ -9,7 +9,7 @@ import java.util.*;
  * Date: Jul 8, 2009
  * Time: 1:02:16 PM
  */
-public class CountrysideProxy extends Proxy {
+public class CountrysideProxy extends Proxy implements FarmHolder {
 
 
     protected Map<String, FarmProxy> farmProxies = new HashMap<String, FarmProxy>();

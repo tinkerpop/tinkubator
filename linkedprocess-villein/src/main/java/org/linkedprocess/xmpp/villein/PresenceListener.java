@@ -27,20 +27,11 @@ public class PresenceListener extends LopVilleinListener {
 
         Proxy proxy = this.getXmppVillein().getLopCloud().getProxy(presence.getFrom());
 
-        if (proxy != null && (presence.getType() == Presence.Type.unavailable ||
-                presence.getType() == Presence.Type.unsubscribe ||
-                presence.getType() == Presence.Type.unsubscribed)) {
-            this.getXmppVillein().getLopCloud().removeProxy(presence.getFrom());
-            // Handlers
-            for (PresenceHandler presenceHandler : this.getXmppVillein().getPresenceHandlers()) {
-                presenceHandler.handlePresenceUpdate(proxy, presence.getType());
-            }
-            return;
-        }
-
-
-        if (null != proxy) {
+        if (proxy != null) {
             proxy.setPresence(presence);
+            if (presence.getType() == Presence.Type.unavailable || presence.getType() == Presence.Type.unsubscribe || presence.getType() == Presence.Type.unsubscribed) {
+                this.getXmppVillein().getLopCloud().removeProxy(presence.getFrom());
+            }
         } else {
             if (LinkedProcess.isBareJid(presence.getFrom())) {
                 CountrysideProxy countrysideProxy = new CountrysideProxy(presence.getFrom(), this.getXmppVillein().getDispatcher());
@@ -77,9 +68,13 @@ public class PresenceListener extends LopVilleinListener {
                 }
             }
         }
-        // Handlers
-        for (PresenceHandler presenceHandler : this.getXmppVillein().getPresenceHandlers()) {
-            presenceHandler.handlePresenceUpdate(proxy, presence.getType());
+
+        if(proxy != null) {
+            // Handlers
+            for (PresenceHandler presenceHandler : this.getXmppVillein().getPresenceHandlers()) {
+                presenceHandler.handlePresenceUpdate(proxy, presence.getType());
+            }
         }
     }
 }
+

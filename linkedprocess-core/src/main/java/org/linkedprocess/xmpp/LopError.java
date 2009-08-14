@@ -134,4 +134,11 @@ public class LopError extends XMPPError {
         return LinkedProcess.xmlOut.outputString(errorElement);
     }
 
+    public String toString() {
+        if(null != lopErrorType)
+            return lopErrorType.toString() + ":" + this.getCondition() + "[" + this.getCode() + "]: " + this.getMessage();
+        else
+            return this.getCondition() + "[" + this.getCode() + "]: " + this.getMessage();
+    }
+
 }

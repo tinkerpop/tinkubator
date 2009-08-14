@@ -3,9 +3,7 @@ package org.linkedprocess.demos.polling;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.patterns.*;
-import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
-import org.linkedprocess.xmpp.villein.proxies.VmProxy;
-import org.linkedprocess.xmpp.villein.proxies.JobStruct;
+import org.linkedprocess.xmpp.villein.proxies.*;
 import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.os.TypedValue;
@@ -27,8 +25,16 @@ public class ProgressPolling {
 
         //////////////// ALLOCATE FARMS
 
-        System.out.println("Waiting for 1 available farms...");
+        System.out.println("Waiting for 1 available farm...");
+
+        //CountrysideProxy testProxy = ResourceAllocationPattern.allocateCountryside(villein.getLopCloud(), "test_countryside@lanl.linkedprocess.org", -1);
+        //Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(testProxy, 1, 20000);
         Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(villein.getLopCloud(), 1, 20000);
+        farmProxies = LopCloud.filterFarmProxiesByPasswordRequired(farmProxies, false);
+        if(farmProxies.size() == 0) {
+            System.out.println("Could not allocate a password free farm.");
+            System.exit(1);
+        }
         for (FarmProxy farmProxy : farmProxies) {
             System.out.println("farm allocated: " + farmProxy.getFullJid());
         }
@@ -43,7 +49,7 @@ public class ProgressPolling {
         JobStruct jobStruct = new JobStruct();
         jobStruct.setExpression("var meter = 0.0;\n" +
                                 "while(true) {\n" +
-                                    "\tmeter = meter + 0.0000001;\n" +
+                                    "\tmeter = meter + 0.00000001;\n" +
                                 "}");
         vmProxy.submitJob(jobStruct, null, null);
 
@@ -91,7 +97,7 @@ public class ProgressPolling {
 
     public static void main(String[] args) throws Exception {
         double meterMax = 1.0d;
-        long pollingInterval = 400;
+        long pollingInterval = 500;
         String username = "linked.process.1";
         String password = "linked12";
         String server = "lanl.linkedprocess.org";

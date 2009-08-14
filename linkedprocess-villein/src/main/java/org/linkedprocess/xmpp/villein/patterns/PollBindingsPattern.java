@@ -59,7 +59,7 @@ public class PollBindingsPattern implements Runnable {
         while (lopErrorResult == null && vmBindingsResult == null) {
             VMBindings actualBindings = null;
             try {
-                actualBindings = SynchronousPattern.getBindings(vmProxy, this.desiredBindings.keySet(), pollingInterval);
+                actualBindings = SynchronousPattern.getBindings(vmProxy, this.desiredBindings.keySet(), 1000);
             } catch (TimeoutException e) {
                 LOGGER.warning(e.getMessage());
             } catch (CommandException e) {
