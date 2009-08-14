@@ -27,7 +27,7 @@ import java.util.Set;
  * Date: Jul 7, 2009
  * Time: 11:13:22 PM
  */
-public class CountrysideArea extends JPanel implements ActionListener, MouseListener, PresenceHandler {
+public class LopCloudArea extends JPanel implements ActionListener, MouseListener, PresenceHandler {
 
     protected VilleinGui villeinGui;
     protected JTree tree;
@@ -46,16 +46,16 @@ public class CountrysideArea extends JPanel implements ActionListener, MouseList
     protected final static String VM_CONTROL = "vm control";
     protected final static String PROBE = "probe";
 
-    public CountrysideArea(VilleinGui villeinGui) {
+    public LopCloudArea(VilleinGui villeinGui) {
         super(new BorderLayout());
         this.villeinGui = villeinGui;
-        CountrysideProxy countrysideStruct = new CountrysideProxy(LinkedProcess.generateBareJid(this.villeinGui.getXmppVillein().getFullJid()), this.villeinGui.getXmppVillein().getDispatcher());
-        this.treeRoot = new DefaultMutableTreeNode(countrysideStruct);
+        this.treeRoot = new DefaultMutableTreeNode(null);
         this.tree = new JTree(this.treeRoot);
         this.tree.setCellRenderer(new TreeRenderer());
         this.tree.setModel(new DefaultTreeModel(treeRoot));
         this.tree.addMouseListener(this);
         this.tree.setRootVisible(false);
+        this.tree.setShowsRootHandles(true);
         this.popupMenu = new JPopupMenu();
         this.popupMenu.setBorder(BorderFactory.createLineBorder(ImageHolder.GRAY_COLOR, 2));
 

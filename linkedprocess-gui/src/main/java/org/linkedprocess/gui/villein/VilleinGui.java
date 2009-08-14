@@ -19,7 +19,7 @@ public class VilleinGui extends JFrame {
     protected static final String FRAME_TITLE = "LoPSideD Villein";
 
     protected XmppVillein xmppVillein;
-    protected CountrysideArea countrysideArea;
+    protected LopCloudArea lopCloudArea;
     protected Map<String, VmControlFrame> vmFrames = new HashMap<String, VmControlFrame>();
 
     public VilleinGui() {
@@ -45,10 +45,10 @@ public class VilleinGui extends JFrame {
         this.xmppVillein = xmppVillein;
 
         this.getContentPane().removeAll();
-        this.countrysideArea = new CountrysideArea(this);
-        this.countrysideArea.createTree();
-        this.xmppVillein.addPresenceHandler(this.countrysideArea);
-        this.getContentPane().add(countrysideArea);
+        this.lopCloudArea = new LopCloudArea(this);
+        this.lopCloudArea.createTree();
+        this.xmppVillein.addPresenceHandler(this.lopCloudArea);
+        this.getContentPane().add(lopCloudArea);
         this.setResizable(true);
         this.pack();
         this.setVisible(true);
@@ -72,19 +72,19 @@ public class VilleinGui extends JFrame {
     }
 
     public void updateHostAreaTree(String jid, boolean remove) {
-        this.countrysideArea.updateTree(jid, remove);
+        this.lopCloudArea.updateTree(jid, remove);
     }
 
     public void createTree() {
-        this.countrysideArea.createTree();
+        this.lopCloudArea.createTree();
     }
 
     public XmppVillein getXmppVillein() {
         return this.xmppVillein;
     }
 
-    public CountrysideArea getHostArea() {
-        return this.countrysideArea;
+    public LopCloudArea getHostArea() {
+        return this.lopCloudArea;
     }
 
     public void shutDown() {

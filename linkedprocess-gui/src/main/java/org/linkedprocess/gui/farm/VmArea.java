@@ -44,6 +44,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
         this.treeRoot = new DefaultMutableTreeNode(countrysideProxy);
         this.tree = new JTree(this.treeRoot);
         this.tree.setCellRenderer(new TreeRenderer());
+        this.tree.setShowsRootHandles(true);
         this.tree.setModel(new DefaultTreeModel(treeRoot));
         this.tree.addMouseListener(this);
 
