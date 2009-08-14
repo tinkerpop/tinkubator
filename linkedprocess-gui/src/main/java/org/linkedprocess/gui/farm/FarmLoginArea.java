@@ -106,7 +106,7 @@ public class FarmLoginArea extends LoginArea {
                 if(farmPassword.equals(""))
                     farmPassword = null;
                 XmppFarm farm = new XmppFarm(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText(), farmPassword);
-                this.farmGui.loadMainFrame(farm);
+                this.farmGui.loadVmArea(farm);
             } else if (event.getActionCommand().equals(QUIT)) {
                 System.exit(0);
             }

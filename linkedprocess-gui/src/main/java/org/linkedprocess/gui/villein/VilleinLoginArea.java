@@ -96,7 +96,7 @@ public class VilleinLoginArea extends LoginArea {
         try {
             if (event.getActionCommand().equals(LOGIN)) {
                 XmppVillein villein = new XmppVillein(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText());
-                this.villeinGui.loadHostArea(villein);
+                this.villeinGui.loadLopCloudArea(villein);
             } else if (event.getActionCommand().equals(QUIT)) {
                 System.exit(0);
             }

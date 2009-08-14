@@ -35,7 +35,7 @@ public class FarmGui extends JFrame implements ActionListener {
         this.setVisible(true);
     }
 
-    public void loadMainFrame(XmppFarm xmppFarm) {
+    public void loadVmArea(XmppFarm xmppFarm) {
         this.xmppFarm = xmppFarm;
         this.getContentPane().removeAll();
         this.vmArea = new VmArea(this);

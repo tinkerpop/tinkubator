@@ -41,7 +41,7 @@ public class VilleinGui extends JFrame {
         this.setVisible(true);
     }
 
-    public void loadHostArea(XmppVillein xmppVillein) {
+    public void loadLopCloudArea(XmppVillein xmppVillein) {
         this.xmppVillein = xmppVillein;
 
         this.getContentPane().removeAll();
@@ -71,20 +71,8 @@ public class VilleinGui extends JFrame {
         return this.vmFrames.get(vmJid);
     }
 
-    public void updateHostAreaTree(String jid, boolean remove) {
-        this.lopCloudArea.updateTree(jid, remove);
-    }
-
-    public void createTree() {
-        this.lopCloudArea.createTree();
-    }
-
     public XmppVillein getXmppVillein() {
         return this.xmppVillein;
-    }
-
-    public LopCloudArea getHostArea() {
-        return this.lopCloudArea;
     }
 
     public void shutDown() {

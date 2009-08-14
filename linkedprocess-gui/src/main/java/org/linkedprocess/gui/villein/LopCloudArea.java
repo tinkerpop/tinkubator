@@ -146,7 +146,7 @@ public class LopCloudArea extends JPanel implements ActionListener, MouseListene
                         FarmProxy farmProxy = (FarmProxy) this.popupTreeObject;
                         Handler<VmProxy> resultHandler = new Handler<VmProxy>() {
                             public void handle(VmProxy vmProxy) {
-                                villeinGui.updateHostAreaTree(vmProxy.getFullJid(), false);
+                                updateTree(vmProxy.getFullJid(), false);
                             }
                         };
                         farmProxy.spawnVm(vmSpecies, resultHandler, new GenericErrorHandler());
@@ -448,9 +448,9 @@ public class LopCloudArea extends JPanel implements ActionListener, MouseListene
 
     public void handlePresenceUpdate(Proxy proxy, Presence.Type presenceType) {
         if (presenceType == Presence.Type.unavailable || presenceType == Presence.Type.unsubscribe || presenceType == Presence.Type.unsubscribed) {
-            this.villeinGui.updateHostAreaTree(proxy.getFullJid(), true);
+            updateTree(proxy.getFullJid(), true);
         } else {
-            this.villeinGui.updateHostAreaTree(proxy.getFullJid(), false);
+            updateTree(proxy.getFullJid(), false);
         }
     }
 }
