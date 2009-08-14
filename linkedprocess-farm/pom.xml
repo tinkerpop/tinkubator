@@ -197,11 +197,6 @@
             <artifactId>xslt-engine</artifactId>
             <version>xxx</version>
         </dependency> -->
-        <!--<dependency>
-            <groupId>net.fortytwo</groupId>
-            <artifactId>linked-data-sail</artifactId>
-            <version>0.5</version>
-        </dependency>-->
     </dependencies>
 
     <repositories>
