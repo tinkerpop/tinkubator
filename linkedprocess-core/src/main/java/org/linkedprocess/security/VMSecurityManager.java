@@ -77,7 +77,8 @@ public class VMSecurityManager extends SecurityManager {
 
     private void permissionDenied(final PermissionType type, final String resource) {
         LOGGER.info("denying permission '" + type.getSpecName() + "' to resource '" + resource + "'");
-new Exception().printStackTrace();
+//new Exception().printStackTrace();
+        
         SecurityException e = new SecurityException("permission '" + type + "' is not granted for resource: " + resource);
         alertListeners(e, type, resource);
         throw e;
@@ -124,8 +125,9 @@ new Exception().printStackTrace();
     }
 
     private void addClassPath(final PathPermissions perms) {
-        String classpath = System.getProperty("java.class.path");
-        LOGGER.info("adding elements of classpath as read-permitted paths: " + classpath);
+        String classpath = System.getProperty("java.class.path")
+                + ":" + System.getProperty("java.library.path");
+        LOGGER.info("adding elements of classpath/library paths as read-permitted paths: " + classpath);
         String[] paths = classpath.split(":");
         for (String p : paths) {
             perms.addPermitRule(p);
