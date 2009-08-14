@@ -43,6 +43,11 @@ class VMSequencer {
 
         // Must set status to ACTIVE before spawning the thread.
         status = Status.ACTIVE;
+
+        Thread sequencerThread = new Thread(new SequencerRunnable(), nextThreadName());
+        // Sequencer threads have less priority than the scheduler's thread.
+        sequencerThread.setPriority(Thread.currentThread().getPriority() - 1);
+        sequencerThread.start();
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -57,6 +62,13 @@ class VMSequencer {
         if (VMWorker.SCHEDULER_TERMINATED_SENTINEL == w) {
             //LOGGER.info("VMSequencer has received SCHEDULER_TERMINATED_SENTINEL");
             status = Status.TERMINATED;
+            return;
+        }
+
+        // Occasionally, a sequencer will pull a worker from the queue while it
+        // is in the process of being terminated.  When this happens, simply skip
+        // this time slice;
+        if (VMWorker.Status.TERMINATED == w.status) {
             return;
         }
 
