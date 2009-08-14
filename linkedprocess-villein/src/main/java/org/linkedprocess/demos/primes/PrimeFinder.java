@@ -3,6 +3,7 @@ package org.linkedprocess.demos.primes;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.linkedprocess.xmpp.villein.patterns.SynchronousPattern;
 import org.linkedprocess.xmpp.villein.patterns.ScatterGatherPattern;
+import org.linkedprocess.xmpp.villein.patterns.ResourceAllocationPattern;
 import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
 import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.villein.proxies.JobStruct;
@@ -23,28 +24,18 @@ public class PrimeFinder {
 
 		XmppVillein villein = new XmppVillein(server, port, username, password);
 		villein.createLopCloudFromRoster();
-        SynchronousPattern sp = new SynchronousPattern();
-        ScatterGatherPattern sg = new ScatterGatherPattern();
 
-        //////////////// WAIT FOR ACTIVE FARMS
+        //////////////// ALLOCATE FARMS
 
         System.out.println("Waiting for " + farmCount + " available farms...");
-        sp.waitForFarms(villein.getLopCloud(), farmCount, 20000);
-        for (FarmProxy farm : villein.getLopCloud().getFarmProxies()) {
-			System.out.println("found farm: " + farm.getFullJid());
+        Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(villein.getLopCloud(), farmCount, 20000);
+        for (FarmProxy farmProxy : farmProxies) {
+			System.out.println("farm allocated: " + farmProxy.getFullJid());
 		}
-        Set<FarmProxy> farmProxies = new HashSet<FarmProxy>();
-        int i = 0;
-        for(FarmProxy farmProxy :  villein.getLopCloud().getFarmProxies()) {
-            farmProxies.add(farmProxy);
-            if(i == farmCount) {
-                break;
-            }
-        }
 
-        //////////////// SPAWN VIRTUAL MACHINES ON ACTIVE FARMS
+        //////////////// SPAWN VIRTUAL MACHINES ON ALLOCATED FARMS
 
-        Set<VmProxy> vmProxies = sg.scatterSpawnVm(farmProxies, "groovy", vmsPerFarm, -1);
+        Set<VmProxy> vmProxies = ScatterGatherPattern.scatterSpawnVm(farmProxies, "groovy", vmsPerFarm, -1);
         System.out.println(vmProxies.size() + " virtual machines have been spawned...");
 
         //////////////// DISTRIBUTE PRIME FINDER FUNCTION DEFINITION
@@ -57,7 +48,7 @@ public class PrimeFinder {
         }
 
         System.out.println("Scattering find primes function definition jobs...");
-        vmJobMap = sg.scatterSubmitJob(vmJobMap, -1);
+        vmJobMap = ScatterGatherPattern.scatterSubmitJob(vmJobMap, -1);
 
 
         //////////////// DISTRIBUTE PRIME FINDER FUNCTION CALLS
@@ -74,13 +65,13 @@ public class PrimeFinder {
             currentStartInteger = currentEndInteger + 1;
         }
         System.out.println("Scattering find primes function call jobs...");
-        vmJobMap = sg.scatterSubmitJob(vmJobMap, -1);
+        vmJobMap = ScatterGatherPattern.scatterSubmitJob(vmJobMap, -1);
 
 
         //////////////// TERMINATE ALL SPAWNED VIRTUAL MACHINES
 
         System.out.println("Terminating virtual machines...");
-        sg.scatterTerminateVm(vmJobMap.keySet());
+        ScatterGatherPattern.scatterTerminateVm(vmJobMap.keySet());
 
         //////////////// SORT AND DISPLAY JOB RESULT PRIME VALUES
 

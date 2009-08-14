@@ -14,7 +14,7 @@ public class ScatterGatherPattern {
 
     private static final Logger LOGGER = LinkedProcess.getLogger(SynchronousPattern.class);
 
-    private void monitorSleep(final Object monitor, final long timeout) {
+    private static void monitorSleep(final Object monitor, final long timeout) {
         try {
             synchronized (monitor) {
                 if (timeout > 0)
@@ -27,7 +27,15 @@ public class ScatterGatherPattern {
         }
     }
 
-    public Set<VmProxy> scatterSpawnVm(final Collection<FarmProxy> farmProxies, final String vmSpecies, final int vmsPerFarm, final long timeout) throws TimeoutException {
+    private static boolean areComplete(Collection<JobStruct> jobStructs) {
+        for (JobStruct jobStruct : jobStructs) {
+            if (!jobStruct.isComplete())
+                return false;
+        }
+        return true;
+    }
+
+    public static Set<VmProxy> scatterSpawnVm(final Collection<FarmProxy> farmProxies, final String vmSpecies, final int vmsPerFarm, final long timeout) throws TimeoutException {
         final Set<VmProxy> vmProxies = new HashSet<VmProxy>();
         final List<Object> counter = new ArrayList<Object>();
         final Object monitor = new Object();
@@ -60,20 +68,20 @@ public class ScatterGatherPattern {
             }
         }
 
-        this.monitorSleep(monitor, timeout);
+        ScatterGatherPattern.monitorSleep(monitor, timeout);
         if (counter.size() != (farmProxies.size() * vmsPerFarm))
             throw new TimeoutException("scatter spawn_vm timedout after " + timeout + "ms.");
 
         return vmProxies;
     }
 
-    public void scatterTerminateVm(Collection<VmProxy> vmProxies) {
+    public static void scatterTerminateVm(Collection<VmProxy> vmProxies) {
         for (VmProxy vmProxy : vmProxies) {
             vmProxy.terminateVm(null, null);
         }
     }
 
-    public Map<VmProxy, JobStruct> scatterSubmitJob(final Map<VmProxy, JobStruct> vmJobMap, long timeout) throws TimeoutException {
+    public static Map<VmProxy, JobStruct> scatterSubmitJob(final Map<VmProxy, JobStruct> vmJobMap, long timeout) throws TimeoutException {
         final Object monitor = new Object();
 
         for (final VmProxy vmProxy : vmJobMap.keySet()) {
@@ -90,14 +98,14 @@ public class ScatterGatherPattern {
             vmProxy.submitJob(vmJobMap.get(vmProxy), submitJobHandler, submitJobHandler);
         }
 
-        this.monitorSleep(monitor, timeout);
+        ScatterGatherPattern.monitorSleep(monitor, timeout);
         if (!ScatterGatherPattern.areComplete(vmJobMap.values()))
             throw new TimeoutException("scatter submit_job timedout after " + timeout + "ms.");
 
         return vmJobMap;
     }
 
-    public void scatterSubmitJob(final Map<VmProxy, JobStruct> vmJobMap, final Handler<Map<VmProxy, JobStruct>> resultHandler) {
+    public static void scatterSubmitJob(final Map<VmProxy, JobStruct> vmJobMap, final Handler<Map<VmProxy, JobStruct>> resultHandler) {
         for (final VmProxy vmProxy : vmJobMap.keySet()) {
             Handler<JobStruct> submitJobHandler = new Handler<JobStruct>() {
                 public void handle(JobStruct jobStruct) {
@@ -109,14 +117,6 @@ public class ScatterGatherPattern {
             };
             vmProxy.submitJob(vmJobMap.get(vmProxy), submitJobHandler, submitJobHandler);
         }
-    }
-
-    private static boolean areComplete(Collection<JobStruct> jobStructs) {
-        for (JobStruct jobStruct : jobStructs) {
-            if (!jobStruct.isComplete())
-                return false;
-        }
-        return true;
     }
 }
 

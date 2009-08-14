@@ -15,7 +15,7 @@ public class CommandException extends Exception {
         this.lopError = lopError;
     }
 
-    public XMPPError getXMPPError() {
+    public LopError getLopError() {
         return this.lopError;
     }
 }

@@ -10,5 +10,5 @@ import org.linkedprocess.os.TypedValue;
  */
 public interface BindingsChecker {
 
-    public boolean areEquivalentBindings(VMBindings checkBindings, VMBindings desiredBindings);
+    public boolean areEquivalent(VMBindings actualBindings, VMBindings desiredBindings);
 }

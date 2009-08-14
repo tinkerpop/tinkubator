@@ -23,13 +23,7 @@ import java.util.ArrayList;
 public class SynchronousPattern {
     private static final Logger LOGGER = LinkedProcess.getLogger(SynchronousPattern.class);
 
-    private void checkTimeout(long startTime, long timeout) throws TimeoutException {
-        if ((System.currentTimeMillis() - startTime) > timeout) {
-            throw new TimeoutException("timeout occured after " + (System.currentTimeMillis() - startTime) + "ms.");
-        }
-    }
-
-    private void monitorSleep(final Object monitor, final long timeout) {
+    private static void monitorSleep(final Object monitor, final long timeout) {
         try {
             synchronized (monitor) {
                 if (timeout > 0)
@@ -42,7 +36,7 @@ public class SynchronousPattern {
         }
     }
 
-    public VmProxy spawnVm(final FarmProxy farmProxy, final String vmSpecies, final long timeout) throws TimeoutException, CommandException {
+    public static VmProxy spawnVm(final FarmProxy farmProxy, final String vmSpecies, final long timeout) throws TimeoutException, CommandException {
         final Object monitor = new Object();
         final Holder<VmProxy> vmProxyHolder = new Holder<VmProxy>();
         final Holder<LopError> lopErrorHolder = new Holder<LopError>();
@@ -66,7 +60,7 @@ public class SynchronousPattern {
         };
 
         farmProxy.spawnVm(vmSpecies, resultHandler, errorHandler);
-        this.monitorSleep(monitor, timeout);
+        SynchronousPattern.monitorSleep(monitor, timeout);
         if (vmProxyHolder.isEmpty() && lopErrorHolder.isEmpty())
             throw new TimeoutException("spawn_vm timedout after " + timeout + "ms.");
 
@@ -76,7 +70,7 @@ public class SynchronousPattern {
         return vmProxyHolder.retrieve();
     }
 
-    public JobStruct submitJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws TimeoutException {
+    public static JobStruct submitJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws TimeoutException {
         final Object monitor = new Object();
         final Holder<JobStruct> jobStructHolder = new Holder<JobStruct>();
 
@@ -90,14 +84,14 @@ public class SynchronousPattern {
         };
 
         vmProxy.submitJob(jobStruct, submitJobHandler, submitJobHandler);
-        this.monitorSleep(monitor, timeout);
+        SynchronousPattern.monitorSleep(monitor, timeout);
         if (jobStructHolder.isEmpty())
             throw new TimeoutException("submit_job timedout after " + timeout + "ms.");
 
         return jobStructHolder.retrieve();
     }
 
-    public LinkedProcess.JobStatus pingJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws TimeoutException, CommandException {
+    public static LinkedProcess.JobStatus pingJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws TimeoutException, CommandException {
         final Object monitor = new Object();
         final Holder<LinkedProcess.JobStatus> jobStatusHolder = new Holder<LinkedProcess.JobStatus>();
         final Holder<LopError> lopErrorHolder = new Holder<LopError>();
@@ -120,7 +114,7 @@ public class SynchronousPattern {
         };
 
         vmProxy.pingJob(jobStruct, resultHandler, errorHandler);
-        this.monitorSleep(monitor, timeout);
+        SynchronousPattern.monitorSleep(monitor, timeout);
         if (jobStatusHolder.isEmpty() && lopErrorHolder.isEmpty())
             throw new TimeoutException("ping_job timedout after " + timeout + "ms.");
 
@@ -130,7 +124,7 @@ public class SynchronousPattern {
         return jobStatusHolder.retrieve();
     }
 
-    public JobStruct abortJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws TimeoutException, CommandException {
+    public static JobStruct abortJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws TimeoutException, CommandException {
         final Object monitor = new Object();
         final Holder<JobStruct> jobStructHolder = new Holder<JobStruct>();
         final Holder<LopError> lopErrorHolder = new Holder<LopError>();
@@ -154,7 +148,7 @@ public class SynchronousPattern {
 
         vmProxy.abortJob(jobStruct, resultHandler, errorHandler);
 
-        this.monitorSleep(monitor, timeout);
+        SynchronousPattern.monitorSleep(monitor, timeout);
         if (jobStructHolder.isEmpty() && lopErrorHolder.isEmpty())
             throw new TimeoutException("abort_job timedout after " + timeout + "ms.");
 
@@ -165,7 +159,7 @@ public class SynchronousPattern {
 
     }
 
-    public void setBindings(final VmProxy vmProxy, VMBindings vmBindings, final long timeout) throws TimeoutException, CommandException {
+    public static void setBindings(final VmProxy vmProxy, VMBindings vmBindings, final long timeout) throws TimeoutException, CommandException {
         final Object monitor = new Object();
         final Holder<VMBindings> vmBindingsHolder = new Holder<VMBindings>();
         final Holder<LopError> lopErrorHolder = new Holder<LopError>();
@@ -188,7 +182,7 @@ public class SynchronousPattern {
         };
         vmProxy.setBindings(vmBindings, resultHandler, errorHandler);
 
-        this.monitorSleep(monitor, timeout);
+        SynchronousPattern.monitorSleep(monitor, timeout);
         if (vmBindingsHolder.isEmpty() && lopErrorHolder.isEmpty())
             throw new TimeoutException("set manage_bindings timedout after " + timeout + "ms.");
 
@@ -197,7 +191,7 @@ public class SynchronousPattern {
 
     }
 
-    public VMBindings getBindings(final VmProxy vmProxy, Set<String> bindingNames, final long timeout) throws TimeoutException, CommandException {
+    public static VMBindings getBindings(final VmProxy vmProxy, Set<String> bindingNames, final long timeout) throws TimeoutException, CommandException {
         final Object monitor = new Object();
         final Holder<VMBindings> vmBindingsHolder = new Holder<VMBindings>();
         final Holder<LopError> lopErrorHolder = new Holder<LopError>();
@@ -220,7 +214,7 @@ public class SynchronousPattern {
         };
         vmProxy.getBindings(bindingNames, resultHandler, errorHandler);
 
-        this.monitorSleep(monitor, timeout);
+        SynchronousPattern.monitorSleep(monitor, timeout);
         if (vmBindingsHolder.isEmpty() && lopErrorHolder.isEmpty())
             throw new TimeoutException("get manage_bindings timedout after " + timeout + "ms.");
 
@@ -231,7 +225,7 @@ public class SynchronousPattern {
 
     }
 
-    public void terminateVm(final VmProxy vmProxy, final long timeout) throws TimeoutException, CommandException {
+    public static void terminateVm(final VmProxy vmProxy, final long timeout) throws TimeoutException, CommandException {
         final Object monitor = new Object();
         final Holder<Object> objectHolder = new Holder<Object>();
         final Holder<LopError> lopErrorHolder = new Holder<LopError>();
@@ -254,7 +248,7 @@ public class SynchronousPattern {
         };
         vmProxy.terminateVm(resultHandler, errorHandler);
 
-        this.monitorSleep(monitor, timeout);
+        SynchronousPattern.monitorSleep(monitor, timeout);
         if (objectHolder.isEmpty() && lopErrorHolder.isEmpty())
                 throw new TimeoutException("terminate_vm timedout after " + timeout + "ms.");
 
@@ -262,21 +256,7 @@ public class SynchronousPattern {
             throw new CommandException(lopErrorHolder.retrieve());
     }
 
-    public void waitForFarms(final LopCloud lopCloud, final int minimumFarms, final long timeout) throws TimeoutException {
-        long startTime = System.currentTimeMillis();
-        while (true) {
-            checkTimeout(startTime, timeout);
-            if (lopCloud.getFarmProxies().size() >= minimumFarms)
-                return;
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                LOGGER.warning(e.getMessage());
-            }
-        }
-    }
-
-    private class Holder<T> {
+    private static class Holder<T> {
         private T object = null;
 
         public void store(T t) {
