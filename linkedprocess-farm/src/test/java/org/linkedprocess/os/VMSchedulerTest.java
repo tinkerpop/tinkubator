@@ -29,8 +29,8 @@ public class VMSchedulerTest extends TestCase {
     public void setUp() {
         // Note: calling a LinkedProcess method simply ensures that its static initializer (part of whose job is
         //       to pre-load classes for scheduler threads) has already executed.
-
         LinkedProcess.getConfiguration();
+        
         resultsByID.clear();
         farmStatusEvents.clear();
         vmStatusEventTypes.clear();
@@ -94,7 +94,7 @@ public class VMSchedulerTest extends TestCase {
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         Job job = randomShortRunningJob(vm1);
-        scheduler.scheduleJob(vm1, job);
+        scheduler.submitJob(vm1, job);
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
         assertNormalResult(job);
@@ -106,7 +106,7 @@ public class VMSchedulerTest extends TestCase {
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         Job job = randomLongRunningJob(vm1);
-        scheduler.scheduleJob(vm1, job);
+        scheduler.submitJob(vm1, job);
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
         assertNormalResult(job);
@@ -119,8 +119,8 @@ public class VMSchedulerTest extends TestCase {
         scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         Job job1 = randomShortRunningJob(vm1);
         Job job2 = randomShortRunningJob(vm1);
-        scheduler.scheduleJob(vm1, job1);
-        scheduler.scheduleJob(vm1, job2);
+        scheduler.submitJob(vm1, job1);
+        scheduler.submitJob(vm1, job2);
         scheduler.waitUntilFinished();
         assertEquals(2, resultsByID.size());
         assertNormalResult(job1);
@@ -134,8 +134,8 @@ public class VMSchedulerTest extends TestCase {
         scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         Job job1 = randomLongRunningJob(vm1);
         Job job2 = randomLongRunningJob(vm1);
-        scheduler.scheduleJob(vm1, job1);
-        scheduler.scheduleJob(vm1, job2);
+        scheduler.submitJob(vm1, job1);
+        scheduler.submitJob(vm1, job2);
         scheduler.waitUntilFinished();
         assertEquals(2, resultsByID.size());
         assertNormalResult(job1);
@@ -148,7 +148,7 @@ public class VMSchedulerTest extends TestCase {
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         Job job = randomInvalidJob(vm1);
-        scheduler.scheduleJob(vm1, job);
+        scheduler.submitJob(vm1, job);
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
         assertErrorResult(job);
@@ -160,7 +160,7 @@ public class VMSchedulerTest extends TestCase {
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         Job job = randomValidButExceptionGeneratingJob(vm1);
-        scheduler.scheduleJob(vm1, job);
+        scheduler.submitJob(vm1, job);
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
         assertErrorResult(job);
@@ -175,7 +175,7 @@ public class VMSchedulerTest extends TestCase {
 
         // Add a job and immediately abort it
         job1 = randomInfiniteJob(vm1);
-        scheduler.scheduleJob(vm1, job1);
+        scheduler.submitJob(vm1, job1);
         scheduler.abortJob(vm1, job1.getJobId());
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
@@ -183,7 +183,7 @@ public class VMSchedulerTest extends TestCase {
 
         // Add a job and wait until it is in progress before aborting it.
         job1 = randomInfiniteJob(vm1);
-        scheduler.scheduleJob(vm1, job1);
+        scheduler.submitJob(vm1, job1);
         Object o = "";
         synchronized (o) {
             o.wait(100);
@@ -195,7 +195,7 @@ public class VMSchedulerTest extends TestCase {
 
         // Make sure other jobs can still complete normally.
         job2 = this.randomShortRunningJob(vm1);
-        scheduler.scheduleJob(vm1, job2);
+        scheduler.submitJob(vm1, job2);
         scheduler.waitUntilFinished();
         assertEquals(3, resultsByID.size());
         assertNormalResult(job2);
@@ -203,8 +203,8 @@ public class VMSchedulerTest extends TestCase {
         // Add two jobs, then abort them
         job1 = randomInfiniteJob(vm1);
         job2 = randomInfiniteJob(vm1);
-        scheduler.scheduleJob(vm1, job1);
-        scheduler.scheduleJob(vm1, job2);
+        scheduler.submitJob(vm1, job1);
+        scheduler.submitJob(vm1, job2);
         synchronized (o) {
             o.wait(100);
         }
@@ -227,15 +227,15 @@ public class VMSchedulerTest extends TestCase {
         String vm3 = randomJID();
         scheduler.spawnVirtualMachine(vm3, LinkedProcess.JAVASCRIPT);
         Job job1 = randomLongRunningJob(vm1);
-        scheduler.scheduleJob(vm1, job1);
+        scheduler.submitJob(vm1, job1);
         Job job2 = randomLongRunningJob(vm1);
-        scheduler.scheduleJob(vm1, job2);
+        scheduler.submitJob(vm1, job2);
         Job job3 = randomLongRunningJob(vm1);
-        scheduler.scheduleJob(vm2, job3);
+        scheduler.submitJob(vm2, job3);
         Job job4 = randomLongRunningJob(vm1);
-        scheduler.scheduleJob(vm2, job4);
+        scheduler.submitJob(vm2, job4);
         Job job5 = randomLongRunningJob(vm1);
-        scheduler.scheduleJob(vm2, job5);
+        scheduler.submitJob(vm2, job5);
         scheduler.waitUntilFinished();
         assertEquals(5, resultsByID.size());
         assertNormalResult(job1);
@@ -340,7 +340,7 @@ public class VMSchedulerTest extends TestCase {
         // Try to assign a job to a non-existent VM.
         Job job1 = randomInfiniteJob(vm1);
         try {
-            scheduler.scheduleJob(vm1, job1);
+            scheduler.submitJob(vm1, job1);
             assertTrue(false);
         } catch (VMWorkerNotFoundException e) {
         }
@@ -362,9 +362,9 @@ public class VMSchedulerTest extends TestCase {
         }
 
         // Try to schedule a job with a duplicate ID (before the original job has finished)
-        scheduler.scheduleJob(vm1, job1);
+        scheduler.submitJob(vm1, job1);
         try {
-            scheduler.scheduleJob(vm1, job1);
+            scheduler.submitJob(vm1, job1);
             assertTrue(false);
         } catch (JobAlreadyExistsException e) {
         }
@@ -388,7 +388,7 @@ public class VMSchedulerTest extends TestCase {
         //String expr = "f = new Packages.java.io.File(\"test.txt\");";
         String expr = "java.lang.System.exit(0);";
         Job job1 = randomJob(vm1, expr);
-        scheduler.scheduleJob(vm1, job1);
+        scheduler.submitJob(vm1, job1);
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
         assertPermissionDeniedResult(job1);

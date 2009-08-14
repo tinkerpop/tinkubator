@@ -95,8 +95,8 @@ public class VMScheduler {
      * @throws org.linkedprocess.os.errors.JobAlreadyExistsException
      *          if a job with the given ID already exists on the machine with the given ID
      */
-    public synchronized void scheduleJob(final String machineJID,
-                                         final Job job) throws VMWorkerIsFullException, VMWorkerNotFoundException, JobAlreadyExistsException {
+    public synchronized void submitJob(final String machineJID,
+                                       final Job job) throws VMWorkerIsFullException, VMWorkerNotFoundException, JobAlreadyExistsException {
         if (LinkedProcess.FarmStatus.INACTIVE == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
@@ -107,7 +107,7 @@ public class VMScheduler {
 
         // FIXME: this call may block for as long as one timeslice.
         //        This wait could probably be eliminated.
-        if (!w.addJob(job)) {
+        if (!w.submitJob(job)) {
             throw new VMWorkerIsFullException(machineJID);
         }
 
@@ -391,7 +391,7 @@ public class VMScheduler {
                     }
                 }
             }
-                            
+
             for (String jid : toShutDown) {
                 try {
                     terminateVirtualMachine(jid);
@@ -419,7 +419,10 @@ public class VMScheduler {
             public void putBackWorker(final VMWorker w,
                                       final boolean idle) {
                 // If the worker thread died unexpectedly, terminate the worker.
-                if (VMWorker.Status.TERMINATED == w.status) {
+                // Note: this should no longer happen, as workers attempt to recover from
+                // thread death (so this code may go away at some point).
+                /*
+                if (VMWorker.Status.ABNORMAL_ERROR == w.status) {
                     for (String jid : workersByJID.keySet()) {
                         // This is not efficient, but it shouldn't happen often.
                         if (workersByJID.get(jid) == w) {
@@ -432,7 +435,7 @@ public class VMScheduler {
                             }
                         }
                     }
-                }
+                }*/
 
                 if (!idle) {
                     enqueueWorker(w);

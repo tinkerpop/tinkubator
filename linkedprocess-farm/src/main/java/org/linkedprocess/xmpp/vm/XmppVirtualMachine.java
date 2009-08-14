@@ -110,7 +110,7 @@ public class XmppVirtualMachine extends XmppClient {
     }
 
     public void scheduleJob(Job job) throws VMWorkerNotFoundException, VMWorkerIsFullException, JobAlreadyExistsException {
-        this.farm.getVmScheduler().scheduleJob(this.getFullJid(), job);
+        this.farm.getVmScheduler().submitJob(this.getFullJid(), job);
     }
 
     public void setBindings(VMBindings bindings) throws VMWorkerNotFoundException {

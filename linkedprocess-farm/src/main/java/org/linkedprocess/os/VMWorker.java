@@ -10,6 +10,8 @@ import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.MissingResourceException;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
@@ -39,7 +41,8 @@ public class VMWorker {
         ACTIVE_SUSPENDED,
         IDLE_WAITING,
         IDLE_FINISHED,
-        TERMINATED
+        TERMINATED,
+        ABNORMAL_ERROR
     }
 
     private static final Logger LOGGER = LinkedProcess.getLogger(VMWorker.class);
@@ -174,8 +177,8 @@ public class VMWorker {
      * @throws org.linkedprocess.os.errors.JobAlreadyExistsException
      *          if a job with the given ID is already active or in the queue
      */
-    public synchronized boolean addJob(final Job job) throws JobAlreadyExistsException {
-        LOGGER.info("adding job: " + job);
+    public synchronized boolean submitJob(final Job job) throws JobAlreadyExistsException {
+        LOGGER.info("submitting job: " + job);
 
         switch (status) {
             case ACTIVE_SUSPENDED:
@@ -384,8 +387,18 @@ public class VMWorker {
                 resumeWorkerThread();
                 // The worker isn't really "idle" if there are jobs in its queue.
                 return 0 == jobQueue.size();
-            case TERMINATED:
-                // This only occurs if the worker thread dies unexpectedly.
+            case ABNORMAL_ERROR:
+                // Attempt to recover in the event that the worker thread has terminated
+                // (i.e. through a call to System.exit within the script engine code.
+                workerThread = createWorkerThread();
+                status = Status.IDLE_WAITING;
+                Exception e = new IllegalStateException("Your VM's worker thread has encountered an abnormal error. " +
+                        "For example, the current Groovy engine throws a GroovyBugError whenever it encounters a security exception. " +
+                        "If you are using Groovy, please make sure that your code is not violating the permissions granted " +
+                        "by this farm.");
+                JobResult result = new JobResult(latestJob, e);
+                resultHandler.handleResult(result);
+                return 0 == jobQueue.size();
             default:
                 throw new IllegalStateException("status should not occur at the end of a work window: " + status);
         }
@@ -545,16 +558,24 @@ public class VMWorker {
                     // This should only happen when the worker thread is explicitly stopped.  Die peacefully.
                     LOGGER.info("worker runnable has been stopped");
                     return;
-                } catch (Exception e) {
-                    // TODO: stack trace
-                    LOGGER.severe("worker runnable died with error: " + e.toString());
-                    e.printStackTrace();
+                } catch (Throwable e) {
+                    LOGGER.severe("worker has encountered an abnormal error (" + e.getClass() + "):\n" + stackTraceToString(e));
+                    
+                    // Indicate that this worker should be reset.
+                    status = Status.ABNORMAL_ERROR;
 
-                    // Indicate to the scheduler that this worker has died.
-                    status = Status.TERMINATED;
+                    // Cause this thread to exit.
+                    break;
                 }
             }
         }
     }
 
+
+    private String stackTraceToString(final Throwable t) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(bos);
+        t.printStackTrace(ps);
+        return bos.toString();
+    }
 }

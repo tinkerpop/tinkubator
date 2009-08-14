@@ -136,11 +136,7 @@ public class LinkedProcess {
     }
 
     public enum LopErrorType {
-        WRONG_FARM_PASSWORD("wrong_farm_password"),
-        WRONG_VM_PASSWORD("wrong_vm_password"),
-        MALFORMED_PACKET("malformed_packet"), // when a received packet is not as expected
         EVALUATION_ERROR("evaluation_error"),
-        PERMISSION_DENIED("permission_denied"),
         FARM_IS_BUSY("farm_is_busy"), // VMSchedulerIsFullException
         INTERNAL_ERROR("internal_error"), // VMAlreadyExistsException, VMWorkerNotFoundException
         INVALID_VALUE("invalid_value"), // InvalidValueException
@@ -148,9 +144,13 @@ public class LinkedProcess {
         JOB_ALREADY_EXISTS("job_already_exists"),
         JOB_NOT_FOUND("job_not_found"), // JobNotFoundException
         JOB_TIMED_OUT("job_timed_out"),
+        MALFORMED_PACKET("malformed_packet"), // when a received packet is not as expected
+        PERMISSION_DENIED("permission_denied"),
         SPECIES_NOT_SUPPORTED("species_not_supported"), // UnsupportedScriptEngineException
         UNKNOWN_DATATYPE("unknown_datatype"),
-        VM_IS_BUSY("vm_is_busy"); // VMWorkerIsFullException
+        VM_IS_BUSY("vm_is_busy"), // VMWorkerIsFullException
+        WRONG_FARM_PASSWORD("wrong_farm_password"),
+        WRONG_VM_PASSWORD("wrong_vm_password");
 
         private final String name;
 

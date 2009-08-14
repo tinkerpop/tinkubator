@@ -52,7 +52,6 @@ public class VilleinGui extends JFrame {
         this.setResizable(true);
         this.pack();
         this.setVisible(true);
-
     }
 
     public void addVmFrame(VmProxy vmProxy) {

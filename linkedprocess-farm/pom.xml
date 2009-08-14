@@ -17,7 +17,7 @@
     <!--<properties>
         <powermock.version>1.2.5</powermock.version>
     </properties>-->
-                    
+
     <dependencies>
         <dependency>
             <groupId>org.linkedprocess</groupId>
@@ -191,7 +191,11 @@
             <artifactId>xslt-engine</artifactId>
             <version>xxx</version>
         </dependency> -->
-
+        <dependency>
+            <groupId>net.fortytwo</groupId>
+            <artifactId>linked-data-sail</artifactId>
+            <version>0.5</version>
+        </dependency>
     </dependencies>
 
     <repositories>
