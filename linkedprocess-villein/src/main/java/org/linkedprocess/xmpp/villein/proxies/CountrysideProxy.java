@@ -51,42 +51,4 @@ public class CountrysideProxy extends Proxy {
         this.farmProxies.remove(farmJid);
     }
 
-    public Collection<FarmProxy> filterFarmProxiesByVmSpeciesSupport(Collection<FarmProxy> farmProxies, String vmSpecies) {
-        Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
-        for (FarmProxy farmProxy : farmProxies) {
-            if (farmProxy.supportsSpecies(vmSpecies))
-                returnFarmProxies.add(farmProxy);
-        }
-        return returnFarmProxies;
-    }
-
-    public Collection<FarmProxy> filterFarmProxiesByVmTimeToLive(Collection<FarmProxy> farmProxies, long minimumVmTimeToLive) {
-        Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
-        for (FarmProxy farmProxy : farmProxies) {
-            if (farmProxy.getVmTimeToLive() >= minimumVmTimeToLive) {
-                returnFarmProxies.add(farmProxy);
-            }
-        }
-        return returnFarmProxies;
-    }
-
-    public Collection<FarmProxy> filterFarmProxiesByJobTimeout(Collection<FarmProxy> farmProxies, long minimumJobTimeout) {
-        Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
-        for (FarmProxy farmProxy : farmProxies) {
-            if (farmProxy.getJobTimeout() >= minimumJobTimeout) {
-                returnFarmProxies.add(farmProxy);
-            }
-        }
-        return returnFarmProxies;
-    }
-
-    public Collection<FarmProxy> filterFarmProxiesByPasswordRequired(Collection<FarmProxy> farmProxies, boolean wantPasswordRequired) {
-        Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
-        for (FarmProxy farmProxy : farmProxies) {
-            if (farmProxy.requiresPassword() == wantPasswordRequired)
-                farmProxies.add(farmProxy);           
-        }
-        return returnFarmProxies;
-    }
-
 }
