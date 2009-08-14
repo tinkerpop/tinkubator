@@ -43,11 +43,6 @@ class VMSequencer {
 
         // Must set status to ACTIVE before spawning the thread.
         status = Status.ACTIVE;
-
-        Thread sequencerThread = new Thread(new SequencerRunnable(), nextThreadName());
-        // Sequencer threads have less priority than the scheduler's thread.
-        sequencerThread.setPriority(Thread.currentThread().getPriority() - 1);
-        sequencerThread.start();
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -83,16 +78,16 @@ class VMSequencer {
 
         public void run() {
             //LOGGER.info("running SequencerRunnable");
-
-            try {
-                // Break out when the sequencer is terminated.
-                while (Status.ACTIVE == status) {
+            // Break out when the sequencer is terminated.
+            while (Status.ACTIVE == status) {
+                try {
                     executeForTimeSlice();
+                    //LOGGER.info("SequencerRunnable is terminating");
+                } catch (Throwable t) {
+                    // Log the error, but attempt to recover.
+                    LOGGER.severe("sequencer runnable died with error: " + t.toString());
+                    t.printStackTrace();
                 }
-                //LOGGER.info("SequencerRunnable is terminating");
-            } catch (Throwable t) {
-                LOGGER.severe("sequencer runnable died with error: " + t.toString());
-                t.printStackTrace();
             }
         }
     }
