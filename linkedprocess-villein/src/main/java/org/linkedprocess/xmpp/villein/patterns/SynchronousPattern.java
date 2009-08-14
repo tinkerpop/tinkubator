@@ -1,21 +1,31 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp.villein.patterns;
 
-import org.linkedprocess.xmpp.villein.proxies.JobStruct;
-import org.linkedprocess.xmpp.villein.proxies.VmProxy;
-import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
-import org.linkedprocess.xmpp.villein.proxies.LopCloud;
-import org.linkedprocess.xmpp.villein.Handler;
-import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.VMBindings;
-import org.jivesoftware.smack.packet.Packet;
+import org.linkedprocess.xmpp.LopError;
+import org.linkedprocess.xmpp.villein.Handler;
+import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
+import org.linkedprocess.xmpp.villein.proxies.JobStruct;
+import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 
-import java.util.logging.Logger;
 import java.util.Set;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
+ * SynchronousPattern provides methods that wait for commands to complete before continuing. 
+ * This pattern runs against the design philosophy of XMPP in which communication should be asynchronous.
+ * However, practically speaking, there are many situations where it is easier to wait for the command to complete then to deal with handlers.
+ * All of the methods provided by this pattern allow for a timeout value to be provided.
+ * If the command takes longer than this timeout value, then a TimeoutException is thrown.
+ *
+ *
  * User: marko
  * Date: Aug 4, 2009
  * Time: 1:56:00 PM

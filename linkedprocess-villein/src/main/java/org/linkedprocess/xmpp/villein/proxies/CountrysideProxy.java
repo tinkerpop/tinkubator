@@ -1,10 +1,22 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp.villein.proxies;
 
 import org.linkedprocess.xmpp.villein.Dispatcher;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
+ * A CountrysideProxy is a proxy to a countryside.
+ * A countryside can contain any number of farms and registries and is identified by a bare JID.
+ *
  * User: marko
  * Date: Jul 8, 2009
  * Time: 1:02:16 PM

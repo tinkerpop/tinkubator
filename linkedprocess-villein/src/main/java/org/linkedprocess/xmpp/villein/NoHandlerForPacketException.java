@@ -8,13 +8,12 @@
 package org.linkedprocess.xmpp.villein;
 
 /**
- * A general purpose handler. Used extensively by the proxies, commands, and patterns.
+ * If no handler was registered for a packet, then this exception is thrown.
+ * For many situations, a null handler is passed into a command and thus, this is a common exception.
  *
  * User: josh
  * Date: Aug 6, 2009
- * Time: 4:09:18 PM
+ * Time: 5:58:39 PM
  */
-public interface Handler<T> {
-    void handle(T t);
+public class NoHandlerForPacketException extends Exception {
 }
-

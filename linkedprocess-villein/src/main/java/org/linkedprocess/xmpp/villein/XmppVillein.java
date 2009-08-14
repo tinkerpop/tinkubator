@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp.villein;
 
 import org.jivesoftware.smack.Roster;
@@ -25,6 +32,11 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
+ * XmppVillein is the primary class used when creating an LoP villein. An LoP villein is an XMPP client that is identified by a fully-qualified JID.
+ * The bare JID of a villein is the villein's countryside. A villein is able to leverage the resources of an LoP cloud and thus,
+ * can utilize the resources on other countrysides. For anyone wishing to make use of the computing resource of an LoP cloud, a villein is the
+ * means by which this is done.
+ *
  * User: marko
  * Date: Jul 7, 2009
  * Time: 11:59:48 PM

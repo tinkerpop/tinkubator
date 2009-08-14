@@ -1,26 +1,27 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp.villein.proxies;
 
-import org.linkedprocess.xmpp.villein.proxies.Proxy;
-import org.linkedprocess.xmpp.villein.proxies.VmProxy;
-import org.linkedprocess.xmpp.villein.Handler;
-import org.linkedprocess.xmpp.villein.Dispatcher;
-import org.linkedprocess.xmpp.villein.XmppVillein;
-import org.linkedprocess.xmpp.LopError;
-import org.linkedprocess.LinkedProcess;
-import org.jivesoftware.smack.packet.XMPPError;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.packet.DiscoverInfo;
-import org.jivesoftware.smackx.packet.DataForm;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jdom.Document;
-import org.jdom.JDOMException;
-import org.jdom.Element;
-import org.jdom.Namespace;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.LopError;
+import org.linkedprocess.xmpp.villein.Dispatcher;
+import org.linkedprocess.xmpp.villein.Handler;
 
-import java.util.*;
-import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
+ * A FarmProxy is a proxy to a farm. A farm is an XMPP client as is identified by a fully-qualified JID.
+ * The bare JID component of the farm is the farm's countryside. A farm can contain any number of virtual machines.
+ *
  * User: marko
  * Date: Jul 8, 2009
  * Time: 9:53:17 AM

@@ -1,16 +1,26 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp.villein.patterns;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.xmpp.villein.proxies.LopCloud;
-import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
-import org.linkedprocess.xmpp.villein.proxies.FarmHolder;
 import org.linkedprocess.xmpp.villein.proxies.CountrysideProxy;
+import org.linkedprocess.xmpp.villein.proxies.FarmHolder;
+import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
+import org.linkedprocess.xmpp.villein.proxies.LopCloud;
 
-import java.util.logging.Logger;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Logger;
 
 /**
+ * The ResourceAllocationPattern is useful for allocating resources in an LoP cloud.
+ * This pattern simply wraps an LoP cloud with useful methods.
+ *
  * User: marko
  * Date: Aug 14, 2009
  * Time: 11:34:19 AM

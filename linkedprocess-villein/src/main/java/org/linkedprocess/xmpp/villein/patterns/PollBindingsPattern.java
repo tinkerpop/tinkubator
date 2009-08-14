@@ -1,17 +1,25 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp.villein.patterns;
 
-import org.linkedprocess.xmpp.villein.XmppVillein;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.proxies.VmProxy;
-import org.linkedprocess.xmpp.LopError;
-import org.linkedprocess.os.VMBindings;
-import org.linkedprocess.LinkedProcess;
 
-import java.util.Set;
-import java.util.HashSet;
 import java.util.logging.Logger;
 
 /**
+ * The PollBindingsPattern allows you to monitor the state of the bindings of a particular virtual machine.
+ * When the actual state of the virtul machine's bindings reach some desired bindings state (as defined by an equivalence relation),
+ * then a result handler is called. This is generally useful when a job is executing and the state of that job must be monitored.
+ *
  * User: marko
  * Date: Aug 5, 2009
  * Time: 12:49:24 AM

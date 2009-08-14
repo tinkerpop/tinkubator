@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp.villein;
 
 import org.jivesoftware.smack.packet.IQ;
@@ -8,11 +15,14 @@ import org.linkedprocess.xmpp.farm.SpawnVm;
 import org.linkedprocess.xmpp.vm.*;
 
 /**
+ * This class is repsonsible for dynamically adjusting the LoP cloud and all of its underlying resource proxies.
+ * As incomming packets are processed by the XMPP villein, respective proxy data structures are updated.
+ *
  * User: marko
  * Date: Jul 30, 2009
  * Time: 12:13:39 PM
  */
-public class LopVilleinListener extends LopListener {
+class LopVilleinListener extends LopListener {
 
     public static final LinkedProcess.ClientType LOP_CLIENT_TYPE = LinkedProcess.ClientType.VILLEIN;
 

@@ -1,12 +1,25 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp.villein.proxies;
 
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.villein.XmppVillein;
-import org.jivesoftware.smack.RosterEntry;
 
 import java.util.*;
 
 /**
+ * An LoP cloud is the primary interface to all LoP resources.
+ * All resources in an LoP cloud (e.g. countrysides, registries, farms, virtual machines, and jobs) are mediated through proxies.
+ * As a developer, you should primarily focus on the evolving data proxy data structure whereby, an LoP cloud contains
+ * contrysides, countrysides contain farms and registries, farms contains virtual machines, and virtual machines contain jobs. These
+ * proxies hide many of the low-level details of the LoP XMPP protocol specification. Moreover, higher-level interfaces
+ * to the underlying resources of an LoP cloud can be accessed through the various supported patterns.
+ *
  * User: marko
  * Date: Aug 12, 2009
  * Time: 2:15:04 PM

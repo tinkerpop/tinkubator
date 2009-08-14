@@ -1,19 +1,26 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp.villein.commands;
 
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.XmppVillein;
 
-import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Created by IntelliJ IDEA.
+ * A HandlerSet maintains a collection of HandlerRecords which each maintain a Handler for a command.
+ *
  * User: josh
  * Date: Aug 6, 2009
  * Time: 5:53:06 PM
- * To change this template use File | Settings | File Templates.
  */
 public class HandlerSet<T> {
     private final Map<String, HandlerRecord> handlerRecords;

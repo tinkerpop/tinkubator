@@ -1,15 +1,30 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp.villein.patterns;
 
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.LopError;
+import org.linkedprocess.xmpp.villein.Handler;
+import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
 import org.linkedprocess.xmpp.villein.proxies.JobStruct;
 import org.linkedprocess.xmpp.villein.proxies.VmProxy;
-import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
-import org.linkedprocess.xmpp.villein.Handler;
-import org.linkedprocess.xmpp.LopError;
-import org.linkedprocess.LinkedProcess;
 
 import java.util.*;
 import java.util.logging.Logger;
 
+/**
+ * The ScatterGatherPattern is useful for distributing commands across a collection of resources in an LoP cloud and handling their results when all commands are complete.
+ * ScatterGatherPattern has both synchronous and asynchronous versions of its methods.
+ *
+ * User: marko
+ * Date: Aug 4, 2009
+ * Time: 1:56:00 PM
+ */
 public class ScatterGatherPattern {
 
     private static final Logger LOGGER = LinkedProcess.getLogger(SynchronousPattern.class);

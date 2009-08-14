@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp.villein;
 
 import org.jdom.Document;
@@ -8,11 +15,14 @@ import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.villein.proxies.*;
 
 /**
+ * This class is repsonsible for managing all incoming presence packets and updating the proxies data structure appropriately.
+ * Moreover, presence handlers can be provided in order to allow other areas of your code base access to these presence packets.
+ *
  * User: marko
  * Date: Jul 8, 2009
  * Time: 11:57:44 AM
  */
-public class PresenceListener extends LopVilleinListener {
+class PresenceListener extends LopVilleinListener {
 
 
     public PresenceListener(XmppVillein xmppVillein) {

@@ -1,20 +1,32 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.demos.primes;
 
-import org.linkedprocess.xmpp.villein.XmppVillein;
-import org.linkedprocess.xmpp.villein.patterns.SynchronousPattern;
-import org.linkedprocess.xmpp.villein.patterns.ScatterGatherPattern;
-import org.linkedprocess.xmpp.villein.patterns.ResourceAllocationPattern;
-import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
-import org.linkedprocess.xmpp.villein.proxies.VmProxy;
-import org.linkedprocess.xmpp.villein.proxies.JobStruct;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.villein.XmppVillein;
+import org.linkedprocess.xmpp.villein.patterns.ResourceAllocationPattern;
+import org.linkedprocess.xmpp.villein.patterns.ScatterGatherPattern;
+import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
+import org.linkedprocess.xmpp.villein.proxies.JobStruct;
+import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptEngine;
 import java.util.*;
 
 /**
- * User: marko Date: Jul 28, 2009 Time: 11:35:49 AM
+ * PrimeFinder will find the set of all prime values between some start and end integer range.
+ * The integer range is segmented into intervals that are dependent upon how many virtual machines are spawned.
+ * The integer ranges are distributed to the spawned virtual machines for primality testing.
+ * The virtual machines execute Groovy code and create an array of all primes found in their interval range.
+ * The results are then returned to the PrimeFinder class and the results are sorted and displayed.
+ *
+ * User: marko
+ * Date: Jul 28, 2009
+ * Time: 11:35:49 AM
  */
 public class PrimeFinder {
 

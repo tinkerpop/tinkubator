@@ -1,15 +1,26 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp.villein.commands;
 
-import org.linkedprocess.xmpp.villein.proxies.VmProxy;
-import org.linkedprocess.xmpp.villein.proxies.JobStruct;
-import org.linkedprocess.xmpp.villein.XmppVillein;
-import org.linkedprocess.xmpp.villein.Handler;
-import org.linkedprocess.xmpp.vm.AbortJob;
-import org.linkedprocess.xmpp.LopError;
-import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Packet;
+import org.linkedprocess.xmpp.LopError;
+import org.linkedprocess.xmpp.villein.Handler;
+import org.linkedprocess.xmpp.villein.XmppVillein;
+import org.linkedprocess.xmpp.villein.proxies.JobStruct;
+import org.linkedprocess.xmpp.villein.proxies.VmProxy;
+import org.linkedprocess.xmpp.vm.AbortJob;
 
 /**
+ * The proxy by which an abort_job is sent to a virtual machine.
+ * Any result of the command is returned to the provided result handler.
+ * Any error of the command is returned to the provided error handler.
+ * 
  * User: marko
  * Date: Aug 7, 2009
  * Time: 4:45:56 PM

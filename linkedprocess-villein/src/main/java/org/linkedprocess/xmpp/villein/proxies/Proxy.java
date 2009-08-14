@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp.villein.proxies;
 
 import org.jdom.Document;
@@ -19,6 +26,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * A Proxy is the base class for all proxies. A proxy is identified by either a bare or fully-qualified JID.
+ * Information about a proxy can be accessed via disco#info and helpful interfaces to this document are provided by means
+ * of the field inner class.
+ *
  * User: marko
  * Date: Jul 8, 2009
  * Time: 10:55:56 PM

@@ -1,23 +1,47 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.demos.polling;
 
-import org.linkedprocess.xmpp.villein.XmppVillein;
-import org.linkedprocess.xmpp.villein.Handler;
-import org.linkedprocess.xmpp.villein.patterns.*;
-import org.linkedprocess.xmpp.villein.proxies.*;
-import org.linkedprocess.xmpp.LopError;
-import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.os.TypedValue;
+import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.xmpp.LopError;
+import org.linkedprocess.xmpp.villein.Handler;
+import org.linkedprocess.xmpp.villein.XmppVillein;
+import org.linkedprocess.xmpp.villein.patterns.BindingsChecker;
+import org.linkedprocess.xmpp.villein.patterns.PollBindingsPattern;
+import org.linkedprocess.xmpp.villein.patterns.ResourceAllocationPattern;
+import org.linkedprocess.xmpp.villein.patterns.SynchronousPattern;
+import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
+import org.linkedprocess.xmpp.villein.proxies.JobStruct;
+import org.linkedprocess.xmpp.villein.proxies.LopCloud;
+import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 
 import java.util.Set;
 
 /**
+ * This class demonstrates how to use the PollBindingPattern.
+ * The following JavaScript job is submitted to a spawned virtual machine:
+ *   var meter = 0.0;
+ *   while(true) {
+ *     meter = meter = 0.00000001;
+ *   }
+ * The meter binding is polled at an interval and checked against some desired binding.
+ * When the desired binding is reached, the VM terminates and the binding is printed.
+ * The purpose of the PollBindingsPattern is to allow you to monitor the states of variables
+ * in a virtual machine as code is executing.
+ * 
  * User: marko
  * Date: Aug 14, 2009
  * Time: 11:32:06 AM
  */
 public class ProgressPolling {
 
-    public static void findPrimesUsingLop(double meterMax, long pollingInterval, String username, String password, String server, int port) throws Exception {
+    public static void doProgressMeter(double meterMax, long pollingInterval, String username, String password, String server, int port) throws Exception {
 
         final Object monitor = new Object();
         XmppVillein villein = new XmppVillein(server, port, username, password);
@@ -103,7 +127,7 @@ public class ProgressPolling {
         String server = "lanl.linkedprocess.org";
 
         long startTime = System.currentTimeMillis();
-        ProgressPolling.findPrimesUsingLop(meterMax, pollingInterval, username, password, server, 5222);
+        ProgressPolling.doProgressMeter(meterMax, pollingInterval, username, password, server, 5222);
         System.out.println("Running time: " + (System.currentTimeMillis() - startTime) / 1000.0f + " seconds.");
     }
 }

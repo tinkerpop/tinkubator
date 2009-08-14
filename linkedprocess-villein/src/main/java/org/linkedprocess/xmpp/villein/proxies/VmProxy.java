@@ -1,17 +1,27 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp.villein.proxies;
 
-import org.jivesoftware.smack.packet.XMPPError;
+import org.jdom.Document;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.os.errors.InvalidValueException;
+import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.villein.Dispatcher;
 import org.linkedprocess.xmpp.villein.Handler;
-import org.linkedprocess.xmpp.LopError;
-import org.jdom.Document;
 
 import java.util.Set;
 
 /**
+ * A VmProxy is a proxy to a virtual machine. A virtual machine is an XMPP client that has a full-qualified JID.
+ * The bare JID component of the virtual machine is the virtual machine's countryside. A virtual machine is spawned from
+ * a farm. Nearly all the computation that happens in LoP is through virtual machines.
+ *
  * User: marko
  * Date: Jul 8, 2009
  * Time: 9:13:19 AM

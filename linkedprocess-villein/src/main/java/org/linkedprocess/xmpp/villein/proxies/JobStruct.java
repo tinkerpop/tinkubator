@@ -1,12 +1,21 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp.villein.proxies;
 
-import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.LopError;
 
-import java.util.Collection;
-
 /**
+ * A JobStruct is a data structure representing a job. A job is submitted to and returned by a virtual machine.
+ * A submitted job does not have a result or error. However, a submitted job should have an expression.
+ * The expression is a code fragement that is to be executed by the virtual machine and must be in the language of the virtual machine species.
+ * When a JobStruct is returned by a submit_job call, the result or error may be set along with the complete flag.
+ * 
  * User: marko
  * Date: Jul 28, 2009
  * Time: 12:59:40 PM

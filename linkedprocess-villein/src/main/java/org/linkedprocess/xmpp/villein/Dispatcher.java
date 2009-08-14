@@ -1,15 +1,21 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp.villein;
 
-import org.linkedprocess.xmpp.villein.commands.*;
-import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.linkedprocess.xmpp.villein.commands.*;
 
 /**
- * Created by IntelliJ IDEA.
+ *
+ *
  * User: josh
  * Date: Aug 6, 2009
  * Time: 5:37:56 PM
- * To change this template use File | Settings | File Templates.
  */
 public class Dispatcher {
     private final PingJobCommand pingJobCommand;
