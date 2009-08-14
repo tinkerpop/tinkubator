@@ -1,9 +1,12 @@
 package org.linkedprocess;
 
+import static org.junit.Assert.*;
+
 import com.sun.phobos.script.javascript.RhinoScriptEngine;
 import com.sun.script.jruby.JRubyScriptEngine;
 import com.sun.script.jython.JythonScriptEngine;
-import junit.framework.TestCase;
+
+import org.junit.Test;
 import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
 
 import javax.script.*;
@@ -14,8 +17,8 @@ import java.util.List;
  * Date: Jun 25, 2009
  * Time: 11:08:14 AM
  */
-public class ScriptEngineTest extends TestCase {
-
+public class ScriptEngineTest {
+	@Test
     public void testLanguageSupport() {
         ScriptEngineManager manager = LinkedProcessFarm.getScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName(LinkedProcess.JAVASCRIPT);
@@ -37,7 +40,7 @@ public class ScriptEngineTest extends TestCase {
             System.out.printf("\tLanguage: %s (%s)\n", langName, langVersion);
         }
     }
-
+	@Test
     public void testGetEngines() throws Exception {
         Class c = ScriptEngineFactory.class;
         for (Class c2 : c.getClasses()) {
@@ -66,7 +69,7 @@ public class ScriptEngineTest extends TestCase {
 
         engine.eval("print \"Hello, World!\"\n");
     }
-
+	@Test
     public void testJavaScript() throws Exception {
         // Note: we're using the "phobos" engine
         ScriptEngine engine = new RhinoScriptEngine();
@@ -76,10 +79,10 @@ public class ScriptEngineTest extends TestCase {
         engine = manager.getEngineByName(LinkedProcess.JAVASCRIPT);
         System.out.println("" + engine.getClass());
         assertNotNull(engine);
-        //TODO this breaks on OS X, returns null!
-        assertEquals("42.0", engine.eval("42").toString());
+        //on OS X, this returns 42, not 42.0
+        assertEquals("42", engine.eval("42").toString().substring(0,2));
     }
-
+	@Test
     public void testJython() throws Exception {
         /*
         ScriptEngineManager man = LinkedProcess.createScriptEngineManager();
@@ -96,7 +99,7 @@ public class ScriptEngineTest extends TestCase {
         Bindings b = ctx.getBindings(ScriptContext.ENGINE_SCOPE);
         System.out.println(b.get("foo"));
     }
-
+	@Test
     public void testJRuby() throws Exception {
         ScriptEngine engine = new JRubyScriptEngine();
         assertEquals("42", engine.eval("42").toString());
@@ -111,7 +114,7 @@ public class ScriptEngineTest extends TestCase {
         //JRubyScriptEngineFactory jf;
         //JRubyScriptEngine je = new JRubyScriptEngine();
     }
-
+	@Test
     public void testGroovy() throws Exception {
         ScriptEngineManager manager = LinkedProcessFarm.getScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName(LinkedProcess.GROOVY);

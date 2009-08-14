@@ -25,11 +25,17 @@
             <version>alpha1</version>
         </dependency>
         <dependency>
+            <groupId>org.linkedprocess</groupId>
+            <artifactId>linkedprocess-util</artifactId>
+            <version>alpha1</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.5</version>
             <!--<scope>test</scope>-->
         </dependency>
+        <!-- mocking deps -->
         <dependency>
             <groupId>org.powermock.modules</groupId>
             <artifactId>powermock-module-junit4
@@ -49,7 +55,7 @@
             <version>2.4</version>
             <scope>test</scope>
         </dependency>
-        <!---->
+
         <dependency>
             <groupId>jython</groupId>
             <artifactId>jython</artifactId>

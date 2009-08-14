@@ -1,4 +1,4 @@
-package org.linkedprocess;
+package org.linkedprocess.testing.offline;
 
 import static org.easymock.EasyMock.reportMatcher;
 import org.easymock.IArgumentMatcher;

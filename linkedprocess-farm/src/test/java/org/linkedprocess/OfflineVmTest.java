@@ -9,6 +9,7 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 
 import java.util.ArrayList;
 
+import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.IQ;
@@ -17,6 +18,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.junit.Before;
 import org.junit.Test;
 import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.testing.offline.OfflineTest;
 import org.linkedprocess.xmpp.farm.XmppFarm;
 import org.linkedprocess.xmpp.vm.ManageBindings;
 import org.linkedprocess.xmpp.vm.PingJob;
@@ -24,13 +26,12 @@ import org.linkedprocess.xmpp.vm.SubmitJob;
 import org.linkedprocess.xmpp.vm.TerminateVm;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
-public class OfflineVmTest extends XMPPSpecificationTest {
+public class OfflineVmTest extends OfflineTest {
 
 	private static final String PETER_HAR_SETT_MÅNGA_SNYGGA_FLICKOR = "Peter har sett många snygga flickor";
-	private static final String VM = "vm";
 	private static final String FIRST_NAME = "name";
 	private static final String FULL_NAME = "full_name";
-	private MockXMPPConnection connection;
+	private MockVmXmppConnection connection;
 	private ArrayList<Packet> sentPackets;
 	private XmppFarm farm;
 	private XmppVirtualMachine vm;
@@ -39,8 +40,12 @@ public class OfflineVmTest extends XMPPSpecificationTest {
 	public void startVM() throws Exception {
 		XMPPConnection farmConn = createMock(XMPPConnection.class);
 		XMPPConnection vmConn = createMock(XMPPConnection.class);
-		prepareMocksAndConnection("LoPFarm", farmConn);
-		connection = prepareMocksAndConnection(VM, vmConn);
+		connection = new MockVmXmppConnection(new ConnectionConfiguration(
+				server, port), "LoPVm", vmConn);
+		MockFarmXmppConnection farmConnection = new MockFarmXmppConnection(new ConnectionConfiguration(
+				server, port), "LoPFarm", farmConn);
+		OfflineTest.prepareMocksAndConnection(farmConn, farmConnection);
+		OfflineTest.prepareMocksAndConnection(vmConn, connection);
 		sentPackets = connection.sentPackets;
 		replayAll();
 		// start the farm

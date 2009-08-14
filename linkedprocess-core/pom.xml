@@ -44,6 +44,26 @@
             <version>4.5</version>
             <!--<scope>test</scope>-->
         </dependency>
+        <!-- mocking deps -->
+        <dependency>
+            <groupId>org.powermock.modules</groupId>
+            <artifactId>powermock-module-junit4
+            </artifactId>
+            <version>1.2.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock.api</groupId>
+            <artifactId>powermock-api-easymock</artifactId>
+            <version>1.2.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymockclassextension</artifactId>
+            <version>2.4</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <repositories>

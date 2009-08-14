@@ -21,28 +21,41 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DataForm;
 import org.junit.After;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.testing.offline.MockXMPPConnection;
+import org.linkedprocess.testing.offline.OfflineTest;
+import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.farm.SpawnVm;
 import org.linkedprocess.xmpp.farm.XmppFarm;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-public class OfflineFarmTest extends XMPPSpecificationTest {
+@RunWith(PowerMockRunner.class)
+@PrepareForTest( { XmppFarm.class, XmppClient.class,
+		ServiceDiscoveryManager.class })
+public class OfflineFarmTest extends OfflineTest {
 
 	private static final String FARM = "farm";
 	private XmppFarm farm;
-	private MockXMPPConnection connection;
+	private MockFarmXmppConnection connection;
 	private ArrayList<Packet> sentPackets;
 
+//	@Before
 	public void startFarm() throws Exception {
 
 		XMPPConnection farmConn = createMock(XMPPConnection.class);
-		connection = prepareMocksAndConnection(FARM, farmConn);
+		connection = new MockFarmXmppConnection(new ConnectionConfiguration(
+				server, port), "LoPFarm", farmConn);
+		OfflineTest.prepareMocksAndConnection(farmConn, connection);
 
 		sentPackets = connection.sentPackets;
-		//first VM
+		// first VM
 		expectNew(XmppVirtualMachine.class, isA(String.class),
 				isA(Integer.class), isA(String.class), isA(String.class),
 				isA(XmppFarm.class), isA(String.class), isA(String.class),
@@ -52,11 +65,11 @@ public class OfflineFarmTest extends XMPPSpecificationTest {
 				isA(Integer.class), isA(String.class), isA(String.class),
 				isA(XmppFarm.class), isA(String.class), isA(String.class),
 				isA(String.class))
-				.andReturn(createMockVM(username + "LoPVM/2")).times(0,1);
+				.andReturn(createMockVM(username + "LoPVM/2")).times(0, 1);
 		replayAll();
 		// start the farm
-		farm = new XmppFarm(server, port, username, password, null);
 		connection.clearPackets();
+		farm = new XmppFarm(server, port, username, password, null);
 	}
 
 	private XmppVirtualMachine createMockVM(String id) {
@@ -73,7 +86,7 @@ public class OfflineFarmTest extends XMPPSpecificationTest {
 		}
 		expectLastCall().anyTimes();
 		MockXMPPConnection vmConnection = new MockXMPPConnection(
-				new ConnectionConfiguration(server, port), "vm1");
+				new ConnectionConfiguration(server, port), "vm1", null);
 		expect(mockVM.getConnection()).andReturn(vmConnection).anyTimes();
 		expect(mockVM.getVmPassword()).andReturn(password).anyTimes();
 		return mockVM;
@@ -93,7 +106,7 @@ public class OfflineFarmTest extends XMPPSpecificationTest {
 	@Test
 	public void tryingToSpawnAVMFromFarmWithoutPWDShouldIgnoreFarmPwdTag()
 			throws Exception {
-		startFarm();
+		 startFarm();
 
 		// omitting the VM Password tag
 		SpawnVm spawn = new SpawnVm();
@@ -101,6 +114,7 @@ public class OfflineFarmTest extends XMPPSpecificationTest {
 		spawn.setPacketID(IQ_PACKET_ID);
 		spawn.setFrom(CLIENT_JID);
 		spawn.setType(IQ.Type.GET);
+		connection.clearPackets();
 		connection.receiveSpawn(spawn);
 		assertEquals(1, sentPackets.size());
 		SpawnVm result = (SpawnVm) sentPackets.get(0);
@@ -113,7 +127,7 @@ public class OfflineFarmTest extends XMPPSpecificationTest {
 	@Test
 	public void tryingToSpawnAVMFromFarmWithoutPWDShouldIgnoreFarmPwd()
 			throws Exception {
-		startFarm();
+		 startFarm();
 
 		// try to add a password
 		connection.clearPackets();
@@ -127,16 +141,15 @@ public class OfflineFarmTest extends XMPPSpecificationTest {
 		assertNotNull(result.getVmPassword());
 		assertNotNull(result.getVmJid());
 		assertEquals(1, farm.getVirtualMachines().size());
-		//try to shutdown the VM just created to make shure it exists
+		// try to shutdown the VM just created to make shure it exists
 		farm.terminateVirtualMachine(result.getVmJid());
 		assertEquals(0, farm.getVirtualMachines().size());
 
-
 	}
+
 	@Test
-	public void multipleSpawnsShouldStartSeparateVMs()
-			throws Exception {
-		startFarm();
+	public void multipleSpawnsShouldStartSeparateVMs() throws Exception {
+		 startFarm();
 
 		connection.clearPackets();
 		SpawnVm spawn = createSpawnPacket();
@@ -149,35 +162,37 @@ public class OfflineFarmTest extends XMPPSpecificationTest {
 		assertNotNull(result.getVmJid());
 		assertEquals(1, farm.getVirtualMachines().size());
 
-		//send one more
+		// send one more
 		connection.clearPackets();
 		connection.receiveSpawn(spawn);
 		assertEquals(2, farm.getVirtualMachines().size());
 		result = (SpawnVm) connection.getLastPacket();
 		assertEquals(IQ.Type.RESULT, result.getType());
 
-
 	}
 
 	@Test
 	public void startingFarmShouldPopulateMetaInfForDiscInfo() throws Exception {
-		startFarm();
+		 startFarm();
 
 		// check LoPFarm for registered features
-		assertTrue(connection.getDiscInfoFeatures().contains(LinkedProcess.DISCO_INFO_NAMESPACE));
+		assertTrue(connection.getDiscInfoFeatures().contains(
+				LinkedProcess.DISCO_INFO_NAMESPACE));
 		DataForm firstDataform = connection.dataformCapture.getValue();
 		Iterator<FormField> fields = firstDataform.getFields();
 		assertTrue(fields.hasNext());
-		assertEquals("supported virtual machine species", fields.next().getLabel());
-		
+		assertEquals("supported virtual machine species", fields.next()
+				.getLabel());
+
 	}
 
 	@Test
 	public void tryingToSpawnAVMFromFarmWithPWDShouldCheckPwd()
 			throws Exception {
-		LinkedProcess.getConfiguration().put(LinkedProcess.FARM_PASSWORD_PROPERTY,
-				password);
-		startFarm();
+		LinkedProcess.getConfiguration().put(
+				LinkedProcess.FARM_PASSWORD_PROPERTY, password);
+		 startFarm();
+		
 
 		// omitting the VM Password tag
 		SpawnVm spawn = new SpawnVm();
@@ -185,6 +200,7 @@ public class OfflineFarmTest extends XMPPSpecificationTest {
 		spawn.setPacketID(IQ_PACKET_ID);
 		spawn.setFrom(CLIENT_JID);
 		spawn.setType(IQ.Type.GET);
+		connection.clearPackets();
 		connection.receiveSpawn(spawn);
 
 		assertEquals(1, sentPackets.size());
@@ -216,7 +232,8 @@ public class OfflineFarmTest extends XMPPSpecificationTest {
 	public void sendingWrongSpawnRequestsShouldReturnErrorPackets()
 			throws Exception {
 		// make sure farm is not PWD protected
-		LinkedProcess.getConfiguration().remove(LinkedProcess.FARM_PASSWORD_PROPERTY);
+		LinkedProcess.getConfiguration().remove(
+				LinkedProcess.FARM_PASSWORD_PROPERTY);
 
 		startFarm();
 
@@ -254,18 +271,18 @@ public class OfflineFarmTest extends XMPPSpecificationTest {
 				LinkedProcess.LopErrorType.SPECIES_NOT_SUPPORTED.toString()));
 
 	}
-	
-	
+
 	@Test
 	public void subscribingToAFarmsRosterShouldResultInTOnePresencePacketsBack()
 			throws Exception {
-		startFarm();
-
+		 startFarm();
+	 
 		assertNotNull(connection.spawn);
 		assertNotNull(connection.subscribe);
 		Presence subscriptionPacket = new Presence(Presence.Type.subscribe);
 		subscriptionPacket.setTo(FARM);
 		subscriptionPacket.setFrom(CLIENT_JID);
+		connection.clearPackets();
 		connection.receiveSubscribe(subscriptionPacket);
 		assertEquals(1, sentPackets.size());
 		// subscription acc
@@ -277,15 +294,7 @@ public class OfflineFarmTest extends XMPPSpecificationTest {
 	@Test
 	public void checkCorrectStartupAndShutdownPacketsAndListeners()
 			throws Exception {
-		// mocking
-		XMPPConnection farmConn = createMock(XMPPConnection.class);
-		connection = prepareMocksAndConnection(FARM, farmConn);
-
-		sentPackets = connection.sentPackets;
-		replayAll();
-
-		// start the farm
-		farm = new XmppFarm(server, port, username, password, null);
+		startFarm();
 		assertEquals(1, sentPackets.size());
 		// Farm started
 		Presence presence = (Presence) connection.getLastPacket();
@@ -310,7 +319,6 @@ public class OfflineFarmTest extends XMPPSpecificationTest {
 
 	@After
 	public void shutdown() {
-		farm.shutDown();
 		verifyAll();
 	}
 
