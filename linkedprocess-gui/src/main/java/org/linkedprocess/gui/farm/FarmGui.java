@@ -17,9 +17,9 @@ import java.awt.event.ActionListener;
 public class FarmGui extends JFrame implements ActionListener {
 
     protected static final String FRAME_TITLE = "LoPSideD Farm";
-    protected static final String SHOW_MANAGER = "show manager";
-    protected static final String HIDE_MANAGER = "hide manager";
-    protected static final String QUIT_MANAGER = "quit manager";
+    protected static final String SHOW_FARM = "show farm";
+    protected static final String HIDE_FARM = "hide farm";
+    protected static final String QUIT_FARM = "quit farm";
     protected XmppFarm xmppFarm;
 
     protected SystemTray systemTray;
@@ -60,11 +60,11 @@ public class FarmGui extends JFrame implements ActionListener {
 
         try {
             PopupMenu popup = new PopupMenu();
-            MenuItem exit = new MenuItem(QUIT_MANAGER);
+            MenuItem exit = new MenuItem(QUIT_FARM);
             if (this.isVisible())
-                show = new MenuItem(FarmGui.SHOW_MANAGER);
+                show = new MenuItem(FarmGui.SHOW_FARM);
             else
-                show = new MenuItem(FarmGui.HIDE_MANAGER);
+                show = new MenuItem(FarmGui.HIDE_FARM);
             popup.add(show);
             popup.addSeparator();
             popup.add(exit);
@@ -94,13 +94,13 @@ public class FarmGui extends JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent event) {
 
-        if (event.getActionCommand().equals(FarmGui.SHOW_MANAGER)) {
-            show.setLabel(HIDE_MANAGER);
+        if (event.getActionCommand().equals(FarmGui.SHOW_FARM)) {
+            show.setLabel(HIDE_FARM);
             this.setVisible(true);
-        } else if (event.getActionCommand().equals(FarmGui.HIDE_MANAGER)) {
-            show.setLabel(SHOW_MANAGER);
+        } else if (event.getActionCommand().equals(FarmGui.HIDE_FARM)) {
+            show.setLabel(SHOW_FARM);
             this.setVisible(false);
-        } else if (event.getActionCommand().equals(FarmGui.QUIT_MANAGER)) {
+        } else if (event.getActionCommand().equals(FarmGui.QUIT_FARM)) {
             this.shutDown();
         }
     }
