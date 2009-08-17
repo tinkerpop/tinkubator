@@ -22,9 +22,8 @@ import java.util.Map;
  * A FarmProxy is a proxy to a farm. A farm is an XMPP client as is identified by a fully-qualified JID.
  * The bare JID component of the farm is the farm's countryside. A farm can contain any number of virtual machines.
  *
- * User: marko
- * Date: Jul 8, 2009
- * Time: 9:53:17 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class FarmProxy extends Proxy {
 

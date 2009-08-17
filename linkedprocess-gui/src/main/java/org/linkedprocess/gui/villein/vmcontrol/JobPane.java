@@ -141,9 +141,9 @@ public class JobPane extends JPanel implements ActionListener {
         } else if (event.getActionCommand().equals(CLEAR)) {
             this.expressionTextArea.setText("");
         } else if (event.getActionCommand().equals(ABORT_JOB)) {
-            Handler<JobStruct> resultHandler = new Handler<JobStruct>() {
-                public void handle(JobStruct jobStruct) {
-                    vmControlFrame.handleIncomingAbortJob(jobStruct);
+            Handler<String> resultHandler = new Handler<String>() {
+                public void handle(String jobId) {
+                    vmControlFrame.handleIncomingAbortJob(jobId);
                 }
             };
             this.vmControlFrame.getVmProxy().abortJob(this.createAbortJobStruct(), resultHandler, new GenericErrorHandler());

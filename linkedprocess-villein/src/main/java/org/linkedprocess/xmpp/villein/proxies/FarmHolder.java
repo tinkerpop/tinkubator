@@ -11,9 +11,8 @@ import java.util.Collection;
 
 /**
  *
- * User: marko
- * Date: Aug 14, 2009
- * Time: 12:37:36 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public interface FarmHolder {
 

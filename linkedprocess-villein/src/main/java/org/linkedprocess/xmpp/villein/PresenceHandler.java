@@ -11,9 +11,8 @@ import org.jivesoftware.smack.packet.Presence;
 import org.linkedprocess.xmpp.villein.proxies.Proxy;
 
 /**
- * User: marko
- * Date: Aug 4, 2009
- * Time: 11:02:03 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public interface PresenceHandler {
 

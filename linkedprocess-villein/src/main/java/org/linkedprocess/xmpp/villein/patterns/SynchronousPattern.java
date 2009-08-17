@@ -14,25 +14,30 @@ import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
 import org.linkedprocess.xmpp.villein.proxies.JobStruct;
 import org.linkedprocess.xmpp.villein.proxies.VmProxy;
+import org.linkedprocess.xmpp.villein.proxies.ResultHolder;
 
 import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * SynchronousPattern provides methods that wait for commands to complete before continuing. 
+ * SynchronousPattern provides methods that wait for commands to complete before continuing.
  * This pattern runs against the design philosophy of XMPP in which communication should be asynchronous.
  * However, practically speaking, there are many situations where it is easier to wait for the command to complete then to deal with handlers.
  * All of the methods provided by this pattern allow for a timeout value to be provided.
  * If the command takes longer than this timeout value, then a TimeoutException is thrown.
  *
- *
- * User: marko
- * Date: Aug 4, 2009
- * Time: 1:56:00 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class SynchronousPattern {
     private static final Logger LOGGER = LinkedProcess.getLogger(SynchronousPattern.class);
 
+    /**
+     * Puts a monitor on wait for a certain number of milliseconds.
+     *
+     * @param monitor the monitor object to wait
+     * @param timeout the number of milliseconds to wait (use -1 to wait indefinately)
+     */
     private static void monitorSleep(final Object monitor, final long timeout) {
         try {
             synchronized (monitor) {
@@ -46,14 +51,22 @@ public class SynchronousPattern {
         }
     }
 
-    public static VmProxy spawnVm(final FarmProxy farmProxy, final String vmSpecies, final long timeout) throws TimeoutException, CommandException {
+    /**
+     * Spawn a virtual machine and wait for the command to complete.
+     *
+     * @param farmProxy the farm on which to spawn the virtual machine
+     * @param vmSpecies the species of the virtual machine to spawn
+     * @param timeout   the number of milliseconds to spend on this command before a TimeoutException is thrown (use -1 to wait indefinately)
+     * @return the result of the command
+     * @throws TimeoutException is thrown when the command takes longer than the provided timeout in milliseconds
+     */
+    public static ResultHolder<VmProxy> spawnVm(final FarmProxy farmProxy, final String vmSpecies, final long timeout) throws TimeoutException {
         final Object monitor = new Object();
-        final Holder<VmProxy> vmProxyHolder = new Holder<VmProxy>();
-        final Holder<LopError> lopErrorHolder = new Holder<LopError>();
+        final ResultHolder<VmProxy> resultHolder = new ResultHolder<VmProxy>();
 
         Handler<VmProxy> resultHandler = new Handler<VmProxy>() {
             public void handle(VmProxy vmProxy) {
-                vmProxyHolder.store(vmProxy);
+                resultHolder.setResult(vmProxy);
                 farmProxy.addVmProxy(vmProxy);
                 synchronized (monitor) {
                     monitor.notify();
@@ -62,7 +75,7 @@ public class SynchronousPattern {
         };
         Handler<LopError> errorHandler = new Handler<LopError>() {
             public void handle(LopError lopError) {
-                lopErrorHolder.store(lopError);
+                resultHolder.setLopError(lopError);
                 synchronized (monitor) {
                     monitor.notify();
                 }
@@ -71,22 +84,28 @@ public class SynchronousPattern {
 
         farmProxy.spawnVm(vmSpecies, resultHandler, errorHandler);
         SynchronousPattern.monitorSleep(monitor, timeout);
-        if (vmProxyHolder.isEmpty() && lopErrorHolder.isEmpty())
+        if (resultHolder.isEmpty())
             throw new TimeoutException("spawn_vm timedout after " + timeout + "ms.");
 
-        if (!lopErrorHolder.isEmpty())
-            throw new CommandException(lopErrorHolder.retrieve());
-
-        return vmProxyHolder.retrieve();
+        return resultHolder;
     }
 
-    public static JobStruct submitJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws TimeoutException {
+    /**
+     * Submit a job to a virtual machine for evaluation/execution.
+     *
+     * @param vmProxy   the virtual machine on which to execute the command
+     * @param jobStruct the job to be excecuted
+     * @param timeout   the number of milliseconds to spend on this command before a TimeoutException is thrown (use -1 to wait indefinately)
+     * @return the result of the command
+     * @throws TimeoutException is thrown when the command takes longer than the provided timeout in milliseconds
+     */
+    public static ResultHolder<JobStruct> submitJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws TimeoutException {
         final Object monitor = new Object();
-        final Holder<JobStruct> jobStructHolder = new Holder<JobStruct>();
+        final ResultHolder<JobStruct> resultHolder = new ResultHolder<JobStruct>();
 
         Handler<JobStruct> submitJobHandler = new Handler<JobStruct>() {
             public void handle(JobStruct jobStruct) {
-                jobStructHolder.store(jobStruct);
+                resultHolder.setResult(jobStruct);
                 synchronized (monitor) {
                     monitor.notify();
                 }
@@ -95,20 +114,26 @@ public class SynchronousPattern {
 
         vmProxy.submitJob(jobStruct, submitJobHandler, submitJobHandler);
         SynchronousPattern.monitorSleep(monitor, timeout);
-        if (jobStructHolder.isEmpty())
+        if (resultHolder.isEmpty())
             throw new TimeoutException("submit_job timedout after " + timeout + "ms.");
 
-        return jobStructHolder.retrieve();
+        return resultHolder;
     }
 
-    public static LinkedProcess.JobStatus pingJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws TimeoutException, CommandException {
+    /**
+     * @param vmProxy   the virtual machine on which to execute the command
+     * @param jobStruct the job to ping on the virtual machine
+     * @param timeout   the number of milliseconds to spend on this command before a TimeoutException is thrown (use -1 to wait indefinately)
+     * @return the result of the command
+     * @throws TimeoutException is thrown when the command takes longer than the provided timeout in milliseconds
+     */
+    public static ResultHolder<LinkedProcess.JobStatus> pingJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws TimeoutException {
         final Object monitor = new Object();
-        final Holder<LinkedProcess.JobStatus> jobStatusHolder = new Holder<LinkedProcess.JobStatus>();
-        final Holder<LopError> lopErrorHolder = new Holder<LopError>();
+        final ResultHolder<LinkedProcess.JobStatus> resultHolder = new ResultHolder<LinkedProcess.JobStatus>();
 
         Handler<LinkedProcess.JobStatus> resultHandler = new Handler<LinkedProcess.JobStatus>() {
             public void handle(LinkedProcess.JobStatus jobStatus) {
-                jobStatusHolder.store(jobStatus);
+                resultHolder.setResult(jobStatus);
                 synchronized (monitor) {
                     monitor.notify();
                 }
@@ -116,7 +141,7 @@ public class SynchronousPattern {
         };
         Handler<LopError> errorHandler = new Handler<LopError>() {
             public void handle(LopError lopError) {
-                lopErrorHolder.store(lopError);
+                resultHolder.setLopError(lopError);
                 synchronized (monitor) {
                     monitor.notify();
                 }
@@ -125,23 +150,26 @@ public class SynchronousPattern {
 
         vmProxy.pingJob(jobStruct, resultHandler, errorHandler);
         SynchronousPattern.monitorSleep(monitor, timeout);
-        if (jobStatusHolder.isEmpty() && lopErrorHolder.isEmpty())
+        if (resultHolder.isEmpty())
             throw new TimeoutException("ping_job timedout after " + timeout + "ms.");
 
-        if (!lopErrorHolder.isEmpty())
-            throw new CommandException(lopErrorHolder.retrieve());
-
-        return jobStatusHolder.retrieve();
+        return resultHolder;
     }
 
-    public static JobStruct abortJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws TimeoutException, CommandException {
+    /**
+     * @param vmProxy   the virtual machine on which to execute the command
+     * @param jobStruct the job to abort on the virtual machine
+     * @param timeout   the number of milliseconds to spend on this command before a TimeoutException is thrown (use -1 to wait indefinately)
+     * @return the result of the command
+     * @throws TimeoutException is thrown when the command takes longer than the provided timeout in milliseconds
+     */
+    public static ResultHolder<String> abortJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws TimeoutException {
         final Object monitor = new Object();
-        final Holder<JobStruct> jobStructHolder = new Holder<JobStruct>();
-        final Holder<LopError> lopErrorHolder = new Holder<LopError>();
+        final ResultHolder<String> resultHolder = new ResultHolder<String>();
 
-        Handler<JobStruct> resultHandler = new Handler<JobStruct>() {
-            public void handle(JobStruct jobStruct) {
-                jobStructHolder.store(jobStruct);
+        Handler<String> resultHandler = new Handler<String>() {
+            public void handle(String jobId) {
+                resultHolder.setResult(jobId);
                 synchronized (monitor) {
                     monitor.notify();
                 }
@@ -149,7 +177,7 @@ public class SynchronousPattern {
         };
         Handler<LopError> errorHandler = new Handler<LopError>() {
             public void handle(LopError lopError) {
-                lopErrorHolder.store(lopError);
+                resultHolder.setLopError(lopError);
                 synchronized (monitor) {
                     monitor.notify();
                 }
@@ -159,24 +187,26 @@ public class SynchronousPattern {
         vmProxy.abortJob(jobStruct, resultHandler, errorHandler);
 
         SynchronousPattern.monitorSleep(monitor, timeout);
-        if (jobStructHolder.isEmpty() && lopErrorHolder.isEmpty())
+        if (resultHolder.isEmpty())
             throw new TimeoutException("abort_job timedout after " + timeout + "ms.");
 
-        if (!lopErrorHolder.isEmpty())
-            throw new CommandException(lopErrorHolder.retrieve());
-
-        return jobStructHolder.retrieve();
-
+        return resultHolder;
     }
 
-    public static void setBindings(final VmProxy vmProxy, VMBindings vmBindings, final long timeout) throws TimeoutException, CommandException {
+    /**
+     * @param vmProxy    the virtual machine on which to execute the command
+     * @param vmBindings the bindings to set on the virtual machine
+     * @param timeout    the number of milliseconds to spend on this command before a TimeoutException is thrown (use -1 to wait indefinately)
+     * @return the result of the command
+     * @throws TimeoutException is thrown when the command takes longer than the provided timeout in milliseconds
+     */
+    public static ResultHolder<VMBindings> setBindings(final VmProxy vmProxy, VMBindings vmBindings, final long timeout) throws TimeoutException {
         final Object monitor = new Object();
-        final Holder<VMBindings> vmBindingsHolder = new Holder<VMBindings>();
-        final Holder<LopError> lopErrorHolder = new Holder<LopError>();
+        final ResultHolder<VMBindings> resultHolder = new ResultHolder<VMBindings>();
 
         Handler<VMBindings> resultHandler = new Handler<VMBindings>() {
             public void handle(VMBindings vmBindings) {
-                vmBindingsHolder.store(vmBindings);
+                resultHolder.setResult(vmBindings);
                 synchronized (monitor) {
                     monitor.notify();
                 }
@@ -184,7 +214,7 @@ public class SynchronousPattern {
         };
         Handler<LopError> errorHandler = new Handler<LopError>() {
             public void handle(LopError lopError) {
-                lopErrorHolder.store(lopError);
+                resultHolder.setLopError(lopError);
                 synchronized (monitor) {
                     monitor.notify();
                 }
@@ -193,22 +223,27 @@ public class SynchronousPattern {
         vmProxy.setBindings(vmBindings, resultHandler, errorHandler);
 
         SynchronousPattern.monitorSleep(monitor, timeout);
-        if (vmBindingsHolder.isEmpty() && lopErrorHolder.isEmpty())
+        if (resultHolder.isEmpty())
             throw new TimeoutException("set manage_bindings timedout after " + timeout + "ms.");
 
-        if (!lopErrorHolder.isEmpty())
-            throw new CommandException(lopErrorHolder.retrieve());
+        return resultHolder;
 
     }
 
-    public static VMBindings getBindings(final VmProxy vmProxy, Set<String> bindingNames, final long timeout) throws TimeoutException, CommandException {
+    /**
+     * @param vmProxy      the virtual machine on which to execute the command
+     * @param bindingNames the name of the bindings to retrieve from the virtual machine
+     * @param timeout      the number of milliseconds to spend on this command before a TimeoutException is thrown (use -1 to wait indefinately)
+     * @return the result of the command
+     * @throws TimeoutException is thrown when the command takes longer than the provided timeout in milliseconds
+     */
+    public static ResultHolder<VMBindings> getBindings(final VmProxy vmProxy, Set<String> bindingNames, final long timeout) throws TimeoutException {
         final Object monitor = new Object();
-        final Holder<VMBindings> vmBindingsHolder = new Holder<VMBindings>();
-        final Holder<LopError> lopErrorHolder = new Holder<LopError>();
+        final ResultHolder<VMBindings> resultHolder = new ResultHolder<VMBindings>();
 
         Handler<VMBindings> resultHandler = new Handler<VMBindings>() {
             public void handle(VMBindings vmBindings) {
-                vmBindingsHolder.store(vmBindings);
+                resultHolder.setResult(vmBindings);
                 synchronized (monitor) {
                     monitor.notify();
                 }
@@ -216,7 +251,7 @@ public class SynchronousPattern {
         };
         Handler<LopError> errorHandler = new Handler<LopError>() {
             public void handle(LopError lopError) {
-                lopErrorHolder.store(lopError);
+                resultHolder.setLopError(lopError);
                 synchronized (monitor) {
                     monitor.notify();
                 }
@@ -225,24 +260,26 @@ public class SynchronousPattern {
         vmProxy.getBindings(bindingNames, resultHandler, errorHandler);
 
         SynchronousPattern.monitorSleep(monitor, timeout);
-        if (vmBindingsHolder.isEmpty() && lopErrorHolder.isEmpty())
+        if (resultHolder.isEmpty())
             throw new TimeoutException("get manage_bindings timedout after " + timeout + "ms.");
 
-        if (!lopErrorHolder.isEmpty())
-            throw new CommandException(lopErrorHolder.retrieve());
-
-        return vmBindingsHolder.retrieve();
+        return resultHolder;
 
     }
 
-    public static void terminateVm(final VmProxy vmProxy, final long timeout) throws TimeoutException, CommandException {
+    /**
+     * @param vmProxy the virtual machine on which to execute the command
+     * @param timeout the number of milliseconds to spend on this command before a TimeoutException is thrown (use -1 to wait indefinately)
+     * @return the result of the command
+     * @throws TimeoutException is thrown when the command takes longer than the provided timeout in milliseconds
+     */
+    public static ResultHolder<Object> terminateVm(final VmProxy vmProxy, final long timeout) throws TimeoutException {
         final Object monitor = new Object();
-        final Holder<Object> objectHolder = new Holder<Object>();
-        final Holder<LopError> lopErrorHolder = new Holder<LopError>();
+        final ResultHolder<Object> resultHolder = new ResultHolder<Object>();
 
         Handler<Object> resultHandler = new Handler<Object>() {
             public void handle(Object object) {
-                objectHolder.store(object);
+                resultHolder.setResult(object);
                 synchronized (monitor) {
                     monitor.notify();
                 }
@@ -250,7 +287,7 @@ public class SynchronousPattern {
         };
         Handler<LopError> errorHandler = new Handler<LopError>() {
             public void handle(LopError lopError) {
-                lopErrorHolder.store(lopError);
+                resultHolder.setLopError(lopError);
                 synchronized (monitor) {
                     monitor.notify();
                 }
@@ -259,27 +296,9 @@ public class SynchronousPattern {
         vmProxy.terminateVm(resultHandler, errorHandler);
 
         SynchronousPattern.monitorSleep(monitor, timeout);
-        if (objectHolder.isEmpty() && lopErrorHolder.isEmpty())
-                throw new TimeoutException("terminate_vm timedout after " + timeout + "ms.");
+        if (resultHolder.isEmpty())
+            throw new TimeoutException("terminate_vm timedout after " + timeout + "ms.");
 
-        if (!lopErrorHolder.isEmpty())
-            throw new CommandException(lopErrorHolder.retrieve());
+        return resultHolder;
     }
-
-    private static class Holder<T> {
-        private T object = null;
-
-        public void store(T t) {
-            this.object = t;
-        }
-
-        public T retrieve() {
-            return this.object;
-        }
-
-        public boolean isEmpty() {
-            return (this.object == null);
-        }
-    }
-
 }

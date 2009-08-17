@@ -39,7 +39,7 @@ public abstract class LopIq extends IQ {
                 clientType = LinkedProcess.ClientType.FARM;
             break;
         }
-        return new LopError(LopError.stringConditionMap.get(xmppError.getCondition()), lopErrorType, xmppError.getMessage(), clientType);
+        return new LopError(LopError.stringConditionMap.get(xmppError.getCondition()), lopErrorType, xmppError.getMessage(), clientType, this.getPacketID());
     }
 
 }

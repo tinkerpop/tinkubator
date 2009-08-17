@@ -18,9 +18,8 @@ import org.linkedprocess.xmpp.villein.proxies.*;
  * This class is repsonsible for managing all incoming presence packets and updating the proxies data structure appropriately.
  * Moreover, presence handlers can be provided in order to allow other areas of your code base access to these presence packets.
  *
- * User: marko
- * Date: Jul 8, 2009
- * Time: 11:57:44 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 class PresenceListener extends LopVilleinListener {
 

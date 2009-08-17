@@ -22,9 +22,8 @@ import org.linkedprocess.xmpp.vm.PingJob;
  * Any result of the command is returned to the provided result handler.
  * Any error of the command is returned to the provided error handler.
  *
- * User: josh
- * Date: Aug 6, 2009
- * Time: 5:50:56 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class PingJobCommand extends Command {
     private final HandlerSet<LinkedProcess.JobStatus> resultHandlers;

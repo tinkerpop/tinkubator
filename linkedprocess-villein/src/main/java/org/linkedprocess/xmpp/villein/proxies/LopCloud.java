@@ -20,9 +20,8 @@ import java.util.*;
  * proxies hide many of the low-level details of the LoP XMPP protocol specification. Moreover, higher-level interfaces
  * to the underlying resources of an LoP cloud can be accessed through the various supported patterns.
  *
- * User: marko
- * Date: Aug 12, 2009
- * Time: 2:15:04 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class LopCloud implements FarmHolder {
 

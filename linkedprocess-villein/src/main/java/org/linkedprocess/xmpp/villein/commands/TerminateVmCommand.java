@@ -20,9 +20,8 @@ import org.linkedprocess.xmpp.vm.TerminateVm;
  * Any result of the command is returned to the provided result handler.
  * Any error of the command is returned to the provided error handler.
  *
- * User: marko
- * Date: Aug 7, 2009
- * Time: 4:53:16 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class TerminateVmCommand extends Command {
 

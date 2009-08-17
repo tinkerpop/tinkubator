@@ -9,9 +9,8 @@ import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.farm.XmppFarm;
 
 /**
- * User: marko
- * Date: Jun 25, 2009
- * Time: 2:25:59 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version 0.1
  */
 public class TerminateVmListener extends LopVmListener {
 
@@ -44,10 +43,10 @@ public class TerminateVmListener extends LopVmListener {
 
         if (null == vmPassword) {
             returnTerminateVm.setType(IQ.Type.ERROR);
-            returnTerminateVm.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "terminate_vm XML packet is missing the vm_password attribute", LOP_CLIENT_TYPE));
+            returnTerminateVm.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "terminate_vm XML packet is missing the vm_password attribute", LOP_CLIENT_TYPE, terminateVm.getPacketID()));
         } else if (!((XmppVirtualMachine) this.xmppClient).checkVmPassword(vmPassword)) {
             returnTerminateVm.setType(IQ.Type.ERROR);
-            returnTerminateVm.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE));
+            returnTerminateVm.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, terminateVm.getPacketID()));
         } else {
             terminate = true;
             returnTerminateVm.setType(IQ.Type.RESULT);

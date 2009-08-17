@@ -14,6 +14,7 @@ import org.linkedprocess.xmpp.villein.patterns.ScatterGatherPattern;
 import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
 import org.linkedprocess.xmpp.villein.proxies.JobStruct;
 import org.linkedprocess.xmpp.villein.proxies.VmProxy;
+import org.linkedprocess.xmpp.villein.proxies.ResultHolder;
 
 import java.util.*;
 
@@ -24,9 +25,8 @@ import java.util.*;
  * The virtual machines execute Groovy code and create an array of all primes found in their interval range.
  * The results are then returned to the PrimeFinder class and the results are sorted and displayed.
  *
- * User: marko
- * Date: Jul 28, 2009
- * Time: 11:35:49 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class PrimeFinder {
 
@@ -47,16 +47,16 @@ public class PrimeFinder {
 
         //////////////// SPAWN VIRTUAL MACHINES ON ALLOCATED FARMS
 
-        Set<VmProxy> vmProxies = ScatterGatherPattern.scatterSpawnVm(farmProxies, "groovy", vmsPerFarm, -1);
+        Set<ResultHolder<VmProxy>> vmProxies = ScatterGatherPattern.scatterSpawnVm(farmProxies, "groovy", vmsPerFarm, -1);
         System.out.println(vmProxies.size() + " virtual machines have been spawned...");
 
         //////////////// DISTRIBUTE PRIME FINDER FUNCTION DEFINITION
 
         Map<VmProxy, JobStruct> vmJobMap = new HashMap<VmProxy, JobStruct>();
-        for(VmProxy vmProxy : vmProxies) {
+        for(ResultHolder<VmProxy> vmProxyResult : vmProxies) {
             JobStruct jobStruct = new JobStruct();
             jobStruct.setExpression(LinkedProcess.convertStreamToString(PrimeFinder.class.getResourceAsStream("findPrimes.groovy")));
-            vmJobMap.put(vmProxy, jobStruct);
+            vmJobMap.put(vmProxyResult.getResult(), jobStruct);
         }
 
         System.out.println("Scattering find primes function definition jobs...");

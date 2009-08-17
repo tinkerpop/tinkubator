@@ -8,11 +8,13 @@
 package org.linkedprocess.xmpp.villein.patterns;
 
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
 import org.linkedprocess.xmpp.villein.proxies.JobStruct;
 import org.linkedprocess.xmpp.villein.proxies.VmProxy;
+import org.linkedprocess.xmpp.villein.proxies.ResultHolder;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -21,14 +23,18 @@ import java.util.logging.Logger;
  * The ScatterGatherPattern is useful for distributing commands across a collection of resources in an LoP cloud and handling their results when all commands are complete.
  * ScatterGatherPattern has both synchronous and asynchronous versions of its methods.
  *
- * User: marko
- * Date: Aug 4, 2009
- * Time: 1:56:00 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class ScatterGatherPattern {
 
     private static final Logger LOGGER = LinkedProcess.getLogger(SynchronousPattern.class);
 
+    /**
+     * Puts a monitor on wait for a certain number of milliseconds.
+     * @param monitor the monitor object to wait
+     * @param timeout the number of milliseconds to wait (use -1 to wait indefinately)
+     */
     private static void monitorSleep(final Object monitor, final long timeout) {
         try {
             synchronized (monitor) {
@@ -42,6 +48,12 @@ public class ScatterGatherPattern {
         }
     }
 
+    /**
+     * Determines if all the JobStructs in the Collection are complete.
+     *
+     * @param jobStructs the JobStructs to check
+     * @return false if at least one of the JobStructs is not complete
+     */
     private static boolean areComplete(Collection<JobStruct> jobStructs) {
         for (JobStruct jobStruct : jobStructs) {
             if (!jobStruct.isComplete())
@@ -50,18 +62,26 @@ public class ScatterGatherPattern {
         return true;
     }
 
-    public static Set<VmProxy> scatterSpawnVm(final Collection<FarmProxy> farmProxies, final String vmSpecies, final int vmsPerFarm, final long timeout) throws TimeoutException {
-        final Set<VmProxy> vmProxies = new HashSet<VmProxy>();
-        final List<Object> counter = new ArrayList<Object>();
+    /**
+     * Scatters spawn_vm commands to a Collection of FarmProxies and waits for all commands to complete.
+     *
+     * @param farmProxies the proxies to the farms where a virtual machine spawn is desired
+     * @param vmSpecies   the species of the virtual machine to spawn
+     * @param vmsPerFarm  the number of virtual machines to spawn on each farm
+     * @param timeout     the number of milliseconds to spend on this scatter before a TimeoutException is thrown (use -1 to wait indefinately)
+     * @return a set of virtual machine proxies that were spawned from this scatter
+     * @throws TimeoutException is thrown when the scatter takes longer than the provided timeout in milliseconds
+     */
+    public static Set<ResultHolder<VmProxy>> scatterSpawnVm(final Collection<FarmProxy> farmProxies, final String vmSpecies, final int vmsPerFarm, final long timeout) throws TimeoutException {
+        final Set<ResultHolder<VmProxy>> resultHolders = new HashSet<ResultHolder<VmProxy>>();
         final Object monitor = new Object();
 
-        for (FarmProxy farmProxy : farmProxies) {
+        for (final FarmProxy farmProxy : farmProxies) {
             for (int i = 0; i < vmsPerFarm; i++) {
                 Handler<VmProxy> resultHandler = new Handler<VmProxy>() {
                     public void handle(VmProxy vmProxy) {
-                        vmProxies.add(vmProxy);
-                        counter.add(new Object());
-                        if (counter.size() == (farmProxies.size() * vmsPerFarm)) {
+                        resultHolders.add(new ResultHolder<VmProxy>(vmProxy));
+                        if (resultHolders.size() == (farmProxies.size() * vmsPerFarm)) {
                             synchronized (monitor) {
                                 monitor.notify();
                             }
@@ -71,8 +91,8 @@ public class ScatterGatherPattern {
 
                 Handler<LopError> errorHandler = new Handler<LopError>() {
                     public void handle(LopError lopError) {
-                        counter.add(new Object());
-                        if (counter.size() == (farmProxies.size() * vmsPerFarm)) {
+                        resultHolders.add(new ResultHolder<VmProxy>(lopError));
+                        if (resultHolders.size() == (farmProxies.size() * vmsPerFarm)) {
                             synchronized (monitor) {
                                 monitor.notify();
                             }
@@ -84,18 +104,64 @@ public class ScatterGatherPattern {
         }
 
         ScatterGatherPattern.monitorSleep(monitor, timeout);
-        if (counter.size() != (farmProxies.size() * vmsPerFarm))
+        if (resultHolders.size() != (farmProxies.size() * vmsPerFarm))
             throw new TimeoutException("scatter spawn_vm timedout after " + timeout + "ms.");
 
-        return vmProxies;
+        return resultHolders;
     }
 
+    /**
+     * Scatters spawn_vm commands to a Collection of FarmProxies and makes use of a result handler when the commands are complete.
+     *
+     * @param farmProxies   the proxies of the farms to spawn virtual machines on
+     * @param vmSpecies     vmSpecies the species of the virtual machine to spawn
+     * @param vmsPerFarm    the number of virtual machines to spawn on each farm
+     * @param resultHandler the handler of the results (can be null)
+     */
+    public void scatterSpawnVm(final Collection<FarmProxy> farmProxies, final String vmSpecies, final int vmsPerFarm, final Handler<Set<ResultHolder<VmProxy>>> resultHandler) {
+        final Set<ResultHolder<VmProxy>> resultHolders = new HashSet<ResultHolder<VmProxy>>();
+        for (final FarmProxy farmProxy : farmProxies) {
+            for (int i = 0; i < vmsPerFarm; i++) {
+                Handler<VmProxy> spawnResultHandler = new Handler<VmProxy>() {
+                    public void handle(VmProxy vmProxy) {
+                        resultHolders.add(new ResultHolder<VmProxy>(vmProxy));
+                        if (resultHolders.size() == vmsPerFarm * farmProxies.size()) {
+                            resultHandler.handle(resultHolders);
+                        }
+                    }
+                };
+                Handler<LopError> spawnErrorHandler = new Handler<LopError>() {
+                    public void handle(LopError lopError) {
+                        resultHolders.add(new ResultHolder<VmProxy>(lopError));
+                        if (resultHolders.size() == vmsPerFarm * farmProxies.size()) {
+                            resultHandler.handle(resultHolders);
+                        }
+                    }
+                };
+                farmProxy.spawnVm(vmSpecies, spawnResultHandler, spawnErrorHandler);
+            }
+        }
+    }
+
+    /**
+     * Scatters terminate_vm commands to a Collection of VmProxies and makes not use of handlers or waiting.
+     *
+     * @param vmProxies the proxies of the virtual machines to terminate
+     */
     public static void scatterTerminateVm(Collection<VmProxy> vmProxies) {
         for (VmProxy vmProxy : vmProxies) {
             vmProxy.terminateVm(null, null);
         }
     }
 
+    /**
+     * Scatters submit_job commands to a set of VmProxies and waits for all commands to complete.
+     *
+     * @param vmJobMap a mapping from a VmProxy to the JobStruct that it should evaluate
+     * @param timeout  the number of milliseconds to spend on this scatter before a TimeoutException is thrown (use -1 to wait indefinately)
+     * @return a mapping from a VmProxy to the JobStruct that it evaluated with its result or error
+     * @throws TimeoutException is thrown when the scatter takes longer than the provided timeout in milliseconds
+     */
     public static Map<VmProxy, JobStruct> scatterSubmitJob(final Map<VmProxy, JobStruct> vmJobMap, long timeout) throws TimeoutException {
         final Object monitor = new Object();
 
@@ -120,6 +186,12 @@ public class ScatterGatherPattern {
         return vmJobMap;
     }
 
+    /**
+     * Scatters submit_vm commands to a set of VmProxies and makes use of a result handler when the commands are complete.
+     *
+     * @param vmJobMap      a mapping from a VmProxy to the JobStruct that it should evaluate
+     * @param resultHandler the handler of the results (can be null)
+     */
     public static void scatterSubmitJob(final Map<VmProxy, JobStruct> vmJobMap, final Handler<Map<VmProxy, JobStruct>> resultHandler) {
         for (final VmProxy vmProxy : vmJobMap.keySet()) {
             Handler<JobStruct> submitJobHandler = new Handler<JobStruct>() {
@@ -133,5 +205,306 @@ public class ScatterGatherPattern {
             vmProxy.submitJob(vmJobMap.get(vmProxy), submitJobHandler, submitJobHandler);
         }
     }
+
+    /**
+     * Scatters abort_job commands to a set of VmProxies and waits for all commands to complete.
+     *
+     * @param vmJobMap a mapping from a VmProxy to the JobStruct that should be aborted (requires jobId be set)
+     * @param timeout  the number of milliseconds to spend on this scatter before a TimeoutException is thrown (use -1 to wait indefinately)
+     * @return a set of job id results
+     * @throws TimeoutException is thrown when the scatter takes longer than the provided timeout in milliseconds
+     */
+    public static Set<ResultHolder<String>> scatterAbortJob(final Map<VmProxy, JobStruct> vmJobMap, long timeout) throws TimeoutException {
+        final Object monitor = new Object();
+
+        final Set<ResultHolder<String>> resultHolders = new HashSet<ResultHolder<String>>();
+
+        for (final VmProxy vmProxy : vmJobMap.keySet()) {
+            Handler<String> abortResultHandler = new Handler<String>() {
+                public void handle(String jobId) {
+                    resultHolders.add(new ResultHolder<String>(jobId));
+                    if (resultHolders.size() == vmJobMap.size()) {
+                        synchronized (monitor) {
+                            monitor.notify();
+                        }
+                    }
+                }
+            };
+
+            Handler<LopError> abortErrorHandler = new Handler<LopError>() {
+                public void handle(LopError lopError) {
+                    resultHolders.add(new ResultHolder<String>(lopError));
+                    if (resultHolders.size() == vmJobMap.size()) {
+                        synchronized (monitor) {
+                            monitor.notify();
+                        }
+                    }
+                }
+            };
+            vmProxy.abortJob(vmJobMap.get(vmProxy), abortResultHandler, abortErrorHandler);
+        }
+
+        ScatterGatherPattern.monitorSleep(monitor, timeout);
+        if (resultHolders.size() != vmJobMap.size())
+            throw new TimeoutException("scatter abort_job timedout after " + timeout + "ms.");
+        return resultHolders;
+
+    }
+
+    /**
+     * Scatters abort_job commands to a set of VmProxies and makes use of a result handler when the commands are complete.
+     *
+     * @param vmJobMap      a mapping from a VmProxy to the JobStruct that should be aborted (requires jobId be set)
+     * @param resultHandler the handler of the job id results (can be null)
+     */
+    public static void scatterAbortJob(final Map<VmProxy, JobStruct> vmJobMap, final Handler<Set<ResultHolder<String>>> resultHandler) {
+        final Set<ResultHolder<String>> resultHolders = new HashSet<ResultHolder<String>>();
+
+        for (final VmProxy vmProxy : vmJobMap.keySet()) {
+            Handler<String> abortResultHandler = new Handler<String>() {
+                public void handle(String jobId) {
+                    resultHolders.add(new ResultHolder<String>(jobId));
+                    if (resultHolders.size() == vmJobMap.size()) {
+                        resultHandler.handle(resultHolders);
+                    }
+                }
+            };
+
+            Handler<LopError> abortErrorHandler = new Handler<LopError>() {
+                public void handle(LopError lopError) {
+                    resultHolders.add(new ResultHolder<String>(lopError));
+                    if (resultHolders.size() == vmJobMap.size()) {
+                        resultHandler.handle(resultHolders);
+                    }
+                }
+            };
+            vmProxy.abortJob(vmJobMap.get(vmProxy), abortResultHandler, abortErrorHandler);
+        }
+    }
+
+    /**
+     * Scatters ping_job commands to a set of VmProxies and waits for all commands to complete.
+     *
+     * @param vmJobMap a mapping from a VmProxy to the JobStruct that should be pinged (requires jobId be set)
+     * @param timeout  the number of milliseconds to spend on this scatter before a TimeoutException is thrown (use -1 to wait indefinately)
+     * @return a set of job status results
+     * @throws TimeoutException is thrown when the scatter takes longer than the provided timeout in milliseconds
+     */
+    public static Set<ResultHolder<LinkedProcess.JobStatus>> scatterPingJob(final Map<VmProxy, JobStruct> vmJobMap, long timeout) throws TimeoutException {
+        final Object monitor = new Object();
+        final Set<ResultHolder<LinkedProcess.JobStatus>> resultHolders = new HashSet<ResultHolder<LinkedProcess.JobStatus>>();
+
+        for (final VmProxy vmProxy : vmJobMap.keySet()) {
+            Handler<LinkedProcess.JobStatus> pingResultHandler = new Handler<LinkedProcess.JobStatus>() {
+                public void handle(LinkedProcess.JobStatus jobStatus) {
+                    resultHolders.add(new ResultHolder<LinkedProcess.JobStatus>(jobStatus));
+                    if (resultHolders.size() == vmJobMap.size()) {
+                        synchronized (monitor) {
+                            monitor.notify();
+                        }
+                    }
+                }
+            };
+
+            Handler<LopError> pingErrorHandler = new Handler<LopError>() {
+                public void handle(LopError lopError) {
+                    resultHolders.add(new ResultHolder<LinkedProcess.JobStatus>(lopError));
+                    if (resultHolders.size() == vmJobMap.size()) {
+                        synchronized (monitor) {
+                            monitor.notify();
+                        }
+                    }
+                }
+            };
+            vmProxy.pingJob(vmJobMap.get(vmProxy), pingResultHandler, pingErrorHandler);
+        }
+
+        ScatterGatherPattern.monitorSleep(monitor, timeout);
+        if (resultHolders.size() != vmJobMap.size())
+            throw new TimeoutException("scatter ping_job timedout after " + timeout + "ms.");
+        return resultHolders;
+
+    }
+
+    /**
+     * Scatters ping_job commands to a set of VmProxies and makes use of a result handler when the commands are complete.
+     *
+     * @param vmJobMap      a mapping from a VmProxy to the JobStruct that should be pinged (requires jobId be set)
+     * @param resultHandler the handler of the job status results (can be null)
+     */
+    public static void scatterPingJob(final Map<VmProxy, JobStruct> vmJobMap, final Handler<Set<ResultHolder<LinkedProcess.JobStatus>>> resultHandler) {
+        final Set<ResultHolder<LinkedProcess.JobStatus>> resultHolders = new HashSet<ResultHolder<LinkedProcess.JobStatus>>();
+
+        for (final VmProxy vmProxy : vmJobMap.keySet()) {
+            Handler<LinkedProcess.JobStatus> pingResultHandler = new Handler<LinkedProcess.JobStatus>() {
+                public void handle(LinkedProcess.JobStatus jobStatus) {
+                    resultHolders.add(new ResultHolder<LinkedProcess.JobStatus>(jobStatus));
+                    if (resultHolders.size() == vmJobMap.size()) {
+                        resultHandler.handle(resultHolders);
+                    }
+                }
+            };
+
+            Handler<LopError> pingErrorHandler = new Handler<LopError>() {
+                public void handle(LopError lopError) {
+                    resultHolders.add(new ResultHolder<LinkedProcess.JobStatus>(lopError));
+                    if (resultHolders.size() == vmJobMap.size()) {
+                        resultHandler.handle(resultHolders);
+                    }
+                }
+            };
+            vmProxy.pingJob(vmJobMap.get(vmProxy), pingResultHandler, pingErrorHandler);
+        }
+    }
+
+    /**
+     * Scatter get-based manage_bindings commands to a set of VmProxies and waits for all commands to complete.
+     *
+     * @param vmBindingNamesMap a mapping from a VmProxy to the binding names that should be retrieved
+     * @param timeout           the number of milliseconds to spend on this scatter before a TimeoutException is thrown (use -1 to wait indefinately)
+     * @return a mapping from a VmProxy to the results of its get manage_bindings
+     * @throws TimeoutException is thrown when the scatter takes longer than the provided timeout in milliseconds
+     */
+    public static Map<VmProxy, ResultHolder<VMBindings>> scatterGetBindings(final Map<VmProxy, Set<String>> vmBindingNamesMap, long timeout) throws TimeoutException {
+        final Object monitor = new Object();
+        final Map<VmProxy, ResultHolder<VMBindings>> resultHolders = new HashMap<VmProxy, ResultHolder<VMBindings>>();
+        for (final VmProxy vmProxy : vmBindingNamesMap.keySet()) {
+            Handler<VMBindings> scatterResultHandler = new Handler<VMBindings>() {
+                public void handle(VMBindings vmBindings) {
+                    resultHolders.put(vmProxy, new ResultHolder<VMBindings>(vmBindings));
+                    if (resultHolders.size() == vmBindingNamesMap.size()) {
+                        synchronized (monitor) {
+                            monitor.notify();
+                        }
+                    }
+                }
+            };
+
+            Handler<LopError> scatterErrorHandler = new Handler<LopError>() {
+                public void handle(LopError lopError) {
+                    resultHolders.put(vmProxy, new ResultHolder<VMBindings>(lopError));
+                    if (resultHolders.size() == vmBindingNamesMap.size()) {
+                        synchronized (monitor) {
+                            monitor.notify();
+                        }
+                    }
+                }
+            };
+            vmProxy.getBindings(vmBindingNamesMap.get(vmProxy), scatterResultHandler, scatterErrorHandler);
+        }
+
+        ScatterGatherPattern.monitorSleep(monitor, timeout);
+        if (resultHolders.size() != vmBindingNamesMap.size())
+            throw new TimeoutException("scatter get manage_bindings timedout after " + timeout + "ms.");
+        return resultHolders;
+
+    }
+
+    /**
+     * Scatter get-based manage_bindings comannds to a set of VmProxies and make use of a result handler when the commands are complete.
+     *
+     * @param vmBindingNamesMap a mapping from a VmProxy to the binding names that should be retrieved
+     * @param resultHandler     the handler of the results (can be null)
+     */
+    public static void scatterGetBindings(final Map<VmProxy, Set<String>> vmBindingNamesMap, final Handler<Map<VmProxy, ResultHolder<VMBindings>>> resultHandler) {
+        final Map<VmProxy, ResultHolder<VMBindings>> resultHolders = new HashMap<VmProxy, ResultHolder<VMBindings>>();
+
+        for (final VmProxy vmProxy : vmBindingNamesMap.keySet()) {
+            Handler<VMBindings> bindingsResultHandler = new Handler<VMBindings>() {
+                public void handle(VMBindings vmBindings) {
+                    resultHolders.put(vmProxy, new ResultHolder<VMBindings>(vmBindings));
+                    if (resultHolders.size() == vmBindingNamesMap.size()) {
+                        resultHandler.handle(resultHolders);
+                    }
+                }
+            };
+
+            Handler<LopError> bindingsErrorHandler = new Handler<LopError>() {
+                public void handle(LopError lopError) {
+                    resultHolders.put(vmProxy, new ResultHolder<VMBindings>(lopError));
+                    if (resultHolders.size() == vmBindingNamesMap.size()) {
+                        resultHandler.handle(resultHolders);
+                    }
+                }
+            };
+            vmProxy.getBindings(vmBindingNamesMap.get(vmProxy), bindingsResultHandler, bindingsErrorHandler);
+        }
+    }
+
+
+    /**
+     * Scatter set-based manage_bindings commands to a set of VmProxies and waits for all commands to complete.
+     *
+     * @param vmBindingsMap a mapping from a VmProxy to the bindings that should be set
+     * @param timeout       the number of milliseconds to spend on this scatter before a TimeoutException is thrown (use -1 to wait indefinately)
+     * @return a mapping from a VmProxy to the results of its get manage_bindings
+     * @throws TimeoutException is thrown when the scatter takes longer than the provided timeout in milliseconds
+     */
+    public static Map<VmProxy, ResultHolder<VMBindings>> scatterSetBindings(final Map<VmProxy, VMBindings> vmBindingsMap, long timeout) throws TimeoutException {
+        final Object monitor = new Object();
+        final Map<VmProxy, ResultHolder<VMBindings>> resultHolders = new HashMap<VmProxy, ResultHolder<VMBindings>>();
+        for (final VmProxy vmProxy : vmBindingsMap.keySet()) {
+            Handler<VMBindings> scatterResultHandler = new Handler<VMBindings>() {
+                public void handle(VMBindings vmBindings) {
+                    resultHolders.put(vmProxy, new ResultHolder<VMBindings>(vmBindings));
+                    if (resultHolders.size() == vmBindingsMap.size()) {
+                        synchronized (monitor) {
+                            monitor.notify();
+                        }
+                    }
+                }
+            };
+
+            Handler<LopError> scatterErrorHandler = new Handler<LopError>() {
+                public void handle(LopError lopError) {
+                    resultHolders.put(vmProxy, new ResultHolder<VMBindings>(lopError));
+                    if (resultHolders.size() == vmBindingsMap.size()) {
+                        synchronized (monitor) {
+                            monitor.notify();
+                        }
+                    }
+                }
+            };
+            vmProxy.setBindings(vmBindingsMap.get(vmProxy), scatterResultHandler, scatterErrorHandler);
+        }
+
+        ScatterGatherPattern.monitorSleep(monitor, timeout);
+        if (resultHolders.size() != vmBindingsMap.size())
+            throw new TimeoutException("scatter set manage_bindings timedout after " + timeout + "ms.");
+        return resultHolders;
+
+    }
+
+    /**
+     * Scatter set-based manage_bindings comannds to a set of VmProxies and make use of a result handler when the commands are complete.
+     *
+     * @param vmBindingsMap a mapping from a VmProxy to the bindings that should be set
+     * @param resultHandler the handler of the results (can be null)
+     */
+    public static void scatterSetBindings(final Map<VmProxy, VMBindings> vmBindingsMap, final Handler<Map<VmProxy, ResultHolder<VMBindings>>> resultHandler) {
+        final Map<VmProxy, ResultHolder<VMBindings>> resultHolders = new HashMap<VmProxy, ResultHolder<VMBindings>>();
+
+        for (final VmProxy vmProxy : vmBindingsMap.keySet()) {
+            Handler<VMBindings> bindingsResultHandler = new Handler<VMBindings>() {
+                public void handle(VMBindings vmBindings) {
+                    resultHolders.put(vmProxy, new ResultHolder<VMBindings>(vmBindings));
+                    if (resultHolders.size() == vmBindingsMap.size()) {
+                        resultHandler.handle(resultHolders);
+                    }
+                }
+            };
+
+            Handler<LopError> bindingsErrorHandler = new Handler<LopError>() {
+                public void handle(LopError lopError) {
+                    resultHolders.put(vmProxy, new ResultHolder<VMBindings>(lopError));
+                    if (resultHolders.size() == vmBindingsMap.size()) {
+                        resultHandler.handle(resultHolders);
+                    }
+                }
+            };
+            vmProxy.setBindings(vmBindingsMap.get(vmProxy), bindingsResultHandler, bindingsErrorHandler);
+        }
+    }
+
 }
 

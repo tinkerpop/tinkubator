@@ -37,9 +37,8 @@ import java.util.logging.Logger;
  * can utilize the resources on other countrysides. For anyone wishing to make use of the computing resource of an LoP cloud, a villein is the
  * means by which this is done.
  *
- * User: marko
- * Date: Jul 7, 2009
- * Time: 11:59:48 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class XmppVillein extends XmppClient {
 

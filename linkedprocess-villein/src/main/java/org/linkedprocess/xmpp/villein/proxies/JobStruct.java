@@ -16,9 +16,8 @@ import org.linkedprocess.xmpp.LopError;
  * The expression is a code fragement that is to be executed by the virtual machine and must be in the language of the virtual machine species.
  * When a JobStruct is returned by a submit_job call, the result or error may be set along with the complete flag.
  * 
- * User: marko
- * Date: Jul 28, 2009
- * Time: 12:59:40 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class JobStruct implements Comparable {
     protected String jobId;

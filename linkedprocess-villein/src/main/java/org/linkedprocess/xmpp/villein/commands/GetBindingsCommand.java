@@ -23,9 +23,8 @@ import java.util.Set;
  * Any result of the command is returned to the provided result handler.
  * Any error of the command is returned to the provided error handler.
  *
- * User: marko
- * Date: Aug 7, 2009
- * Time: 5:33:09 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class GetBindingsCommand extends Command {
 

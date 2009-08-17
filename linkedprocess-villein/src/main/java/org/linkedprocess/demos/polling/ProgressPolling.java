@@ -16,10 +16,7 @@ import org.linkedprocess.xmpp.villein.patterns.BindingsChecker;
 import org.linkedprocess.xmpp.villein.patterns.PollBindingsPattern;
 import org.linkedprocess.xmpp.villein.patterns.ResourceAllocationPattern;
 import org.linkedprocess.xmpp.villein.patterns.SynchronousPattern;
-import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
-import org.linkedprocess.xmpp.villein.proxies.JobStruct;
-import org.linkedprocess.xmpp.villein.proxies.LopCloud;
-import org.linkedprocess.xmpp.villein.proxies.VmProxy;
+import org.linkedprocess.xmpp.villein.proxies.*;
 
 import java.util.Set;
 
@@ -35,9 +32,8 @@ import java.util.Set;
  * The purpose of the PollBindingsPattern is to allow you to monitor the states of variables
  * in a virtual machine as code is executing.
  * 
- * User: marko
- * Date: Aug 14, 2009
- * Time: 11:32:06 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class ProgressPolling {
 
@@ -65,8 +61,8 @@ public class ProgressPolling {
 
         //////////////// SPAWN VIRTUAL MACHINES ON ALLOCATED FARMS
 
-        VmProxy vmProxy = SynchronousPattern.spawnVm(farmProxies.iterator().next(), "javascript", -1);
-        System.out.println("virtual machine spawned: " + vmProxy.getFullJid());
+        ResultHolder<VmProxy> vmProxyResult = SynchronousPattern.spawnVm(farmProxies.iterator().next(), "javascript", -1);
+        System.out.println("virtual machine spawned: " + vmProxyResult.getResult().getFullJid());
 
         //////////////// DISTRIBUTE PROGRESS METER INCREMENTING CODE
 
@@ -75,7 +71,7 @@ public class ProgressPolling {
                                 "while(true) {\n" +
                                     "\tmeter = meter + 0.00000001;\n" +
                                 "}");
-        vmProxy.submitJob(jobStruct, null, null);
+        vmProxyResult.getResult().submitJob(jobStruct, null, null);
 
         BindingsChecker bc = new BindingsChecker() {
             public boolean areEquivalent(VMBindings actualBindings, VMBindings desiredBindings) {
@@ -112,11 +108,11 @@ public class ProgressPolling {
         PollBindingsPattern pb = new PollBindingsPattern();
         VMBindings desiredBindings = new VMBindings();
         desiredBindings.putTyped("meter", new TypedValue(VMBindings.XMLSchemaDatatype.DOUBLE, ""+meterMax));
-        pb.startPattern(vmProxy, desiredBindings, bc, resultHandler, errorHandler, pollingInterval);
+        pb.startPattern(vmProxyResult.getResult(), desiredBindings, bc, resultHandler, errorHandler, pollingInterval);
         synchronized(monitor) {
             monitor.wait();
         }
-        vmProxy.terminateVm(null, null);
+        vmProxyResult.getResult().terminateVm(null, null);
     }
 
     public static void main(String[] args) throws Exception {

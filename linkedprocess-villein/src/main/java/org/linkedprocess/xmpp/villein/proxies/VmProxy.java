@@ -22,9 +22,8 @@ import java.util.Set;
  * The bare JID component of the virtual machine is the virtual machine's countryside. A virtual machine is spawned from
  * a farm. Nearly all the computation that happens in LoP is through virtual machines.
  *
- * User: marko
- * Date: Jul 8, 2009
- * Time: 9:13:19 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class VmProxy extends Proxy {
 
@@ -49,7 +48,7 @@ public class VmProxy extends Proxy {
         dispatcher.getPingJobCommand().send(this, jobStruct, resultHandler, errorHandler);
     }
 
-    public void abortJob(final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<LopError> errorHandler) {
+    public void abortJob(final JobStruct jobStruct, final Handler<String> resultHandler, final Handler<LopError> errorHandler) {
         dispatcher.getAbortJobCommand().send(this, jobStruct, resultHandler, errorHandler);
     }
 

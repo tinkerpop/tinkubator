@@ -163,8 +163,8 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         jobList.repaint();
     }
 
-    public void handleIncomingAbortJob(JobStruct jobStruct) {
-        this.jobStatus.put(jobStruct.getJobId(), JobStatus.ABORTED);
+    public void handleIncomingAbortJob(String jobId) {
+        this.jobStatus.put(jobId, JobStatus.ABORTED);
         jobList.repaint();
     }
 

@@ -11,9 +11,8 @@ package org.linkedprocess.xmpp.villein.patterns;
  * The TimeoutException is used by most synchronous methods. With synchronous methods a timeout value is provided.
  * If the method takes longer than this timeout value to execute, then a TimeoutException is thrown.
  *
- * User: marko
- * Date: Aug 4, 2009
- * Time: 2:04:27 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class TimeoutException extends Exception {
     public TimeoutException(final String message) {

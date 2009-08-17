@@ -21,9 +21,8 @@ import java.util.logging.Logger;
  * The ResourceAllocationPattern is useful for allocating resources in an LoP cloud.
  * This pattern simply wraps an LoP cloud with useful methods.
  *
- * User: marko
- * Date: Aug 14, 2009
- * Time: 11:34:19 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class ResourceAllocationPattern {
 

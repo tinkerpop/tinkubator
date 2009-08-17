@@ -12,6 +12,7 @@ import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.proxies.VmProxy;
+import org.linkedprocess.xmpp.villein.proxies.ResultHolder;
 
 import java.util.logging.Logger;
 
@@ -20,13 +21,13 @@ import java.util.logging.Logger;
  * When the actual state of the virtul machine's bindings reach some desired bindings state (as defined by an equivalence relation),
  * then a result handler is called. This is generally useful when a job is executing and the state of that job must be monitored.
  *
- * User: marko
- * Date: Aug 5, 2009
- * Time: 12:49:24 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class PollBindingsPattern implements Runnable {
 
     private static final Logger LOGGER = LinkedProcess.getLogger(PollBindingsPattern.class);
+    private static final long TIMEOUT = 2000;
 
     protected VmProxy vmProxy;
     protected VMBindings desiredBindings;
@@ -62,28 +63,30 @@ public class PollBindingsPattern implements Runnable {
     public void run() {
         Object monitor = new Object();
 
-        LopError lopErrorResult = null;
-        VMBindings vmBindingsResult = null;
-        while (lopErrorResult == null && vmBindingsResult == null) {
-            VMBindings actualBindings = null;
+
+        while (true) {
+            ResultHolder<VMBindings> resultBindings = null;
             try {
-                actualBindings = SynchronousPattern.getBindings(vmProxy, this.desiredBindings.keySet(), 1000);
+                resultBindings = SynchronousPattern.getBindings(vmProxy, this.desiredBindings.keySet(), TIMEOUT);
             } catch (TimeoutException e) {
                 LOGGER.warning(e.getMessage());
-            } catch (CommandException e) {
-                lopErrorResult = e.getLopError();
             }
-            if (actualBindings != null && this.bindingsChecker.areEquivalent(actualBindings, this.desiredBindings)) {
-                vmBindingsResult = actualBindings;
-            } else {
-                monitorSleep(monitor, this.pollingInterval);
+
+            if (resultBindings != null) {
+                if (!resultBindings.successfulResult()) {
+                    this.errorHandler.handle(resultBindings.getLopError());
+                    break;
+                } else {
+                    if (this.bindingsChecker.areEquivalent(resultBindings.getResult(), this.desiredBindings)) {
+                        resultHandler.handle(resultBindings.getResult());
+                        break;
+                    } else {
+                        monitorSleep(monitor, this.pollingInterval);
+                    }
+                }
             }
         }
 
-        if (lopErrorResult != null) {
-            errorHandler.handle(lopErrorResult);
-        } else {
-            resultHandler.handle(vmBindingsResult);
-        }
+
     }
 }

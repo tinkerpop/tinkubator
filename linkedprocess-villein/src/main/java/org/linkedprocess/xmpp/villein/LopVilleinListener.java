@@ -18,9 +18,8 @@ import org.linkedprocess.xmpp.vm.*;
  * This class is repsonsible for dynamically adjusting the LoP cloud and all of its underlying resource proxies.
  * As incomming packets are processed by the XMPP villein, respective proxy data structures are updated.
  *
- * User: marko
- * Date: Jul 30, 2009
- * Time: 12:13:39 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 class LopVilleinListener extends LopListener {
 

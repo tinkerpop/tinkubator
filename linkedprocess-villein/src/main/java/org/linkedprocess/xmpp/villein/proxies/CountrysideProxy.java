@@ -17,9 +17,8 @@ import java.util.Map;
  * A CountrysideProxy is a proxy to a countryside.
  * A countryside can contain any number of farms and registries and is identified by a bare JID.
  *
- * User: marko
- * Date: Jul 8, 2009
- * Time: 1:02:16 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class CountrysideProxy extends Proxy implements FarmHolder {
 

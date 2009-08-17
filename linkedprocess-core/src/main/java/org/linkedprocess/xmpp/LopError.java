@@ -13,10 +13,11 @@ import java.util.Map;
  * Date: Jul 24, 2009
  * Time: 9:52:06 AM
  */
-public class LopError extends XMPPError {
+public class LopError extends XMPPError implements Comparable {
 
     protected LinkedProcess.LopErrorType lopErrorType;
     protected LinkedProcess.ClientType clientType;
+    protected String packetId;
 
     public static final Map<Condition, Integer> conditionCodeMap = new HashMap<Condition, Integer>();
     public static final Map<Condition, XMPPError.Type> conditionErrorMap = new HashMap<Condition, XMPPError.Type>();
@@ -104,10 +105,11 @@ public class LopError extends XMPPError {
     }
 
 
-    public LopError(XMPPError.Condition condition, LinkedProcess.LopErrorType lopErrorType, String errorMessage, LinkedProcess.ClientType clientType) {
+    public LopError(XMPPError.Condition condition, LinkedProcess.LopErrorType lopErrorType, String errorMessage, LinkedProcess.ClientType clientType, String packetId) {
         super(LopError.conditionCodeMap.get(condition), LopError.conditionErrorMap.get(condition), condition.toString().toLowerCase(), errorMessage, null);
         this.lopErrorType = lopErrorType;
         this.clientType = clientType;
+        this.packetId = packetId;
     }
 
     public LinkedProcess.LopErrorType getLopErrorType() {
@@ -116,6 +118,10 @@ public class LopError extends XMPPError {
 
     public LinkedProcess.ClientType getClientType() {
         return this.clientType;
+    }
+
+    public String getPacketId() {
+        return this.packetId;
     }
 
     public String toXML() {
@@ -139,6 +145,13 @@ public class LopError extends XMPPError {
             return lopErrorType.toString() + ":" + this.getCondition() + "[" + this.getCode() + "]: " + this.getMessage();
         else
             return this.getCondition() + "[" + this.getCode() + "]: " + this.getMessage();
+    }
+
+    public int compareTo(Object object) {
+        if(object instanceof LopError)
+            return packetId.compareTo(((LopError)object).getPacketId());
+        else
+            throw new ClassCastException();
     }
 
 }

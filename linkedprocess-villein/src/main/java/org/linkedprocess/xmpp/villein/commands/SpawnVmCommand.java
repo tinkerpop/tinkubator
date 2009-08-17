@@ -23,9 +23,8 @@ import org.linkedprocess.xmpp.villein.proxies.VmProxy;
  * Any result of the command is returned to the provided result handler.
  * Any error of the command is returned to the provided error handler.
  *
- * User: marko
- * Date: Aug 7, 2009
- * Time: 3:50:24 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class SpawnVmCommand extends Command {
     private final HandlerSet<VmProxy> resultHandlers;

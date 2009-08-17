@@ -11,9 +11,8 @@ import org.linkedprocess.os.errors.VMWorkerNotFoundException;
 import org.linkedprocess.xmpp.LopError;
 
 /**
- * User: marko
- * Date: Jun 23, 2009
- * Time: 2:32:50 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version 0.1
  */
 public class SubmitJobListener extends LopVmListener {
 
@@ -60,12 +59,12 @@ public class SubmitJobListener extends LopVmListener {
                 errorMessage = null;
 
             returnSubmitJob.setType(IQ.Type.ERROR);
-            returnSubmitJob.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, errorMessage, LOP_CLIENT_TYPE));
+            returnSubmitJob.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, errorMessage, LOP_CLIENT_TYPE, submitJob.getPacketID()));
 
 
         } else if (!((XmppVirtualMachine) this.xmppClient).checkVmPassword(vmPassword)) {
             returnSubmitJob.setType(IQ.Type.ERROR);
-            returnSubmitJob.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE));
+            returnSubmitJob.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, submitJob.getPacketID()));
         } else {
             Job job = new Job(this.xmppClient.getFullJid(), villeinJid, iqId, expression);
             try {
@@ -73,13 +72,13 @@ public class SubmitJobListener extends LopVmListener {
                 submitJob = null;
             } catch (VMWorkerNotFoundException e) {
                 returnSubmitJob.setType(IQ.Type.ERROR);
-                returnSubmitJob.setLopError(new LopError(XMPPError.Condition.interna_server_error, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE));
+                returnSubmitJob.setLopError(new LopError(XMPPError.Condition.interna_server_error, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE, submitJob.getPacketID()));
             } catch (VMWorkerIsFullException e) {
                 returnSubmitJob.setType(IQ.Type.ERROR);
-                returnSubmitJob.setLopError(new LopError(XMPPError.Condition.service_unavailable, LinkedProcess.LopErrorType.VM_IS_BUSY, e.getMessage(), LOP_CLIENT_TYPE));
+                returnSubmitJob.setLopError(new LopError(XMPPError.Condition.service_unavailable, LinkedProcess.LopErrorType.VM_IS_BUSY, e.getMessage(), LOP_CLIENT_TYPE, submitJob.getPacketID()));
             } catch (JobAlreadyExistsException e) {
                 returnSubmitJob.setType(IQ.Type.ERROR);
-                returnSubmitJob.setLopError(new LopError(XMPPError.Condition.conflict, LinkedProcess.LopErrorType.JOB_ALREADY_EXISTS, e.getMessage(), LOP_CLIENT_TYPE));
+                returnSubmitJob.setLopError(new LopError(XMPPError.Condition.conflict, LinkedProcess.LopErrorType.JOB_ALREADY_EXISTS, e.getMessage(), LOP_CLIENT_TYPE, submitJob.getPacketID()));
             }
         }
 

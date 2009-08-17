@@ -10,9 +10,8 @@ package org.linkedprocess.xmpp.villein.proxies;
 /**
  * An internal exception thrown when the proxies data structure is in an inconsistent state.
  *
- * User: marko
- * Date: Aug 4, 2009
- * Time: 2:30:56 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class ParentProxyNotFoundException extends RuntimeException {
     public ParentProxyNotFoundException(final String message) {

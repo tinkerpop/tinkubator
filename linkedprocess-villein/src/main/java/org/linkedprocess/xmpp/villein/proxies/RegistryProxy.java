@@ -23,9 +23,8 @@ import java.util.Set;
  * The bare JID of a registry is the registry's countryside. The purpose of a registry is to maintain a list of countrysides with active farms.
  * A registry is a good starting place for identifying countrysides and expanding your countryside's roster and thus, access to compute cycles.
  *
- * User: marko
- * Date: Jul 30, 2009
- * Time: 3:41:36 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class RegistryProxy extends Proxy {
 

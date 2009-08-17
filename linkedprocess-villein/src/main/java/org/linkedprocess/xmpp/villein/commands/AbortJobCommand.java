@@ -21,22 +21,21 @@ import org.linkedprocess.xmpp.vm.AbortJob;
  * Any result of the command is returned to the provided result handler.
  * Any error of the command is returned to the provided error handler.
  * 
- * User: marko
- * Date: Aug 7, 2009
- * Time: 4:45:56 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class AbortJobCommand extends Command {
 
-    private final HandlerSet<JobStruct> resultHandlers;
+    private final HandlerSet<String> resultHandlers;
     private final HandlerSet<LopError> errorHandlers;
 
     public AbortJobCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
-        this.resultHandlers = new HandlerSet<JobStruct>();
+        this.resultHandlers = new HandlerSet<String>();
         this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(final VmProxy vmStruct, final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<LopError> errorHandler) {
+    public void send(final VmProxy vmStruct, final JobStruct jobStruct, final Handler<String> resultHandler, final Handler<LopError> errorHandler) {
         String id = Packet.nextID();
         AbortJob abortJob = new AbortJob();
         abortJob.setTo(vmStruct.getFullJid());
@@ -54,7 +53,7 @@ public class AbortJobCommand extends Command {
         try {
             JobStruct jobStruct = new JobStruct();
             jobStruct.setJobId(abortJob.getJobId());
-            this.resultHandlers.handle(abortJob.getPacketID(), jobStruct);
+            this.resultHandlers.handle(abortJob.getPacketID(), abortJob.getJobId());
         } finally {
             this.resultHandlers.removeHandler(abortJob.getPacketID());
             this.errorHandlers.removeHandler(abortJob.getPacketID());

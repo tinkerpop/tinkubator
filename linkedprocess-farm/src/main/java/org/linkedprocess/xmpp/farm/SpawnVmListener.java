@@ -11,9 +11,8 @@ import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 /**
- * User: marko
- * Date: Jun 25, 2009
- * Time: 11:23:49 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version 0.1
  */
 public class SpawnVmListener extends LopFarmListener {
 
@@ -46,10 +45,10 @@ public class SpawnVmListener extends LopFarmListener {
 
         if (vmSpecies == null) {
             returnSpawnVm.setType(IQ.Type.ERROR);
-            returnSpawnVm.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "spawn_vm XML packet is missing the vm_species attribute", LOP_CLIENT_TYPE));
+            returnSpawnVm.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "spawn_vm XML packet is missing the vm_species attribute", LOP_CLIENT_TYPE, spawnVm.getPacketID()));
         } else if (this.getXmppFarm().getFarmPassword() != null && (farmPassword == null || !farmPassword.equals(this.getXmppFarm().getFarmPassword()))) {
             returnSpawnVm.setType(IQ.Type.ERROR);
-            returnSpawnVm.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_FARM_PASSWORD, null, LOP_CLIENT_TYPE));
+            returnSpawnVm.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_FARM_PASSWORD, null, LOP_CLIENT_TYPE, spawnVm.getPacketID()));
         } else {
             try {
                 XmppVirtualMachine vm = this.getXmppFarm().spawnVirtualMachine(spawnVm.getFrom(), vmSpecies);
@@ -60,13 +59,13 @@ public class SpawnVmListener extends LopFarmListener {
 
             } catch (VMAlreadyExistsException e) {
                 returnSpawnVm.setType(IQ.Type.ERROR);
-                returnSpawnVm.setLopError(new LopError(XMPPError.Condition.conflict, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE));
+                returnSpawnVm.setLopError(new LopError(XMPPError.Condition.conflict, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE, spawnVm.getPacketID()));
             } catch (VMSchedulerIsFullException e) {
                 returnSpawnVm.setType(IQ.Type.ERROR);
-                returnSpawnVm.setLopError(new LopError(XMPPError.Condition.service_unavailable, LinkedProcess.LopErrorType.FARM_IS_BUSY, e.getMessage(), LOP_CLIENT_TYPE));
+                returnSpawnVm.setLopError(new LopError(XMPPError.Condition.service_unavailable, LinkedProcess.LopErrorType.FARM_IS_BUSY, e.getMessage(), LOP_CLIENT_TYPE, spawnVm.getPacketID()));
             } catch (UnsupportedScriptEngineException e) {
                 returnSpawnVm.setType(IQ.Type.ERROR);
-                returnSpawnVm.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.SPECIES_NOT_SUPPORTED, e.getMessage(), LOP_CLIENT_TYPE));
+                returnSpawnVm.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.SPECIES_NOT_SUPPORTED, e.getMessage(), LOP_CLIENT_TYPE, spawnVm.getPacketID()));
             }
         }
 

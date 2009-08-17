@@ -30,9 +30,8 @@ import java.util.Set;
  * Information about a proxy can be accessed via disco#info and helpful interfaces to this document are provided by means
  * of the field inner class.
  *
- * User: marko
- * Date: Jul 8, 2009
- * Time: 10:55:56 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class Proxy implements Comparable {
 
