@@ -13,6 +13,7 @@ import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -36,7 +37,7 @@ public class OfflineTest {
 
 	protected static String server = "talk1.l.google.com";
 	protected static int port = 5222;
-	protected static String CLIENT_JID = "mockClient";
+	protected static String CLIENT_JID = "mockClient@mock.linkedprocess.org/LoPCLient/1234";
 	protected static String IQ_PACKET_ID = "123";
 
 	@After
@@ -75,6 +76,9 @@ public class OfflineTest {
 
 		mdm.setExtendedInfo(capture(mockConnection.dataformCapture));
 		expectLastCall().anyTimes();
+		DiscoverInfo farmInfo = new DiscoverInfo();
+		farmInfo.addFeature(LinkedProcess.LOP_FARM_NAMESPACE);
+		expect(mdm.discoverInfo(CLIENT_JID)).andReturn(farmInfo ).anyTimes();
 		// the magic of inserting the mock connections!
 		expectNew(XMPPConnectionWrapper.class,
 				isA(ConnectionConfiguration.class)).andReturn(mockConnection);
