@@ -21,6 +21,7 @@ public class VMScheduler {
     public static final int MAX_VM;
     private static final long VM_TIMEOUT;
     private static final long SCHEDULER_CLEANUP_INTERVAL;
+    private static final long WAIT_UNTIL_FINISHED_INTERVAL = 100;
 
     static {
         Properties props = LinkedProcess.getConfiguration();
@@ -332,9 +333,10 @@ public class VMScheduler {
 
     /**
      * Waits until all pending and currently executed jobs have finished.  This
-     * is a convenience method (for unit tests) which should be used with
-     * caution.  Because the method is synchronized, you could wait indefinitely
-     * on a job which never finishes, with no chance of terminating the job.
+     * is a convenience method (for unit tests and shutdown) which should be
+     * used with caution.  Because the method is synchronized, you could wait
+     * indefinitely on a job which never finishes, with no chance of terminating
+     * the job.
      *
      * @throws InterruptedException if the Thread is interrupted while waiting
      */
@@ -344,7 +346,7 @@ public class VMScheduler {
         // whose virtual machine has been terminated produce a result which is
         // counted.
         while (jobsCompleted < jobsReceived) {
-            Thread.sleep(100);
+            Thread.sleep(WAIT_UNTIL_FINISHED_INTERVAL);
         }
     }
 
@@ -504,11 +506,15 @@ public class VMScheduler {
         }
 
         public void handleResult(JobResult result) {
-            synchronized (monitor) {
-                jobsCompleted++;
+            try {
+                innerHandler.handleResult(result);
+            } finally {
+                // For the sake of waitUntilFinished, count the job as completed
+                // AFTER the call to the inner handler has completed (or failed).
+                synchronized (monitor) {
+                    jobsCompleted++;
+                }
             }
-
-            innerHandler.handleResult(result);
         }
     }
 }
