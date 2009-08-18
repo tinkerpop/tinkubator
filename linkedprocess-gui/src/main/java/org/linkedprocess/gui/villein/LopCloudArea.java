@@ -23,9 +23,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * User: marko
- * Date: Jul 7, 2009
- * Time: 11:13:22 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class LopCloudArea extends JPanel implements ActionListener, MouseListener, PresenceHandler {
 
@@ -130,14 +129,14 @@ public class LopCloudArea extends JPanel implements ActionListener, MouseListene
                 farmFrame.setVisible(true);
                 farmFrame.setResizable(true);
             }
-        } else if(event.getActionCommand().equals(SET_FARM_PASSWORD)) {
+        } else if (event.getActionCommand().equals(SET_FARM_PASSWORD)) {
             if (this.popupTreeObject instanceof FarmProxy) {
                 FarmProxy farmProxy = (FarmProxy) this.popupTreeObject;
                 farmProxy.setFarmPassword(JOptionPane.showInputDialog(null, "enter farm password", "set farm password", JOptionPane.QUESTION_MESSAGE).trim());
             }
 
         } else if (event.getActionCommand().equals(SHUTDOWN)) {
-            this.villeinGui.getXmppVillein().shutDown(null);
+            this.villeinGui.getXmppVillein().shutdown(null);
             this.villeinGui.loadLoginFrame();
         } else {
             for (String vmSpecies : this.supportedVmSpeciesActionCommands) {
@@ -387,7 +386,7 @@ public class LopCloudArea extends JPanel implements ActionListener, MouseListene
         JMenuItem probeResource = new JMenuItem(PROBE);
         JMenuItem discoInfo = new JMenuItem(DISCOVER_INFORMATION);
         JMenuItem addFarmPassword = null;
-        if(farmProxy.requiresPassword()) {
+        if (farmProxy.requiresPassword()) {
             addFarmPassword = new JMenuItem(SET_FARM_PASSWORD);
             addFarmPassword.addActionListener(this);
         }
@@ -405,7 +404,7 @@ public class LopCloudArea extends JPanel implements ActionListener, MouseListene
         this.popupMenu.addSeparator();
         this.popupMenu.add(probeResource);
         this.popupMenu.add(discoInfo);
-        if(null != addFarmPassword)
+        if (null != addFarmPassword)
             this.popupMenu.add(addFarmPassword);
         this.popupMenu.add(spawnMenu);
         discoInfo.addActionListener(this);

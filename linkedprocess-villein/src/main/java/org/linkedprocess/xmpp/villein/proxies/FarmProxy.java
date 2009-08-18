@@ -57,7 +57,7 @@ public class FarmProxy extends Proxy {
 
     public Collection<String> getSupportedVmSpecies() {
         Field field = this.getField(LinkedProcess.VM_SPECIES_ATTRIBUTE);
-        if(null != field)
+        if (null != field)
             return field.getValues();
         else
             return new HashSet<String>();
@@ -73,17 +73,16 @@ public class FarmProxy extends Proxy {
 
     public boolean requiresPassword() {
         Field field = this.getField(LinkedProcess.FARM_PASSWORD_REQUIRED);
-        if(null != field) {
+        if (null != field) {
             return field.getBooleanValue();
-        }
-        else {
+        } else {
             return false;
         }
     }
 
     public long getVmTimeToLive() {
         Field field = this.getField(LinkedProcess.VM_TIME_TO_LIVE);
-        if(null != field) {
+        if (null != field) {
             return field.getLongValue();
         } else {
             return -1;
@@ -92,7 +91,7 @@ public class FarmProxy extends Proxy {
 
     public long getJobTimeout() {
         Field field = this.getField(LinkedProcess.JOB_TIMEOUT);
-        if(null != field) {
+        if (null != field) {
             return field.getLongValue();
         } else {
             return -1;

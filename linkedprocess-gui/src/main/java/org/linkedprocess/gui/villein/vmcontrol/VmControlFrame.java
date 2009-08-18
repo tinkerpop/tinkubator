@@ -5,9 +5,9 @@ import org.jivesoftware.smack.filter.OrFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.ToContainsFilter;
 import org.jivesoftware.smack.packet.Packet;
+import org.linkedprocess.gui.GenericErrorHandler;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.PacketSnifferPanel;
-import org.linkedprocess.gui.GenericErrorHandler;
 import org.linkedprocess.gui.villein.VilleinGui;
 import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.xmpp.villein.proxies.JobStruct;
@@ -25,9 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * User: marko
- * Date: Jul 8, 2009
- * Time: 7:12:15 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class VmControlFrame extends JFrame implements ListSelectionListener, ActionListener {
 

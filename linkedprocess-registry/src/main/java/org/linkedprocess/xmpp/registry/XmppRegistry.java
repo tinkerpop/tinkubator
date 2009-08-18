@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp.registry;
 
 import org.jivesoftware.smack.Roster;
@@ -18,9 +25,8 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * User: marko
- * Date: Jul 30, 2009
- * Time: 11:33:10 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class XmppRegistry extends XmppClient {
 
@@ -105,12 +111,12 @@ public class XmppRegistry extends XmppClient {
 
         XmppRegistry xmppRegistry = new XmppRegistry(server, port, username, password);
 
-        Object o = "";
+        Object monitor = new Object();
         try {
-            synchronized (o) {
+            synchronized (monitor) {
                 // Never break out until the process is killed.
                 while (true) {
-                    o.wait();
+                    monitor.wait();
                 }
             }
         } catch (Throwable t) {

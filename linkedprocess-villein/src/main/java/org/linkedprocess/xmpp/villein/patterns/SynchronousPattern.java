@@ -13,8 +13,8 @@ import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
 import org.linkedprocess.xmpp.villein.proxies.JobStruct;
-import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.villein.proxies.ResultHolder;
+import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 
 import java.util.Set;
 import java.util.logging.Logger;

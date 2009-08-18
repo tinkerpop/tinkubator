@@ -35,8 +35,7 @@ public class PresenceSubscriptionListener extends LopFarmListener {
 
             return;
 
-        } else
-        if (type == Presence.Type.unsubscribe && !presence.getFrom().equals(this.getXmppFarm().getBareJid()) && !presence.getFrom().equals(this.getXmppFarm().getFullJid())) {
+        } else if (type == Presence.Type.unsubscribe && !presence.getFrom().equals(this.getXmppFarm().getBareJid()) && !presence.getFrom().equals(this.getXmppFarm().getFullJid())) {
             XmppFarm.LOGGER.info("Unsubscribing from " + presence.getFrom());
             Presence unsubscribed = new Presence(Presence.Type.unsubscribed);
             Presence unsubscribe = new Presence(Presence.Type.unsubscribe);

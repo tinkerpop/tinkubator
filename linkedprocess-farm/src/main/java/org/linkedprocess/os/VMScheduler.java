@@ -309,7 +309,7 @@ public class VMScheduler {
     /**
      * Shuts down all active virtual machines and cancels all jobs.
      */
-    public synchronized void shutDown() {
+    public synchronized void shutdown() {
         LOGGER.info("shutting down VMScheduler");
 
         workerQueue.clear();

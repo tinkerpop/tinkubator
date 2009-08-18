@@ -54,7 +54,7 @@ public class TerminateVmCommand extends Command {
             this.resultHandlers.handle(terminateVm.getPacketID(), null);
         } finally {
             this.resultHandlers.removeHandler(terminateVm.getPacketID());
-            this.errorHandlers.removeHandler(terminateVm.getPacketID()); 
+            this.errorHandlers.removeHandler(terminateVm.getPacketID());
         }
     }
 

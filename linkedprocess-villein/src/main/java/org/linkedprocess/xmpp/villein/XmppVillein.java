@@ -51,6 +51,15 @@ public class XmppVillein extends XmppClient {
     protected Set<PresenceHandler> presenceHandlers = new HashSet<PresenceHandler>();
     protected LopCloud lopCloud = new LopCloud();
 
+    /**
+     * Creates a new LoP villein.
+     *
+     * @param server   the XMPP server to log into
+     * @param port     the port that the XMPP server is listening on
+     * @param username the username to log into the XMPP server with
+     * @param password the password to use to log into the XMPP server with
+     * @throws XMPPException is thrown when some communication error occurs with the XMPP server
+     */
     public XmppVillein(final String server, final int port, final String username, final String password) throws XMPPException {
         LOGGER.info("Starting " + STATUS_MESSAGE);
 
@@ -96,28 +105,43 @@ public class XmppVillein extends XmppClient {
         return this.status;
     }
 
+    /**
+     * An LoP cloud is the primary data structure which contains methods for accessing all other resources in a cloud.
+     *
+     * @return an LoP cloud data structure
+     */
     public LopCloud getLopCloud() {
         return this.lopCloud;
     }
 
+    /**
+     * An XMPP roster maintains a collection of subscriptions to bare JIDs (i.e. countrysides).
+     * This collection of countrysides may contain farms and other LoP-based resources.
+     */
     public void createLopCloudFromRoster() {
         for (RosterEntry entry : this.getRoster().getEntries()) {
-            addCountrySideEntry(entry.getUser());
+            CountrysideProxy countrysideProxy = this.lopCloud.getCountrysideProxy(entry.getUser());
+            if (countrysideProxy == null) {
+                countrysideProxy = new CountrysideProxy(entry.getUser(), this.dispatcher);
+                this.lopCloud.addCountrysideProxy(countrysideProxy);
+            }
         }
-        addCountrySideEntry(LinkedProcess.generateBareJid(this.connection.getUser()));
+        // include the villein's countryside in the lop cloud
+        CountrysideProxy countrysideProxy = this.lopCloud.getCountrysideProxy(this.getBareJid());
+        if (countrysideProxy == null) {
+            countrysideProxy = new CountrysideProxy(this.getBareJid(), this.dispatcher);
+            this.lopCloud.addCountrysideProxy(countrysideProxy);
+        }
     }
 
-    private void addCountrySideEntry(String user) {
-    	CountrysideProxy countrysideProxy = this.lopCloud.getCountrysideProxy(user);
-        if (countrysideProxy == null) {
-            countrysideProxy = new CountrysideProxy(user, this.dispatcher);
-            this.lopCloud.addCountrysideProxy(countrysideProxy);
-        }	
-	}
-
-	public void requestUnsubscription(String jid) {
-        super.requestUnsubscription(jid);
-        CountrysideProxy countrysideProxy = this.lopCloud.getCountrysideProxy(jid);
+    /**
+     * When a unsubscription is requested, all virtual machines that this villein has access to on the countryside are terminatd.
+     *
+     * @param bareJid the countryside JID to unsubscribe from
+     */
+    public void requestUnsubscription(String bareJid) {
+        super.requestUnsubscription(bareJid);
+        CountrysideProxy countrysideProxy = this.lopCloud.getCountrysideProxy(bareJid);
         if (countrysideProxy != null) {
             for (FarmProxy farmProxy : countrysideProxy.getFarmProxies()) {
                 for (VmProxy vmProxy : farmProxy.getVmProxies()) {
@@ -127,13 +151,23 @@ public class XmppVillein extends XmppClient {
                 }
             }
         }
-        this.lopCloud.removeCountrysideProxy(jid);
+        this.lopCloud.removeCountrysideProxy(bareJid);
     }
 
+    /**
+     * Adds the identity name and type of the Villein to its disco#info document.
+     */
     protected void initiateFeatures() {
         super.initiateFeatures();
         ServiceDiscoveryManager.setIdentityName(XmppVillein.RESOURCE_PREFIX);
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
+    }
+
+    /**
+     * Shutdown the villein by disconnecting it from the XMPP server.
+     */
+    public void shutdown() {
+        super.shutdown(new Presence(Presence.Type.unavailable));
     }
 
     public Dispatcher getDispatcher() {

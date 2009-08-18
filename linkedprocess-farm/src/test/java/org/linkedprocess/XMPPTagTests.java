@@ -17,7 +17,7 @@ import org.linkedprocess.xmpp.vm.TerminateVm;
  */
 public class XMPPTagTests extends TestCase {
 
-	public void testSpawnTag() throws Exception {
+    public void testSpawnTag() throws Exception {
         SpawnVm spawnVm = new SpawnVm();
         spawnVm.setVmJid("lp1@gmail.com");
         spawnVm.setVmSpecies("lop:vm:javascript");

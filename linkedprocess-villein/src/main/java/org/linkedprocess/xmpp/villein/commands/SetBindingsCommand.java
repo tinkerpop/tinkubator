@@ -50,11 +50,11 @@ public class SetBindingsCommand extends Command {
             public void handle(VMBindings vmBindings) {
                 try {
                     vmStruct.addVmBindings(vmBindings);
-                } catch(InvalidValueException e) {
+                } catch (InvalidValueException e) {
                     XmppVillein.LOGGER.severe(e.getMessage());
                 }
                 resultHandler.handle(vmBindings);
-            } 
+            }
         };
 
         this.resultHandlers.addHandler(id, autoResultHandler);

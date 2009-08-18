@@ -6,20 +6,19 @@ import org.linkedprocess.gui.LoginArea;
 import org.linkedprocess.xmpp.farm.XmppFarm;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.awt.*;
-import java.util.Properties;
+import java.awt.event.ActionEvent;
 import java.io.FileInputStream;
+import java.util.Properties;
 
 /**
- * User: marko
- * Date: Jul 6, 2009
- * Time: 10:32:32 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class FarmLoginArea extends LoginArea {
 
     protected FarmGui farmGui;
-    protected final static String PROPERTIES_FILE = "farm_manager.properties";
+    protected final static String PROPERTIES_FILE = "farm_gui.properties";
 
     public FarmLoginArea(FarmGui farmGui) {
         super(new BorderLayout());
@@ -103,7 +102,7 @@ public class FarmLoginArea extends LoginArea {
         try {
             if (event.getActionCommand().equals(LOGIN)) {
                 String farmPassword = this.farmPasswordField.getText().trim();
-                if(farmPassword.equals(""))
+                if (farmPassword.equals(""))
                     farmPassword = null;
                 XmppFarm farm = new XmppFarm(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText(), farmPassword);
                 this.farmGui.loadVmArea(farm);

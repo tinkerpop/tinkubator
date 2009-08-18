@@ -30,7 +30,7 @@ public class VMSchedulerTest extends TestCase {
         // Note: calling a LinkedProcess method simply ensures that its static initializer (part of whose job is
         //       to pre-load classes for scheduler threads) has already executed.
         LinkedProcess.getConfiguration();
-        
+
         resultsByID.clear();
         farmStatusEvents.clear();
         vmStatusEventTypes.clear();
@@ -42,14 +42,14 @@ public class VMSchedulerTest extends TestCase {
     public void testCreateAndShutDownScheduler() throws Exception {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         assertEquals(LinkedProcess.FarmStatus.ACTIVE, scheduler.getSchedulerStatus());
-        scheduler.shutDown();
+        scheduler.shutdown();
     }
 
     public void testCreateVM() throws Exception {
         scheduler = new VMScheduler(resultHandler, eventHandler);
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
-        scheduler.shutDown();
+        scheduler.shutdown();
     }
 
     public void testAddMultipleVMs() throws Exception {
@@ -61,12 +61,12 @@ public class VMSchedulerTest extends TestCase {
         scheduler.spawnVirtualMachine(vm2, LinkedProcess.JAVASCRIPT);
         assertEquals(LinkedProcess.VmStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm2));
         assertEquals(LinkedProcess.FarmStatus.ACTIVE, scheduler.getSchedulerStatus());
-        scheduler.shutDown();
+        scheduler.shutdown();
     }
 
     public void testSchedulerStatusAfterShutdown() {
         scheduler = new VMScheduler(resultHandler, eventHandler);
-        scheduler.shutDown();
+        scheduler.shutdown();
         assertEquals(LinkedProcess.FarmStatus.INACTIVE, scheduler.getSchedulerStatus());
     }
 
@@ -77,7 +77,7 @@ public class VMSchedulerTest extends TestCase {
         assertEquals(LinkedProcess.VmStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm1));
         scheduler.terminateVirtualMachine(vm1);
         assertEquals(LinkedProcess.VmStatus.NOT_FOUND, scheduler.getVirtualMachineStatus(vm1));
-        scheduler.shutDown();
+        scheduler.shutdown();
     }
 
     public void testVMStatusAfterSchedulerShutDown() throws Exception {
@@ -85,7 +85,7 @@ public class VMSchedulerTest extends TestCase {
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         assertEquals(LinkedProcess.VmStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm1));
-        scheduler.shutDown();
+        scheduler.shutdown();
         assertEquals(LinkedProcess.VmStatus.NOT_FOUND, scheduler.getVirtualMachineStatus(vm1));
     }
 
@@ -98,7 +98,7 @@ public class VMSchedulerTest extends TestCase {
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
         assertNormalResult(job);
-        scheduler.shutDown();
+        scheduler.shutdown();
     }
 
     public void testLongRunningJob() throws Exception {
@@ -110,7 +110,7 @@ public class VMSchedulerTest extends TestCase {
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
         assertNormalResult(job);
-        scheduler.shutDown();
+        scheduler.shutdown();
     }
 
     public void testAddMultipleJobs() throws Exception {
@@ -125,7 +125,7 @@ public class VMSchedulerTest extends TestCase {
         assertEquals(2, resultsByID.size());
         assertNormalResult(job1);
         assertNormalResult(job2);
-        scheduler.shutDown();
+        scheduler.shutdown();
     }
 
     public void testAddConcurrentLongRunningJobs() throws Exception {
@@ -140,7 +140,7 @@ public class VMSchedulerTest extends TestCase {
         assertEquals(2, resultsByID.size());
         assertNormalResult(job1);
         assertNormalResult(job2);
-        scheduler.shutDown();
+        scheduler.shutdown();
     }
 
     public void testInvalidExpression() throws Exception {
@@ -152,7 +152,7 @@ public class VMSchedulerTest extends TestCase {
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
         assertErrorResult(job);
-        scheduler.shutDown();
+        scheduler.shutdown();
     }
 
     public void testValidButExceptionGeneratingExpression() throws Exception {
@@ -164,7 +164,7 @@ public class VMSchedulerTest extends TestCase {
         scheduler.waitUntilFinished();
         assertEquals(1, resultsByID.size());
         assertErrorResult(job);
-        scheduler.shutDown();
+        scheduler.shutdown();
     }
 
     public void testAbortJob() throws Exception {
@@ -215,7 +215,7 @@ public class VMSchedulerTest extends TestCase {
         assertAbortedResult(job1);
         assertAbortedResult(job2);
 
-        scheduler.shutDown();
+        scheduler.shutdown();
     }
 
     public void testMultipleVMs() throws Exception {
@@ -243,7 +243,7 @@ public class VMSchedulerTest extends TestCase {
         assertNormalResult(job3);
         assertNormalResult(job4);
         assertNormalResult(job5);
-        scheduler.shutDown();
+        scheduler.shutdown();
     }
 
     public void testSchedulerAndVMStatus() throws Exception {
@@ -290,7 +290,7 @@ public class VMSchedulerTest extends TestCase {
         assertEquals(LinkedProcess.FarmStatus.ACTIVE, scheduler.getSchedulerStatus());
 
         // Shut down scheduler.
-        scheduler.shutDown();
+        scheduler.shutdown();
         assertEquals(4, farmStatusEvents.size());
         assertEquals(LinkedProcess.FarmStatus.INACTIVE, farmStatusEvents.get(3));
         assertEquals(LinkedProcess.FarmStatus.INACTIVE, scheduler.getSchedulerStatus());
@@ -313,7 +313,7 @@ public class VMSchedulerTest extends TestCase {
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
 
-        scheduler.shutDown();
+        scheduler.shutdown();
     }
 
     public void testStatusErrors() throws Exception {
@@ -369,7 +369,7 @@ public class VMSchedulerTest extends TestCase {
         } catch (JobAlreadyExistsException e) {
         }
 
-        scheduler.shutDown();
+        scheduler.shutdown();
     }
 
     public void testSecurity() throws Exception {
@@ -395,7 +395,7 @@ public class VMSchedulerTest extends TestCase {
 //        assertEquals("foo", resultsByID.get(job1.getJobId()).getException().getMessage());
 //        assertEquals("foo", resultsByID.get(job1.getJobId()).getExpression());
 
-        scheduler.shutDown();
+        scheduler.shutdown();
     }
 
 ////////////////////////////////////////////////////////////////////////////

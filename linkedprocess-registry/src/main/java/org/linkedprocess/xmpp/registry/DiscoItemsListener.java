@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp.registry;
 
 import org.jivesoftware.smack.packet.IQ;
@@ -5,9 +12,8 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 
 /**
- * User: marko
- * Date: Jul 30, 2009
- * Time: 3:14:37 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class DiscoItemsListener extends LopRegistryListener {
 

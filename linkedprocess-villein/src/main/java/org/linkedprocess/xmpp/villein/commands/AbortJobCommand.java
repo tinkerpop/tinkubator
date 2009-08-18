@@ -20,7 +20,7 @@ import org.linkedprocess.xmpp.vm.AbortJob;
  * The proxy by which an abort_job is sent to a virtual machine.
  * Any result of the command is returned to the provided result handler.
  * Any error of the command is returned to the provided error handler.
- * 
+ *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */

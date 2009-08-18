@@ -10,11 +10,9 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
- * Created by IntelliJ IDEA.
  * User: josh
  * Date: Jul 29, 2009
  * Time: 4:20:26 PM
- * To change this template use File | Settings | File Templates.
  */
 public class LinkedProcessFarm {
     private static final Logger LOGGER = LinkedProcess.getLogger(LinkedProcessFarm.class);

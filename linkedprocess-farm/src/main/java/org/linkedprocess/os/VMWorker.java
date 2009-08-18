@@ -560,7 +560,7 @@ public class VMWorker {
                     return;
                 } catch (Throwable e) {
                     LOGGER.severe("worker has encountered an abnormal error (" + e.getClass() + "):\n" + stackTraceToString(e));
-                    
+
                     // Indicate that this worker should be reset.
                     status = Status.ABNORMAL_ERROR;
 

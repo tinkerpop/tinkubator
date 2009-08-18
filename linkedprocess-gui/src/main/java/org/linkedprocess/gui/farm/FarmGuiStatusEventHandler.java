@@ -4,9 +4,8 @@ import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.farm.StatusEventHandler;
 
 /**
- * User: marko
- * Date: Jul 4, 2009
- * Time: 5:44:41 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class FarmGuiStatusEventHandler extends StatusEventHandler {
 

@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess;
 
 import org.jdom.Document;
@@ -5,14 +12,14 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import org.linkedprocess.security.VMSecurityManager;
 import org.jivesoftware.smack.packet.Packet;
+import org.linkedprocess.security.VMSecurityManager;
 
 import java.io.*;
 import java.util.Properties;
 import java.util.Random;
-import java.util.logging.Logger;
 import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
  * Author: josh

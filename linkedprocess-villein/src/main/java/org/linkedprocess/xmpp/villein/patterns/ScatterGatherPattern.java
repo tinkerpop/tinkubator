@@ -13,8 +13,8 @@ import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
 import org.linkedprocess.xmpp.villein.proxies.JobStruct;
-import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.villein.proxies.ResultHolder;
+import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -32,6 +32,7 @@ public class ScatterGatherPattern {
 
     /**
      * Puts a monitor on wait for a certain number of milliseconds.
+     *
      * @param monitor the monitor object to wait
      * @param timeout the number of milliseconds to wait (use -1 to wait indefinately)
      */

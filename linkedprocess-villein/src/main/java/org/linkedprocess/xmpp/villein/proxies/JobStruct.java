@@ -15,7 +15,7 @@ import org.linkedprocess.xmpp.LopError;
  * A submitted job does not have a result or error. However, a submitted job should have an expression.
  * The expression is a code fragement that is to be executed by the virtual machine and must be in the language of the virtual machine species.
  * When a JobStruct is returned by a submit_job call, the result or error may be set along with the complete flag.
- * 
+ *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
@@ -83,7 +83,7 @@ public class JobStruct implements Comparable {
     }
 
     public String toString() {
-        if(null == lopError)
+        if (null == lopError)
             return "job id[" + jobId + "], complete[" + complete + "], result[" + result + "]";
         else
             return "job id[" + jobId + "], complete[" + complete + "], error[" + lopError.getLopErrorType().toString() + "]";

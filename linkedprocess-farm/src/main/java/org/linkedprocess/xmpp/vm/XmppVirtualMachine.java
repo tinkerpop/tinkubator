@@ -5,9 +5,9 @@ import org.jivesoftware.smack.filter.*;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.Job;
@@ -23,9 +23,8 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * User: marko
- * Date: Jun 23, 2009
- * Time: 11:01:06 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class XmppVirtualMachine extends XmppClient {
 
@@ -68,7 +67,7 @@ public class XmppVirtualMachine extends XmppClient {
         PacketFilter abandonFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter terminateFilter = new AndFilter(new PacketTypeFilter(TerminateVm.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter bindingsFilter = new AndFilter(new PacketTypeFilter(ManageBindings.class), new OrFilter(new IQTypeFilter(IQ.Type.GET), new IQTypeFilter(IQ.Type.SET)));
-        
+
         this.connection.addPacketListener(new SubmitJobListener(this), submitFilter);
         this.connection.addPacketListener(new PingJobListener(this), statusFilter);
         this.connection.addPacketListener(new AbortJobListener(this), abandonFilter);
@@ -157,8 +156,8 @@ public class XmppVirtualMachine extends XmppClient {
         return this.villeinJid;
     }
 
-    public void shutDown() {
-        super.shutDown(this.createPresence(LinkedProcess.VmStatus.INACTIVE));
+    public void shutdown() {
+        super.shutdown(this.createPresence(LinkedProcess.VmStatus.INACTIVE));
 
     }
 

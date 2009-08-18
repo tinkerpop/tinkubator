@@ -9,7 +9,7 @@ package org.linkedprocess.xmpp.villein;
 
 /**
  * A general purpose handler. Used extensively by the proxies, commands, and patterns.
- *
+ * <p/>
  * User: josh
  * Date: Aug 6, 2009
  * Time: 4:09:18 PM

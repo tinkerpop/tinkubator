@@ -10,7 +10,6 @@ package org.linkedprocess.xmpp.villein.proxies;
 import java.util.Collection;
 
 /**
- *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */

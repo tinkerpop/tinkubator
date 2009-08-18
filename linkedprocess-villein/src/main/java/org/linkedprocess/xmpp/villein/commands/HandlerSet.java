@@ -17,7 +17,7 @@ import java.util.Map;
 
 /**
  * A HandlerSet maintains a collection of HandlerRecords which each maintain a Handler for a command.
- *
+ * <p/>
  * User: josh
  * Date: Aug 6, 2009
  * Time: 5:53:06 PM
@@ -31,7 +31,7 @@ public class HandlerSet<T> {
 
     public Handler<T> addHandler(final String id,
                                  final Handler<T> handler) {
-        if(null != handler) {
+        if (null != handler) {
             HandlerRecord r = new HandlerRecord(handler);
             handlerRecords.put(id, r);
         }

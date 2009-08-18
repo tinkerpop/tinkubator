@@ -2,7 +2,6 @@ package org.linkedprocess.gui.villein.vmcontrol;
 
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.linkedprocess.gui.GenericErrorHandler;
-import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.proxies.JobStruct;
 
@@ -12,9 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * User: marko
- * Date: Jul 12, 2009
- * Time: 10:15:56 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class JobPane extends JPanel implements ActionListener {
 

@@ -78,7 +78,7 @@ class PresenceListener extends LopVilleinListener {
             }
         }
 
-        if(proxy != null) {
+        if (proxy != null) {
             // Handlers
             for (PresenceHandler presenceHandler : this.getXmppVillein().getPresenceHandlers()) {
                 presenceHandler.handlePresenceUpdate(proxy, presence.getType());

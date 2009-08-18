@@ -35,17 +35,17 @@ public class RegistryProxy extends Proxy {
         try {
             this.refreshDiscoItems();
         } catch (Exception e) {
-            XmppVillein.LOGGER.warning("Problem loading disco#items: "  + e.getMessage());
+            XmppVillein.LOGGER.warning("Problem loading disco#items: " + e.getMessage());
         }
-        
+
     }
 
     public RegistryProxy(final String fullJid, final Dispatcher dispatcher, final Document discoInfoDocument) {
         super(fullJid, dispatcher, discoInfoDocument);
-         try {
+        try {
             this.refreshDiscoItems();
         } catch (Exception e) {
-             XmppVillein.LOGGER.warning("Problem loading disco#items: "  + e.getMessage());
+            XmppVillein.LOGGER.warning("Problem loading disco#items: " + e.getMessage());
         }
     }
 
@@ -54,14 +54,14 @@ public class RegistryProxy extends Proxy {
         ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();
         DiscoverItems discoItems = discoManager.discoverItems(this.getFullJid());
         Iterator<DiscoverItems.Item> itty = discoItems.getItems();
-        while(itty.hasNext()) {
+        while (itty.hasNext()) {
             this.discoItems.add(itty.next());
         }
     }
 
     public Set<CountrysideProxy> getActiveCountrysides() {
         Set<CountrysideProxy> countrysideProxies = new HashSet<CountrysideProxy>();
-        for(DiscoverItems.Item item : discoItems) {
+        for (DiscoverItems.Item item : discoItems) {
             CountrysideProxy countrysideProxy = new CountrysideProxy(item.getEntityID(), null);
             countrysideProxies.add(countrysideProxy);
         }

@@ -11,8 +11,6 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.xmpp.villein.commands.*;
 
 /**
- *
- *
  * User: josh
  * Date: Aug 6, 2009
  * Time: 5:37:56 PM
@@ -41,7 +39,7 @@ public class Dispatcher {
     public PingJobCommand getPingJobCommand() {
         return this.pingJobCommand;
     }
-    
+
     public SpawnVmCommand getSpawnVmCommand() {
         return this.spawnVmCommand;
     }

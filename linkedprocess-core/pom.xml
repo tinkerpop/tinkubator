@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+  ~ protocol is an open-source project founded at the Center for Nonlinear Studies
+  ~ at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+  ~ http://linkedprocess.org and LICENSE.txt for more information.
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -13,10 +20,10 @@
         <artifactId>linkedprocess</artifactId>
         <version>alpha1</version>
     </parent>
-                                     
+
     <dependencies>
-                                       
-        <dependency>             
+
+        <dependency>
             <groupId>jivesoftware</groupId>
             <artifactId>smack</artifactId>
             <version>3.1.0</version>

@@ -12,7 +12,7 @@ import org.linkedprocess.xmpp.villein.XmppVillein;
 /**
  * The base class of all LoP command proxies.
  * Note that the command proxies are best utilized through the supported LoP proxies and patterns.
- * 
+ *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */

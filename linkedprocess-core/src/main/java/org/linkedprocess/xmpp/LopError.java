@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.xmpp;
 
 import org.jdom.Element;
@@ -9,9 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * User: marko
- * Date: Jul 24, 2009
- * Time: 9:52:06 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class LopError extends XMPPError implements Comparable {
 
@@ -141,15 +147,15 @@ public class LopError extends XMPPError implements Comparable {
     }
 
     public String toString() {
-        if(null != lopErrorType)
+        if (null != lopErrorType)
             return lopErrorType.toString() + ":" + this.getCondition() + "[" + this.getCode() + "]: " + this.getMessage();
         else
             return this.getCondition() + "[" + this.getCode() + "]: " + this.getMessage();
     }
 
     public int compareTo(Object object) {
-        if(object instanceof LopError)
-            return packetId.compareTo(((LopError)object).getPacketId());
+        if (object instanceof LopError)
+            return packetId.compareTo(((LopError) object).getPacketId());
         else
             throw new ClassCastException();
     }

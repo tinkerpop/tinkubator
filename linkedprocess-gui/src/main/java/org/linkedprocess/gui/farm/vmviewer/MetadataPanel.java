@@ -9,9 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * User: marko
- * Date: Jul 21, 2009
- * Time: 9:44:31 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class MetadataPanel extends JPanel implements ActionListener {
 

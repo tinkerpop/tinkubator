@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2009. The LoPSideD implementation of the Linked Process
+ * protocol is an open-source project founded at the Center for Nonlinear Studies
+ * at the Los Alamos National Laboratory in Los Alamos, New Mexico. Please visit
+ * http://linkedprocess.org and LICENSE.txt for more information.
+ */
+
 package org.linkedprocess.security;
 
 import org.linkedprocess.LinkedProcess;
@@ -78,7 +85,7 @@ public class VMSecurityManager extends SecurityManager {
     private void permissionDenied(final PermissionType type, final String resource) {
         LOGGER.info("denying permission '" + type.getSpecName() + "' to resource '" + resource + "'");
 //new Exception().printStackTrace();
-        
+
         SecurityException e = new SecurityException("permission '" + type + "' is not granted for resource: " + resource);
         alertListeners(e, type, resource);
         throw e;

@@ -41,10 +41,10 @@ public class ResourceAllocationPattern {
             checkTimeout(startTime, timeout);
             if (farmHolder.getFarmProxies().size() >= numberOfFarms) {
                 int i = 0;
-                for(FarmProxy farmProxy : farmHolder.getFarmProxies()){
+                for (FarmProxy farmProxy : farmHolder.getFarmProxies()) {
                     farmProxies.add(farmProxy);
                     i++;
-                    if(i == numberOfFarms)
+                    if (i == numberOfFarms)
                         return farmProxies;
                 }
             }
@@ -63,7 +63,7 @@ public class ResourceAllocationPattern {
         while (true) {
             checkTimeout(startTime, timeout);
             countrysideProxy = lopCloud.getCountrysideProxy(countrysideJid);
-            if(null != countrysideProxy)
+            if (null != countrysideProxy)
                 return countrysideProxy;
             try {
                 Thread.sleep(150);

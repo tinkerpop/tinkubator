@@ -1,8 +1,8 @@
 package org.linkedprocess.gui.villein.vmcontrol;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.GenericErrorHandler;
+import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.os.TypedValue;
 import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.os.errors.InvalidValueException;
@@ -21,9 +21,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * User: marko
- * Date: Jul 17, 2009
- * Time: 11:57:06 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class ManageBindingsPanel extends JPanel implements ActionListener, TableModelListener, ListSelectionListener {
 

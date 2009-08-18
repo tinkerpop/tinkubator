@@ -14,9 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * User: marko
- * Date: Jul 24, 2009
- * Time: 4:44:14 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class ViewBindingsPanel extends JPanel implements ActionListener, ListSelectionListener {
 

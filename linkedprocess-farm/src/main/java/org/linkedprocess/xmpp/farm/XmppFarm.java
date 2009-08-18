@@ -27,17 +27,12 @@ import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 import javax.script.ScriptEngineFactory;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
- * User: marko
- * Date: Jun 25, 2009
- * Time: 11:02:49 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class XmppFarm extends XmppClient {
 
@@ -53,7 +48,7 @@ public class XmppFarm extends XmppClient {
 
     public XmppFarm(final String server, final int port, final String username, final String password, final String farmPassword) throws XMPPException {
         LOGGER.info("Starting " + STATUS_MESSAGE);
-        if(null == farmPassword) {
+        if (null == farmPassword) {
             this.farmPassword = LinkedProcess.getConfiguration().getProperty(LinkedProcess.FARM_PASSWORD_PROPERTY);
             if (null != this.farmPassword) {
                 this.farmPassword = this.farmPassword.trim();
@@ -113,7 +108,7 @@ public class XmppFarm extends XmppClient {
 
         } finally {
             if (exceptionThrown) {
-                vm.shutDown();
+                vm.shutdown();
                 this.machines.remove(vmJid);
             }
         }
@@ -123,7 +118,7 @@ public class XmppFarm extends XmppClient {
     public void terminateVirtualMachine(String vmJid) throws VMWorkerNotFoundException {
         XmppVirtualMachine vm = this.machines.get(vmJid);
         if (null != vm) {
-            vm.shutDown();
+            vm.shutdown();
             this.machines.remove(vmJid);
         }
     }
@@ -145,16 +140,16 @@ public class XmppFarm extends XmppClient {
         return this.machines.values();
     }
 
-    public void shutDown() {
+    public void shutdown() {
         LOGGER.info("shutting down XmppFarm");
 
-        this.vmScheduler.shutDown();
+        this.vmScheduler.shutdown();
         try {
             this.vmScheduler.waitUntilFinished();
         } catch (InterruptedException e) {
             LOGGER.severe(e.getMessage());
         }
-        super.shutDown(this.createPresence(LinkedProcess.FarmStatus.INACTIVE));
+        super.shutdown(this.createPresence(LinkedProcess.FarmStatus.INACTIVE));
 
     }
 
@@ -281,10 +276,6 @@ public class XmppFarm extends XmppClient {
         return this.farmPassword;
     }
 
-    //public void setFarmPassword(final String farmPassword) {
-    //    this.farmPassword = farmPassword;
-    //}
-
     public static void main(final String[] args) throws Exception {
         Properties props = LinkedProcess.getConfiguration();
         String server = props.getProperty(LinkedProcess.FARM_SERVER_PROPERTY);
@@ -296,12 +287,12 @@ public class XmppFarm extends XmppClient {
         StatusEventHandler h = new StatusEventHandler(farm);
         farm.setStatusEventHandler(h);
 
-        Object o = "";
+        Object monitor = new Object();
         try {
-            synchronized (o) {
+            synchronized (monitor) {
                 // Never break out until the process is killed.
                 while (true) {
-                    o.wait();
+                    monitor.wait();
                 }
             }
         } catch (Throwable t) {

@@ -41,7 +41,7 @@ public class VmProxy extends Proxy {
 
     // FIXME: why Handler<JobStruct> for errors? Seems kind of weird, even if it works.
     public void submitJob(final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<JobStruct> errorHandler) {
-       dispatcher.getSubmitJobCommand().send(this, jobStruct, resultHandler, errorHandler);
+        dispatcher.getSubmitJobCommand().send(this, jobStruct, resultHandler, errorHandler);
     }
 
     public void pingJob(final JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> resultHandler, final Handler<LopError> errorHandler) {

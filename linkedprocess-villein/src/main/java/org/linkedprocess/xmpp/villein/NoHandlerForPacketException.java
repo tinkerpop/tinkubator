@@ -10,7 +10,7 @@ package org.linkedprocess.xmpp.villein;
 /**
  * If no handler was registered for a packet, then this exception is thrown.
  * For many situations, a null handler is passed into a command and thus, this is a common exception.
- *
+ * <p/>
  * User: josh
  * Date: Aug 6, 2009
  * Time: 5:58:39 PM

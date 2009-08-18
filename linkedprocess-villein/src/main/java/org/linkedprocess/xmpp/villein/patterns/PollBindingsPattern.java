@@ -11,8 +11,8 @@ import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.villein.Handler;
-import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.villein.proxies.ResultHolder;
+import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 
 import java.util.logging.Logger;
 
@@ -46,7 +46,12 @@ public class PollBindingsPattern implements Runnable {
         new Thread(this).start();
     }
 
-
+    /**
+     * Puts a monitor on wait for a certain number of milliseconds.
+     *
+     * @param monitor the monitor object to wait
+     * @param timeout the number of milliseconds to wait (use -1 to wait indefinately)
+     */
     private static void monitorSleep(final Object monitor, final long timeout) {
         try {
             synchronized (monitor) {
@@ -60,6 +65,9 @@ public class PollBindingsPattern implements Runnable {
         }
     }
 
+    /**
+     * This initiates the polling thread. Note that a thread is created and started in the constructor of this method.
+     */
     public void run() {
         Object monitor = new Object();
 

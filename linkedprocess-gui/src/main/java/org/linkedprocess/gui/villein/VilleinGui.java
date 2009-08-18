@@ -2,17 +2,16 @@ package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.Connection;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
-import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.villein.XmppVillein;
+import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 
 import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * User: marko
- * Date: Jul 7, 2009
- * Time: 10:33:02 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class VilleinGui extends JFrame {
 
@@ -76,7 +75,7 @@ public class VilleinGui extends JFrame {
 
     public void shutDown() {
         if (this.xmppVillein != null)
-            this.xmppVillein.shutDown(null);
+            this.xmppVillein.shutdown(null);
         System.exit(0);
     }
 

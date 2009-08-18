@@ -6,9 +6,8 @@ import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 import javax.swing.*;
 
 /**
- * User: marko
- * Date: Jul 21, 2009
- * Time: 9:21:16 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class VmViewerFrame extends JFrame {
 

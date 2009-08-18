@@ -21,9 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * User: marko
- * Date: Jul 7, 2009
- * Time: 5:03:43 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class VmArea extends JPanel implements ActionListener, MouseListener {
 
@@ -129,8 +128,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else
-        if (node != null && (status == LinkedProcess.VmStatus.ACTIVE || status == LinkedProcess.VmStatus.ACTIVE_FULL)) {
+        } else if (node != null && (status == LinkedProcess.VmStatus.ACTIVE || status == LinkedProcess.VmStatus.ACTIVE_FULL)) {
             node.removeAllChildren();
             XmppVirtualMachine xmppVm = (XmppVirtualMachine) node.getUserObject();
             node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", xmppVm.getVilleinJid())));
@@ -148,7 +146,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
 
     public void actionPerformed(ActionEvent event) {
         if (event.getActionCommand().equals(SHUTDOWN)) {
-            this.farmGui.getXmppFarm().shutDown();
+            this.farmGui.getXmppFarm().shutdown();
             this.farmGui.loadLoginFrame();
         }
     }

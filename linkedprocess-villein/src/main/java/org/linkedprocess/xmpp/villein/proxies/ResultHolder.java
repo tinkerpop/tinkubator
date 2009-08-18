@@ -17,7 +17,8 @@ public class ResultHolder<T> {
     private T result;
     private LopError lopError;
 
-    public ResultHolder() {}
+    public ResultHolder() {
+    }
 
     public ResultHolder(T result) {
         this.result = result;
@@ -47,7 +48,7 @@ public class ResultHolder<T> {
         return this.lopError == null;
     }
 
-    public boolean isEmpty()  {
+    public boolean isEmpty() {
         return (this.lopError == null && this.result == null);
     }
 }

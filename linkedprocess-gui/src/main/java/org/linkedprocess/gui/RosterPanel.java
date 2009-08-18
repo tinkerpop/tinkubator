@@ -13,9 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * User: marko
- * Date: Jul 19, 2009
- * Time: 9:44:45 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class RosterPanel extends JPanel implements ActionListener, ListSelectionListener {
 

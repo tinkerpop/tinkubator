@@ -22,23 +22,17 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * This class demonstrates how to use the PollBindingPattern.
- * The following JavaScript job is submitted to a spawned virtual machine:
- * var meter = 0.0;
- * while(true) {
- * meter = meter = 0.00000001;
- * }
- * The meter binding is polled at an interval and checked against some desired binding.
- * When the desired binding is reached, the VM terminates and the binding is printed.
- * The purpose of the PollBindingsPattern is to allow you to monitor the states of variables
- * in a virtual machine as code is executing.
+ * ProgressPollingAbortJob is analagous to ProgressPolling save that instead of simply terminating the virtual machine
+ * when the progress meter has been met, the while(true) loop is aborted. This demonstrates that it is possible to have
+ * while(true) loops operating and when the state of the computation has reached a desired state, the infinite loop can
+ * be terminated using an abort_job.
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class ProgressPolling {
+public class ProgressPollingAbortJob {
 
-    public static void doProgressPolling(double meterMax, long pollingInterval, String username, String password, String server, int port) throws Exception {
+    public static void doProgressPollingAbortJob(double meterMax, long pollingInterval, String username, String password, String server, int port) throws Exception {
 
         final Object monitor = new Object();
         XmppVillein villein = new XmppVillein(server, port, username, password);
@@ -68,6 +62,7 @@ public class ProgressPolling {
         //////////////// DISTRIBUTE PROGRESS METER INCREMENTING CODE
 
         JobStruct jobStruct = new JobStruct();
+        jobStruct.setJobId("ABCD");
         jobStruct.setExpression("var meter = 0.0;\n" +
                 "while(true) {\n" +
                 "\tmeter = meter + 0.00000005;\n" +
@@ -113,6 +108,8 @@ public class ProgressPolling {
         synchronized (monitor) {
             monitor.wait();
         }
+        System.out.println("Aborting: " + jobStruct);
+        SynchronousPattern.abortJob(vmProxyResult.getResult(), jobStruct, 2000);
         System.out.println("Terminating: " + vmProxyResult.getResult());
         vmProxyResult.getResult().terminateVm(null, null);
         villein.shutdown();
@@ -131,7 +128,7 @@ public class ProgressPolling {
         long pollingInterval = Long.valueOf(props.getProperty("progressPolling.pollingInterval"));
 
         long startTime = System.currentTimeMillis();
-        ProgressPolling.doProgressPolling(meterMax, pollingInterval, username, password, server, port);
+        ProgressPollingAbortJob.doProgressPollingAbortJob(meterMax, pollingInterval, username, password, server, port);
         System.out.println("Running time: " + (System.currentTimeMillis() - startTime) / 1000.0f + " seconds.");
     }
 }

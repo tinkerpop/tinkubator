@@ -34,7 +34,7 @@ public class PingJobCommand extends Command {
         this.resultHandlers = new HandlerSet<LinkedProcess.JobStatus>();
         this.errorHandlers = new HandlerSet<LopError>();
     }
-    
+
     public void send(VmProxy vmStruct, JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> statusHandler, final Handler<LopError> errorHandler) {
 
         String id = Packet.nextID();

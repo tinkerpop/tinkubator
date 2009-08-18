@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.linkedprocess.xmpp.farm.SpawnVm;
 import org.linkedprocess.xmpp.farm.XmppFarm;
 
 /**
@@ -76,10 +75,8 @@ public class OnlineFarmTest extends TestCase {
     }
 
 
-    
-
     @After
     public void teardown() {
-        //xmppFarm.shutDown();
+        //xmppFarm.shutdown();
     }
 }

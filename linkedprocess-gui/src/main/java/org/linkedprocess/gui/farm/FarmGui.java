@@ -10,9 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * User: marko
- * Date: Jul 4, 2009
- * Time: 5:33:39 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class FarmGui extends JFrame implements ActionListener {
 
@@ -88,7 +87,7 @@ public class FarmGui extends JFrame implements ActionListener {
 
     public void shutDown() {
         if (this.xmppFarm != null)
-            this.xmppFarm.shutDown();
+            this.xmppFarm.shutdown();
         System.exit(0);
     }
 

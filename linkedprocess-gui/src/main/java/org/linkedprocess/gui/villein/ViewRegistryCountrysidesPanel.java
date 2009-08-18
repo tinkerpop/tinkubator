@@ -1,27 +1,18 @@
 package org.linkedprocess.gui.villein;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.Namespace;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.gui.ImageHolder;
-import org.linkedprocess.xmpp.villein.proxies.RegistryProxy;
-import org.linkedprocess.xmpp.villein.proxies.CountrysideProxy;
 import org.linkedprocess.xmpp.villein.XmppVillein;
+import org.linkedprocess.xmpp.villein.proxies.CountrysideProxy;
+import org.linkedprocess.xmpp.villein.proxies.RegistryProxy;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 /**
- * User: marko
- * Date: Jul 30, 2009
- * Time: 5:05:38 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListener {
 

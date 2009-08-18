@@ -47,7 +47,7 @@ public class GetBindingsCommand extends Command {
         manageBindings.setVmPassword(vmStruct.getVmPassword());
         manageBindings.setPacketID(id);
         VMBindings vmBindings = new VMBindings();
-        for(String bindingName : bindingNames) {
+        for (String bindingName : bindingNames) {
             vmBindings.put(bindingName, null);
         }
         manageBindings.setBindings(vmBindings);

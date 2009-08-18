@@ -10,7 +10,7 @@ import org.linkedprocess.xmpp.farm.XmppFarm;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
- * @version 0.1
+ * @version LoPSideD 0.1
  */
 public class TerminateVmListener extends LopVmListener {
 
@@ -60,7 +60,7 @@ public class TerminateVmListener extends LopVmListener {
             try {
                 this.getXmppVm().getFarm().getVmScheduler().terminateVirtualMachine(xmppClient.getFullJid());
             } catch (VMWorkerNotFoundException e) {
-                this.getXmppVm().shutDown();
+                this.getXmppVm().shutdown();
             }
         }
     }

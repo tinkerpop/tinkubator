@@ -92,12 +92,12 @@ public class Proxy implements Comparable {
     }
 
     public Field getField(String variable) {
-       List<Field> fields =  this.getFields();
-       for(Field field : fields) {
-           if(field.getVariable().equals(variable))
-            return field;
-       }
-       return null;
+        List<Field> fields = this.getFields();
+        for (Field field : fields) {
+            if (field.getVariable().equals(variable))
+                return field;
+        }
+        return null;
     }
 
     public List<Field> getFields() {
@@ -145,6 +145,10 @@ public class Proxy implements Comparable {
         }
     }
 
+    public String toString() {
+        return this.getClass().getName() + "[" + this.fullJid + "]";
+    }
+
 
     public class Field {
         protected String variable;
@@ -185,7 +189,7 @@ public class Proxy implements Comparable {
         public void setOption(boolean option) {
             this.option = option;
         }
-        
+
         public void addValue(String value) {
             this.values.add(value);
         }

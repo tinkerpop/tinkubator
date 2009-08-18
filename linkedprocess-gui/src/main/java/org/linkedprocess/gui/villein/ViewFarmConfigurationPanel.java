@@ -1,16 +1,9 @@
 package org.linkedprocess.gui.villein;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.Namespace;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
 import org.linkedprocess.xmpp.villein.proxies.Proxy;
-import org.linkedprocess.xmpp.villein.XmppVillein;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -19,14 +12,11 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
- * User: marko
- * Date: Jul 28, 2009
- * Time: 11:15:56 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionListener, ActionListener {
 
@@ -85,7 +75,6 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
 
         this.refreshFarmFeatures();
         this.refreshFarmConfiguration();
-
 
 
         JScrollPane scrollPane1 = new JScrollPane(this.configurationTable);
@@ -150,11 +139,10 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
         DefaultTableModel tableModel = (DefaultTableModel) this.configurationTable.getModel();
         this.clearAllRows(this.configurationTable);
         java.util.List<Proxy.Field> fields = this.farmProxy.getFields();
-        for(Proxy.Field field : fields) {
+        for (Proxy.Field field : fields) {
             tableModel.addRow(new Object[]{field.getVariable(), field.getLabel(), field.getType()});
         }
     }
-
 
 
 }

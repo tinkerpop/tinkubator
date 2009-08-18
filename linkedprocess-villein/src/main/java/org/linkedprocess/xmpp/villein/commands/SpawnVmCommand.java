@@ -74,7 +74,7 @@ public class SpawnVmCommand extends Command {
     public void receiveError(final SpawnVm spawnVm) {
         try {
             errorHandlers.handle(spawnVm.getPacketID(), spawnVm.getLopError());
-        } finally { 
+        } finally {
             resultHandlers.removeHandler(spawnVm.getPacketID());
             errorHandlers.removeHandler(spawnVm.getPacketID());
         }

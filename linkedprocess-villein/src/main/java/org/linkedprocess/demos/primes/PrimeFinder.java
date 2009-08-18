@@ -13,8 +13,8 @@ import org.linkedprocess.xmpp.villein.patterns.ResourceAllocationPattern;
 import org.linkedprocess.xmpp.villein.patterns.ScatterGatherPattern;
 import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
 import org.linkedprocess.xmpp.villein.proxies.JobStruct;
-import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.villein.proxies.ResultHolder;
+import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 
 import java.util.*;
 
@@ -31,19 +31,19 @@ import java.util.*;
 public class PrimeFinder {
 
 
-	public static List<Integer> findPrimesUsingLop(int startInteger, int endInteger, int farmCount, int vmsPerFarm, String username, String password, String server, int port) throws Exception {
+    public static List<Integer> findPrimesUsingLop(int startInteger, int endInteger, int farmCount, int vmsPerFarm, String username, String password, String server, int port) throws Exception {
 
 
-		XmppVillein villein = new XmppVillein(server, port, username, password);
-		villein.createLopCloudFromRoster();
+        XmppVillein villein = new XmppVillein(server, port, username, password);
+        villein.createLopCloudFromRoster();
 
         //////////////// ALLOCATE FARMS
 
         System.out.println("Waiting for " + farmCount + " available farms...");
         Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(villein.getLopCloud(), farmCount, 20000);
         for (FarmProxy farmProxy : farmProxies) {
-			System.out.println("farm allocated: " + farmProxy.getFullJid());
-		}
+            System.out.println("farm allocated: " + farmProxy.getFullJid());
+        }
 
         //////////////// SPAWN VIRTUAL MACHINES ON ALLOCATED FARMS
 
@@ -53,7 +53,7 @@ public class PrimeFinder {
         //////////////// DISTRIBUTE PRIME FINDER FUNCTION DEFINITION
 
         Map<VmProxy, JobStruct> vmJobMap = new HashMap<VmProxy, JobStruct>();
-        for(ResultHolder<VmProxy> vmProxyResult : vmProxies) {
+        for (ResultHolder<VmProxy> vmProxyResult : vmProxies) {
             JobStruct jobStruct = new JobStruct();
             jobStruct.setExpression(LinkedProcess.convertStreamToString(PrimeFinder.class.getResourceAsStream("findPrimes.groovy")));
             vmJobMap.put(vmProxyResult.getResult(), jobStruct);
@@ -67,9 +67,9 @@ public class PrimeFinder {
 
         int intervalInteger = Math.round((endInteger - startInteger) / vmJobMap.keySet().size());
         int currentStartInteger = startInteger;
-        for(VmProxy vmProxy : vmJobMap.keySet()) {
+        for (VmProxy vmProxy : vmJobMap.keySet()) {
             int currentEndInteger = currentStartInteger + intervalInteger;
-            if(currentEndInteger > endInteger)
+            if (currentEndInteger > endInteger)
                 currentEndInteger = endInteger;
             JobStruct jobStruct = new JobStruct();
             jobStruct.setExpression("findPrimes(" + currentStartInteger + ", " + currentEndInteger + ")");
@@ -85,14 +85,19 @@ public class PrimeFinder {
         System.out.println("Terminating virtual machines...");
         ScatterGatherPattern.scatterTerminateVm(vmJobMap.keySet());
 
+        //////////////// SHUT DOWN THE VILLEIN
+
+        System.out.println("Shutting down the villein...");
+        villein.shutdown();
+
         //////////////// SORT AND DISPLAY JOB RESULT PRIME VALUES
 
         System.out.println("Gathering find primes function results...");
         ArrayList<Integer> primes = new ArrayList<Integer>();
-        for(JobStruct jobStruct : vmJobMap.values()) {
-            if(jobStruct.wasSuccessful()) {
-                for(String primeString : jobStruct.getResult().replace("[","").replace("]","").split(",")) {
-                    if(!primeString.trim().equals(""))
+        for (JobStruct jobStruct : vmJobMap.values()) {
+            if (jobStruct.wasSuccessful()) {
+                for (String primeString : jobStruct.getResult().replace("[", "").replace("]", "").split(",")) {
+                    if (!primeString.trim().equals(""))
                         primes.add(Integer.valueOf(primeString.trim()));
                 }
             } else {
@@ -105,17 +110,23 @@ public class PrimeFinder {
 
 
     public static void main(String[] args) throws Exception {
-        int startInteger = 1;
-        int endInteger = 5000;
-        int farmCount = 2;
-        int vmsPerFarm = 2;
-        String username = "linked.process.1";
-        String password = "linked12";
-        String server = "lanl.linkedprocess.org";
-        
+
+        Properties props = new Properties();
+        props.load(PrimeFinder.class.getResourceAsStream("../demo.properties"));
+        String username = props.getProperty("username");
+        String password = props.getProperty("password");
+        String server = props.getProperty("server");
+        int port = Integer.valueOf(props.getProperty("port"));
+
+        int startInteger = Integer.valueOf(props.getProperty("primeFinder.startInteger"));
+        int endInteger = Integer.valueOf(props.getProperty("primeFinder.endInteger"));
+        int farmCount = Integer.valueOf(props.getProperty("primeFinder.farmCount"));
+        int vmsPerFarm = Integer.valueOf(props.getProperty("primeFinder.vmsPerFarm"));
+
         long startTime = System.currentTimeMillis();
-        System.out.println("Prime LoP results: " + PrimeFinder.findPrimesUsingLop(startInteger, endInteger, farmCount, vmsPerFarm, username, password, server, 5222));
-        System.out.println("Running time: " + (System.currentTimeMillis() - startTime)/1000.0f + " seconds.");
+        System.out.println("Prime LoP results: " + PrimeFinder.findPrimesUsingLop(startInteger, endInteger, farmCount, vmsPerFarm, username, password, server, port));
+        System.out.println("Running time: " + (System.currentTimeMillis() - startTime) / 1000.0f + " seconds.");
+
     }
 
 

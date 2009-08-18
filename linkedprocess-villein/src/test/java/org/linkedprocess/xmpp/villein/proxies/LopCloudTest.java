@@ -20,11 +20,11 @@ public class LopCloudTest extends TestCase {
         LopCloud lopCloud = new LopCloud();
         CountrysideProxy countrysideProxy = new CountrysideProxy("test@test", null);
         lopCloud.addCountrysideProxy(countrysideProxy);
-        for(int i=0; i<10; i++) {
+        for (int i = 0; i < 10; i++) {
             FarmProxy farmProxy = new FarmProxy("test@test/" + LinkedProcess.generateRandomResourceId(), null);
             lopCloud.addFarmProxy(farmProxy);
         }
         assertEquals(lopCloud.getFarmProxies().size(), 10);
     }
-    
+
 }

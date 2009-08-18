@@ -8,8 +8,8 @@ import org.linkedprocess.LinkedProcess;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,9 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * User: marko
- * Date: Jul 18, 2009
- * Time: 11:20:09 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class PacketSnifferPanel extends JPanel implements ListSelectionListener, ActionListener, PacketInterceptor, PacketListener {
 

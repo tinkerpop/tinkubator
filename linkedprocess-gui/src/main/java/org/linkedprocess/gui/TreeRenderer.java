@@ -2,10 +2,11 @@ package org.linkedprocess.gui;
 
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.xmpp.farm.XmppFarm;
-import org.linkedprocess.xmpp.villein.*;
-import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
+import org.linkedprocess.xmpp.villein.XmppVillein;
 import org.linkedprocess.xmpp.villein.proxies.CountrysideProxy;
-import org.linkedprocess.xmpp.villein.proxies.*;
+import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
+import org.linkedprocess.xmpp.villein.proxies.RegistryProxy;
+import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 import javax.swing.*;
@@ -14,9 +15,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
 
 /**
- * User: marko
- * Date: Jul 8, 2009
- * Time: 4:00:56 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class TreeRenderer extends DefaultTreeCellRenderer {
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
