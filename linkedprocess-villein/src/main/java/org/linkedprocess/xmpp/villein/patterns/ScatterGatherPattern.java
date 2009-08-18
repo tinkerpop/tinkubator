@@ -187,7 +187,7 @@ public class ScatterGatherPattern {
     }
 
     /**
-     * Scatters submit_vm commands to a set of VmProxies and makes use of a result handler when the commands are complete.
+     * Scatters submit_job commands to a set of VmProxies and makes use of a result handler when the commands are complete.
      *
      * @param vmJobMap      a mapping from a VmProxy to the JobStruct that it should evaluate
      * @param resultHandler the handler of the results (can be null)
