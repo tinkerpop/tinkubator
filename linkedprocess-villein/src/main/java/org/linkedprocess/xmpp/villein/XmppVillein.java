@@ -102,15 +102,20 @@ public class XmppVillein extends XmppClient {
 
     public void createLopCloudFromRoster() {
         for (RosterEntry entry : this.getRoster().getEntries()) {
-            CountrysideProxy countrysideProxy = this.lopCloud.getCountrysideProxy(entry.getUser());
-            if (countrysideProxy == null) {
-                countrysideProxy = new CountrysideProxy(entry.getUser(), this.dispatcher);
-                this.lopCloud.addCountrysideProxy(countrysideProxy);
-            }
+            addCountrySideEntry(entry.getUser());
         }
+        addCountrySideEntry(LinkedProcess.generateBareJid(this.connection.getUser()));
     }
 
-    public void requestUnsubscription(String jid) {
+    private void addCountrySideEntry(String user) {
+    	CountrysideProxy countrysideProxy = this.lopCloud.getCountrysideProxy(user);
+        if (countrysideProxy == null) {
+            countrysideProxy = new CountrysideProxy(user, this.dispatcher);
+            this.lopCloud.addCountrysideProxy(countrysideProxy);
+        }	
+	}
+
+	public void requestUnsubscription(String jid) {
         super.requestUnsubscription(jid);
         CountrysideProxy countrysideProxy = this.lopCloud.getCountrysideProxy(jid);
         if (countrysideProxy != null) {
