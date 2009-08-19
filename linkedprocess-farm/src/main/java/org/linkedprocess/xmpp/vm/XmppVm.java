@@ -11,7 +11,7 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.Job;
-import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.os.errors.JobAlreadyExistsException;
 import org.linkedprocess.os.errors.JobNotFoundException;
 import org.linkedprocess.os.errors.VmWorkerIsFullException;
@@ -112,11 +112,11 @@ public class XmppVm extends XmppClient {
         this.farm.getVmScheduler().submitJob(this.getFullJid(), job);
     }
 
-    public void setBindings(VMBindings bindings) throws VmWorkerNotFoundException {
+    public void setBindings(VmBindings bindings) throws VmWorkerNotFoundException {
         this.farm.getVmScheduler().setBindings(this.getFullJid(), bindings);
     }
 
-    public VMBindings getBindings(Set<String> names) throws VmWorkerNotFoundException {
+    public VmBindings getBindings(Set<String> names) throws VmWorkerNotFoundException {
         return this.farm.getVmScheduler().getBindings(this.getFullJid(), names);
     }
 

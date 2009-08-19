@@ -219,8 +219,8 @@ public class VmWorker {
     /**
      * @return the set of all bindings in this worker's ScriptEngine, at ScriptContext.ENGINE_SCOPE
      */
-    public synchronized VMBindings getAllBindings() {
-        VMBindings bindings = new VMBindings();
+    public synchronized VmBindings getAllBindings() {
+        VmBindings bindings = new VmBindings();
         Bindings b = this.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
         bindings.putAll(b);
         return bindings;
@@ -231,8 +231,8 @@ public class VmWorker {
      * @return a set of bindings containing the values associated with the given binding names, in this worker's
      *         ScriptEngine, at ScriptContext.ENGINE_SCOPE
      */
-    public synchronized VMBindings getBindings(final Set<String> bindingNames) {
-        VMBindings bindings = new VMBindings();
+    public synchronized VmBindings getBindings(final Set<String> bindingNames) {
+        VmBindings bindings = new VmBindings();
         Bindings b = this.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
         for (String key : bindingNames) {
             bindings.put(key, b.get(key));
@@ -262,7 +262,7 @@ public class VmWorker {
      *
      * @param bindings the bindings to update
      */
-    public synchronized void setBindings(final VMBindings bindings) {
+    public synchronized void setBindings(final VmBindings bindings) {
         Bindings b = this.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
         b.putAll(bindings);
 

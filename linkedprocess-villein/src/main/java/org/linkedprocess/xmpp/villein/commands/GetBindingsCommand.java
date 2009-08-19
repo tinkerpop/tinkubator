@@ -9,7 +9,7 @@ package org.linkedprocess.xmpp.villein.commands;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.XmppVillein;
@@ -28,16 +28,16 @@ import java.util.Set;
  */
 public class GetBindingsCommand extends Command {
 
-    private final HandlerSet<VMBindings> resultHandlers;
+    private final HandlerSet<VmBindings> resultHandlers;
     private final HandlerSet<LopError> errorHandlers;
 
     public GetBindingsCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
-        this.resultHandlers = new HandlerSet<VMBindings>();
+        this.resultHandlers = new HandlerSet<VmBindings>();
         this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(VmProxy vmStruct, Set<String> bindingNames, final Handler<VMBindings> resultHandler, final Handler<LopError> errorHandler) {
+    public void send(VmProxy vmStruct, Set<String> bindingNames, final Handler<VmBindings> resultHandler, final Handler<LopError> errorHandler) {
 
         String id = Packet.nextID();
         ManageBindings manageBindings = new ManageBindings();
@@ -46,7 +46,7 @@ public class GetBindingsCommand extends Command {
         manageBindings.setType(IQ.Type.GET);
         manageBindings.setVmPassword(vmStruct.getVmPassword());
         manageBindings.setPacketID(id);
-        VMBindings vmBindings = new VMBindings();
+        VmBindings vmBindings = new VmBindings();
         for (String bindingName : bindingNames) {
             vmBindings.put(bindingName, null);
         }

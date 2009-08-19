@@ -7,7 +7,7 @@
 
 package org.linkedprocess.xmpp.villein.patterns;
 
-import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.os.VmBindings;
 
 /**
  * A BindingsChecker allows a user to define a bindings equivalence relationship that is utilized by the PollBindingsPattern.
@@ -17,5 +17,5 @@ import org.linkedprocess.os.VMBindings;
  */
 public interface BindingsChecker {
 
-    public boolean areEquivalent(VMBindings actualBindings, VMBindings desiredBindings);
+    public boolean areEquivalent(VmBindings actualBindings, VmBindings desiredBindings);
 }

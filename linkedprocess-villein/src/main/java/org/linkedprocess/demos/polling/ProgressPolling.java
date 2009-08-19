@@ -8,7 +8,7 @@
 package org.linkedprocess.demos.polling;
 
 import org.linkedprocess.os.TypedValue;
-import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.XmppVillein;
@@ -75,7 +75,7 @@ public class ProgressPolling {
         vmProxyResult.getResult().submitJob(jobStruct, null, null);
 
         BindingsChecker bc = new BindingsChecker() {
-            public boolean areEquivalent(VMBindings actualBindings, VMBindings desiredBindings) {
+            public boolean areEquivalent(VmBindings actualBindings, VmBindings desiredBindings) {
                 TypedValue actualValue = actualBindings.getTyped("meter");
                 TypedValue desiredValue = desiredBindings.getTyped("meter");
                 if (actualValue != null) {
@@ -88,8 +88,8 @@ public class ProgressPolling {
                 }
             }
         };
-        Handler<VMBindings> resultHandler = new Handler<VMBindings>() {
-            public void handle(VMBindings vmBindings) {
+        Handler<VmBindings> resultHandler = new Handler<VmBindings>() {
+            public void handle(VmBindings vmBindings) {
                 System.out.println("progress meter value has been reached: " + vmBindings);
                 synchronized (monitor) {
                     monitor.notify();
@@ -107,8 +107,8 @@ public class ProgressPolling {
             }
         };
         PollBindingsPattern pb = new PollBindingsPattern();
-        VMBindings desiredBindings = new VMBindings();
-        desiredBindings.putTyped("meter", new TypedValue(VMBindings.XMLSchemaDatatype.DOUBLE, "" + meterMax));
+        VmBindings desiredBindings = new VmBindings();
+        desiredBindings.putTyped("meter", new TypedValue(VmBindings.XMLSchemaDatatype.DOUBLE, "" + meterMax));
         pb.startPattern(vmProxyResult.getResult(), desiredBindings, bc, resultHandler, errorHandler, pollingInterval);
         synchronized (monitor) {
             monitor.wait();

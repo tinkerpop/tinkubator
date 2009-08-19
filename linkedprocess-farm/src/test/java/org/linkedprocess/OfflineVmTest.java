@@ -9,7 +9,7 @@ import org.jivesoftware.smack.packet.Presence;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.testing.offline.OfflineTest;
 import org.linkedprocess.xmpp.farm.XmppFarm;
 import org.linkedprocess.xmpp.vm.*;
@@ -151,8 +151,8 @@ public class OfflineVmTest extends OfflineTest {
         bindings.setType(IQ.Type.SET);
         bindings.setVmPassword(vm.getVmPassword());
         bindings.addBinding(FIRST_NAME, "Peter",
-                VMBindings.XMLSchemaDatatype.STRING.getURI());
-        bindings.addBinding(FULL_NAME, "", VMBindings.XMLSchemaDatatype.STRING
+                VmBindings.XMLSchemaDatatype.STRING.getURI());
+        bindings.addBinding(FULL_NAME, "", VmBindings.XMLSchemaDatatype.STRING
                 .getURI());
         connection.manageBindings.processPacket(bindings);
         ManageBindings result = (ManageBindings) sentPackets.get(0);
@@ -173,7 +173,7 @@ public class OfflineVmTest extends OfflineTest {
         //now, the same should be bound to full_name now.
         connection.clearPackets();
         ManageBindings getResult = new ManageBindings();
-        getResult.addBinding(FULL_NAME, "", VMBindings.XMLSchemaDatatype.STRING
+        getResult.addBinding(FULL_NAME, "", VmBindings.XMLSchemaDatatype.STRING
                 .getURI());
         getResult.setVmPassword(vm.getVmPassword());
         getResult.setType(IQ.Type.GET);

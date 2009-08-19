@@ -20,10 +20,10 @@ import java.util.logging.Logger;
 public class TypedValue {
     private static final Logger LOGGER = LinkedProcess.getLogger(TypedValue.class);
 
-    private final VMBindings.XMLSchemaDatatype datatype;
+    private final VmBindings.XMLSchemaDatatype datatype;
     private final String value;
 
-    public VMBindings.XMLSchemaDatatype getDatatype() {
+    public VmBindings.XMLSchemaDatatype getDatatype() {
         return datatype;
     }
 
@@ -31,7 +31,7 @@ public class TypedValue {
         return value;
     }
 
-    public TypedValue(final VMBindings.XMLSchemaDatatype datatype,
+    public TypedValue(final VmBindings.XMLSchemaDatatype datatype,
                       final String value) {
         this.datatype = datatype;
         this.value = value;
@@ -39,13 +39,13 @@ public class TypedValue {
 
     public TypedValue(final Object value) {
         // Note: class inheritance is not taken into account
-        VMBindings.XMLSchemaDatatype d;
+        VmBindings.XMLSchemaDatatype d;
         try {
-            d = VMBindings.XMLSchemaDatatype.valueByClass(value.getClass());
+            d = VmBindings.XMLSchemaDatatype.valueByClass(value.getClass());
         } catch (NoSuchDatatypeException e) {
             // Default to xsd:string if the data type is not known
             LOGGER.warning("no data type found for class: " + value.getClass() + ". Defaulting to xsd:string.");
-            d = VMBindings.XMLSchemaDatatype.STRING;
+            d = VmBindings.XMLSchemaDatatype.STRING;
         }
         this.datatype = d;
 
