@@ -15,7 +15,7 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.LinkedProcessFarm;
-import org.linkedprocess.os.VMScheduler;
+import org.linkedprocess.os.VmScheduler;
 import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
 import org.linkedprocess.os.errors.VmAlreadyExistsException;
 import org.linkedprocess.os.errors.VmSchedulerIsFullException;
@@ -43,7 +43,7 @@ public class XmppFarm extends XmppClient {
     protected String farmPassword;
 
     protected final Map<String, XmppVm> machines;
-    protected final VMScheduler vmScheduler;
+    protected final VmScheduler vmScheduler;
     protected DataForm serviceExtension;
 
     public XmppFarm(final String server, final int port, final String username, final String password, final String farmPassword) throws XMPPException {
@@ -66,7 +66,7 @@ public class XmppFarm extends XmppClient {
         //this.printClientStatistics();
 
         this.roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
-        this.vmScheduler = new VMScheduler(new VMJobResultHandler(this), new StatusEventHandler(this));
+        this.vmScheduler = new VmScheduler(new VmJobResultHandler(this), new StatusEventHandler(this));
         this.machines = new HashMap<String, XmppVm>();
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new IQTypeFilter(IQ.Type.GET));
@@ -93,7 +93,7 @@ public class XmppFarm extends XmppClient {
         }
     }
 
-    public VMScheduler getVmScheduler() {
+    public VmScheduler getVmScheduler() {
         return this.vmScheduler;
     }
 
@@ -130,10 +130,6 @@ public class XmppFarm extends XmppClient {
         } else {
             return vm;
         }
-    }
-
-    public VMScheduler getVMScheduler() {
-        return this.vmScheduler;
     }
 
     public Collection<XmppVm> getVirtualMachines() {
@@ -268,7 +264,7 @@ public class XmppFarm extends XmppClient {
         }
     }
 
-    public void setStatusEventHandler(VMScheduler.LopStatusEventHandler statusHandler) {
+    public void setStatusEventHandler(VmScheduler.LopStatusEventHandler statusHandler) {
         this.vmScheduler.setStatusEventHandler(statusHandler);
     }
 

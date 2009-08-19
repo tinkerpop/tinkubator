@@ -1,7 +1,7 @@
 package org.linkedprocess.xmpp.farm;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.VMScheduler;
+import org.linkedprocess.os.VmScheduler;
 import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 import org.linkedprocess.xmpp.vm.XmppVm;
 
@@ -10,7 +10,7 @@ import org.linkedprocess.xmpp.vm.XmppVm;
  * Date: Jul 1, 2009
  * Time: 3:12:44 PM
  */
-public class StatusEventHandler implements VMScheduler.LopStatusEventHandler {
+public class StatusEventHandler implements VmScheduler.LopStatusEventHandler {
 
     protected XmppFarm xmppFarm;
 

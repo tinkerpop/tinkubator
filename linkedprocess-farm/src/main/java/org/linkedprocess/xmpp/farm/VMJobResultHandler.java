@@ -2,7 +2,7 @@ package org.linkedprocess.xmpp.farm;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.linkedprocess.os.JobResult;
-import org.linkedprocess.os.VMScheduler;
+import org.linkedprocess.os.VmScheduler;
 import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 import org.linkedprocess.xmpp.vm.XmppVm;
 
@@ -11,7 +11,7 @@ import org.linkedprocess.xmpp.vm.XmppVm;
  * Date: Jun 26, 2009
  * Time: 4:23:32 PM
  */
-public class VMJobResultHandler implements VMScheduler.VMResultHandler {
+public class VMJobResultHandler implements VmScheduler.VmResultHandler {
 
     XmppFarm xmppFarm;
 

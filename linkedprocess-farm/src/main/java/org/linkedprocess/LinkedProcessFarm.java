@@ -1,7 +1,7 @@
 package org.linkedprocess;
 
 import org.linkedprocess.os.JobResult;
-import org.linkedprocess.os.VMWorker;
+import org.linkedprocess.os.VmWorker;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
@@ -87,7 +87,7 @@ public class LinkedProcessFarm {
         // Hack to pre-load Rhino and Jython resource bundles.  This will have to be extended.
         for (ScriptEngineFactory f : getSupportedScriptEngineFactories()) {
             // Avoid ClassNotFoundException for inner class
-            if (VMWorker.Status.ACTIVE_INPROGRESS.toString().equals("")) {
+            if (VmWorker.Status.ACTIVE_INPROGRESS.toString().equals("")) {
                 // Do nothing.  The point was to simply to load VMWorker.Status.
             }
 
