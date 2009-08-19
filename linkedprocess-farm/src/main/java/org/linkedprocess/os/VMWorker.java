@@ -3,7 +3,7 @@ package org.linkedprocess.os;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.errors.JobAlreadyExistsException;
 import org.linkedprocess.os.errors.JobNotFoundException;
-import org.linkedprocess.security.VMSandboxedThread;
+import org.linkedprocess.security.VmSandboxedThread;
 import org.mozilla.javascript.WrappedException;
 
 import javax.script.Bindings;
@@ -212,8 +212,8 @@ public class VMWorker {
     /**
      * @return the set of all bindings in this worker's ScriptEngine, at ScriptContext.ENGINE_SCOPE
      */
-    public synchronized VMBindings getAllBindings() {
-        VMBindings bindings = new VMBindings();
+    public synchronized VmBindings getAllBindings() {
+        VmBindings bindings = new VmBindings();
         Bindings b = this.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
         bindings.putAll(b);
         return bindings;
@@ -224,8 +224,8 @@ public class VMWorker {
      * @return a set of bindings containing the values associated with the given binding names, in this worker's
      *         ScriptEngine, at ScriptContext.ENGINE_SCOPE
      */
-    public synchronized VMBindings getBindings(final Set<String> bindingNames) {
-        VMBindings bindings = new VMBindings();
+    public synchronized VmBindings getBindings(final Set<String> bindingNames) {
+        VmBindings bindings = new VmBindings();
         Bindings b = this.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
         for (String key : bindingNames) {
             bindings.put(key, b.get(key));
@@ -255,7 +255,7 @@ public class VMWorker {
      *
      * @param bindings the bindings to update
      */
-    public synchronized void setBindings(final VMBindings bindings) {
+    public synchronized void setBindings(final VmBindings bindings) {
         Bindings b = this.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
         b.putAll(bindings);
 
@@ -436,7 +436,7 @@ public class VMWorker {
     }
 
     private Thread createWorkerThread() {
-        Thread t = new VMSandboxedThread(new WorkerRunnable(), nextThreadName());
+        Thread t = new VmSandboxedThread(new WorkerRunnable(), nextThreadName());
         // Worker threads have less priority than sequencer threads, which have
         // less priority than the scheduler's thread.
         t.setPriority(Thread.currentThread().getPriority() - 2);

@@ -39,7 +39,7 @@ public class ServiceDiscoveryConfiguration {
 
     private final Set<PermissionType> permittedTypes;
 
-    public ServiceDiscoveryConfiguration(final VMSecurityManager m) {
+    public ServiceDiscoveryConfiguration(final VmSecurityManager m) {
         permittedTypes = m.getPermittedTypes();
         readPermissions = m.getReadPermissions();
         writePermissions = m.getWritePermissions();
@@ -102,7 +102,7 @@ public class ServiceDiscoveryConfiguration {
         return p;
     }
 
-    public void modifySecurityManager(final VMSecurityManager manager) {
+    public void modifySecurityManager(final VmSecurityManager manager) {
         manager.setReadPermissions(readPermissions);
         manager.setWritePermissions(writePermissions);
         manager.setDeletePermissions(deletePermissions);

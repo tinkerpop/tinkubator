@@ -6,8 +6,8 @@ import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.Job;
 import org.linkedprocess.os.errors.JobAlreadyExistsException;
-import org.linkedprocess.os.errors.VMWorkerIsFullException;
-import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.os.errors.VmWorkerIsFullException;
+import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 import org.linkedprocess.xmpp.LopError;
 
 /**
@@ -70,10 +70,10 @@ public class SubmitJobListener extends LopVmListener {
             try {
                 ((XmppVm) xmppClient).scheduleJob(job);
                 submitJob = null;
-            } catch (VMWorkerNotFoundException e) {
+            } catch (VmWorkerNotFoundException e) {
                 returnSubmitJob.setType(IQ.Type.ERROR);
                 returnSubmitJob.setLopError(new LopError(XMPPError.Condition.interna_server_error, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE, submitJob.getPacketID()));
-            } catch (VMWorkerIsFullException e) {
+            } catch (VmWorkerIsFullException e) {
                 returnSubmitJob.setType(IQ.Type.ERROR);
                 returnSubmitJob.setLopError(new LopError(XMPPError.Condition.service_unavailable, LinkedProcess.LopErrorType.VM_IS_BUSY, e.getMessage(), LOP_CLIENT_TYPE, submitJob.getPacketID()));
             } catch (JobAlreadyExistsException e) {

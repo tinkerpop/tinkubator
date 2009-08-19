@@ -74,7 +74,7 @@ public class VMScheduler {
 
         // Note: if numberOfSequencers is less than 1, strange things may happen.
         for (int i = 0; i < numberOfSequencers; i++) {
-            new VMSequencer(source, timeSlice);
+            new VmSequencer(source, timeSlice);
         }
 
         setSchedulerStatus(LinkedProcess.FarmStatus.ACTIVE);
@@ -89,15 +89,15 @@ public class VMScheduler {
      *
      * @param machineJID the JID of the virtual machine to execute the job
      * @param job        the job to execute
-     * @throws org.linkedprocess.os.errors.VMWorkerIsFullException
+     * @throws org.linkedprocess.os.errors.VmWorkerIsFullException
      *          if the VM in question has a full queue
-     * @throws org.linkedprocess.os.errors.VMWorkerNotFoundException
+     * @throws org.linkedprocess.os.errors.VmWorkerNotFoundException
      *          if no such VM exists
      * @throws org.linkedprocess.os.errors.JobAlreadyExistsException
      *          if a job with the given ID already exists on the machine with the given ID
      */
     public synchronized void submitJob(final String machineJID,
-                                       final Job job) throws VMWorkerIsFullException, VMWorkerNotFoundException, JobAlreadyExistsException {
+                                       final Job job) throws VmWorkerIsFullException, VmWorkerNotFoundException, JobAlreadyExistsException {
         if (LinkedProcess.FarmStatus.INACTIVE == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
@@ -109,7 +109,7 @@ public class VMScheduler {
         // FIXME: this call may block for as long as one timeslice.
         //        This wait could probably be eliminated.
         if (!w.submitJob(job)) {
-            throw new VMWorkerIsFullException(machineJID);
+            throw new VmWorkerIsFullException(machineJID);
         }
 
         enqueueWorker(w);
@@ -124,11 +124,11 @@ public class VMScheduler {
      * @param jobID      the ID of the specific job to be removed
      * @throws org.linkedprocess.os.errors.JobNotFoundException
      *          if no job with the specified ID exists
-     * @throws org.linkedprocess.os.errors.VMWorkerNotFoundException
+     * @throws org.linkedprocess.os.errors.VmWorkerNotFoundException
      *          if no VM worker with the specified JID exists
      */
     public synchronized void abortJob(final String machineJID,
-                                      final String jobID) throws VMWorkerNotFoundException, JobNotFoundException {
+                                      final String jobID) throws VmWorkerNotFoundException, JobNotFoundException {
         if (LinkedProcess.FarmStatus.INACTIVE == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
@@ -208,10 +208,10 @@ public class VMScheduler {
      * Destroys an already-created virtual machine.
      *
      * @param machineJID the JID of the virtual machine to destroy
-     * @throws org.linkedprocess.os.errors.VMWorkerNotFoundException
+     * @throws org.linkedprocess.os.errors.VmWorkerNotFoundException
      *          if a VM worker with the JID does not exist
      */
-    public synchronized void terminateVirtualMachine(final String machineJID) throws VMWorkerNotFoundException {
+    public synchronized void terminateVirtualMachine(final String machineJID) throws VmWorkerNotFoundException {
         if (LinkedProcess.FarmStatus.INACTIVE == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
@@ -235,9 +235,9 @@ public class VMScheduler {
     /**
      * @param machineJID the JID of the virtual machine to query
      * @return the set of all variable bindings in the given virtual machine
-     * @throws VMWorkerNotFoundException if no VM worker with the given JID exists
+     * @throws org.linkedprocess.os.errors.VmWorkerNotFoundException if no VM worker with the given JID exists
      */
-    public synchronized VMBindings getAllBindings(final String machineJID) throws VMWorkerNotFoundException {
+    public synchronized VmBindings getAllBindings(final String machineJID) throws VmWorkerNotFoundException {
         if (LinkedProcess.FarmStatus.INACTIVE == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
@@ -251,10 +251,10 @@ public class VMScheduler {
      * @param machineJID   the JID of the virtual machine to query
      * @param bindingNames the names to bind
      * @return the bindings of the given variable names in the given virtual machine
-     * @throws VMWorkerNotFoundException if no VM worker with the given JID exists
+     * @throws org.linkedprocess.os.errors.VmWorkerNotFoundException if no VM worker with the given JID exists
      */
-    public synchronized VMBindings getBindings(final String machineJID,
-                                               final Set<String> bindingNames) throws VMWorkerNotFoundException {
+    public synchronized VmBindings getBindings(final String machineJID,
+                                               final Set<String> bindingNames) throws VmWorkerNotFoundException {
         if (LinkedProcess.FarmStatus.INACTIVE == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
@@ -286,17 +286,17 @@ public class VMScheduler {
      * @param machineJID the JID of the machine to execute the job
      * @param jobID      the ID of the job of interest
      * @return the status of the given job
-     * @throws org.linkedprocess.os.errors.VMWorkerNotFoundException
+     * @throws org.linkedprocess.os.errors.VmWorkerNotFoundException
      *          if no VM worker with the given JID exists
      * @throws org.linkedprocess.os.errors.JobNotFoundException
      *          if no job with the given ID exists
      */
     public synchronized LinkedProcess.JobStatus getJobStatus(final String machineJID,
-                                                             final String jobID) throws VMWorkerNotFoundException, JobNotFoundException {
+                                                             final String jobID) throws VmWorkerNotFoundException, JobNotFoundException {
         VMWorker w = workersByJID.get(machineJID);
 
         if (null == w) {
-            throw new VMWorkerNotFoundException(machineJID);
+            throw new VmWorkerNotFoundException(machineJID);
         }
 
         if (w.jobExists(jobID)) {
@@ -355,10 +355,10 @@ public class VMScheduler {
      *
      * @param machineJID the JID of the virtual machine to update
      * @param bindings   the key, value bindings to update
-     * @throws VMWorkerNotFoundException if no VM worker with the given JID exists
+     * @throws org.linkedprocess.os.errors.VmWorkerNotFoundException if no VM worker with the given JID exists
      */
     public synchronized void setBindings(final String machineJID,
-                                         final VMBindings bindings) throws VMWorkerNotFoundException {
+                                         final VmBindings bindings) throws VmWorkerNotFoundException {
         if (LinkedProcess.FarmStatus.INACTIVE == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
@@ -397,7 +397,7 @@ public class VMScheduler {
             for (String jid : toShutDown) {
                 try {
                     terminateVirtualMachine(jid);
-                } catch (VMWorkerNotFoundException e) {
+                } catch (VmWorkerNotFoundException e) {
                     // Ignore this error: it means the worker has already been explicitly terminated.
                 }
             }
@@ -459,11 +459,11 @@ public class VMScheduler {
         //LOGGER.info("...done (workerQueue.size() = " + workerQueue.size() + ")");
     }
 
-    private VMWorker getWorkerByJID(final String machineJID) throws VMWorkerNotFoundException {
+    private VMWorker getWorkerByJID(final String machineJID) throws VmWorkerNotFoundException {
         VMWorker w = workersByJID.get(machineJID);
 
         if (null == w) {
-            throw new VMWorkerNotFoundException(machineJID);
+            throw new VmWorkerNotFoundException(machineJID);
         }
 
         return w;

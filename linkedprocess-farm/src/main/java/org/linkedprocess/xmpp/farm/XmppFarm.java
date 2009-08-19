@@ -19,10 +19,10 @@ import org.linkedprocess.os.VMScheduler;
 import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
 import org.linkedprocess.os.errors.VmAlreadyExistsException;
 import org.linkedprocess.os.errors.VmSchedulerIsFullException;
-import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 import org.linkedprocess.security.ServiceDiscoveryConfiguration;
 import org.linkedprocess.security.SystemInfo;
-import org.linkedprocess.security.VMSecurityManager;
+import org.linkedprocess.security.VmSecurityManager;
 import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.vm.XmppVm;
 
@@ -115,7 +115,7 @@ public class XmppFarm extends XmppClient {
         return vm;
     }
 
-    public void terminateVirtualMachine(String vmJid) throws VMWorkerNotFoundException {
+    public void terminateVirtualMachine(String vmJid) throws VmWorkerNotFoundException {
         XmppVm vm = this.machines.get(vmJid);
         if (null != vm) {
             vm.shutdown();
@@ -123,10 +123,10 @@ public class XmppFarm extends XmppClient {
         }
     }
 
-    public XmppVm getVirtualMachine(String vmJid) throws VMWorkerNotFoundException {
+    public XmppVm getVirtualMachine(String vmJid) throws VmWorkerNotFoundException {
         XmppVm vm = this.machines.get(vmJid);
         if (vm == null) {
-            throw new VMWorkerNotFoundException(vmJid);
+            throw new VmWorkerNotFoundException(vmJid);
         } else {
             return vm;
         }
@@ -191,7 +191,7 @@ public class XmppFarm extends XmppClient {
         this.serviceExtension.addField(field);
 
         // Add security-related fields
-        VMSecurityManager man = (VMSecurityManager) System.getSecurityManager();
+        VmSecurityManager man = (VmSecurityManager) System.getSecurityManager();
         ServiceDiscoveryConfiguration conf = new ServiceDiscoveryConfiguration(man);
         conf.addFields(this.serviceExtension);
 

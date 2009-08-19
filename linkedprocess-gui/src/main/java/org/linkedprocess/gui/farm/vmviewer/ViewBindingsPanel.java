@@ -2,7 +2,7 @@ package org.linkedprocess.gui.farm.vmviewer;
 
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.TypedValue;
-import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.xmpp.vm.XmppVm;
 
 import javax.swing.*;
@@ -74,7 +74,7 @@ public class ViewBindingsPanel extends JPanel implements ActionListener, ListSel
 
     public void refreshBindings() {
         try {
-            VMBindings bindings = this.xmppVm.getFarm().getVMScheduler().getAllBindings(this.xmppVm.getFullJid());
+            VmBindings bindings = this.xmppVm.getFarm().getVMScheduler().getAllBindings(this.xmppVm.getFullJid());
             DefaultTableModel tableModel = (DefaultTableModel) this.bindingsTable.getModel();
             this.clearAllRows();
             for (String key : bindings.keySet()) {

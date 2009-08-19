@@ -5,7 +5,7 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.errors.JobNotFoundException;
-import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 import org.linkedprocess.xmpp.LopError;
 
 /**
@@ -62,7 +62,7 @@ public class PingJobListener extends LopVmListener {
             try {
                 returnPingJob.setValue(((XmppVm) this.xmppClient).getJobStatus(jobId));
                 returnPingJob.setType(IQ.Type.RESULT);
-            } catch (VMWorkerNotFoundException e) {
+            } catch (VmWorkerNotFoundException e) {
                 returnPingJob.setType(IQ.Type.ERROR);
                 returnPingJob.setLopError(new LopError(XMPPError.Condition.interna_server_error, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE, pingJob.getPacketID()));
             } catch (JobNotFoundException e) {

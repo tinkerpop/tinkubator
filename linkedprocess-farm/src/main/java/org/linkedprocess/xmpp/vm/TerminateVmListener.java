@@ -4,7 +4,7 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.farm.XmppFarm;
 
@@ -59,7 +59,7 @@ public class TerminateVmListener extends LopVmListener {
         if (terminate) {
             try {
                 this.getXmppVm().getFarm().getVmScheduler().terminateVirtualMachine(xmppClient.getFullJid());
-            } catch (VMWorkerNotFoundException e) {
+            } catch (VmWorkerNotFoundException e) {
                 this.getXmppVm().shutdown();
             }
         }

@@ -4,7 +4,7 @@ import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.gui.GenericErrorHandler;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.os.TypedValue;
-import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.os.errors.InvalidValueException;
 import org.linkedprocess.xmpp.villein.Handler;
 
@@ -55,7 +55,7 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
         this.bindingsTable.getColumnModel().getColumn(3).setPreferredWidth(30);
 
         JComboBox xmlSchemaBox = new JComboBox();
-        for (VMBindings.XMLSchemaDatatype dataType : VMBindings.XMLSchemaDatatype.values()) {
+        for (VmBindings.XMLSchemaDatatype dataType : VmBindings.XMLSchemaDatatype.values()) {
             xmlSchemaBox.addItem(dataType.abbreviate());
         }
         JCheckBox nullCheckBox = new JCheckBox();
@@ -144,15 +144,15 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
         } else if (event.getActionCommand().equals(GET)) {
             Set<String> bindingNames = this.getGetManageBindings();
             if (bindingNames != null && bindingNames.size() > 0) {
-                Handler<VMBindings> resultHandler = new Handler<VMBindings>() {
-                    public void handle(VMBindings vmBindings) {
+                Handler<VmBindings> resultHandler = new Handler<VmBindings>() {
+                    public void handle(VmBindings vmBindings) {
                         handleIncomingManageBindings(vmBindings);
                     }
                 };
                 vmControlFrame.getVmProxy().getBindings(bindingNames, resultHandler, new GenericErrorHandler());
             }
         } else if (event.getActionCommand().equals(SET)) {
-            VMBindings vmBindings = this.getSetManageBindings();
+            VmBindings vmBindings = this.getSetManageBindings();
             if (vmBindings != null && vmBindings.size() > 0) {
                 vmControlFrame.getVmProxy().setBindings(vmBindings, null, new GenericErrorHandler());
             }
@@ -178,8 +178,8 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
         return bindingsName;
     }
 
-    public VMBindings getSetManageBindings() {
-        VMBindings vmBindings = new VMBindings();
+    public VmBindings getSetManageBindings() {
+        VmBindings vmBindings = new VmBindings();
         DefaultTableModel tableModel = (DefaultTableModel) this.bindingsTable.getModel();
         for (int row : this.bindingsTable.getSelectedRows()) {
             String name = (String) tableModel.getValueAt(row, 0);
@@ -191,8 +191,8 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
             } else {
                 try {
                     if (!isNull) {
-                        String datatype = VMBindings.XMLSchemaDatatype.expandDatatypeAbbreviation((String) tableModel.getValueAt(row, 2));
-                        vmBindings.putTyped(name, new TypedValue(VMBindings.XMLSchemaDatatype.valueByURI(datatype), value));
+                        String datatype = VmBindings.XMLSchemaDatatype.expandDatatypeAbbreviation((String) tableModel.getValueAt(row, 2));
+                        vmBindings.putTyped(name, new TypedValue(VmBindings.XMLSchemaDatatype.valueByURI(datatype), value));
                     } else {
                         vmBindings.putTyped(name, null);
                     }
@@ -205,7 +205,7 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
         return vmBindings;
     }
 
-    public void handleIncomingManageBindings(VMBindings vmBindings) {
+    public void handleIncomingManageBindings(VmBindings vmBindings) {
         DefaultTableModel tableModel = (DefaultTableModel) this.bindingsTable.getModel();
         for (String name : vmBindings.keySet()) {
             for (int i = 0; i < tableModel.getRowCount(); i++) {

@@ -11,7 +11,7 @@ import org.jdom.Element;
 import org.jivesoftware.smack.packet.IQ;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.TypedValue;
-import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.os.errors.InvalidValueException;
 
 /**
@@ -21,7 +21,7 @@ import org.linkedprocess.os.errors.InvalidValueException;
  */
 public class ManageBindings extends VirtualMachineIq {
 
-    protected VMBindings bindings = new VMBindings();
+    protected VmBindings bindings = new VmBindings();
     protected String badDatatypeMessage;
     protected String invalidValueMessage;
 
@@ -45,7 +45,7 @@ public class ManageBindings extends VirtualMachineIq {
         if (value == null && datatype == null) {
             this.bindings.putTyped(name, null);
         } else {
-            TypedValue typeValue = new TypedValue(VMBindings.XMLSchemaDatatype.valueByURI(datatype), value);
+            TypedValue typeValue = new TypedValue(VmBindings.XMLSchemaDatatype.valueByURI(datatype), value);
             this.bindings.putTyped(name, typeValue);
         }
     }
@@ -54,11 +54,11 @@ public class ManageBindings extends VirtualMachineIq {
         return this.bindings.getTyped(name);
     }
 
-    public VMBindings getBindings() {
+    public VmBindings getBindings() {
         return this.bindings;
     }
 
-    public void setBindings(VMBindings bindings) {
+    public void setBindings(VmBindings bindings) {
         this.bindings = bindings;
     }
 

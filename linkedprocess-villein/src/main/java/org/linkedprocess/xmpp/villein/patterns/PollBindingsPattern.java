@@ -8,7 +8,7 @@
 package org.linkedprocess.xmpp.villein.patterns;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.proxies.ResultHolder;
@@ -30,13 +30,13 @@ public class PollBindingsPattern implements Runnable {
     private static final long TIMEOUT = 2000;
 
     protected VmProxy vmProxy;
-    protected VMBindings desiredBindings;
+    protected VmBindings desiredBindings;
     protected long pollingInterval;
     protected BindingsChecker bindingsChecker;
-    protected Handler<VMBindings> resultHandler;
+    protected Handler<VmBindings> resultHandler;
     protected Handler<LopError> errorHandler;
 
-    public void startPattern(final VmProxy vmProxy, final VMBindings desiredBindings, final BindingsChecker bindingsChecker, Handler<VMBindings> resultHandler, Handler<LopError> errorHandler, long pollingInterval) {
+    public void startPattern(final VmProxy vmProxy, final VmBindings desiredBindings, final BindingsChecker bindingsChecker, Handler<VmBindings> resultHandler, Handler<LopError> errorHandler, long pollingInterval) {
         this.vmProxy = vmProxy;
         this.desiredBindings = desiredBindings;
         this.bindingsChecker = bindingsChecker;
@@ -73,7 +73,7 @@ public class PollBindingsPattern implements Runnable {
 
 
         while (true) {
-            ResultHolder<VMBindings> resultBindings = null;
+            ResultHolder<VmBindings> resultBindings = null;
             try {
                 resultBindings = SynchronousPattern.getBindings(vmProxy, this.desiredBindings.keySet(), TIMEOUT);
             } catch (TimeoutException e) {

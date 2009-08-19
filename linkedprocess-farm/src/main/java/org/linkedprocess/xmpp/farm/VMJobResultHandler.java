@@ -3,7 +3,7 @@ package org.linkedprocess.xmpp.farm;
 import org.jivesoftware.smack.packet.IQ;
 import org.linkedprocess.os.JobResult;
 import org.linkedprocess.os.VMScheduler;
-import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 import org.linkedprocess.xmpp.vm.XmppVm;
 
 /**
@@ -28,7 +28,7 @@ public class VmJobResultHandler implements VMScheduler.VMResultHandler {
             XmppVm.LOGGER.info("Sent " + VmJobResultHandler.class.getName());
             XmppVm.LOGGER.info(returnSubmitJob.toXML());
 
-        } catch (VMWorkerNotFoundException e) {
+        } catch (VmWorkerNotFoundException e) {
             XmppVm.LOGGER.severe("Could not find virtual machine. Thus, can not send error message");
         }
 

@@ -4,7 +4,7 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 import org.linkedprocess.xmpp.LopError;
 
 /**
@@ -63,7 +63,7 @@ public class ManageBindingsListener extends LopVmListener {
                 }
 
 
-            } catch (VMWorkerNotFoundException e) {
+            } catch (VmWorkerNotFoundException e) {
                 returnManageBindings.setType(IQ.Type.ERROR);
                 returnManageBindings.setLopError(new LopError(XMPPError.Condition.interna_server_error, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE, manageBindings.getPacketID()));
             }
