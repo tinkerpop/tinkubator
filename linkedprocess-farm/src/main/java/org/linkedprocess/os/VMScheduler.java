@@ -149,13 +149,13 @@ public class VMScheduler {
      * @param language   the type of virtual machine to create
      * @throws org.linkedprocess.os.errors.UnsupportedScriptEngineException
      *          if the given script engine is not supported
-     * @throws org.linkedprocess.os.errors.VMAlreadyExistsException
+     * @throws org.linkedprocess.os.errors.VmAlreadyExistsException
      *          if a VM with the given JID already exists in this scheduler
      * @throws org.linkedprocess.os.errors.VMSchedulerIsFullException
      *          if the scheduler cannot create additional virtual machines
      */
     public synchronized void spawnVirtualMachine(final String machineJID,
-                                                 final String language) throws VMAlreadyExistsException, UnsupportedScriptEngineException, VMSchedulerIsFullException {
+                                                 final String language) throws VmAlreadyExistsException, UnsupportedScriptEngineException, VMSchedulerIsFullException {
         if (LinkedProcess.FarmStatus.INACTIVE == status) {
             throw new IllegalStateException("scheduler has been terminated");
         }
@@ -175,7 +175,7 @@ public class VMScheduler {
         }
 
         if (null != workersByJID.get(machineJID)) {
-            throw new VMAlreadyExistsException(machineJID);
+            throw new VmAlreadyExistsException(machineJID);
         }
 
         // Pick an engine based on language name, not engine name.

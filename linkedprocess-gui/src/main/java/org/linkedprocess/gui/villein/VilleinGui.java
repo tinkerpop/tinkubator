@@ -75,7 +75,7 @@ public class VilleinGui extends JFrame {
 
     public void shutDown() {
         if (this.xmppVillein != null)
-            this.xmppVillein.shutdown(null);
+            this.xmppVillein.shutdown();
         System.exit(0);
     }
 

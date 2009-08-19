@@ -13,8 +13,8 @@ import org.linkedprocess.xmpp.LopError;
  */
 public class ManageBindingsListener extends LopVmListener {
 
-    public ManageBindingsListener(XmppVirtualMachine xmppVirtualMachine) {
-        super(xmppVirtualMachine);
+    public ManageBindingsListener(XmppVm xmppVm) {
+        super(xmppVm);
     }
 
     public void processPacket(Packet packet) {
@@ -29,8 +29,8 @@ public class ManageBindingsListener extends LopVmListener {
 
     private void processManageBindingsPacket(ManageBindings manageBindings) {
 
-        XmppVirtualMachine.LOGGER.info("Arrived " + ManageBindingsListener.class.getName());
-        XmppVirtualMachine.LOGGER.info(manageBindings.toXML());
+        XmppVm.LOGGER.info("Arrived " + ManageBindingsListener.class.getName());
+        XmppVm.LOGGER.info(manageBindings.toXML());
 
         ManageBindings returnManageBindings = new ManageBindings();
         returnManageBindings.setTo(manageBindings.getFrom());
@@ -49,7 +49,7 @@ public class ManageBindingsListener extends LopVmListener {
         } else if (null != manageBindings.getInvalidValueMessage()) {
             returnManageBindings.setType(IQ.Type.ERROR);
             returnManageBindings.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.INVALID_VALUE, manageBindings.getInvalidValueMessage(), LOP_CLIENT_TYPE, manageBindings.getPacketID()));
-        } else if (!((XmppVirtualMachine) this.xmppClient).checkVmPassword(vmPassword)) {
+        } else if (!((XmppVm) this.xmppClient).checkVmPassword(vmPassword)) {
             returnManageBindings.setType(IQ.Type.ERROR);
             returnManageBindings.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, manageBindings.getPacketID()));
         } else {
@@ -69,8 +69,8 @@ public class ManageBindingsListener extends LopVmListener {
             }
         }
 
-        XmppVirtualMachine.LOGGER.info("Sent " + ManageBindingsListener.class.getName());
-        XmppVirtualMachine.LOGGER.info(returnManageBindings.toXML());
+        XmppVm.LOGGER.info("Sent " + ManageBindingsListener.class.getName());
+        XmppVm.LOGGER.info(returnManageBindings.toXML());
         this.getXmppVm().getConnection().sendPacket(returnManageBindings);
 
 

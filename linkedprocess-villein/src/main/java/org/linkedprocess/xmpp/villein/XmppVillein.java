@@ -158,13 +158,6 @@ public class XmppVillein extends XmppClient {
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
     }
 
-    /**
-     * Shutdown the villein by disconnecting it from the XMPP server.
-     */
-    public void shutdown() {
-        super.shutdown(new Presence(Presence.Type.unavailable));
-    }
-
     public Dispatcher getDispatcher() {
         return this.dispatcher;
     }

@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.errors.JobAlreadyExistsException;
 import org.linkedprocess.os.errors.JobNotFoundException;
-import org.linkedprocess.os.errors.VMAlreadyExistsException;
+import org.linkedprocess.os.errors.VmAlreadyExistsException;
 import org.linkedprocess.os.errors.VMWorkerNotFoundException;
 
 import java.util.*;
@@ -325,7 +325,7 @@ public class VMSchedulerTest extends TestCase {
         try {
             scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
             assertTrue(false);
-        } catch (VMAlreadyExistsException e) {
+        } catch (VmAlreadyExistsException e) {
         }
 
         scheduler.terminateVirtualMachine(vm1);

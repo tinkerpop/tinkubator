@@ -7,7 +7,7 @@ import org.linkedprocess.xmpp.villein.proxies.CountrysideProxy;
 import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
 import org.linkedprocess.xmpp.villein.proxies.RegistryProxy;
 import org.linkedprocess.xmpp.villein.proxies.VmProxy;
-import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
+import org.linkedprocess.xmpp.vm.XmppVm;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -35,8 +35,8 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
             else
                 this.setIcon(ImageHolder.farmPasswordIcon);
             this.setToolTipText("farm");
-        } else if (x instanceof XmppVirtualMachine) {
-            XmppVirtualMachine vm = (XmppVirtualMachine) x;
+        } else if (x instanceof XmppVm) {
+            XmppVm vm = (XmppVm) x;
             this.setText(LinkedProcess.generateResource(vm.getFullJid()));
             this.setIcon(ImageHolder.vmIcon);
             this.setToolTipText("virtual machine");

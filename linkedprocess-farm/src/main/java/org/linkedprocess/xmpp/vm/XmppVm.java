@@ -26,9 +26,9 @@ import java.util.logging.Logger;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class XmppVirtualMachine extends XmppClient {
+public class XmppVm extends XmppClient {
 
-    public static Logger LOGGER = LinkedProcess.getLogger(XmppVirtualMachine.class);
+    public static Logger LOGGER = LinkedProcess.getLogger(XmppVm.class);
     public static String RESOURCE_PREFIX = "LoPVM";
     public static String STATUS_MESSAGE = "LoPSideD Virtual Machine";
 
@@ -37,7 +37,7 @@ public class XmppVirtualMachine extends XmppClient {
     protected final String vmSpecies;
     protected final String villeinJid;
 
-    public XmppVirtualMachine(final String server, final int port, final String username, final String password, XmppFarm farm, final String villeinJid, final String vmSpecies, final String vmPassword) {
+    public XmppVm(final String server, final int port, final String username, final String password, XmppFarm farm, final String villeinJid, final String vmSpecies, final String vmPassword) {
 
         this.farm = farm;
         this.vmPassword = vmPassword;
@@ -88,9 +88,9 @@ public class XmppVirtualMachine extends XmppClient {
 
         switch (status) {
             case ACTIVE:
-                return new Presence(Presence.Type.available, XmppVirtualMachine.STATUS_MESSAGE, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.available);
+                return new Presence(Presence.Type.available, XmppVm.STATUS_MESSAGE, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.available);
             case ACTIVE_FULL:
-                return new Presence(Presence.Type.available, XmppVirtualMachine.STATUS_MESSAGE, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.dnd);
+                return new Presence(Presence.Type.available, XmppVm.STATUS_MESSAGE, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.dnd);
             case NOT_FOUND:
                 return new Presence(Presence.Type.unavailable);
             case INACTIVE:
@@ -122,7 +122,7 @@ public class XmppVirtualMachine extends XmppClient {
 
     protected void initiateFeatures() {
         super.initiateFeatures();
-        ServiceDiscoveryManager.setIdentityName(XmppVirtualMachine.RESOURCE_PREFIX);
+        ServiceDiscoveryManager.setIdentityName(XmppVm.RESOURCE_PREFIX);
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
         this.getDiscoManager().addFeature(LinkedProcess.LOP_VM_NAMESPACE);
 
@@ -154,11 +154,6 @@ public class XmppVirtualMachine extends XmppClient {
 
     public String getVilleinJid() {
         return this.villeinJid;
-    }
-
-    public void shutdown() {
-        super.shutdown(this.createPresence(LinkedProcess.VmStatus.INACTIVE));
-
     }
 
     public LinkedProcess.VmStatus getVmStatus() {
