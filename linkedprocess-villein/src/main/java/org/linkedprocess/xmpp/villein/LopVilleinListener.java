@@ -69,7 +69,7 @@ class LopVilleinListener extends LopListener {
         } else if (packet instanceof ManageBindings) {
             ManageBindings manageBindings = (ManageBindings) packet;
             // TODO: NOT GUARENTEED SET/GET DETERMINANT
-            if (null == manageBindings.getBindings()) {
+            if (manageBindings.getBindings().isEmpty()) {
                 if (manageBindings.getType() == IQ.Type.RESULT) {
                     this.getXmppVillein().getDispatcher().getSetBindingsCommand().receiveNormal(manageBindings);
                 } else if (manageBindings.getType() == IQ.Type.ERROR) {
