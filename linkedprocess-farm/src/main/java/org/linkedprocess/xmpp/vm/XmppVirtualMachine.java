@@ -11,11 +11,11 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.Job;
-import org.linkedprocess.os.VmBindings;
+import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.os.errors.JobAlreadyExistsException;
 import org.linkedprocess.os.errors.JobNotFoundException;
-import org.linkedprocess.os.errors.VmWorkerIsFullException;
-import org.linkedprocess.os.errors.VmWorkerNotFoundException;
+import org.linkedprocess.os.errors.VMWorkerIsFullException;
+import org.linkedprocess.os.errors.VMWorkerNotFoundException;
 import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.farm.XmppFarm;
 
@@ -26,9 +26,9 @@ import java.util.logging.Logger;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class XmppVm extends XmppClient {
+public class XmppVirtualMachine extends XmppClient {
 
-    public static Logger LOGGER = LinkedProcess.getLogger(XmppVm.class);
+    public static Logger LOGGER = LinkedProcess.getLogger(XmppVirtualMachine.class);
     public static String RESOURCE_PREFIX = "LoPVM";
     public static String STATUS_MESSAGE = "LoPSideD Virtual Machine";
 
@@ -37,7 +37,7 @@ public class XmppVm extends XmppClient {
     protected final String vmSpecies;
     protected final String villeinJid;
 
-    public XmppVm(final String server, final int port, final String username, final String password, XmppFarm farm, final String villeinJid, final String vmSpecies, final String vmPassword) {
+    public XmppVirtualMachine(final String server, final int port, final String username, final String password, XmppFarm farm, final String villeinJid, final String vmSpecies, final String vmPassword) {
 
         this.farm = farm;
         this.vmPassword = vmPassword;
@@ -88,9 +88,9 @@ public class XmppVm extends XmppClient {
 
         switch (status) {
             case ACTIVE:
-                return new Presence(Presence.Type.available, XmppVm.STATUS_MESSAGE, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.available);
+                return new Presence(Presence.Type.available, XmppVirtualMachine.STATUS_MESSAGE, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.available);
             case ACTIVE_FULL:
-                return new Presence(Presence.Type.available, XmppVm.STATUS_MESSAGE, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.dnd);
+                return new Presence(Presence.Type.available, XmppVirtualMachine.STATUS_MESSAGE, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.dnd);
             case NOT_FOUND:
                 return new Presence(Presence.Type.unavailable);
             case INACTIVE:
@@ -100,29 +100,29 @@ public class XmppVm extends XmppClient {
         }
     }
 
-    public void abortJob(String jobId) throws VmWorkerNotFoundException, JobNotFoundException {
+    public void abortJob(String jobId) throws VMWorkerNotFoundException, JobNotFoundException {
         this.farm.getVmScheduler().abortJob(this.getFullJid(), jobId);
     }
 
-    public LinkedProcess.JobStatus getJobStatus(String jobId) throws VmWorkerNotFoundException, JobNotFoundException {
+    public LinkedProcess.JobStatus getJobStatus(String jobId) throws VMWorkerNotFoundException, JobNotFoundException {
         return this.farm.getVmScheduler().getJobStatus(this.getFullJid(), jobId);
     }
 
-    public void scheduleJob(Job job) throws VmWorkerNotFoundException, VmWorkerIsFullException, JobAlreadyExistsException {
+    public void scheduleJob(Job job) throws VMWorkerNotFoundException, VMWorkerIsFullException, JobAlreadyExistsException {
         this.farm.getVmScheduler().submitJob(this.getFullJid(), job);
     }
 
-    public void setBindings(VmBindings bindings) throws VmWorkerNotFoundException {
+    public void setBindings(VMBindings bindings) throws VMWorkerNotFoundException {
         this.farm.getVmScheduler().setBindings(this.getFullJid(), bindings);
     }
 
-    public VmBindings getBindings(Set<String> names) throws VmWorkerNotFoundException {
+    public VMBindings getBindings(Set<String> names) throws VMWorkerNotFoundException {
         return this.farm.getVmScheduler().getBindings(this.getFullJid(), names);
     }
 
     protected void initiateFeatures() {
         super.initiateFeatures();
-        ServiceDiscoveryManager.setIdentityName(XmppVm.RESOURCE_PREFIX);
+        ServiceDiscoveryManager.setIdentityName(XmppVirtualMachine.RESOURCE_PREFIX);
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
         this.getDiscoManager().addFeature(LinkedProcess.LOP_VM_NAMESPACE);
 
@@ -136,7 +136,7 @@ public class XmppVm extends XmppClient {
         this.getDiscoManager().setExtendedInfo(serviceExtension);
     }
 
-    public void terminateSelf() throws VmWorkerNotFoundException {
+    public void terminateSelf() throws VMWorkerNotFoundException {
         this.farm.terminateVirtualMachine(this.getFullJid());
     }
 
@@ -154,6 +154,11 @@ public class XmppVm extends XmppClient {
 
     public String getVilleinJid() {
         return this.villeinJid;
+    }
+
+    public void shutdown() {
+        super.shutdown(this.createPresence(LinkedProcess.VmStatus.INACTIVE));
+
     }
 
     public LinkedProcess.VmStatus getVmStatus() {

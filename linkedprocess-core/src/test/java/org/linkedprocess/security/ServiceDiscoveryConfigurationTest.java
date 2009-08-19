@@ -24,7 +24,7 @@ public class ServiceDiscoveryConfigurationTest extends TestCase {
         Properties p = LinkedProcess.getConfiguration();
         p.setProperty("org.linkedprocess.security.read", "true");
 
-        VmSecurityManager m = new VmSecurityManager(p);
+        VMSecurityManager m = new VMSecurityManager(p);
         PathPermissions pp = new PathPermissions();
         pp.addPermitRule("/tmp/foo/bar");
         pp.addPermitRule("/opt/stuff");

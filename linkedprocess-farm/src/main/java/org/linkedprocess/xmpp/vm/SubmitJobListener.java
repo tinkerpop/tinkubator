@@ -6,8 +6,8 @@ import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.Job;
 import org.linkedprocess.os.errors.JobAlreadyExistsException;
-import org.linkedprocess.os.errors.VmWorkerIsFullException;
-import org.linkedprocess.os.errors.VmWorkerNotFoundException;
+import org.linkedprocess.os.errors.VMWorkerIsFullException;
+import org.linkedprocess.os.errors.VMWorkerNotFoundException;
 import org.linkedprocess.xmpp.LopError;
 
 /**
@@ -17,8 +17,8 @@ import org.linkedprocess.xmpp.LopError;
 public class SubmitJobListener extends LopVmListener {
 
 
-    public SubmitJobListener(XmppVm xmppVm) {
-        super(xmppVm);
+    public SubmitJobListener(XmppVirtualMachine xmppVirtualMachine) {
+        super(xmppVirtualMachine);
     }
 
     public void processPacket(Packet packet) {
@@ -32,8 +32,8 @@ public class SubmitJobListener extends LopVmListener {
     }
 
     private void processSubmitJobPacket(SubmitJob submitJob) {
-        XmppVm.LOGGER.info("Arrived " + SubmitJobListener.class.getName());
-        XmppVm.LOGGER.info(submitJob.toXML());
+        XmppVirtualMachine.LOGGER.info("Arrived " + SubmitJobListener.class.getName());
+        XmppVirtualMachine.LOGGER.info(submitJob.toXML());
 
         String expression = submitJob.getExpression();
         String iqId = submitJob.getPacketID();
@@ -62,18 +62,18 @@ public class SubmitJobListener extends LopVmListener {
             returnSubmitJob.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, errorMessage, LOP_CLIENT_TYPE, submitJob.getPacketID()));
 
 
-        } else if (!((XmppVm) this.xmppClient).checkVmPassword(vmPassword)) {
+        } else if (!((XmppVirtualMachine) this.xmppClient).checkVmPassword(vmPassword)) {
             returnSubmitJob.setType(IQ.Type.ERROR);
             returnSubmitJob.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, submitJob.getPacketID()));
         } else {
             Job job = new Job(this.xmppClient.getFullJid(), villeinJid, iqId, expression);
             try {
-                ((XmppVm) xmppClient).scheduleJob(job);
+                ((XmppVirtualMachine) xmppClient).scheduleJob(job);
                 submitJob = null;
-            } catch (VmWorkerNotFoundException e) {
+            } catch (VMWorkerNotFoundException e) {
                 returnSubmitJob.setType(IQ.Type.ERROR);
                 returnSubmitJob.setLopError(new LopError(XMPPError.Condition.interna_server_error, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE, submitJob.getPacketID()));
-            } catch (VmWorkerIsFullException e) {
+            } catch (VMWorkerIsFullException e) {
                 returnSubmitJob.setType(IQ.Type.ERROR);
                 returnSubmitJob.setLopError(new LopError(XMPPError.Condition.service_unavailable, LinkedProcess.LopErrorType.VM_IS_BUSY, e.getMessage(), LOP_CLIENT_TYPE, submitJob.getPacketID()));
             } catch (JobAlreadyExistsException e) {
@@ -83,8 +83,8 @@ public class SubmitJobListener extends LopVmListener {
         }
 
         if (submitJob != null) {
-            XmppVm.LOGGER.fine("Sent " + PingJobListener.class.getName());
-            XmppVm.LOGGER.fine(returnSubmitJob.toXML());
+            XmppVirtualMachine.LOGGER.fine("Sent " + PingJobListener.class.getName());
+            XmppVirtualMachine.LOGGER.fine(returnSubmitJob.toXML());
             this.getXmppVm().getConnection().sendPacket(returnSubmitJob);
         }
 

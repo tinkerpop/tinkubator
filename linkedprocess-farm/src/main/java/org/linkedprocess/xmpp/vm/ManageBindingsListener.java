@@ -4,7 +4,7 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.errors.VmWorkerNotFoundException;
+import org.linkedprocess.os.errors.VMWorkerNotFoundException;
 import org.linkedprocess.xmpp.LopError;
 
 /**
@@ -13,8 +13,8 @@ import org.linkedprocess.xmpp.LopError;
  */
 public class ManageBindingsListener extends LopVmListener {
 
-    public ManageBindingsListener(XmppVm xmppVm) {
-        super(xmppVm);
+    public ManageBindingsListener(XmppVirtualMachine xmppVirtualMachine) {
+        super(xmppVirtualMachine);
     }
 
     public void processPacket(Packet packet) {
@@ -29,8 +29,8 @@ public class ManageBindingsListener extends LopVmListener {
 
     private void processManageBindingsPacket(ManageBindings manageBindings) {
 
-        XmppVm.LOGGER.info("Arrived " + ManageBindingsListener.class.getName());
-        XmppVm.LOGGER.info(manageBindings.toXML());
+        XmppVirtualMachine.LOGGER.info("Arrived " + ManageBindingsListener.class.getName());
+        XmppVirtualMachine.LOGGER.info(manageBindings.toXML());
 
         ManageBindings returnManageBindings = new ManageBindings();
         returnManageBindings.setTo(manageBindings.getFrom());
@@ -49,7 +49,7 @@ public class ManageBindingsListener extends LopVmListener {
         } else if (null != manageBindings.getInvalidValueMessage()) {
             returnManageBindings.setType(IQ.Type.ERROR);
             returnManageBindings.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.INVALID_VALUE, manageBindings.getInvalidValueMessage(), LOP_CLIENT_TYPE, manageBindings.getPacketID()));
-        } else if (!((XmppVm) this.xmppClient).checkVmPassword(vmPassword)) {
+        } else if (!((XmppVirtualMachine) this.xmppClient).checkVmPassword(vmPassword)) {
             returnManageBindings.setType(IQ.Type.ERROR);
             returnManageBindings.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, manageBindings.getPacketID()));
         } else {
@@ -63,14 +63,14 @@ public class ManageBindingsListener extends LopVmListener {
                 }
 
 
-            } catch (VmWorkerNotFoundException e) {
+            } catch (VMWorkerNotFoundException e) {
                 returnManageBindings.setType(IQ.Type.ERROR);
                 returnManageBindings.setLopError(new LopError(XMPPError.Condition.interna_server_error, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE, manageBindings.getPacketID()));
             }
         }
 
-        XmppVm.LOGGER.info("Sent " + ManageBindingsListener.class.getName());
-        XmppVm.LOGGER.info(returnManageBindings.toXML());
+        XmppVirtualMachine.LOGGER.info("Sent " + ManageBindingsListener.class.getName());
+        XmppVirtualMachine.LOGGER.info(returnManageBindings.toXML());
         this.getXmppVm().getConnection().sendPacket(returnManageBindings);
 
 

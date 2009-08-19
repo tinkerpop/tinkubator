@@ -1,7 +1,7 @@
 package org.linkedprocess.gui.farm.vmviewer;
 
 import org.linkedprocess.gui.PacketSnifferPanel;
-import org.linkedprocess.xmpp.vm.XmppVm;
+import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 import javax.swing.*;
 
@@ -11,10 +11,10 @@ import javax.swing.*;
  */
 public class VmViewerFrame extends JFrame {
 
-    protected XmppVm xmppVm;
+    protected XmppVirtualMachine xmppVm;
 
 
-    public VmViewerFrame(XmppVm xmppVm) {
+    public VmViewerFrame(XmppVirtualMachine xmppVm) {
         super(xmppVm.getResource());
         this.xmppVm = xmppVm;
         JTabbedPane tabbedPane = new JTabbedPane();

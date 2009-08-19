@@ -8,7 +8,7 @@
 package org.linkedprocess.demos.polling;
 
 import org.linkedprocess.os.TypedValue;
-import org.linkedprocess.os.VmBindings;
+import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.XmppVillein;
@@ -70,7 +70,7 @@ public class ProgressPollingAbortJob {
         vmProxyResult.getResult().submitJob(jobStruct, null, null);
 
         BindingsChecker bc = new BindingsChecker() {
-            public boolean areEquivalent(VmBindings actualBindings, VmBindings desiredBindings) {
+            public boolean areEquivalent(VMBindings actualBindings, VMBindings desiredBindings) {
                 TypedValue actualValue = actualBindings.getTyped("meter");
                 TypedValue desiredValue = desiredBindings.getTyped("meter");
                 if (actualValue != null) {
@@ -83,8 +83,8 @@ public class ProgressPollingAbortJob {
                 }
             }
         };
-        Handler<VmBindings> resultHandler = new Handler<VmBindings>() {
-            public void handle(VmBindings vmBindings) {
+        Handler<VMBindings> resultHandler = new Handler<VMBindings>() {
+            public void handle(VMBindings vmBindings) {
                 System.out.println("progress meter value has been reached: " + vmBindings);
                 synchronized (monitor) {
                     monitor.notify();
@@ -102,8 +102,8 @@ public class ProgressPollingAbortJob {
             }
         };
         PollBindingsPattern pb = new PollBindingsPattern();
-        VmBindings desiredBindings = new VmBindings();
-        desiredBindings.putTyped("meter", new TypedValue(VmBindings.XMLSchemaDatatype.DOUBLE, "" + meterMax));
+        VMBindings desiredBindings = new VMBindings();
+        desiredBindings.putTyped("meter", new TypedValue(VMBindings.XMLSchemaDatatype.DOUBLE, "" + meterMax));
         pb.startPattern(vmProxyResult.getResult(), desiredBindings, bc, resultHandler, errorHandler, pollingInterval);
         synchronized (monitor) {
             monitor.wait();

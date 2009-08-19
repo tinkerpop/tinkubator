@@ -3,7 +3,7 @@ package org.linkedprocess;
 import junit.framework.TestCase;
 import org.jivesoftware.smack.packet.IQ;
 import org.junit.Test;
-import org.linkedprocess.os.VmBindings;
+import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.xmpp.farm.SpawnVm;
 import org.linkedprocess.xmpp.vm.AbortJob;
 import org.linkedprocess.xmpp.vm.ManageBindings;
@@ -45,8 +45,8 @@ public class XMPPTagTests extends TestCase {
     public void testManageBindingsTag() throws Exception {
         ManageBindings manageBindings = new ManageBindings();
         manageBindings.setType(IQ.Type.SET);
-        manageBindings.addBinding("name", "marko", VmBindings.XMLSchemaDatatype.STRING.getURI());
-        manageBindings.addBinding("age", "29", VmBindings.XMLSchemaDatatype.INTEGER.getURI());
+        manageBindings.addBinding("name", "marko", VMBindings.XMLSchemaDatatype.STRING.getURI());
+        manageBindings.addBinding("age", "29", VMBindings.XMLSchemaDatatype.INTEGER.getURI());
         assertTrue(manageBindings.toXML().contains("<binding name=\"age\" value=\"29\" datatype=\"http://www.w3.org/2001/XMLSchema#integer\" />"));
         manageBindings.setType(IQ.Type.GET);
         assertFalse(manageBindings.toXML().contains("<binding name=\"age\" value=\"29\" datatype=\"http://www.w3.org/2001/XMLSchema#integer\"/>"));

@@ -2,8 +2,8 @@ package org.linkedprocess.gui.farm.vmviewer;
 
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.TypedValue;
-import org.linkedprocess.os.VmBindings;
-import org.linkedprocess.xmpp.vm.XmppVm;
+import org.linkedprocess.os.VMBindings;
+import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -20,15 +20,15 @@ import java.awt.event.ActionListener;
 public class ViewBindingsPanel extends JPanel implements ActionListener, ListSelectionListener {
 
     protected JTable bindingsTable;
-    protected XmppVm xmppVm;
+    protected XmppVirtualMachine xmppVirtualMachine;
     protected JTextArea valueTextArea;
     protected int count = 0;
     protected static final String REFRESH = "refresh";
 
 
-    public ViewBindingsPanel(XmppVm xmppVm) {
+    public ViewBindingsPanel(XmppVirtualMachine xmppVirtualMachine) {
         super(new BorderLayout());
-        this.xmppVm = xmppVm;
+        this.xmppVirtualMachine = xmppVirtualMachine;
         DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{LinkedProcess.NAME_ATTRIBUTE, LinkedProcess.VALUE_ATTRIBUTE, LinkedProcess.DATATYPE_ATTRIBUTE, "null"});
 
         this.bindingsTable = new JTable(tableModel) {
@@ -74,7 +74,7 @@ public class ViewBindingsPanel extends JPanel implements ActionListener, ListSel
 
     public void refreshBindings() {
         try {
-            VmBindings bindings = this.xmppVm.getFarm().getVMScheduler().getAllBindings(this.xmppVm.getFullJid());
+            VMBindings bindings = this.xmppVirtualMachine.getFarm().getVMScheduler().getAllBindings(this.xmppVirtualMachine.getFullJid());
             DefaultTableModel tableModel = (DefaultTableModel) this.bindingsTable.getModel();
             this.clearAllRows();
             for (String key : bindings.keySet()) {

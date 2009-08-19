@@ -8,7 +8,7 @@
 package org.linkedprocess.xmpp.villein.patterns;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.VmBindings;
+import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
@@ -200,12 +200,12 @@ public class SynchronousPattern {
      * @return the result of the command
      * @throws TimeoutException is thrown when the command takes longer than the provided timeout in milliseconds
      */
-    public static ResultHolder<VmBindings> setBindings(final VmProxy vmProxy, VmBindings vmBindings, final long timeout) throws TimeoutException {
+    public static ResultHolder<VMBindings> setBindings(final VmProxy vmProxy, VMBindings vmBindings, final long timeout) throws TimeoutException {
         final Object monitor = new Object();
-        final ResultHolder<VmBindings> resultHolder = new ResultHolder<VmBindings>();
+        final ResultHolder<VMBindings> resultHolder = new ResultHolder<VMBindings>();
 
-        Handler<VmBindings> resultHandler = new Handler<VmBindings>() {
-            public void handle(VmBindings vmBindings) {
+        Handler<VMBindings> resultHandler = new Handler<VMBindings>() {
+            public void handle(VMBindings vmBindings) {
                 resultHolder.setResult(vmBindings);
                 synchronized (monitor) {
                     monitor.notify();
@@ -237,12 +237,12 @@ public class SynchronousPattern {
      * @return the result of the command
      * @throws TimeoutException is thrown when the command takes longer than the provided timeout in milliseconds
      */
-    public static ResultHolder<VmBindings> getBindings(final VmProxy vmProxy, Set<String> bindingNames, final long timeout) throws TimeoutException {
+    public static ResultHolder<VMBindings> getBindings(final VmProxy vmProxy, Set<String> bindingNames, final long timeout) throws TimeoutException {
         final Object monitor = new Object();
-        final ResultHolder<VmBindings> resultHolder = new ResultHolder<VmBindings>();
+        final ResultHolder<VMBindings> resultHolder = new ResultHolder<VMBindings>();
 
-        Handler<VmBindings> resultHandler = new Handler<VmBindings>() {
-            public void handle(VmBindings vmBindings) {
+        Handler<VMBindings> resultHandler = new Handler<VMBindings>() {
+            public void handle(VMBindings vmBindings) {
                 resultHolder.setResult(vmBindings);
                 synchronized (monitor) {
                     monitor.notify();

@@ -9,7 +9,7 @@ import org.linkedprocess.gui.GenericErrorHandler;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.gui.villein.VilleinGui;
-import org.linkedprocess.os.VmBindings;
+import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.xmpp.villein.proxies.JobStruct;
 import org.linkedprocess.xmpp.villein.proxies.VmProxy;
 
@@ -140,7 +140,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
 
     }
 
-    public void handleIncomingManageBindings(VmBindings vmBindings) {
+    public void handleIncomingManageBindings(VMBindings vmBindings) {
         this.manageBindingsPanel.handleIncomingManageBindings(vmBindings);
     }
 

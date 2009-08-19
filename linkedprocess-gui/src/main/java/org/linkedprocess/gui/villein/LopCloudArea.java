@@ -136,7 +136,7 @@ public class LopCloudArea extends JPanel implements ActionListener, MouseListene
             }
 
         } else if (event.getActionCommand().equals(SHUTDOWN)) {
-            this.villeinGui.getXmppVillein().shutdown();
+            this.villeinGui.getXmppVillein().shutdown(null);
             this.villeinGui.loadLoginFrame();
         } else {
             for (String vmSpecies : this.supportedVmSpeciesActionCommands) {

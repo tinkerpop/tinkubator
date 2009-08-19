@@ -6,7 +6,7 @@ import org.linkedprocess.gui.RosterPanel;
 import org.linkedprocess.gui.TreeRenderer;
 import org.linkedprocess.gui.farm.vmviewer.VmViewerFrame;
 import org.linkedprocess.xmpp.villein.proxies.CountrysideProxy;
-import org.linkedprocess.xmpp.vm.XmppVm;
+import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -77,7 +77,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
         this.setVisible(true);
     }
 
-    public boolean containsVmNode(XmppVm vm) {
+    public boolean containsVmNode(XmppVirtualMachine vm) {
         for (int i = 0; i < treeRoot.getChildCount(); i++) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeRoot.getChildAt(i);
             if (node.getUserObject() == vm) {
@@ -92,7 +92,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
         DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(this.farmGui.getXmppFarm());
         this.treeMap.put(this.farmGui.getXmppFarm().getFullJid(), farmNode);
-        for (XmppVm xmppVm : this.farmGui.getXmppFarm().getVirtualMachines()) {
+        for (XmppVirtualMachine xmppVm : this.farmGui.getXmppFarm().getVirtualMachines()) {
             DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(xmppVm);
             this.treeMap.put(xmppVm.getFullJid(), vmNode);
             vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", xmppVm.getVilleinJid())));
@@ -114,7 +114,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
         DefaultMutableTreeNode node = this.treeMap.get(vmJid);
         if (node == null && status != LinkedProcess.VmStatus.NOT_FOUND) {
             try {
-                XmppVm xmppVm = this.farmGui.getXmppFarm().getVirtualMachine(vmJid);
+                XmppVirtualMachine xmppVm = this.farmGui.getXmppFarm().getVirtualMachine(vmJid);
                 DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(xmppVm);
                 vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", xmppVm.getVilleinJid())));
                 vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", xmppVm.getVmStatus().toString())));
@@ -130,7 +130,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
             }
         } else if (node != null && (status == LinkedProcess.VmStatus.ACTIVE || status == LinkedProcess.VmStatus.ACTIVE_FULL)) {
             node.removeAllChildren();
-            XmppVm xmppVm = (XmppVm) node.getUserObject();
+            XmppVirtualMachine xmppVm = (XmppVirtualMachine) node.getUserObject();
             node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", xmppVm.getVilleinJid())));
             node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", xmppVm.getVmStatus().toString())));
             node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", xmppVm.getVmSpecies())));
@@ -162,8 +162,8 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
             DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
 
             if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
-                if (selectedNode.getUserObject() instanceof XmppVm) {
-                    XmppVm xmppVm = (XmppVm) selectedNode.getUserObject();
+                if (selectedNode.getUserObject() instanceof XmppVirtualMachine) {
+                    XmppVirtualMachine xmppVm = (XmppVirtualMachine) selectedNode.getUserObject();
                     VmViewerFrame vmViewer = this.vmViewerMap.get(xmppVm.getFullJid());
                     if (vmViewer == null) {
                         vmViewer = new VmViewerFrame(xmppVm);

@@ -15,13 +15,13 @@ import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.linkedprocess.os.errors.VmWorkerNotFoundException;
+import org.linkedprocess.os.errors.VMWorkerNotFoundException;
 import org.linkedprocess.testing.offline.MockXMPPConnection;
 import org.linkedprocess.testing.offline.OfflineTest;
 import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.farm.SpawnVm;
 import org.linkedprocess.xmpp.farm.XmppFarm;
-import org.linkedprocess.xmpp.vm.XmppVm;
+import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
 import static org.powermock.api.easymock.PowerMock.*;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -49,12 +49,12 @@ public class OfflineFarmTest extends OfflineTest {
 
         sentPackets = connection.sentPackets;
         // first VM
-        expectNew(XmppVm.class, isA(String.class),
+        expectNew(XmppVirtualMachine.class, isA(String.class),
                 isA(Integer.class), isA(String.class), isA(String.class),
                 isA(XmppFarm.class), isA(String.class), isA(String.class),
                 isA(String.class))
                 .andReturn(createMockVM(username + "LoPVM/1")).times(0, 1);
-        expectNew(XmppVm.class, isA(String.class),
+        expectNew(XmppVirtualMachine.class, isA(String.class),
                 isA(Integer.class), isA(String.class), isA(String.class),
                 isA(XmppFarm.class), isA(String.class), isA(String.class),
                 isA(String.class))
@@ -65,15 +65,15 @@ public class OfflineFarmTest extends OfflineTest {
         farm = new XmppFarm(server, port, username, password, null);
     }
 
-    private XmppVm createMockVM(String id) {
-        XmppVm mockVM = createMock(XmppVm.class);
+    private XmppVirtualMachine createMockVM(String id) {
+        XmppVirtualMachine mockVM = createMock(XmppVirtualMachine.class);
 
         expect(mockVM.getFullJid()).andReturn(id).anyTimes();
         mockVM.shutdown();
         expectLastCall().anyTimes();
         try {
             mockVM.terminateSelf();
-        } catch (VmWorkerNotFoundException e) {
+        } catch (VMWorkerNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

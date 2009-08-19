@@ -9,7 +9,7 @@ package org.linkedprocess.xmpp.villein.commands;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.os.VmBindings;
+import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.os.errors.InvalidValueException;
 import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.villein.Handler;
@@ -26,16 +26,16 @@ import org.linkedprocess.xmpp.vm.ManageBindings;
  * @version LoPSideD 0.1
  */
 public class SetBindingsCommand extends Command {
-    private final HandlerSet<VmBindings> resultHandlers;
+    private final HandlerSet<VMBindings> resultHandlers;
     private final HandlerSet<LopError> errorHandlers;
 
     public SetBindingsCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
-        this.resultHandlers = new HandlerSet<VmBindings>();
+        this.resultHandlers = new HandlerSet<VMBindings>();
         this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(final VmProxy vmStruct, VmBindings vmBindings, final Handler<VmBindings> resultHandler, final Handler<LopError> errorHandler) {
+    public void send(final VmProxy vmStruct, VMBindings vmBindings, final Handler<VMBindings> resultHandler, final Handler<LopError> errorHandler) {
 
         String id = Packet.nextID();
         ManageBindings manageBindings = new ManageBindings();
@@ -46,8 +46,8 @@ public class SetBindingsCommand extends Command {
         manageBindings.setBindings(vmBindings);
         manageBindings.setPacketID(id);
 
-        Handler<VmBindings> autoResultHandler = new Handler<VmBindings>() {
-            public void handle(VmBindings vmBindings) {
+        Handler<VMBindings> autoResultHandler = new Handler<VMBindings>() {
+            public void handle(VMBindings vmBindings) {
                 try {
                     vmStruct.addVmBindings(vmBindings);
                 } catch (InvalidValueException e) {

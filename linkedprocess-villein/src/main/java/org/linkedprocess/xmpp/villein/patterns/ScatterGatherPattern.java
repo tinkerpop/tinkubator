@@ -8,7 +8,7 @@
 package org.linkedprocess.xmpp.villein.patterns;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.VmBindings;
+import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
@@ -366,13 +366,13 @@ public class ScatterGatherPattern {
      * @return a mapping from a VmProxy to the results of its get manage_bindings
      * @throws TimeoutException is thrown when the scatter takes longer than the provided timeout in milliseconds
      */
-    public static Map<VmProxy, ResultHolder<VmBindings>> scatterGetBindings(final Map<VmProxy, Set<String>> vmBindingNamesMap, long timeout) throws TimeoutException {
+    public static Map<VmProxy, ResultHolder<VMBindings>> scatterGetBindings(final Map<VmProxy, Set<String>> vmBindingNamesMap, long timeout) throws TimeoutException {
         final Object monitor = new Object();
-        final Map<VmProxy, ResultHolder<VmBindings>> resultHolders = new HashMap<VmProxy, ResultHolder<VmBindings>>();
+        final Map<VmProxy, ResultHolder<VMBindings>> resultHolders = new HashMap<VmProxy, ResultHolder<VMBindings>>();
         for (final VmProxy vmProxy : vmBindingNamesMap.keySet()) {
-            Handler<VmBindings> scatterResultHandler = new Handler<VmBindings>() {
-                public void handle(VmBindings vmBindings) {
-                    resultHolders.put(vmProxy, new ResultHolder<VmBindings>(vmBindings));
+            Handler<VMBindings> scatterResultHandler = new Handler<VMBindings>() {
+                public void handle(VMBindings vmBindings) {
+                    resultHolders.put(vmProxy, new ResultHolder<VMBindings>(vmBindings));
                     if (resultHolders.size() == vmBindingNamesMap.size()) {
                         synchronized (monitor) {
                             monitor.notify();
@@ -383,7 +383,7 @@ public class ScatterGatherPattern {
 
             Handler<LopError> scatterErrorHandler = new Handler<LopError>() {
                 public void handle(LopError lopError) {
-                    resultHolders.put(vmProxy, new ResultHolder<VmBindings>(lopError));
+                    resultHolders.put(vmProxy, new ResultHolder<VMBindings>(lopError));
                     if (resultHolders.size() == vmBindingNamesMap.size()) {
                         synchronized (monitor) {
                             monitor.notify();
@@ -407,13 +407,13 @@ public class ScatterGatherPattern {
      * @param vmBindingNamesMap a mapping from a VmProxy to the binding names that should be retrieved
      * @param resultHandler     the handler of the results (can be null)
      */
-    public static void scatterGetBindings(final Map<VmProxy, Set<String>> vmBindingNamesMap, final Handler<Map<VmProxy, ResultHolder<VmBindings>>> resultHandler) {
-        final Map<VmProxy, ResultHolder<VmBindings>> resultHolders = new HashMap<VmProxy, ResultHolder<VmBindings>>();
+    public static void scatterGetBindings(final Map<VmProxy, Set<String>> vmBindingNamesMap, final Handler<Map<VmProxy, ResultHolder<VMBindings>>> resultHandler) {
+        final Map<VmProxy, ResultHolder<VMBindings>> resultHolders = new HashMap<VmProxy, ResultHolder<VMBindings>>();
 
         for (final VmProxy vmProxy : vmBindingNamesMap.keySet()) {
-            Handler<VmBindings> bindingsResultHandler = new Handler<VmBindings>() {
-                public void handle(VmBindings vmBindings) {
-                    resultHolders.put(vmProxy, new ResultHolder<VmBindings>(vmBindings));
+            Handler<VMBindings> bindingsResultHandler = new Handler<VMBindings>() {
+                public void handle(VMBindings vmBindings) {
+                    resultHolders.put(vmProxy, new ResultHolder<VMBindings>(vmBindings));
                     if (resultHolders.size() == vmBindingNamesMap.size()) {
                         resultHandler.handle(resultHolders);
                     }
@@ -422,7 +422,7 @@ public class ScatterGatherPattern {
 
             Handler<LopError> bindingsErrorHandler = new Handler<LopError>() {
                 public void handle(LopError lopError) {
-                    resultHolders.put(vmProxy, new ResultHolder<VmBindings>(lopError));
+                    resultHolders.put(vmProxy, new ResultHolder<VMBindings>(lopError));
                     if (resultHolders.size() == vmBindingNamesMap.size()) {
                         resultHandler.handle(resultHolders);
                     }
@@ -441,13 +441,13 @@ public class ScatterGatherPattern {
      * @return a mapping from a VmProxy to the results of its get manage_bindings
      * @throws TimeoutException is thrown when the scatter takes longer than the provided timeout in milliseconds
      */
-    public static Map<VmProxy, ResultHolder<VmBindings>> scatterSetBindings(final Map<VmProxy, VmBindings> vmBindingsMap, long timeout) throws TimeoutException {
+    public static Map<VmProxy, ResultHolder<VMBindings>> scatterSetBindings(final Map<VmProxy, VMBindings> vmBindingsMap, long timeout) throws TimeoutException {
         final Object monitor = new Object();
-        final Map<VmProxy, ResultHolder<VmBindings>> resultHolders = new HashMap<VmProxy, ResultHolder<VmBindings>>();
+        final Map<VmProxy, ResultHolder<VMBindings>> resultHolders = new HashMap<VmProxy, ResultHolder<VMBindings>>();
         for (final VmProxy vmProxy : vmBindingsMap.keySet()) {
-            Handler<VmBindings> scatterResultHandler = new Handler<VmBindings>() {
-                public void handle(VmBindings vmBindings) {
-                    resultHolders.put(vmProxy, new ResultHolder<VmBindings>(vmBindings));
+            Handler<VMBindings> scatterResultHandler = new Handler<VMBindings>() {
+                public void handle(VMBindings vmBindings) {
+                    resultHolders.put(vmProxy, new ResultHolder<VMBindings>(vmBindings));
                     if (resultHolders.size() == vmBindingsMap.size()) {
                         synchronized (monitor) {
                             monitor.notify();
@@ -458,7 +458,7 @@ public class ScatterGatherPattern {
 
             Handler<LopError> scatterErrorHandler = new Handler<LopError>() {
                 public void handle(LopError lopError) {
-                    resultHolders.put(vmProxy, new ResultHolder<VmBindings>(lopError));
+                    resultHolders.put(vmProxy, new ResultHolder<VMBindings>(lopError));
                     if (resultHolders.size() == vmBindingsMap.size()) {
                         synchronized (monitor) {
                             monitor.notify();
@@ -482,13 +482,13 @@ public class ScatterGatherPattern {
      * @param vmBindingsMap a mapping from a VmProxy to the bindings that should be set
      * @param resultHandler the handler of the results (can be null)
      */
-    public static void scatterSetBindings(final Map<VmProxy, VmBindings> vmBindingsMap, final Handler<Map<VmProxy, ResultHolder<VmBindings>>> resultHandler) {
-        final Map<VmProxy, ResultHolder<VmBindings>> resultHolders = new HashMap<VmProxy, ResultHolder<VmBindings>>();
+    public static void scatterSetBindings(final Map<VmProxy, VMBindings> vmBindingsMap, final Handler<Map<VmProxy, ResultHolder<VMBindings>>> resultHandler) {
+        final Map<VmProxy, ResultHolder<VMBindings>> resultHolders = new HashMap<VmProxy, ResultHolder<VMBindings>>();
 
         for (final VmProxy vmProxy : vmBindingsMap.keySet()) {
-            Handler<VmBindings> bindingsResultHandler = new Handler<VmBindings>() {
-                public void handle(VmBindings vmBindings) {
-                    resultHolders.put(vmProxy, new ResultHolder<VmBindings>(vmBindings));
+            Handler<VMBindings> bindingsResultHandler = new Handler<VMBindings>() {
+                public void handle(VMBindings vmBindings) {
+                    resultHolders.put(vmProxy, new ResultHolder<VMBindings>(vmBindings));
                     if (resultHolders.size() == vmBindingsMap.size()) {
                         resultHandler.handle(resultHolders);
                     }
@@ -497,7 +497,7 @@ public class ScatterGatherPattern {
 
             Handler<LopError> bindingsErrorHandler = new Handler<LopError>() {
                 public void handle(LopError lopError) {
-                    resultHolders.put(vmProxy, new ResultHolder<VmBindings>(lopError));
+                    resultHolders.put(vmProxy, new ResultHolder<VMBindings>(lopError));
                     if (resultHolders.size() == vmBindingsMap.size()) {
                         resultHandler.handle(resultHolders);
                     }

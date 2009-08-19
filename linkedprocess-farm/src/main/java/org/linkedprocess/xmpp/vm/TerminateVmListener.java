@@ -4,7 +4,7 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.errors.VmWorkerNotFoundException;
+import org.linkedprocess.os.errors.VMWorkerNotFoundException;
 import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.farm.XmppFarm;
 
@@ -14,8 +14,8 @@ import org.linkedprocess.xmpp.farm.XmppFarm;
  */
 public class TerminateVmListener extends LopVmListener {
 
-    public TerminateVmListener(XmppVm xmppVm) {
-        super(xmppVm);
+    public TerminateVmListener(XmppVirtualMachine xmppVirtualMachine) {
+        super(xmppVirtualMachine);
     }
 
     public void processPacket(Packet terminateVm) {
@@ -44,7 +44,7 @@ public class TerminateVmListener extends LopVmListener {
         if (null == vmPassword) {
             returnTerminateVm.setType(IQ.Type.ERROR);
             returnTerminateVm.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "terminate_vm XML packet is missing the vm_password attribute", LOP_CLIENT_TYPE, terminateVm.getPacketID()));
-        } else if (!((XmppVm) this.xmppClient).checkVmPassword(vmPassword)) {
+        } else if (!((XmppVirtualMachine) this.xmppClient).checkVmPassword(vmPassword)) {
             returnTerminateVm.setType(IQ.Type.ERROR);
             returnTerminateVm.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, terminateVm.getPacketID()));
         } else {
@@ -59,7 +59,7 @@ public class TerminateVmListener extends LopVmListener {
         if (terminate) {
             try {
                 this.getXmppVm().getFarm().getVmScheduler().terminateVirtualMachine(xmppClient.getFullJid());
-            } catch (VmWorkerNotFoundException e) {
+            } catch (VMWorkerNotFoundException e) {
                 this.getXmppVm().shutdown();
             }
         }

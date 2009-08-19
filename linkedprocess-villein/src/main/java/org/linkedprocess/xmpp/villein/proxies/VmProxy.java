@@ -9,7 +9,7 @@ package org.linkedprocess.xmpp.villein.proxies;
 
 import org.jdom.Document;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.VmBindings;
+import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.os.errors.InvalidValueException;
 import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.villein.Dispatcher;
@@ -29,7 +29,7 @@ public class VmProxy extends Proxy {
 
     protected String vmPassword;
     protected String vmSpecies;
-    private VmBindings vmBindings = new VmBindings();
+    private VMBindings vmBindings = new VMBindings();
 
     public VmProxy(final String fullJid, final Dispatcher dispatcher) {
         super(fullJid, dispatcher);
@@ -52,11 +52,11 @@ public class VmProxy extends Proxy {
         dispatcher.getAbortJobCommand().send(this, jobStruct, resultHandler, errorHandler);
     }
 
-    public void getBindings(final Set<String> bindingNames, final Handler<VmBindings> resultHandler, final Handler<LopError> errorHandler) {
+    public void getBindings(final Set<String> bindingNames, final Handler<VMBindings> resultHandler, final Handler<LopError> errorHandler) {
         dispatcher.getGetBindingsCommand().send(this, bindingNames, resultHandler, errorHandler);
     }
 
-    public void setBindings(final VmBindings vmBindings, final Handler<VmBindings> resultHandler, final Handler<LopError> errorHandler) {
+    public void setBindings(final VMBindings vmBindings, final Handler<VMBindings> resultHandler, final Handler<LopError> errorHandler) {
         dispatcher.getSetBindingsCommand().send(this, vmBindings, resultHandler, errorHandler);
     }
 
@@ -80,19 +80,19 @@ public class VmProxy extends Proxy {
         return this.vmSpecies;
     }
 
-    public void addVmBindings(VmBindings bindings) throws InvalidValueException {
+    public void addVmBindings(VMBindings bindings) throws InvalidValueException {
         for (String bindingName : bindings.keySet()) {
             this.vmBindings.putTyped(bindingName, bindings.getTyped(bindingName));
         }
     }
 
-    public void removeVmBindings(VmBindings bindings) {
+    public void removeVmBindings(VMBindings bindings) {
         for (String bindingName : bindings.keySet()) {
             this.vmBindings.remove(bindingName);
         }
     }
 
-    public VmBindings getVmBindings() {
+    public VMBindings getVmBindings() {
         return this.vmBindings;
     }
 }

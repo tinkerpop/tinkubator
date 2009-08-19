@@ -1,7 +1,7 @@
 package org.linkedprocess.demos.primes;
 
 import org.linkedprocess.os.TypedValue;
-import org.linkedprocess.os.VmBindings;
+import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.villein.Handler;
 import org.linkedprocess.xmpp.villein.patterns.BindingsChecker;
@@ -22,8 +22,8 @@ public class VmPollProgressTask implements Runnable {
 	public void run() {
 		final Object monitor = new Object();
 		BindingsChecker bc = new BindingsChecker() {
-			public boolean areEquivalent(VmBindings actualBindings,
-					VmBindings desiredBindings) {
+			public boolean areEquivalent(VMBindings actualBindings,
+					VMBindings desiredBindings) {
 				TypedValue actualValue = actualBindings.getTyped("meter");
 				TypedValue desiredValue = desiredBindings.getTyped("meter");
 				if (actualValue != null) {
@@ -39,9 +39,9 @@ public class VmPollProgressTask implements Runnable {
 				}
 			}
 		};
-		Handler<VmBindings> resultHandler = new Handler<VmBindings>() {
+		Handler<VMBindings> resultHandler = new Handler<VMBindings>() {
 
-			public void handle(VmBindings vmBindings) {
+			public void handle(VMBindings vmBindings) {
 				System.out.println(vmProxy.getFullJid()
 						+ ": progress meter value has been reached: "
 						+ vmBindings);
@@ -61,10 +61,10 @@ public class VmPollProgressTask implements Runnable {
 			}
 		};
 		PollBindingsPattern pb = new PollBindingsPattern();
-		VmBindings desiredBindings = new VmBindings();
+		VMBindings desiredBindings = new VMBindings();
 		try {
 			desiredBindings.putTyped("meter", new TypedValue(
-					VmBindings.XMLSchemaDatatype.DOUBLE, "" + meterMax));
+					VMBindings.XMLSchemaDatatype.DOUBLE, "" + meterMax));
 			pb.startPattern(vmProxy, desiredBindings, bc, resultHandler,
 					errorHandler, pollingInterval);
 			synchronized (monitor) {

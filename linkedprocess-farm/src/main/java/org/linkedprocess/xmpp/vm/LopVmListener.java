@@ -11,12 +11,12 @@ public abstract class LopVmListener extends LopListener {
 
     public static final LinkedProcess.ClientType LOP_CLIENT_TYPE = LinkedProcess.ClientType.VM;
 
-    public LopVmListener(XmppVm xmppVm) {
+    public LopVmListener(XmppVirtualMachine xmppVm) {
         super(xmppVm);
     }
 
-    public XmppVm getXmppVm() {
-        return (XmppVm) this.xmppClient;
+    public XmppVirtualMachine getXmppVm() {
+        return (XmppVirtualMachine) this.xmppClient;
     }
 
 }
