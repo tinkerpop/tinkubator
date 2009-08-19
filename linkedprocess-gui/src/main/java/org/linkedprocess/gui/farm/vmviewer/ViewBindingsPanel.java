@@ -74,7 +74,7 @@ public class ViewBindingsPanel extends JPanel implements ActionListener, ListSel
 
     public void refreshBindings() {
         try {
-            VMBindings bindings = this.xmppVm.getFarm().getVMScheduler().getAllBindings(this.xmppVm.getFullJid());
+            VMBindings bindings = this.xmppVm.getFarm().getVmScheduler().getAllBindings(this.xmppVm.getFullJid());
             DefaultTableModel tableModel = (DefaultTableModel) this.bindingsTable.getModel();
             this.clearAllRows();
             for (String key : bindings.keySet()) {
