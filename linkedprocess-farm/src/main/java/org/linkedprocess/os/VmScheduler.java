@@ -60,7 +60,7 @@ public class VmScheduler {
      */
     public VmScheduler(final VmResultHandler resultHandler,
                        final LopStatusEventHandler eventHandler) {
-        LOGGER.info("instantiating VMScheduler");
+        LOGGER.info("instantiating scheduler");
 
         this.resultHandler = new ResultCounter(resultHandler);
         this.eventHandler = eventHandler;
