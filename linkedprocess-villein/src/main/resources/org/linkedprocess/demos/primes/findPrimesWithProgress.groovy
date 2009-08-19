@@ -11,7 +11,8 @@ def findPrimes(startInt, endInt) {
         if (( n%2 !=0 && prime && n > 2) || n == 2) {
             x.add(n);
         }
-        meter=100*n/(endInt-startInt);
+        meter=(n-startInt)/(endInt-startInt);
+        System.out.println(startInt+'-'+endInt + ':n=' + n + 'progress: ' + meter)
         
     }
     return x;
