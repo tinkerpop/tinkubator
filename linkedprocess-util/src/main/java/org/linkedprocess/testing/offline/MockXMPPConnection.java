@@ -16,9 +16,9 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.xmpp.XMPPConnectionWrapper;
+import org.linkedprocess.xmpp.XmppConnectionWrapper;
 
-public class MockXMPPConnection extends XMPPConnectionWrapper {
+public class MockXmppConnection extends XmppConnectionWrapper {
 
 	Logger logger = LinkedProcess.getLogger(this.getClass());
 	private String host;
@@ -34,7 +34,7 @@ public class MockXMPPConnection extends XMPPConnectionWrapper {
 	public Vector<String> disc_info_features;
 	public Capture<DataForm> dataformCapture = new Capture<DataForm>();
 
-	public MockXMPPConnection(ConnectionConfiguration connConfig, String id,
+	public MockXmppConnection(ConnectionConfiguration connConfig, String id,
 			XMPPConnection connection) {
 		this.id = id;
 		setDelegate(connection);

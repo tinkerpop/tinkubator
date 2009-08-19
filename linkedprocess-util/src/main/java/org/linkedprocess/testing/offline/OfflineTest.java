@@ -18,7 +18,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.xmpp.XMPPConnectionWrapper;
+import org.linkedprocess.xmpp.XmppConnectionWrapper;
 import org.linkedprocess.xmpp.XmppClient;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -57,7 +57,7 @@ public class OfflineTest {
 	}
 
 	public static void prepareMocksAndConnection(XMPPConnection xmppConnection,
-			MockXMPPConnection mockConnection) throws Exception {
+			MockXmppConnection mockConnection) throws Exception {
 		ServiceDiscoveryManager mdm = createMock(ServiceDiscoveryManager.class);
 		Roster mockRoster = createMock(Roster.class);
 		mockRoster.setSubscriptionMode(Roster.SubscriptionMode.manual);
@@ -80,7 +80,7 @@ public class OfflineTest {
 		farmInfo.addFeature(LinkedProcess.LOP_FARM_NAMESPACE);
 		expect(mdm.discoverInfo(CLIENT_JID)).andReturn(farmInfo ).anyTimes();
 		// the magic of inserting the mock connections!
-		expectNew(XMPPConnectionWrapper.class,
+		expectNew(XmppConnectionWrapper.class,
 				isA(ConnectionConfiguration.class)).andReturn(mockConnection);
 
 	}

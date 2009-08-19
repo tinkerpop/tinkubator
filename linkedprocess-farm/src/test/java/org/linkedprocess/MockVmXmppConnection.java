@@ -4,10 +4,10 @@ import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.PacketFilter;
-import org.linkedprocess.testing.offline.MockXMPPConnection;
+import org.linkedprocess.testing.offline.MockXmppConnection;
 import org.linkedprocess.xmpp.vm.*;
 
-public class MockVmXmppConnection extends MockXMPPConnection {
+public class MockVmXmppConnection extends MockXmppConnection {
 
     public PacketListener spawn, subscribe;
     public PacketListener pingJob, submitJob, terminateVm, manageBindings, abortJob;

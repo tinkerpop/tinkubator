@@ -54,7 +54,7 @@ public abstract class XmppClient {
         connConfig.setSendPresence(false);
         //connConfig.setSASLAuthenticationEnabled(false);
 
-        this.connection = new XMPPConnectionWrapper(connConfig);
+        this.connection = new XmppConnectionWrapper(connConfig);
         this.connection.connect();
 
         LOGGER.info("Connected to " + connection.getHost());

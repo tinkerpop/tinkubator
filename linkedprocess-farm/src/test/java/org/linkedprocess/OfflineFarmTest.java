@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.linkedprocess.os.errors.VmWorkerNotFoundException;
-import org.linkedprocess.testing.offline.MockXMPPConnection;
+import org.linkedprocess.testing.offline.MockXmppConnection;
 import org.linkedprocess.testing.offline.OfflineTest;
 import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.farm.SpawnVm;
@@ -78,7 +78,7 @@ public class OfflineFarmTest extends OfflineTest {
             e.printStackTrace();
         }
         expectLastCall().anyTimes();
-        MockXMPPConnection vmConnection = new MockXMPPConnection(
+        MockXmppConnection vmConnection = new MockXmppConnection(
                 new ConnectionConfiguration(server, port), "vm1", null);
         expect(mockVM.getConnection()).andReturn(vmConnection).anyTimes();
         expect(mockVM.getVmPassword()).andReturn(password).anyTimes();

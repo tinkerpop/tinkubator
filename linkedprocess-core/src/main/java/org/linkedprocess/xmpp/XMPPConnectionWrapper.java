@@ -13,15 +13,15 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.linkedprocess.Connection;
 
-public class XMPPConnectionWrapper implements Connection {
+public class XmppConnectionWrapper implements Connection {
 
     private XMPPConnection delegate;
 
-    public XMPPConnectionWrapper(ConnectionConfiguration connConfig) {
+    public XmppConnectionWrapper(ConnectionConfiguration connConfig) {
         delegate = new XMPPConnection(connConfig);
     }
 
-    protected XMPPConnectionWrapper() {
+    protected XmppConnectionWrapper() {
 
     }
 
