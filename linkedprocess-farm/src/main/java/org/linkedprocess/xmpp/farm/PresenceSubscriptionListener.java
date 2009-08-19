@@ -48,6 +48,6 @@ public class PresenceSubscriptionListener extends LopFarmListener {
             this.getXmppFarm().getConnection().sendPacket(unsubscribe);
             return;
         }
-        XmppFarm.LOGGER.severe("This shouldn't have happened.");  // TODO: make this an exception or something -- however, this has yet to happen. Perhaps just remove.
+        throw new IllegalStateException();
     }
 }

@@ -33,7 +33,7 @@ public class StatusEventHandler implements VmScheduler.LopStatusEventHandler {
             }
 
         } catch (VmWorkerNotFoundException e) {
-            this.xmppFarm.LOGGER.severe(e.getMessage());
+            XmppFarm.LOGGER.severe(e.getMessage());
         }
     }
 }

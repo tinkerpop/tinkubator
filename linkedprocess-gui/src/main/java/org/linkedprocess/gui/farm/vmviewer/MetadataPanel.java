@@ -37,7 +37,7 @@ public class MetadataPanel extends JPanel implements ActionListener {
         c.ipady = 10;
         metaPanel.add(new JLabel(this.xmppVm.getFullJid(), ImageHolder.vmIcon, JLabel.LEFT), c);
         c.gridy = 1;
-        metaPanel.add(new JLabel(this.xmppVm.getVilleinJid(), ImageHolder.villeinIcon, JLabel.LEFT), c);
+        metaPanel.add(new JLabel(this.xmppVm.getSpawningVilleinJid(), ImageHolder.villeinIcon, JLabel.LEFT), c);
         c.gridy = 2;
         this.statusLabel = new JLabel(this.xmppVm.getVmStatus().toString(), ImageHolder.statusIcon, JLabel.LEFT);
         metaPanel.add(this.statusLabel, c);

@@ -95,8 +95,8 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
         for (XmppVm xmppVm : this.farmGui.getXmppFarm().getVirtualMachines()) {
             DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(xmppVm);
             this.treeMap.put(xmppVm.getFullJid(), vmNode);
-            vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", xmppVm.getVilleinJid())));
-            vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", xmppVm.getVmStatus().toString())));
+            vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", xmppVm.getSpawningVilleinJid())));
+            vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", ""+VmArea.isAvailable(xmppVm.getVmStatus()))));
             vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", xmppVm.getVmSpecies())));
             //vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", xmppVm.getVmPassword())));
             //vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", xmppVm.getRunningTimeInSeconds() + " seconds")));
@@ -116,8 +116,8 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
             try {
                 XmppVm xmppVm = this.farmGui.getXmppFarm().getVirtualMachine(vmJid);
                 DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(xmppVm);
-                vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", xmppVm.getVilleinJid())));
-                vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", xmppVm.getVmStatus().toString())));
+                vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", xmppVm.getSpawningVilleinJid())));
+                vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", ""+VmArea.isAvailable(xmppVm.getVmStatus()))));
                 vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", xmppVm.getVmSpecies())));
                 //vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", xmppVm.getVmPassword())));
                 //vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", xmppVm.getRunningTimeInSeconds() + " seconds")));
@@ -131,8 +131,8 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
         } else if (node != null && (status == LinkedProcess.VmStatus.ACTIVE || status == LinkedProcess.VmStatus.ACTIVE_FULL)) {
             node.removeAllChildren();
             XmppVm xmppVm = (XmppVm) node.getUserObject();
-            node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", xmppVm.getVilleinJid())));
-            node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", xmppVm.getVmStatus().toString())));
+            node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", xmppVm.getSpawningVilleinJid())));
+            node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", ""+VmArea.isAvailable(xmppVm.getVmStatus()))));
             node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", xmppVm.getVmSpecies())));
             //node.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", xmppVm.getVmPassword())));
             //node.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", xmppVm.getRunningTimeInSeconds() + " seconds")));
@@ -142,6 +142,10 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
             model.removeNodeFromParent(node);
             this.treeMap.remove(vmJid);
         }
+    }
+
+    private static boolean isAvailable(LinkedProcess.VmStatus vmStatus) {
+        return(vmStatus == LinkedProcess.VmStatus.ACTIVE);
     }
 
     public void actionPerformed(ActionEvent event) {

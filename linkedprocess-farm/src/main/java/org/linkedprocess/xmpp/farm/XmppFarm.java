@@ -97,8 +97,8 @@ public class XmppFarm extends XmppClient {
         return this.vmScheduler;
     }
 
-    public XmppVm spawnVirtualMachine(String spawningAppJid, String vmSpecies) throws VmAlreadyExistsException, VmSchedulerIsFullException, UnsupportedScriptEngineException {
-        XmppVm vm = new XmppVm(this.getServer(), this.getPort(), this.getUsername(), this.getPassword(), this, spawningAppJid, vmSpecies, LinkedProcess.generateRandomPassword());
+    public XmppVm spawnVirtualMachine(String spawningVilleinJid, String vmSpecies) throws VmAlreadyExistsException, VmSchedulerIsFullException, UnsupportedScriptEngineException {
+        XmppVm vm = new XmppVm(this.getServer(), this.getPort(), this.getUsername(), this.getPassword(), this, spawningVilleinJid, vmSpecies, LinkedProcess.generateRandomPassword());
         String vmJid = vm.getFullJid();
         this.machines.put(vmJid, vm);
         boolean exceptionThrown = true;

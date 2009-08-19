@@ -35,14 +35,14 @@ public class XmppVm extends XmppClient {
     protected final XmppFarm farm;
     protected final String vmPassword;
     protected final String vmSpecies;
-    protected final String villeinJid;
+    protected final String spawningVilleinJid;
 
-    public XmppVm(final String server, final int port, final String username, final String password, XmppFarm farm, final String villeinJid, final String vmSpecies, final String vmPassword) {
+    public XmppVm(final String server, final int port, final String username, final String password, XmppFarm farm, final String spawningVilleinJid, final String vmSpecies, final String vmPassword) {
 
         this.farm = farm;
         this.vmPassword = vmPassword;
         this.vmSpecies = vmSpecies;
-        this.villeinJid = villeinJid;
+        this.spawningVilleinJid = spawningVilleinJid;
 
         LOGGER.info("Starting LoP virtual machine - password:" + vmPassword);
         // Registering the types of IQ packets/stanzas the the Lop VM can respond to.
@@ -152,8 +152,8 @@ public class XmppVm extends XmppClient {
         return this.vmSpecies;
     }
 
-    public String getVilleinJid() {
-        return this.villeinJid;
+    public String getSpawningVilleinJid() {
+        return this.spawningVilleinJid;
     }
 
     public LinkedProcess.VmStatus getVmStatus() {
