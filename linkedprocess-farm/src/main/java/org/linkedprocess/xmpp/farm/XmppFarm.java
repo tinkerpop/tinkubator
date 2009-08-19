@@ -18,7 +18,7 @@ import org.linkedprocess.LinkedProcessFarm;
 import org.linkedprocess.os.VMScheduler;
 import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
 import org.linkedprocess.os.errors.VmAlreadyExistsException;
-import org.linkedprocess.os.errors.VMSchedulerIsFullException;
+import org.linkedprocess.os.errors.VmSchedulerIsFullException;
 import org.linkedprocess.os.errors.VMWorkerNotFoundException;
 import org.linkedprocess.security.ServiceDiscoveryConfiguration;
 import org.linkedprocess.security.SystemInfo;
@@ -97,7 +97,7 @@ public class XmppFarm extends XmppClient {
         return this.vmScheduler;
     }
 
-    public XmppVm spawnVirtualMachine(String spawningAppJid, String vmSpecies) throws VmAlreadyExistsException, VMSchedulerIsFullException, UnsupportedScriptEngineException {
+    public XmppVm spawnVirtualMachine(String spawningAppJid, String vmSpecies) throws VmAlreadyExistsException, VmSchedulerIsFullException, UnsupportedScriptEngineException {
         XmppVm vm = new XmppVm(this.getServer(), this.getPort(), this.getUsername(), this.getPassword(), this, spawningAppJid, vmSpecies, LinkedProcess.generateRandomPassword());
         String vmJid = vm.getFullJid();
         this.machines.put(vmJid, vm);
