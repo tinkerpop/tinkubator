@@ -114,11 +114,10 @@ public abstract class XmppClient {
         return this.connection;
     }
 
-    public void shutdown(Presence logoutPresence) {
+    public void shutdown() {
         LOGGER.info("Requesting shutdown");
         shutdownRequested = true;
-        //this is in order to wait until we are logged out
-        logout(logoutPresence);
+        logout(new Presence(Presence.Type.unavailable));
     }
 
     public String getUsername() {

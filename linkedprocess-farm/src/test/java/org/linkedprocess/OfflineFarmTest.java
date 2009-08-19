@@ -21,7 +21,7 @@ import org.linkedprocess.testing.offline.OfflineTest;
 import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.farm.SpawnVm;
 import org.linkedprocess.xmpp.farm.XmppFarm;
-import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
+import org.linkedprocess.xmpp.vm.XmppVm;
 import static org.powermock.api.easymock.PowerMock.*;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -49,12 +49,12 @@ public class OfflineFarmTest extends OfflineTest {
 
         sentPackets = connection.sentPackets;
         // first VM
-        expectNew(XmppVirtualMachine.class, isA(String.class),
+        expectNew(XmppVm.class, isA(String.class),
                 isA(Integer.class), isA(String.class), isA(String.class),
                 isA(XmppFarm.class), isA(String.class), isA(String.class),
                 isA(String.class))
                 .andReturn(createMockVM(username + "LoPVM/1")).times(0, 1);
-        expectNew(XmppVirtualMachine.class, isA(String.class),
+        expectNew(XmppVm.class, isA(String.class),
                 isA(Integer.class), isA(String.class), isA(String.class),
                 isA(XmppFarm.class), isA(String.class), isA(String.class),
                 isA(String.class))
@@ -65,8 +65,8 @@ public class OfflineFarmTest extends OfflineTest {
         farm = new XmppFarm(server, port, username, password, null);
     }
 
-    private XmppVirtualMachine createMockVM(String id) {
-        XmppVirtualMachine mockVM = createMock(XmppVirtualMachine.class);
+    private XmppVm createMockVM(String id) {
+        XmppVm mockVM = createMock(XmppVm.class);
 
         expect(mockVM.getFullJid()).andReturn(id).anyTimes();
         mockVM.shutdown();

@@ -26,7 +26,7 @@ public class OfflineVmTest extends OfflineTest {
     private MockVmXmppConnection connection;
     private ArrayList<Packet> sentPackets;
     private XmppFarm farm;
-    private XmppVirtualMachine vm;
+    private XmppVm vm;
 
     @Before
     public void startVM() throws Exception {

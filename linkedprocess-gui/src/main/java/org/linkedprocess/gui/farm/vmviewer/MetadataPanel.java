@@ -1,7 +1,7 @@
 package org.linkedprocess.gui.farm.vmviewer;
 
 import org.linkedprocess.gui.ImageHolder;
-import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
+import org.linkedprocess.xmpp.vm.XmppVm;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,12 +14,12 @@ import java.awt.event.ActionListener;
  */
 public class MetadataPanel extends JPanel implements ActionListener {
 
-    protected XmppVirtualMachine xmppVm;
+    protected XmppVm xmppVm;
     protected JLabel timeLabel;
     protected JLabel statusLabel;
     protected final static String REFRESH = "refresh";
 
-    public MetadataPanel(XmppVirtualMachine xmppVm) {
+    public MetadataPanel(XmppVm xmppVm) {
         super(new BorderLayout());
         this.xmppVm = xmppVm;
         JPanel metaPanel = new JPanel(new GridBagLayout());

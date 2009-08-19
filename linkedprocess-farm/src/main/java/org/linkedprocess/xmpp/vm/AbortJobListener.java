@@ -14,8 +14,8 @@ import org.linkedprocess.xmpp.LopError;
  */
 public class AbortJobListener extends LopVmListener {
 
-    public AbortJobListener(XmppVirtualMachine xmppVirtualMachine) {
-        super(xmppVirtualMachine);
+    public AbortJobListener(XmppVm xmppVm) {
+        super(xmppVm);
     }
 
     public void processPacket(Packet packet) {
@@ -29,8 +29,8 @@ public class AbortJobListener extends LopVmListener {
     public void processAbortJobPacket(AbortJob abortJob) {
 
 
-        XmppVirtualMachine.LOGGER.fine("Arrived " + AbortJobListener.class.getName());
-        XmppVirtualMachine.LOGGER.fine(abortJob.toXML());
+        XmppVm.LOGGER.fine("Arrived " + AbortJobListener.class.getName());
+        XmppVm.LOGGER.fine(abortJob.toXML());
 
         AbortJob returnAbortJob = new AbortJob();
 
@@ -55,12 +55,12 @@ public class AbortJobListener extends LopVmListener {
                 errorMessage = null;
             returnAbortJob.setType(IQ.Type.ERROR);
             returnAbortJob.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, errorMessage, LOP_CLIENT_TYPE, abortJob.getPacketID()));
-        } else if (!((XmppVirtualMachine) this.xmppClient).checkVmPassword(vmPassword)) {
+        } else if (!((XmppVm) this.xmppClient).checkVmPassword(vmPassword)) {
             returnAbortJob.setType(IQ.Type.ERROR);
             returnAbortJob.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, abortJob.getPacketID()));
         } else {
             try {
-                ((XmppVirtualMachine) this.xmppClient).abortJob(jobId);
+                ((XmppVm) this.xmppClient).abortJob(jobId);
                 returnAbortJob.setType(IQ.Type.RESULT);
             } catch (VMWorkerNotFoundException e) {
                 returnAbortJob.setType(IQ.Type.ERROR);
@@ -71,8 +71,8 @@ public class AbortJobListener extends LopVmListener {
             }
         }
 
-        XmppVirtualMachine.LOGGER.fine("Sent " + AbortJobListener.class.getName());
-        XmppVirtualMachine.LOGGER.fine(returnAbortJob.toXML());
+        XmppVm.LOGGER.fine("Sent " + AbortJobListener.class.getName());
+        XmppVm.LOGGER.fine(returnAbortJob.toXML());
         this.getXmppVm().getConnection().sendPacket(returnAbortJob);
 
 

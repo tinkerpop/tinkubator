@@ -8,7 +8,7 @@ import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
 import org.linkedprocess.os.errors.VMAlreadyExistsException;
 import org.linkedprocess.os.errors.VMSchedulerIsFullException;
 import org.linkedprocess.xmpp.LopError;
-import org.linkedprocess.xmpp.vm.XmppVirtualMachine;
+import org.linkedprocess.xmpp.vm.XmppVm;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -51,7 +51,7 @@ public class SpawnVmListener extends LopFarmListener {
             returnSpawnVm.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_FARM_PASSWORD, null, LOP_CLIENT_TYPE, spawnVm.getPacketID()));
         } else {
             try {
-                XmppVirtualMachine vm = this.getXmppFarm().spawnVirtualMachine(spawnVm.getFrom(), vmSpecies);
+                XmppVm vm = this.getXmppFarm().spawnVirtualMachine(spawnVm.getFrom(), vmSpecies);
                 returnSpawnVm.setVmJid(vm.getFullJid());
                 returnSpawnVm.setVmPassword(vm.getVmPassword());
                 returnSpawnVm.setVmSpecies(vmSpecies);
