@@ -15,7 +15,7 @@ import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 import org.linkedprocess.testing.offline.MockXMPPConnection;
 import org.linkedprocess.testing.offline.OfflineTest;
 import org.linkedprocess.xmpp.XmppClient;
@@ -73,7 +73,7 @@ public class OfflineFarmTest extends OfflineTest {
         expectLastCall().anyTimes();
         try {
             mockVM.terminateSelf();
-        } catch (VMWorkerNotFoundException e) {
+        } catch (VmWorkerNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

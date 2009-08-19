@@ -14,8 +14,8 @@ import org.linkedprocess.os.Job;
 import org.linkedprocess.os.VMBindings;
 import org.linkedprocess.os.errors.JobAlreadyExistsException;
 import org.linkedprocess.os.errors.JobNotFoundException;
-import org.linkedprocess.os.errors.VMWorkerIsFullException;
-import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.os.errors.VmWorkerIsFullException;
+import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 import org.linkedprocess.xmpp.XmppClient;
 import org.linkedprocess.xmpp.farm.XmppFarm;
 
@@ -100,23 +100,23 @@ public class XmppVm extends XmppClient {
         }
     }
 
-    public void abortJob(String jobId) throws VMWorkerNotFoundException, JobNotFoundException {
+    public void abortJob(String jobId) throws VmWorkerNotFoundException, JobNotFoundException {
         this.farm.getVmScheduler().abortJob(this.getFullJid(), jobId);
     }
 
-    public LinkedProcess.JobStatus getJobStatus(String jobId) throws VMWorkerNotFoundException, JobNotFoundException {
+    public LinkedProcess.JobStatus getJobStatus(String jobId) throws VmWorkerNotFoundException, JobNotFoundException {
         return this.farm.getVmScheduler().getJobStatus(this.getFullJid(), jobId);
     }
 
-    public void scheduleJob(Job job) throws VMWorkerNotFoundException, VMWorkerIsFullException, JobAlreadyExistsException {
+    public void scheduleJob(Job job) throws VmWorkerNotFoundException, VmWorkerIsFullException, JobAlreadyExistsException {
         this.farm.getVmScheduler().submitJob(this.getFullJid(), job);
     }
 
-    public void setBindings(VMBindings bindings) throws VMWorkerNotFoundException {
+    public void setBindings(VMBindings bindings) throws VmWorkerNotFoundException {
         this.farm.getVmScheduler().setBindings(this.getFullJid(), bindings);
     }
 
-    public VMBindings getBindings(Set<String> names) throws VMWorkerNotFoundException {
+    public VMBindings getBindings(Set<String> names) throws VmWorkerNotFoundException {
         return this.farm.getVmScheduler().getBindings(this.getFullJid(), names);
     }
 
@@ -136,7 +136,7 @@ public class XmppVm extends XmppClient {
         this.getDiscoManager().setExtendedInfo(serviceExtension);
     }
 
-    public void terminateSelf() throws VMWorkerNotFoundException {
+    public void terminateSelf() throws VmWorkerNotFoundException {
         this.farm.terminateVirtualMachine(this.getFullJid());
     }
 

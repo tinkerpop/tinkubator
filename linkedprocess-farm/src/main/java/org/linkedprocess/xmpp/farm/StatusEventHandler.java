@@ -2,7 +2,7 @@ package org.linkedprocess.xmpp.farm;
 
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.VMScheduler;
-import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 import org.linkedprocess.xmpp.vm.XmppVm;
 
 /**
@@ -32,7 +32,7 @@ public class StatusEventHandler implements VMScheduler.LopStatusEventHandler {
                 vm.getConnection().sendPacket(vm.createPresence(status));
             }
 
-        } catch (VMWorkerNotFoundException e) {
+        } catch (VmWorkerNotFoundException e) {
             this.xmppFarm.LOGGER.severe(e.getMessage());
         }
     }

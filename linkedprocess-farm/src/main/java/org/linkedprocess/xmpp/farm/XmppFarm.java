@@ -17,9 +17,9 @@ import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.LinkedProcessFarm;
 import org.linkedprocess.os.VMScheduler;
 import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
-import org.linkedprocess.os.errors.VMAlreadyExistsException;
-import org.linkedprocess.os.errors.VMSchedulerIsFullException;
-import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.os.errors.VmAlreadyExistsException;
+import org.linkedprocess.os.errors.VmSchedulerIsFullException;
+import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 import org.linkedprocess.security.ServiceDiscoveryConfiguration;
 import org.linkedprocess.security.SystemInfo;
 import org.linkedprocess.security.VMSecurityManager;
@@ -97,7 +97,7 @@ public class XmppFarm extends XmppClient {
         return this.vmScheduler;
     }
 
-    public XmppVm spawnVirtualMachine(String spawningAppJid, String vmSpecies) throws VMAlreadyExistsException, VMSchedulerIsFullException, UnsupportedScriptEngineException {
+    public XmppVm spawnVirtualMachine(String spawningAppJid, String vmSpecies) throws VmAlreadyExistsException, VmSchedulerIsFullException, UnsupportedScriptEngineException {
         XmppVm vm = new XmppVm(this.getServer(), this.getPort(), this.getUsername(), this.getPassword(), this, spawningAppJid, vmSpecies, LinkedProcess.generateRandomPassword());
         String vmJid = vm.getFullJid();
         this.machines.put(vmJid, vm);
@@ -115,7 +115,7 @@ public class XmppFarm extends XmppClient {
         return vm;
     }
 
-    public void terminateVirtualMachine(String vmJid) throws VMWorkerNotFoundException {
+    public void terminateVirtualMachine(String vmJid) throws VmWorkerNotFoundException {
         XmppVm vm = this.machines.get(vmJid);
         if (null != vm) {
             vm.shutdown();
@@ -123,10 +123,10 @@ public class XmppFarm extends XmppClient {
         }
     }
 
-    public XmppVm getVirtualMachine(String vmJid) throws VMWorkerNotFoundException {
+    public XmppVm getVirtualMachine(String vmJid) throws VmWorkerNotFoundException {
         XmppVm vm = this.machines.get(vmJid);
         if (vm == null) {
-            throw new VMWorkerNotFoundException(vmJid);
+            throw new VmWorkerNotFoundException(vmJid);
         } else {
             return vm;
         }

@@ -5,8 +5,8 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
-import org.linkedprocess.os.errors.VMAlreadyExistsException;
-import org.linkedprocess.os.errors.VMSchedulerIsFullException;
+import org.linkedprocess.os.errors.VmAlreadyExistsException;
+import org.linkedprocess.os.errors.VmSchedulerIsFullException;
 import org.linkedprocess.xmpp.LopError;
 import org.linkedprocess.xmpp.vm.XmppVm;
 
@@ -57,10 +57,10 @@ public class SpawnVmListener extends LopFarmListener {
                 returnSpawnVm.setVmSpecies(vmSpecies);
                 returnSpawnVm.setType(IQ.Type.RESULT);
 
-            } catch (VMAlreadyExistsException e) {
+            } catch (VmAlreadyExistsException e) {
                 returnSpawnVm.setType(IQ.Type.ERROR);
                 returnSpawnVm.setLopError(new LopError(XMPPError.Condition.conflict, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE, spawnVm.getPacketID()));
-            } catch (VMSchedulerIsFullException e) {
+            } catch (VmSchedulerIsFullException e) {
                 returnSpawnVm.setType(IQ.Type.ERROR);
                 returnSpawnVm.setLopError(new LopError(XMPPError.Condition.service_unavailable, LinkedProcess.LopErrorType.FARM_IS_BUSY, e.getMessage(), LOP_CLIENT_TYPE, spawnVm.getPacketID()));
             } catch (UnsupportedScriptEngineException e) {

@@ -5,7 +5,7 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.errors.JobNotFoundException;
-import org.linkedprocess.os.errors.VMWorkerNotFoundException;
+import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 import org.linkedprocess.xmpp.LopError;
 
 /**
@@ -62,7 +62,7 @@ public class AbortJobListener extends LopVmListener {
             try {
                 ((XmppVm) this.xmppClient).abortJob(jobId);
                 returnAbortJob.setType(IQ.Type.RESULT);
-            } catch (VMWorkerNotFoundException e) {
+            } catch (VmWorkerNotFoundException e) {
                 returnAbortJob.setType(IQ.Type.ERROR);
                 returnAbortJob.setLopError(new LopError(XMPPError.Condition.interna_server_error, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE, abortJob.getPacketID()));
             } catch (JobNotFoundException e) {
