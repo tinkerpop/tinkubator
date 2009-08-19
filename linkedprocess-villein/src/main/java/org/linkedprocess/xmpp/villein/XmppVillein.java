@@ -16,6 +16,7 @@ import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.RosterPacket;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.LinkedProcess;
@@ -121,7 +122,7 @@ public class XmppVillein extends XmppClient {
     public void createLopCloudFromRoster() {
         for (RosterEntry entry : this.getRoster().getEntries()) {
             CountrysideProxy countrysideProxy = this.lopCloud.getCountrysideProxy(entry.getUser());
-            if (countrysideProxy == null) {
+            if (countrysideProxy == null && (entry.getType() == RosterPacket.ItemType.to || entry.getType() == RosterPacket.ItemType.both)) {
                 countrysideProxy = new CountrysideProxy(entry.getUser(), this.dispatcher);
                 this.lopCloud.addCountrysideProxy(countrysideProxy);
             }
