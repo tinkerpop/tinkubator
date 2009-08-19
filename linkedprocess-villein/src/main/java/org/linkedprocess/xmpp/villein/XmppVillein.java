@@ -126,12 +126,6 @@ public class XmppVillein extends XmppClient {
                 this.lopCloud.addCountrysideProxy(countrysideProxy);
             }
         }
-        // include the villein's countryside in the lop cloud
-        CountrysideProxy countrysideProxy = this.lopCloud.getCountrysideProxy(this.getBareJid());
-        if (countrysideProxy == null) {
-            countrysideProxy = new CountrysideProxy(this.getBareJid(), this.dispatcher);
-            this.lopCloud.addCountrysideProxy(countrysideProxy);
-        }
     }
 
     /**
