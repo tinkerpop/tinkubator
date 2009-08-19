@@ -58,7 +58,7 @@ public class SpawnVmCommand extends Command {
         VmProxy vmProxy = new VmProxy(spawnVm.getVmJid(), xmppVillein.getDispatcher());
         vmProxy.setVmPassword(spawnVm.getVmPassword());
         vmProxy.setVmSpecies(spawnVm.getVmSpecies());
-        vmProxy.setPresence(new Presence(Presence.Type.available));
+        vmProxy.setAvailable(true);
         try {
             this.xmppVillein.getLopCloud().addVmProxy(spawnVm.getFrom(), vmProxy);
             resultHandlers.handle(spawnVm.getPacketID(), vmProxy);

@@ -37,14 +37,14 @@ class PresenceListener extends LopVilleinListener {
         Proxy proxy = this.getXmppVillein().getLopCloud().getProxy(presence.getFrom());
 
         if (proxy != null) {
-            proxy.setPresence(presence);
-            if (presence.getType() == Presence.Type.unavailable || presence.getType() == Presence.Type.unsubscribe || presence.getType() == Presence.Type.unsubscribed) {
+            if (!PresenceListener.isAvailable(presence)) {
+                proxy.setAvailable(false);
                 this.getXmppVillein().getLopCloud().removeProxy(presence.getFrom());
             }
         } else {
             if (LinkedProcess.isBareJid(presence.getFrom())) {
                 CountrysideProxy countrysideProxy = new CountrysideProxy(presence.getFrom(), this.getXmppVillein().getDispatcher());
-                countrysideProxy.setPresence(presence);
+                countrysideProxy.setAvailable(PresenceListener.isAvailable(presence));
                 this.getXmppVillein().getLopCloud().addCountrysideProxy(countrysideProxy);
                 proxy = countrysideProxy;
             } else {
@@ -58,7 +58,7 @@ class PresenceListener extends LopVilleinListener {
 
                 if (isFarm(discoInfo)) {
                     FarmProxy farmProxy = new FarmProxy(presence.getFrom(), this.getXmppVillein().getDispatcher(), discoInfoDocument);
-                    farmProxy.setPresence(presence);
+                    farmProxy.setAvailable(PresenceListener.isAvailable(presence));
                     try {
                         this.getXmppVillein().getLopCloud().addFarmProxy(farmProxy);
                         proxy = farmProxy;
@@ -67,7 +67,7 @@ class PresenceListener extends LopVilleinListener {
                     }
                 } else if (isRegistry(discoInfo)) {
                     RegistryProxy registryProxy = new RegistryProxy(presence.getFrom(), this.getXmppVillein().getDispatcher(), discoInfoDocument);
-                    registryProxy.setPresence(presence);
+                    registryProxy.setAvailable(PresenceListener.isAvailable(presence));
                     try {
                         this.getXmppVillein().getLopCloud().addRegistryProxy(registryProxy);
                         proxy = registryProxy;
@@ -81,8 +81,16 @@ class PresenceListener extends LopVilleinListener {
         if (proxy != null) {
             // Handlers
             for (PresenceHandler presenceHandler : this.getXmppVillein().getPresenceHandlers()) {
-                presenceHandler.handlePresenceUpdate(proxy, presence.getType());
+                presenceHandler.handlePresenceUpdate(proxy, PresenceListener.isAvailable(presence));
             }
+        }
+    }
+
+    private static boolean isAvailable(Presence presence) {
+        if (presence.getType() == Presence.Type.unavailable || presence.getType() == Presence.Type.unsubscribe || presence.getType() == Presence.Type.unsubscribed) {
+            return false;
+        } else {
+            return true;
         }
     }
 }

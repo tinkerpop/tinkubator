@@ -35,7 +35,7 @@ import java.util.Set;
  */
 public class Proxy implements Comparable {
 
-    protected Presence presence;
+    protected boolean available = false;
     protected String fullJid;
     protected final Dispatcher dispatcher;
     protected Document discoInfoDocument;
@@ -56,12 +56,12 @@ public class Proxy implements Comparable {
         this.discoInfoDocument = discoInfoDocument;
     }
 
-    public void setPresence(Presence presence) {
-        this.presence = presence;
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 
-    public Presence getPresence() {
-        return this.presence;
+    public boolean isAvailable() {
+        return this.available;
     }
 
     public void setFullJid(String fullJid) {

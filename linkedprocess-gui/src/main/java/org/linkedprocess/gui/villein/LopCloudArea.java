@@ -1,6 +1,5 @@
 package org.linkedprocess.gui.villein;
 
-import org.jivesoftware.smack.packet.Presence;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.gui.*;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
@@ -173,11 +172,8 @@ public class LopCloudArea extends JPanel implements ActionListener, MouseListene
                     model.insertNodeInto(vmNode, farmNode, farmNode.getChildCount());
                     this.tree.scrollPathToVisible(new TreePath(vmNode.getPath()));
                     DefaultMutableTreeNode temp;
-
-                    if (vmProxy.getPresence() != null) {
-                        temp = new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", vmProxy.getPresence().getType().toString()));
-                        model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
-                    }
+                    temp = new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", "" + vmProxy.isAvailable()));
+                    model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
                     if (vmProxy.getVmSpecies() != null) {
                         temp = new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", vmProxy.getVmSpecies()));
                         model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
@@ -229,11 +225,8 @@ public class LopCloudArea extends JPanel implements ActionListener, MouseListene
                     node.removeAllChildren();
                     VmProxy vmProxy = (VmProxy) node.getUserObject();
                     DefaultMutableTreeNode temp;
-
-                    if (vmProxy.getPresence() != null) {
-                        temp = new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", vmProxy.getPresence().getType().toString()));
-                        model.insertNodeInto(temp, node, node.getChildCount());
-                    }
+                    temp = new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", "" + vmProxy.isAvailable()));
+                    model.insertNodeInto(temp, node, node.getChildCount());
                     if (vmProxy.getVmSpecies() != null) {
                         temp = new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", vmProxy.getVmSpecies()));
                         model.insertNodeInto(temp, node, node.getChildCount());
@@ -283,12 +276,9 @@ public class LopCloudArea extends JPanel implements ActionListener, MouseListene
                         VmProxy vmProxy = (VmProxy) proxy;
                         DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(proxy);
                         DefaultMutableTreeNode temp;
-
-                        if (vmProxy.getPresence() != null) {
-                            temp = new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", vmProxy.getPresence().getType().toString()));
-                            model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
-                            this.tree.scrollPathToVisible(new TreePath(temp.getPath()));
-                        }
+                        temp = new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", "" + vmProxy.isAvailable()));
+                        model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
+                        this.tree.scrollPathToVisible(new TreePath(temp.getPath()));
                         if (vmProxy.getVmSpecies() != null) {
                             temp = new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", vmProxy.getVmSpecies()));
                             model.insertNodeInto(temp, vmNode, vmNode.getChildCount());
@@ -445,11 +435,7 @@ public class LopCloudArea extends JPanel implements ActionListener, MouseListene
 
     }
 
-    public void handlePresenceUpdate(Proxy proxy, Presence.Type presenceType) {
-        if (presenceType == Presence.Type.unavailable || presenceType == Presence.Type.unsubscribe || presenceType == Presence.Type.unsubscribed) {
-            updateTree(proxy.getFullJid(), true);
-        } else {
-            updateTree(proxy.getFullJid(), false);
-        }
+    public void handlePresenceUpdate(Proxy proxy, boolean available) {
+        updateTree(proxy.getFullJid(), !available);
     }
 }

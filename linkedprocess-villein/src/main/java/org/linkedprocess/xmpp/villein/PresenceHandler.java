@@ -16,5 +16,5 @@ import org.linkedprocess.xmpp.villein.proxies.Proxy;
  */
 public interface PresenceHandler {
 
-    public void handlePresenceUpdate(Proxy proxy, Presence.Type presenceType);
+    public void handlePresenceUpdate(Proxy proxy, boolean available);
 }
