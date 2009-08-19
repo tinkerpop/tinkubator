@@ -8,13 +8,13 @@
 package org.linkedprocess.demos.primes;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.xmpp.villein.XmppVillein;
-import org.linkedprocess.xmpp.villein.patterns.ResourceAllocationPattern;
-import org.linkedprocess.xmpp.villein.patterns.ScatterGatherPattern;
-import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
-import org.linkedprocess.xmpp.villein.proxies.JobStruct;
-import org.linkedprocess.xmpp.villein.proxies.ResultHolder;
-import org.linkedprocess.xmpp.villein.proxies.VmProxy;
+import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.patterns.ResourceAllocationPattern;
+import org.linkedprocess.villein.patterns.ScatterGatherPattern;
+import org.linkedprocess.villein.proxies.FarmProxy;
+import org.linkedprocess.villein.proxies.JobStruct;
+import org.linkedprocess.villein.proxies.ResultHolder;
+import org.linkedprocess.villein.proxies.VmProxy;
 
 import java.util.*;
 

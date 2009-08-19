@@ -24,7 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.testing.offline.OfflineTest;
-import org.linkedprocess.xmpp.registry.XmppRegistry;
+import org.linkedprocess.registry.XmppRegistry;
 
 public class OfflineRegistryTest extends OfflineTest {
 

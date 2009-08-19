@@ -1,9 +1,9 @@
 package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.Connection;
+import org.linkedprocess.villein.XmppVillein;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
-import org.linkedprocess.xmpp.villein.XmppVillein;
-import org.linkedprocess.xmpp.villein.proxies.VmProxy;
+import org.linkedprocess.villein.proxies.VmProxy;
 
 import javax.swing.*;
 import java.util.HashMap;

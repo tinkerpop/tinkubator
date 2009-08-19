@@ -10,8 +10,8 @@ import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.gui.villein.VilleinGui;
 import org.linkedprocess.os.VmBindings;
-import org.linkedprocess.xmpp.villein.proxies.JobStruct;
-import org.linkedprocess.xmpp.villein.proxies.VmProxy;
+import org.linkedprocess.villein.proxies.JobStruct;
+import org.linkedprocess.villein.proxies.VmProxy;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;

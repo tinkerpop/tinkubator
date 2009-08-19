@@ -1,13 +1,13 @@
 package org.linkedprocess.gui;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.xmpp.farm.XmppFarm;
-import org.linkedprocess.xmpp.villein.XmppVillein;
-import org.linkedprocess.xmpp.villein.proxies.CountrysideProxy;
-import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
-import org.linkedprocess.xmpp.villein.proxies.RegistryProxy;
-import org.linkedprocess.xmpp.villein.proxies.VmProxy;
-import org.linkedprocess.xmpp.vm.XmppVm;
+import org.linkedprocess.vm.XmppVm;
+import org.linkedprocess.farm.XmppFarm;
+import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.proxies.CountrysideProxy;
+import org.linkedprocess.villein.proxies.FarmProxy;
+import org.linkedprocess.villein.proxies.RegistryProxy;
+import org.linkedprocess.villein.proxies.VmProxy;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;

@@ -16,7 +16,7 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.xmpp.XmppConnectionWrapper;
+import org.linkedprocess.XmppConnectionWrapper;
 
 public class MockXmppConnection extends XmppConnectionWrapper {
 

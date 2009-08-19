@@ -1,12 +1,12 @@
 package org.linkedprocess.gui.farm;
 
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.vm.XmppVm;
 import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.gui.RosterPanel;
 import org.linkedprocess.gui.TreeRenderer;
 import org.linkedprocess.gui.farm.vmviewer.VmViewerFrame;
-import org.linkedprocess.xmpp.villein.proxies.CountrysideProxy;
-import org.linkedprocess.xmpp.vm.XmppVm;
+import org.linkedprocess.villein.proxies.CountrysideProxy;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;

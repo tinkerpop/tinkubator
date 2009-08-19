@@ -3,7 +3,7 @@ package org.linkedprocess.gui.farm;
 import org.jivesoftware.smack.XMPPException;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.LoginArea;
-import org.linkedprocess.xmpp.farm.XmppFarm;
+import org.linkedprocess.farm.XmppFarm;
 
 import javax.swing.*;
 import java.awt.*;

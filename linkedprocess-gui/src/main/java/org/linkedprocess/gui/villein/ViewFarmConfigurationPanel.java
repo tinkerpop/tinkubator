@@ -1,9 +1,9 @@
 package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.xmpp.villein.XmppVillein;
-import org.linkedprocess.xmpp.villein.proxies.FarmProxy;
-import org.linkedprocess.xmpp.villein.proxies.Proxy;
+import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.proxies.FarmProxy;
+import org.linkedprocess.villein.proxies.Proxy;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;

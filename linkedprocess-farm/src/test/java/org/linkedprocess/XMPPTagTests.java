@@ -4,11 +4,11 @@ import junit.framework.TestCase;
 import org.jivesoftware.smack.packet.IQ;
 import org.junit.Test;
 import org.linkedprocess.os.VmBindings;
-import org.linkedprocess.xmpp.farm.SpawnVm;
-import org.linkedprocess.xmpp.vm.AbortJob;
-import org.linkedprocess.xmpp.vm.ManageBindings;
-import org.linkedprocess.xmpp.vm.SubmitJob;
-import org.linkedprocess.xmpp.vm.TerminateVm;
+import org.linkedprocess.farm.SpawnVm;
+import org.linkedprocess.vm.SubmitJob;
+import org.linkedprocess.vm.TerminateVm;
+import org.linkedprocess.vm.AbortJob;
+import org.linkedprocess.vm.ManageBindings;
 
 /**
  * User: marko

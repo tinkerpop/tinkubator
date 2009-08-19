@@ -12,9 +12,9 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.linkedprocess.testing.offline.MockXmppConnection;
-import org.linkedprocess.xmpp.registry.DiscoItemsListener;
-import org.linkedprocess.xmpp.registry.PresenceListener;
-import org.linkedprocess.xmpp.registry.PresenceSubscriptionListener;
+import org.linkedprocess.registry.DiscoItemsListener;
+import org.linkedprocess.registry.PresenceListener;
+import org.linkedprocess.registry.PresenceSubscriptionListener;
 
 public class MockRegistryXmppConnection extends MockXmppConnection {
 

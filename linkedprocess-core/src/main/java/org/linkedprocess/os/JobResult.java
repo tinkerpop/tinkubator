@@ -10,8 +10,8 @@ package org.linkedprocess.os;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.xmpp.LopError;
-import org.linkedprocess.xmpp.vm.SubmitJob;
+import org.linkedprocess.vm.SubmitJob;
+import org.linkedprocess.LopError;
 
 import java.util.logging.Logger;
 

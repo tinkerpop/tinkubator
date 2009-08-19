@@ -6,9 +6,9 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Presence;
 import org.linkedprocess.testing.offline.MockXmppConnection;
-import org.linkedprocess.xmpp.farm.PresenceSubscriptionListener;
-import org.linkedprocess.xmpp.farm.SpawnVm;
-import org.linkedprocess.xmpp.farm.SpawnVmListener;
+import org.linkedprocess.farm.PresenceSubscriptionListener;
+import org.linkedprocess.farm.SpawnVm;
+import org.linkedprocess.farm.SpawnVmListener;
 import org.xmlpull.v1.XmlPullParserException;
 
 public class MockFarmXmppConnection extends MockXmppConnection {

@@ -1,12 +1,12 @@
 package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.villein.Handler;
 import org.linkedprocess.gui.*;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
-import org.linkedprocess.xmpp.villein.Handler;
-import org.linkedprocess.xmpp.villein.PresenceHandler;
-import org.linkedprocess.xmpp.villein.XmppVillein;
-import org.linkedprocess.xmpp.villein.proxies.*;
+import org.linkedprocess.villein.PresenceHandler;
+import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.proxies.*;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;

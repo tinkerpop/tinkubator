@@ -1,7 +1,7 @@
 package org.linkedprocess.gui.farm.vmviewer;
 
 import org.linkedprocess.gui.PacketSnifferPanel;
-import org.linkedprocess.xmpp.vm.XmppVm;
+import org.linkedprocess.vm.XmppVm;
 
 import javax.swing.*;
 

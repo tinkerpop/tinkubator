@@ -1,9 +1,9 @@
 package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.gui.ImageHolder;
-import org.linkedprocess.xmpp.villein.XmppVillein;
-import org.linkedprocess.xmpp.villein.proxies.CountrysideProxy;
-import org.linkedprocess.xmpp.villein.proxies.RegistryProxy;
+import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.proxies.CountrysideProxy;
+import org.linkedprocess.villein.proxies.RegistryProxy;
 
 import javax.swing.*;
 import java.awt.*;

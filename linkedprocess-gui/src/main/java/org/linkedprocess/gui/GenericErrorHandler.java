@@ -1,7 +1,7 @@
 package org.linkedprocess.gui;
 
-import org.linkedprocess.xmpp.LopError;
-import org.linkedprocess.xmpp.villein.Handler;
+import org.linkedprocess.LopError;
+import org.linkedprocess.villein.Handler;
 
 import javax.swing.*;
 

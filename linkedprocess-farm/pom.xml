@@ -270,7 +270,7 @@
                     <tarLongFileMode>warn</tarLongFileMode>
                     <archive>
                         <manifest>
-                            <mainClass>org.linkedprocess.xmpp.farm.XmppFarm</mainClass>
+                            <mainClass>org.linkedprocess.farm.XmppFarm</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

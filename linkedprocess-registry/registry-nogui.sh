@@ -20,7 +20,7 @@ if [ $# -ge 1 ] ; then
 fi
 
 # Launch the application
-$JAVA $JAVA_OPTIONS -cp $JAR org.linkedprocess.xmpp.registry.XmppRegistry
+$JAVA $JAVA_OPTIONS -cp $JAR org.linkedprocess.registry.XmppRegistry
 
 # Return the program's exit code
 exit $?

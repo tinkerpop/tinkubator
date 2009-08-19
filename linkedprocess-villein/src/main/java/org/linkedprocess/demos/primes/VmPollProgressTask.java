@@ -2,11 +2,11 @@ package org.linkedprocess.demos.primes;
 
 import org.linkedprocess.os.TypedValue;
 import org.linkedprocess.os.VmBindings;
-import org.linkedprocess.xmpp.LopError;
-import org.linkedprocess.xmpp.villein.Handler;
-import org.linkedprocess.xmpp.villein.patterns.BindingsChecker;
-import org.linkedprocess.xmpp.villein.patterns.PollBindingsPattern;
-import org.linkedprocess.xmpp.villein.proxies.VmProxy;
+import org.linkedprocess.LopError;
+import org.linkedprocess.villein.Handler;
+import org.linkedprocess.villein.patterns.BindingsChecker;
+import org.linkedprocess.villein.patterns.PollBindingsPattern;
+import org.linkedprocess.villein.proxies.VmProxy;
 
 public class VmPollProgressTask implements Runnable {
 	private final VmProxy vmProxy;

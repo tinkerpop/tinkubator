@@ -1,8 +1,8 @@
 package org.linkedprocess.gui.farm;
 
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.farm.XmppFarm;
 import org.linkedprocess.gui.ImageHolder;
-import org.linkedprocess.xmpp.farm.XmppFarm;
 
 import javax.swing.*;
 import java.awt.*;

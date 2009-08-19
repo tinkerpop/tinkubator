@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.linkedprocess.xmpp.farm.XmppFarm;
+import org.linkedprocess.farm.XmppFarm;
 
 /**
  * User: marko Date: Jun 25, 2009 Time: 12:10:47 PM

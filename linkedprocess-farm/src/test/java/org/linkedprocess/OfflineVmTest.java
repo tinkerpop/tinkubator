@@ -11,8 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.testing.offline.OfflineTest;
-import org.linkedprocess.xmpp.farm.XmppFarm;
-import org.linkedprocess.xmpp.vm.*;
+import org.linkedprocess.farm.XmppFarm;
+import org.linkedprocess.vm.*;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 

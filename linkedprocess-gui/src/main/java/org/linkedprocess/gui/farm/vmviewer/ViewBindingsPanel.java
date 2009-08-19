@@ -3,7 +3,7 @@ package org.linkedprocess.gui.farm.vmviewer;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.TypedValue;
 import org.linkedprocess.os.VmBindings;
-import org.linkedprocess.xmpp.vm.XmppVm;
+import org.linkedprocess.vm.XmppVm;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
