@@ -69,9 +69,9 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
     }
 
     /*private void generateDiscoItemsDocument() throws XMPPException, JDOMException, IOException {
-        ServiceDiscoveryManager discoManager = this.villeinGui.getXmppVillein().getDiscoManager();
+        ServiceDiscoveryManager discoManager = this.villeinGui.getLopVillein().getDiscoManager();
         this.discoItemsDocument = LinkedProcess.createXMLDocument(discoManager.discoverItems(this.registryProxy.getFullJid()).toXML());
-        //PacketCollector collector = this.villeinGui.getXmppVillein().getConnection().createPacketCollector(new PacketTypeFilter(DiscoverItems.class));
+        //PacketCollector collector = this.villeinGui.getLopVillein().getConnection().createPacketCollector(new PacketTypeFilter(DiscoverItems.class));
         //this.discoItemsDocument = LinkedProcess.createXMLDocument(collector.nextResult().toXML());
         //collector.cancel();
     }*/

@@ -19,19 +19,19 @@ public class MockVmXmppConnection extends MockXmppConnection {
     @Override
     public void addPacketListener(PacketListener listener, PacketFilter filter) {
         super.addPacketListener(listener, filter);
-        if (listener instanceof PingJobListener) {
+        if (listener instanceof PingJobPacketListener) {
             pingJob = listener;
         }
-        if (listener instanceof SubmitJobListener) {
+        if (listener instanceof SubmitJobPacketListener) {
             submitJob = listener;
         }
-        if (listener instanceof TerminateVmListener) {
+        if (listener instanceof TerminateVmPacketListener) {
             terminateVm = listener;
         }
-        if (listener instanceof ManageBindingsListener) {
+        if (listener instanceof ManageBindingsPacketListener) {
             manageBindings = listener;
         }
-        if (listener instanceof AbortJobListener) {
+        if (listener instanceof AbortJobPacketListener) {
             abortJob = listener;
         }
     }

@@ -65,7 +65,7 @@ public class Proxy implements Comparable {
     }
 
     public void refreshDiscoInfo() {
-        if(this.dispatcher != null) {
+        if (this.dispatcher != null) {
             ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();
             try {
                 DiscoverInfo discoInfo = discoManager.discoverInfo(this.getFullJid());
@@ -81,8 +81,9 @@ public class Proxy implements Comparable {
         if (null != this.discoInfoDocument) {
             Element queryElement = this.discoInfoDocument.getRootElement().getChild(LinkedProcess.QUERY_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
             if (null != queryElement) {
-                for (Element featureElement : (java.util.List<Element>) queryElement.getChildren(LinkedProcess.FEATURE_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE))) {
-                    features.add(featureElement.getAttributeValue(LinkedProcess.VAR_ATTRIBUTE));
+                for (Object featureElement : queryElement.getChildren(LinkedProcess.FEATURE_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE))) {
+                    if (featureElement instanceof Element)
+                        features.add(((Element) featureElement).getAttributeValue(LinkedProcess.VAR_ATTRIBUTE));
                 }
             }
         }
@@ -106,28 +107,34 @@ public class Proxy implements Comparable {
                 Namespace xNamespace = Namespace.getNamespace(LinkedProcess.X_JABBER_DATA_NAMESPACE);
                 Element xElement = queryElement.getChild(LinkedProcess.X_TAG, xNamespace);
                 if (null != xElement) {
-                    for (Element fieldElement : (java.util.List<Element>) xElement.getChildren(LinkedProcess.FIELD_TAG, xNamespace)) {
-                        String variable = fieldElement.getAttributeValue(LinkedProcess.VAR_ATTRIBUTE);
-                        Field field = new Field();
-                        field.setVariable(variable);
-                        field.setLabel(fieldElement.getAttributeValue(LinkedProcess.LABEL_ATTRIBUTE));
-                        field.setType(fieldElement.getAttributeValue(LinkedProcess.TYPE_ATTRIBUTE));
-                        for (Element valueElement : (java.util.List<Element>) fieldElement.getChildren(LinkedProcess.VALUE_TAG, xNamespace)) {
-                            String val = valueElement.getText();
-                            if (null != val)
-                                field.addValue(val);
-                            field.setOption(false);   // TODO: is it per field or per option?
-                        }
-                        for (Element optionElement : (java.util.List<Element>) fieldElement.getChildren(LinkedProcess.OPTION_TAG, xNamespace)) {
-                            Element valueElement = optionElement.getChild(LinkedProcess.VALUE_TAG, xNamespace);
-                            if (null != valueElement) {
-                                String val = valueElement.getText();
-                                if (null != val)
-                                    field.addValue(val);
-                                field.setOption(true); // TODO: is it per field or per option?
+                    for (Object fieldElement : xElement.getChildren(LinkedProcess.FIELD_TAG, xNamespace)) {
+                        if (fieldElement instanceof Element) {
+                            String variable = ((Element) fieldElement).getAttributeValue(LinkedProcess.VAR_ATTRIBUTE);
+                            Field field = new Field();
+                            field.setVariable(variable);
+                            field.setLabel(((Element) fieldElement).getAttributeValue(LinkedProcess.LABEL_ATTRIBUTE));
+                            field.setType(((Element) fieldElement).getAttributeValue(LinkedProcess.TYPE_ATTRIBUTE));
+                            for (Object valueElement : ((Element) fieldElement).getChildren(LinkedProcess.VALUE_TAG, xNamespace)) {
+                                if (valueElement instanceof Element) {
+                                    String val = ((Element) valueElement).getText();
+                                    if (null != val)
+                                        field.addValue(val);
+                                    field.setOption(false);   // TODO: is it per field or per option?
+                                }
                             }
+                            for (Object optionElement : ((Element) fieldElement).getChildren(LinkedProcess.OPTION_TAG, xNamespace)) {
+                                if (optionElement instanceof Element) {
+                                    Element valueElement = ((Element) optionElement).getChild(LinkedProcess.VALUE_TAG, xNamespace);
+                                    if (null != valueElement) {
+                                        String val = valueElement.getText();
+                                        if (null != val)
+                                            field.addValue(val);
+                                        field.setOption(true); // TODO: is it per field or per option?
+                                    }
+                                }
+                            }
+                            proxyFields.add(field);
                         }
-                        proxyFields.add(field);
                     }
                 }
             }

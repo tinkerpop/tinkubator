@@ -12,9 +12,9 @@ import org.linkedprocess.os.errors.VmWorkerNotFoundException;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version 0.1
  */
-public class ManageBindingsListener extends LopVmListener {
+public class ManageBindingsPacketListener extends VmPacketListener {
 
-    public ManageBindingsListener(LopVm lopVm) {
+    public ManageBindingsPacketListener(LopVm lopVm) {
         super(lopVm);
     }
 
@@ -30,12 +30,12 @@ public class ManageBindingsListener extends LopVmListener {
 
     private void processManageBindingsPacket(ManageBindings manageBindings) {
 
-        LopVm.LOGGER.info("Arrived " + ManageBindingsListener.class.getName());
+        LopVm.LOGGER.info("Arrived " + ManageBindingsPacketListener.class.getName());
         LopVm.LOGGER.info(manageBindings.toXML());
 
         ManageBindings returnManageBindings = new ManageBindings();
         returnManageBindings.setTo(manageBindings.getFrom());
-        returnManageBindings.setFrom(this.getXmppVm().getFullJid());
+        returnManageBindings.setFrom(this.getLopVm().getFullJid());
         returnManageBindings.setPacketID(manageBindings.getPacketID());
 
 
@@ -58,9 +58,9 @@ public class ManageBindingsListener extends LopVmListener {
 
                 returnManageBindings.setType(IQ.Type.RESULT);
                 if (manageBindings.getType() == IQ.Type.GET) {
-                    returnManageBindings.setBindings(this.getXmppVm().getBindings(manageBindings.getBindings().keySet()));
+                    returnManageBindings.setBindings(this.getLopVm().getBindings(manageBindings.getBindings().keySet()));
                 } else if (manageBindings.getType() == IQ.Type.SET) {
-                    this.getXmppVm().setBindings(manageBindings.getBindings());
+                    this.getLopVm().setBindings(manageBindings.getBindings());
                 }
 
 
@@ -70,9 +70,9 @@ public class ManageBindingsListener extends LopVmListener {
             }
         }
 
-        LopVm.LOGGER.info("Sent " + ManageBindingsListener.class.getName());
+        LopVm.LOGGER.info("Sent " + ManageBindingsPacketListener.class.getName());
         LopVm.LOGGER.info(returnManageBindings.toXML());
-        this.getXmppVm().getConnection().sendPacket(returnManageBindings);
+        this.getLopVm().getConnection().sendPacket(returnManageBindings);
 
 
     }

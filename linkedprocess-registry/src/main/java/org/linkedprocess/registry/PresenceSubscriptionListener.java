@@ -14,7 +14,7 @@ import org.jivesoftware.smack.packet.Presence;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class PresenceSubscriptionListener extends LopRegistryListener {
+public class PresenceSubscriptionListener extends RegistryPacketListener {
 
 
     public PresenceSubscriptionListener(LopRegistry lopRegistry) {

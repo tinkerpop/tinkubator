@@ -50,8 +50,8 @@ public class LopRegistry extends LopClient {
         PacketFilter discoInfoFilter = new PacketTypeFilter(DiscoverItems.class);
         PacketFilter subscribeFilter = new AndFilter(new PacketTypeFilter(Presence.class), new PresenceSubscriptionFilter());
         this.connection.addPacketListener(new PresenceSubscriptionListener(this), subscribeFilter);
-        this.connection.addPacketListener(new PresenceListener(this), presenceFilter);
-        this.connection.addPacketListener(new DiscoItemsListener(this), discoInfoFilter);
+        this.connection.addPacketListener(new PresencePacketListener(this), presenceFilter);
+        this.connection.addPacketListener(new DiscoItemsPacketListener(this), discoInfoFilter);
 
         this.status = LinkedProcess.RegistryStatus.ACTIVE;
         this.connection.sendPacket(this.createPresence(this.status));

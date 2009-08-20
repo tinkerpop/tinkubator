@@ -15,9 +15,9 @@ import org.jivesoftware.smackx.packet.DiscoverItems;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class DiscoItemsListener extends LopRegistryListener {
+public class DiscoItemsPacketListener extends RegistryPacketListener {
 
-    public DiscoItemsListener(LopRegistry lopRegistry) {
+    public DiscoItemsPacketListener(LopRegistry lopRegistry) {
         super(lopRegistry);
     }
 

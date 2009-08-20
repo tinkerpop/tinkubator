@@ -68,11 +68,11 @@ public class LopVm extends LopClient {
         PacketFilter terminateFilter = new AndFilter(new PacketTypeFilter(TerminateVm.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter bindingsFilter = new AndFilter(new PacketTypeFilter(ManageBindings.class), new OrFilter(new IQTypeFilter(IQ.Type.GET), new IQTypeFilter(IQ.Type.SET)));
 
-        this.connection.addPacketListener(new SubmitJobListener(this), submitFilter);
-        this.connection.addPacketListener(new PingJobListener(this), statusFilter);
-        this.connection.addPacketListener(new AbortJobListener(this), abandonFilter);
-        this.connection.addPacketListener(new TerminateVmListener(this), terminateFilter);
-        this.connection.addPacketListener(new ManageBindingsListener(this), bindingsFilter);
+        this.connection.addPacketListener(new SubmitJobPacketListener(this), submitFilter);
+        this.connection.addPacketListener(new PingJobPacketListener(this), statusFilter);
+        this.connection.addPacketListener(new AbortJobPacketListener(this), abandonFilter);
+        this.connection.addPacketListener(new TerminateVmPacketListener(this), terminateFilter);
+        this.connection.addPacketListener(new ManageBindingsPacketListener(this), bindingsFilter);
 
     }
 

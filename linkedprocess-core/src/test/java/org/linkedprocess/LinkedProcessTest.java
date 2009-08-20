@@ -10,9 +10,8 @@ package org.linkedprocess;
 import junit.framework.TestCase;
 
 /**
- * User: marko
- * Date: Jul 11, 2009
- * Time: 4:23:37 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class LinkedProcessTest extends TestCase {
 

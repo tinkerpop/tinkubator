@@ -15,9 +15,9 @@ import org.linkedprocess.vm.LopVm;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version 0.1
  */
-public class SpawnVmListener extends LopFarmListener {
+public class SpawnVmPacketListener extends FarmPacketListener {
 
-    public SpawnVmListener(LopFarm lopFarm) {
+    public SpawnVmPacketListener(LopFarm lopFarm) {
         super(lopFarm);
     }
 
@@ -30,7 +30,7 @@ public class SpawnVmListener extends LopFarmListener {
     }
 
     private void processSpawnVmPacket(SpawnVm spawnVm) {
-        LopFarm.LOGGER.info("Arrived " + SpawnVmListener.class.getName());
+        LopFarm.LOGGER.info("Arrived " + SpawnVmPacketListener.class.getName());
         LopFarm.LOGGER.info(spawnVm.toXML());
 
 
@@ -42,17 +42,17 @@ public class SpawnVmListener extends LopFarmListener {
         String vmSpecies = spawnVm.getVmSpecies();
         String farmPassword = spawnVm.getFarmPassword();
 
-        //System.out.println(this.getXmppFarm().getFarmPassword() + "!!!" + farmPassword);
+        //System.out.println(this.getLopFarm().getFarmPassword() + "!!!" + farmPassword);
 
         if (vmSpecies == null) {
             returnSpawnVm.setType(IQ.Type.ERROR);
             returnSpawnVm.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "spawn_vm XML packet is missing the vm_species attribute", LOP_CLIENT_TYPE, spawnVm.getPacketID()));
-        } else if (this.getXmppFarm().getFarmPassword() != null && (farmPassword == null || !farmPassword.equals(this.getXmppFarm().getFarmPassword()))) {
+        } else if (this.getLopFarm().getFarmPassword() != null && (farmPassword == null || !farmPassword.equals(this.getLopFarm().getFarmPassword()))) {
             returnSpawnVm.setType(IQ.Type.ERROR);
             returnSpawnVm.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_FARM_PASSWORD, null, LOP_CLIENT_TYPE, spawnVm.getPacketID()));
         } else {
             try {
-                LopVm vm = this.getXmppFarm().spawnVirtualMachine(spawnVm.getFrom(), vmSpecies);
+                LopVm vm = this.getLopFarm().spawnVirtualMachine(spawnVm.getFrom(), vmSpecies);
                 returnSpawnVm.setVmJid(vm.getFullJid());
                 returnSpawnVm.setVmPassword(vm.getVmPassword());
                 returnSpawnVm.setVmSpecies(vmSpecies);
@@ -70,9 +70,9 @@ public class SpawnVmListener extends LopFarmListener {
             }
         }
 
-        LopFarm.LOGGER.info("Sent " + SpawnVmListener.class.getName());
+        LopFarm.LOGGER.info("Sent " + SpawnVmPacketListener.class.getName());
         LopFarm.LOGGER.info(returnSpawnVm.toXML());
-        this.getXmppFarm().getConnection().sendPacket(returnSpawnVm);
+        this.getLopFarm().getConnection().sendPacket(returnSpawnVm);
 
 
     }

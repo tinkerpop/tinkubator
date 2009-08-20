@@ -12,8 +12,8 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.linkedprocess.testing.offline.MockXmppConnection;
-import org.linkedprocess.registry.DiscoItemsListener;
-import org.linkedprocess.registry.PresenceListener;
+import org.linkedprocess.registry.DiscoItemsPacketListener;
+import org.linkedprocess.registry.PresencePacketListener;
 import org.linkedprocess.registry.PresenceSubscriptionListener;
 
 public class MockRegistryXmppConnection extends MockXmppConnection {
@@ -31,10 +31,10 @@ public class MockRegistryXmppConnection extends MockXmppConnection {
 		if (listener instanceof PresenceSubscriptionListener) {
 			subscription = listener;
 		}
-		if (listener instanceof PresenceListener) {
+		if (listener instanceof PresencePacketListener) {
 			presence = listener;
 		}
-		if (listener instanceof DiscoItemsListener) {
+		if (listener instanceof DiscoItemsPacketListener) {
 			discoItems = listener;
 		}
 

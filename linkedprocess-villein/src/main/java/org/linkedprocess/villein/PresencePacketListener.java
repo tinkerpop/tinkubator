@@ -21,10 +21,10 @@ import org.linkedprocess.villein.proxies.*;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-class PresenceListener extends LopVilleinListener {
+class PresencePacketListener extends VilleinPacketListener {
 
 
-    public PresenceListener(LopVillein lopVillein) {
+    public PresencePacketListener(LopVillein lopVillein) {
         super(lopVillein);
     }
 
@@ -34,18 +34,18 @@ class PresenceListener extends LopVilleinListener {
         LopVillein.LOGGER.info("Presence received from " + presence.getFrom());
         LopVillein.LOGGER.info(presence.toXML());
 
-        Proxy proxy = this.getXmppVillein().getLopCloud().getProxy(presence.getFrom());
+        Proxy proxy = this.getLopVillein().getLopCloud().getProxy(presence.getFrom());
 
         if (proxy != null) {
-            if (!PresenceListener.isAvailable(presence)) {
+            if (!PresencePacketListener.isAvailable(presence)) {
                 proxy.setAvailable(false);
-                this.getXmppVillein().getLopCloud().removeProxy(presence.getFrom());
+                this.getLopVillein().getLopCloud().removeProxy(presence.getFrom());
             }
         } else {
             if (LinkedProcess.isBareJid(presence.getFrom())) {
                 CountrysideProxy countrysideProxy = new CountrysideProxy(presence.getFrom());
-                countrysideProxy.setAvailable(PresenceListener.isAvailable(presence));
-                this.getXmppVillein().getLopCloud().addCountrysideProxy(countrysideProxy);
+                countrysideProxy.setAvailable(PresencePacketListener.isAvailable(presence));
+                this.getLopVillein().getLopCloud().addCountrysideProxy(countrysideProxy);
                 proxy = countrysideProxy;
             } else {
                 DiscoverInfo discoInfo = this.getDiscoInfo(presence.getFrom());
@@ -57,19 +57,19 @@ class PresenceListener extends LopVilleinListener {
                 }
 
                 if (isFarm(discoInfo)) {
-                    FarmProxy farmProxy = new FarmProxy(presence.getFrom(), this.getXmppVillein().getDispatcher(), discoInfoDocument);
-                    farmProxy.setAvailable(PresenceListener.isAvailable(presence));
+                    FarmProxy farmProxy = new FarmProxy(presence.getFrom(), this.getLopVillein().getDispatcher(), discoInfoDocument);
+                    farmProxy.setAvailable(PresencePacketListener.isAvailable(presence));
                     try {
-                        this.getXmppVillein().getLopCloud().addFarmProxy(farmProxy);
+                        this.getLopVillein().getLopCloud().addFarmProxy(farmProxy);
                         proxy = farmProxy;
                     } catch (ParentProxyNotFoundException e) {
                         LopVillein.LOGGER.warning("Parent proxy was not found: " + e.getMessage());
                     }
                 } else if (isRegistry(discoInfo)) {
-                    RegistryProxy registryProxy = new RegistryProxy(presence.getFrom(), this.getXmppVillein().getDispatcher(), discoInfoDocument);
-                    registryProxy.setAvailable(PresenceListener.isAvailable(presence));
+                    RegistryProxy registryProxy = new RegistryProxy(presence.getFrom(), this.getLopVillein().getDispatcher(), discoInfoDocument);
+                    registryProxy.setAvailable(PresencePacketListener.isAvailable(presence));
                     try {
-                        this.getXmppVillein().getLopCloud().addRegistryProxy(registryProxy);
+                        this.getLopVillein().getLopCloud().addRegistryProxy(registryProxy);
                         proxy = registryProxy;
                     } catch (ParentProxyNotFoundException e) {
                         LopVillein.LOGGER.warning("Parent proxy was not found: " + e.getMessage());
@@ -80,8 +80,8 @@ class PresenceListener extends LopVilleinListener {
 
         if (proxy != null) {
             // Handlers
-            for (PresenceHandler presenceHandler : this.getXmppVillein().getPresenceHandlers()) {
-                presenceHandler.handlePresenceUpdate(proxy, PresenceListener.isAvailable(presence));
+            for (PresenceHandler presenceHandler : this.getLopVillein().getPresenceHandlers()) {
+                presenceHandler.handlePresenceUpdate(proxy, PresencePacketListener.isAvailable(presence));
             }
         }
     }

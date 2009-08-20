@@ -82,8 +82,8 @@ public class LopVillein extends LopClient {
         PacketFilter lopFilter = new OrFilter(new IQTypeFilter(IQ.Type.RESULT), new IQTypeFilter(IQ.Type.ERROR));
         PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
 
-        this.connection.addPacketListener(new PresenceListener(this), presenceFilter);
-        this.connection.addPacketListener(new LopVilleinListener(this), lopFilter);
+        this.connection.addPacketListener(new PresencePacketListener(this), presenceFilter);
+        this.connection.addPacketListener(new VilleinPacketListener(this), lopFilter);
         this.status = LinkedProcess.VilleinStatus.ACTIVE;
         this.connection.sendPacket(this.createPresence(this.status));
     }

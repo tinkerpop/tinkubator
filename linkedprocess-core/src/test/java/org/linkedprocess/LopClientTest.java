@@ -13,11 +13,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * User: marko
- * Date: Jun 26, 2009
- * Time: 5:52:06 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
-public class XmppClientTest extends TestCase {
+public class LopClientTest extends TestCase {
 
     public void testRandomIDGenerator() {
         // 1,000,000 random IDs are generated without conflict.

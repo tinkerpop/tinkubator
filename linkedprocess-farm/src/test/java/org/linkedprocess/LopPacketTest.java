@@ -11,21 +11,20 @@ import org.linkedprocess.vm.AbortJob;
 import org.linkedprocess.vm.ManageBindings;
 
 /**
- * User: marko
- * Date: Jun 25, 2009
- * Time: 11:03:25 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
-public class XMPPTagTests extends TestCase {
+public class LopPacketTest extends TestCase {
 
     public void testSpawnTag() throws Exception {
         SpawnVm spawnVm = new SpawnVm();
         spawnVm.setVmJid("lp1@gmail.com");
-        spawnVm.setVmSpecies("lop:vm:javascript");
+        spawnVm.setVmSpecies("javascript");
         String spawnString = spawnVm.getChildElementXML();
         System.out.println(spawnString);
         assertTrue(spawnString.contains("xmlns=\"" + LinkedProcess.LOP_FARM_NAMESPACE));
         assertTrue(spawnString.contains("vm_jid=\"lp1@gmail.com\""));
-        assertTrue(spawnString.contains("vm_species=\"lop:vm:javascript\""));
+        assertTrue(spawnString.contains("vm_species=\"javascript\""));
     }
 
     @Test

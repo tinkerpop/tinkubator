@@ -13,9 +13,9 @@ import org.linkedprocess.farm.LopFarm;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class TerminateVmListener extends LopVmListener {
+public class TerminateVmPacketListener extends VmPacketListener {
 
-    public TerminateVmListener(LopVm lopVm) {
+    public TerminateVmPacketListener(LopVm lopVm) {
         super(lopVm);
     }
 
@@ -31,12 +31,12 @@ public class TerminateVmListener extends LopVmListener {
     }
 
     private void processTerminateVmPacket(TerminateVm terminateVm) {
-        LopFarm.LOGGER.info("Arrived " + TerminateVmListener.class.getName());
+        LopFarm.LOGGER.info("Arrived " + TerminateVmPacketListener.class.getName());
         LopFarm.LOGGER.info(terminateVm.toXML());
 
         TerminateVm returnTerminateVm = new TerminateVm();
         returnTerminateVm.setTo(terminateVm.getFrom());
-        returnTerminateVm.setFrom(this.getXmppVm().getFullJid());
+        returnTerminateVm.setFrom(this.getLopVm().getFullJid());
         returnTerminateVm.setPacketID(terminateVm.getPacketID());
 
         String vmPassword = terminateVm.getVmPassword();
@@ -53,15 +53,15 @@ public class TerminateVmListener extends LopVmListener {
             returnTerminateVm.setType(IQ.Type.RESULT);
         }
 
-        LopFarm.LOGGER.info("Sent " + TerminateVmListener.class.getName());
+        LopFarm.LOGGER.info("Sent " + TerminateVmPacketListener.class.getName());
         LopFarm.LOGGER.info(returnTerminateVm.toXML());
-        this.getXmppVm().getConnection().sendPacket(returnTerminateVm);
+        this.getLopVm().getConnection().sendPacket(returnTerminateVm);
 
         if (terminate) {
             try {
-                this.getXmppVm().getFarm().getVmScheduler().terminateVirtualMachine(lopClient.getFullJid());
+                this.getLopVm().getFarm().getVmScheduler().terminateVirtualMachine(lopClient.getFullJid());
             } catch (VmWorkerNotFoundException e) {
-                this.getXmppVm().shutdown();
+                this.getLopVm().shutdown();
             }
         }
     }

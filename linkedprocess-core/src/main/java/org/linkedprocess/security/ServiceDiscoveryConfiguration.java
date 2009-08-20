@@ -11,7 +11,6 @@ import org.jdom.Element;
 import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.packet.DataForm;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,32 +55,34 @@ public class ServiceDiscoveryConfiguration {
             throw new IllegalArgumentException("expected a jabber:x:data element named 'x'");
         }
 
-        for (Element field : (Collection<Element>) x.getChildren(FIELD)) {
-            String varValue = field.getAttributeValue(VAR);
-            PermissionType type = PermissionType.valueOf(varValue);
-            if (null == type) {
-                throw new IllegalArgumentException("missing '" + VAR + "' attribute");
-            }
+        for (Object field : x.getChildren(FIELD)) {
+            if (field instanceof Element) {
+                String varValue = ((Element) field).getAttributeValue(VAR);
+                PermissionType type = PermissionType.valueOf(varValue);
+                if (null == type) {
+                    throw new IllegalArgumentException("missing '" + VAR + "' attribute");
+                }
 
-            permittedTypes.add(type);
+                permittedTypes.add(type);
 
-            switch (type) {
-                case read:
-                    readPermissions = createPathPermissions(field);
-                    break;
-                case write:
-                    writePermissions = createPathPermissions(field);
-                    break;
-                case delete:
-                    deletePermissions = createPathPermissions(field);
-                case exec:
-                    execPermissions = createPathPermissions(field);
-                    break;
-                case link:
-                    linkPermissions = createPathPermissions(field);
-                    break;
-                default:
-                    // Other types have no special formatting.
+                switch (type) {
+                    case read:
+                        readPermissions = createPathPermissions((Element) field);
+                        break;
+                    case write:
+                        writePermissions = createPathPermissions((Element) field);
+                        break;
+                    case delete:
+                        deletePermissions = createPathPermissions((Element) field);
+                    case exec:
+                        execPermissions = createPathPermissions((Element) field);
+                        break;
+                    case link:
+                        linkPermissions = createPathPermissions((Element) field);
+                        break;
+                    default:
+                        // Other types have no special formatting.
+                }
             }
         }
     }
@@ -90,13 +91,14 @@ public class ServiceDiscoveryConfiguration {
     private PathPermissions createPathPermissions(final Element field) {
         PathPermissions p = new PathPermissions();
 
-        for (Element value : (Collection<Element>) field.getChildren(VALUE)) {
-            String s = value.getText();
-            if (0 == s.length()) {
-                throw new IllegalArgumentException("empty '" + VALUE + "' text");
+        for (Object value : field.getChildren(VALUE)) {
+            if (value instanceof Element) {
+                String s = ((Element) value).getText();
+                if (0 == s.length()) {
+                    throw new IllegalArgumentException("empty '" + VALUE + "' text");
+                }
+                p.isPermitted(s);
             }
-
-            p.isPermitted(s);
         }
 
         return p;

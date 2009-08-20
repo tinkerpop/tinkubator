@@ -74,8 +74,8 @@ public class LopFarm extends LopClient {
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter subscribeFilter = new AndFilter(new PacketTypeFilter(Presence.class), new PresenceSubscriptionFilter());
 
-        this.connection.addPacketListener(new SpawnVmListener(this), spawnFilter);
-        this.connection.addPacketListener(new PresenceSubscriptionListener(this), subscribeFilter);
+        this.connection.addPacketListener(new SpawnVmPacketListener(this), spawnFilter);
+        this.connection.addPacketListener(new PresenceSubscriptionPacketListener(this), subscribeFilter);
     }
 
     private void logon(String server, int port, String username, String password) throws XMPPException {

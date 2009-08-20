@@ -13,9 +13,9 @@ import org.linkedprocess.os.errors.VmWorkerNotFoundException;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version 0.1
  */
-public class AbortJobListener extends LopVmListener {
+public class AbortJobPacketListener extends VmPacketListener {
 
-    public AbortJobListener(LopVm lopVm) {
+    public AbortJobPacketListener(LopVm lopVm) {
         super(lopVm);
     }
 
@@ -30,13 +30,13 @@ public class AbortJobListener extends LopVmListener {
     public void processAbortJobPacket(AbortJob abortJob) {
 
 
-        LopVm.LOGGER.fine("Arrived " + AbortJobListener.class.getName());
+        LopVm.LOGGER.fine("Arrived " + AbortJobPacketListener.class.getName());
         LopVm.LOGGER.fine(abortJob.toXML());
 
         AbortJob returnAbortJob = new AbortJob();
 
         returnAbortJob.setTo(abortJob.getFrom());
-        returnAbortJob.setFrom(this.getXmppVm().getFullJid());
+        returnAbortJob.setFrom(this.getLopVm().getFullJid());
         returnAbortJob.setPacketID(abortJob.getPacketID());
 
         String jobId = abortJob.getJobId();
@@ -72,9 +72,9 @@ public class AbortJobListener extends LopVmListener {
             }
         }
 
-        LopVm.LOGGER.fine("Sent " + AbortJobListener.class.getName());
+        LopVm.LOGGER.fine("Sent " + AbortJobPacketListener.class.getName());
         LopVm.LOGGER.fine(returnAbortJob.toXML());
-        this.getXmppVm().getConnection().sendPacket(returnAbortJob);
+        this.getLopVm().getConnection().sendPacket(returnAbortJob);
 
 
     }

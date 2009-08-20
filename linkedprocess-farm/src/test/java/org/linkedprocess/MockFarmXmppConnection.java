@@ -6,9 +6,9 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Presence;
 import org.linkedprocess.testing.offline.MockXmppConnection;
-import org.linkedprocess.farm.PresenceSubscriptionListener;
+import org.linkedprocess.farm.PresenceSubscriptionPacketListener;
 import org.linkedprocess.farm.SpawnVm;
-import org.linkedprocess.farm.SpawnVmListener;
+import org.linkedprocess.farm.SpawnVmPacketListener;
 import org.xmlpull.v1.XmlPullParserException;
 
 public class MockFarmXmppConnection extends MockXmppConnection {
@@ -23,10 +23,10 @@ public class MockFarmXmppConnection extends MockXmppConnection {
     @Override
     public void addPacketListener(PacketListener listener, PacketFilter filter) {
         super.addPacketListener(listener, filter);
-        if (listener instanceof SpawnVmListener) {
+        if (listener instanceof SpawnVmPacketListener) {
             spawn = listener;
         }
-        if (listener instanceof PresenceSubscriptionListener) {
+        if (listener instanceof PresenceSubscriptionPacketListener) {
             subscribe = listener;
         }
     }

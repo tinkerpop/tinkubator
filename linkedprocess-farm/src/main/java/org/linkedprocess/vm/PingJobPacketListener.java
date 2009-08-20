@@ -13,9 +13,9 @@ import org.linkedprocess.os.errors.VmWorkerNotFoundException;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version 0.1
  */
-public class PingJobListener extends LopVmListener {
+public class PingJobPacketListener extends VmPacketListener {
 
-    public PingJobListener(LopVm lopVm) {
+    public PingJobPacketListener(LopVm lopVm) {
         super(lopVm);
     }
 
@@ -29,12 +29,12 @@ public class PingJobListener extends LopVmListener {
 
     public void processJobStatusPacket(PingJob pingJob) {
 
-        LopVm.LOGGER.fine("Arrived " + PingJobListener.class.getName());
+        LopVm.LOGGER.fine("Arrived " + PingJobPacketListener.class.getName());
         LopVm.LOGGER.fine(pingJob.toXML());
 
         PingJob returnPingJob = new PingJob();
         returnPingJob.setTo(pingJob.getFrom());
-        returnPingJob.setFrom(this.getXmppVm().getFullJid());
+        returnPingJob.setFrom(this.getLopVm().getFullJid());
         returnPingJob.setPacketID(pingJob.getPacketID());
 
 
@@ -72,9 +72,9 @@ public class PingJobListener extends LopVmListener {
             }
         }
 
-        LopVm.LOGGER.fine("Sent " + PingJobListener.class.getName());
+        LopVm.LOGGER.fine("Sent " + PingJobPacketListener.class.getName());
         LopVm.LOGGER.fine(returnPingJob.toXML());
-        this.getXmppVm().getConnection().sendPacket(returnPingJob);
+        this.getLopVm().getConnection().sendPacket(returnPingJob);
 
 
     }

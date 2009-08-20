@@ -15,10 +15,10 @@ import org.linkedprocess.LopError;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version 0.1
  */
-public class SubmitJobListener extends LopVmListener {
+public class SubmitJobPacketListener extends VmPacketListener {
 
 
-    public SubmitJobListener(LopVm lopVm) {
+    public SubmitJobPacketListener(LopVm lopVm) {
         super(lopVm);
     }
 
@@ -33,7 +33,7 @@ public class SubmitJobListener extends LopVmListener {
     }
 
     private void processSubmitJobPacket(SubmitJob submitJob) {
-        LopVm.LOGGER.info("Arrived " + SubmitJobListener.class.getName());
+        LopVm.LOGGER.info("Arrived " + SubmitJobPacketListener.class.getName());
         LopVm.LOGGER.info(submitJob.toXML());
 
         String expression = submitJob.getExpression();
@@ -43,7 +43,7 @@ public class SubmitJobListener extends LopVmListener {
 
         SubmitJob returnSubmitJob = new SubmitJob();
         returnSubmitJob.setPacketID(submitJob.getPacketID());
-        returnSubmitJob.setFrom(this.getXmppVm().getFullJid());
+        returnSubmitJob.setFrom(this.getLopVm().getFullJid());
         returnSubmitJob.setTo(submitJob.getFrom());
 
         if (null == vmPassword || null == expression) {
@@ -84,9 +84,9 @@ public class SubmitJobListener extends LopVmListener {
         }
 
         if (submitJob != null) {
-            LopVm.LOGGER.fine("Sent " + PingJobListener.class.getName());
+            LopVm.LOGGER.fine("Sent " + PingJobPacketListener.class.getName());
             LopVm.LOGGER.fine(returnSubmitJob.toXML());
-            this.getXmppVm().getConnection().sendPacket(returnSubmitJob);
+            this.getLopVm().getConnection().sendPacket(returnSubmitJob);
         }
 
     }

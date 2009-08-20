@@ -16,17 +16,17 @@ import org.jivesoftware.smackx.packet.DiscoverInfo;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class PresenceListener extends LopRegistryListener {
+public class PresencePacketListener extends RegistryPacketListener {
 
 
-    public PresenceListener(LopRegistry lopRegistry) {
+    public PresencePacketListener(LopRegistry lopRegistry) {
         super(lopRegistry);
     }
 
     public void processPacket(Packet packet) {
         Presence presence = (Presence) packet;
 
-        LopRegistry.LOGGER.info("Arrived " + PresenceListener.class.getName());
+        LopRegistry.LOGGER.info("Arrived " + PresencePacketListener.class.getName());
         LopRegistry.LOGGER.info(presence.toXML());
 
         if (presence.isAvailable()) {
