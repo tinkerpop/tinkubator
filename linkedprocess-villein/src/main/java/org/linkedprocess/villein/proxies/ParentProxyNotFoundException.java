@@ -8,7 +8,7 @@
 package org.linkedprocess.villein.proxies;
 
 /**
- * An internal exception thrown when the proxies data structure is in an inconsistent state.
+ * An exception thrown when the proxies data structure is in an inconsistent state.
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1

@@ -8,7 +8,6 @@
 package org.linkedprocess.villein.proxies;
 
 import org.jdom.Document;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.linkedprocess.villein.Dispatcher;
@@ -32,37 +31,36 @@ public class RegistryProxy extends Proxy {
 
     public RegistryProxy(final String fullJid, final Dispatcher dispatcher) {
         super(fullJid, dispatcher);
-        try {
-            this.refreshDiscoItems();
-        } catch (Exception e) {
-            XmppVillein.LOGGER.warning("Problem loading disco#items: " + e.getMessage());
-        }
+        this.refreshDiscoItems();
+
 
     }
 
     public RegistryProxy(final String fullJid, final Dispatcher dispatcher, final Document discoInfoDocument) {
         super(fullJid, dispatcher, discoInfoDocument);
-        try {
-            this.refreshDiscoItems();
-        } catch (Exception e) {
-            XmppVillein.LOGGER.warning("Problem loading disco#items: " + e.getMessage());
-        }
+        this.refreshDiscoItems();
+
     }
 
-    public void refreshDiscoItems() throws XMPPException {
-        this.discoItems = new HashSet<DiscoverItems.Item>();
-        ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();
-        DiscoverItems discoItems = discoManager.discoverItems(this.getFullJid());
-        Iterator<DiscoverItems.Item> itty = discoItems.getItems();
-        while (itty.hasNext()) {
-            this.discoItems.add(itty.next());
+    public void refreshDiscoItems() {
+        try {
+
+            this.discoItems = new HashSet<DiscoverItems.Item>();
+            ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();
+            DiscoverItems discoItems = discoManager.discoverItems(this.getFullJid());
+            Iterator<DiscoverItems.Item> itty = discoItems.getItems();
+            while (itty.hasNext()) {
+                this.discoItems.add(itty.next());
+            }
+        } catch (Exception e) {
+            XmppVillein.LOGGER.warning("Problem loading disco#items: " + e.getMessage());
         }
     }
 
     public Set<CountrysideProxy> getActiveCountrysides() {
         Set<CountrysideProxy> countrysideProxies = new HashSet<CountrysideProxy>();
         for (DiscoverItems.Item item : discoItems) {
-            CountrysideProxy countrysideProxy = new CountrysideProxy(item.getEntityID(), null);
+            CountrysideProxy countrysideProxy = new CountrysideProxy(item.getEntityID());
             countrysideProxies.add(countrysideProxy);
         }
         return countrysideProxies;

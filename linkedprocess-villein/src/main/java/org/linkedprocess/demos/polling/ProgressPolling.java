@@ -51,7 +51,7 @@ public class ProgressPolling {
         //CountrysideProxy testProxy = ResourceAllocationPattern.allocateCountryside(villein.getLopCloud(), "test_countryside@lanl.linkedprocess.org", -1);
         //Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(testProxy, 1, 20000);
         Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(villein.getLopCloud(), 1, 20000);
-        farmProxies = LopCloud.filterFarmProxiesByPasswordRequired(farmProxies, false);
+        farmProxies = ResourceAllocationPattern.filterFarmProxiesByPasswordRequired(farmProxies, false);
         if (farmProxies.size() == 0) {
             System.out.println("Could not allocate a password free farm.");
             System.exit(1);

@@ -25,16 +25,16 @@ import org.linkedprocess.vm.SubmitJob;
  */
 public class SubmitJobCommand extends Command {
 
-    private final HandlerSet<JobStruct> resultHandlers;
+    private final HandlerSet<JobStruct> successHandlers;
     private final HandlerSet<JobStruct> errorHandlers;
 
     public SubmitJobCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
-        this.resultHandlers = new HandlerSet<JobStruct>();
+        this.successHandlers = new HandlerSet<JobStruct>();
         this.errorHandlers = new HandlerSet<JobStruct>();
     }
 
-    public void send(final VmProxy vmStruct, final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<JobStruct> errorHandler) {
+    public void send(final VmProxy vmStruct, final JobStruct jobStruct, final Handler<JobStruct> successHandler, final Handler<JobStruct> errorHandler) {
 
         if (null == jobStruct.getJobId())
             jobStruct.setJobId(Packet.nextID());
@@ -47,21 +47,21 @@ public class SubmitJobCommand extends Command {
         submitJob.setType(IQ.Type.GET);
         submitJob.setPacketID(jobStruct.getJobId());
 
-        this.resultHandlers.addHandler(jobStruct.getJobId(), resultHandler);
+        this.successHandlers.addHandler(jobStruct.getJobId(), successHandler);
         this.errorHandlers.addHandler(jobStruct.getJobId(), errorHandler);
 
         xmppVillein.getConnection().sendPacket(submitJob);
     }
 
-    public void receiveNormal(final SubmitJob submitJob) {
+    public void receiveSuccess(final SubmitJob submitJob) {
         try {
             JobStruct jobStruct = new JobStruct();
             jobStruct.setJobId(submitJob.getPacketID());
             jobStruct.setResult(submitJob.getExpression());
             jobStruct.setComplete(true);
-            resultHandlers.handle(submitJob.getPacketID(), jobStruct);
+            successHandlers.handle(submitJob.getPacketID(), jobStruct);
         } finally {
-            resultHandlers.removeHandler(submitJob.getPacketID());
+            successHandlers.removeHandler(submitJob.getPacketID());
             errorHandlers.removeHandler(submitJob.getPacketID());
         }
     }
@@ -74,7 +74,7 @@ public class SubmitJobCommand extends Command {
             jobStruct.setComplete(true);
             errorHandlers.handle(submitJob.getPacketID(), jobStruct);
         } finally {
-            resultHandlers.removeHandler(submitJob.getPacketID());
+            successHandlers.removeHandler(submitJob.getPacketID());
             errorHandlers.removeHandler(submitJob.getPacketID());
         }
     }

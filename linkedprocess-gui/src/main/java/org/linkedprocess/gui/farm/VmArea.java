@@ -39,7 +39,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
     public VmArea(FarmGui farmGui) {
         super(new BorderLayout());
         this.farmGui = farmGui;
-        CountrysideProxy countrysideProxy = new CountrysideProxy(LinkedProcess.generateBareJid(farmGui.getXmppFarm().getFullJid()), null);
+        CountrysideProxy countrysideProxy = new CountrysideProxy(LinkedProcess.generateBareJid(farmGui.getXmppFarm().getFullJid()));
         this.treeRoot = new DefaultMutableTreeNode(countrysideProxy);
         this.tree = new JTree(this.treeRoot);
         this.tree.setCellRenderer(new TreeRenderer());

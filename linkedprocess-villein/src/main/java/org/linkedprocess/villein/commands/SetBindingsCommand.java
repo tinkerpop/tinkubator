@@ -9,9 +9,8 @@ package org.linkedprocess.villein.commands;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.os.VmBindings;
-import org.linkedprocess.os.errors.InvalidValueException;
 import org.linkedprocess.LopError;
+import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.XmppVillein;
 import org.linkedprocess.villein.proxies.VmProxy;
@@ -26,16 +25,16 @@ import org.linkedprocess.vm.ManageBindings;
  * @version LoPSideD 0.1
  */
 public class SetBindingsCommand extends Command {
-    private final HandlerSet<VmBindings> resultHandlers;
+    private final HandlerSet<VmBindings> successHandlers;
     private final HandlerSet<LopError> errorHandlers;
 
     public SetBindingsCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
-        this.resultHandlers = new HandlerSet<VmBindings>();
+        this.successHandlers = new HandlerSet<VmBindings>();
         this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(final VmProxy vmStruct, VmBindings vmBindings, final Handler<VmBindings> resultHandler, final Handler<LopError> errorHandler) {
+    public void send(final VmProxy vmStruct, VmBindings vmBindings, final Handler<VmBindings> sucessHandler, final Handler<LopError> errorHandler) {
 
         String id = Packet.nextID();
         ManageBindings manageBindings = new ManageBindings();
@@ -48,26 +47,22 @@ public class SetBindingsCommand extends Command {
 
         Handler<VmBindings> autoResultHandler = new Handler<VmBindings>() {
             public void handle(VmBindings vmBindings) {
-                try {
-                    vmStruct.addVmBindings(vmBindings);
-                } catch (InvalidValueException e) {
-                    XmppVillein.LOGGER.severe(e.getMessage());
-                }
-                resultHandler.handle(vmBindings);
+                vmStruct.addVmBindings(vmBindings);
+                sucessHandler.handle(vmBindings);
             }
         };
 
-        this.resultHandlers.addHandler(id, autoResultHandler);
+        this.successHandlers.addHandler(id, autoResultHandler);
         this.errorHandlers.addHandler(id, errorHandler);
 
         xmppVillein.getConnection().sendPacket(manageBindings);
     }
 
-    public void receiveNormal(final ManageBindings manageBindings) {
+    public void receiveSuccess(final ManageBindings manageBindings) {
         try {
-            resultHandlers.handle(manageBindings.getPacketID(), manageBindings.getBindings());
+            successHandlers.handle(manageBindings.getPacketID(), manageBindings.getBindings());
         } finally {
-            resultHandlers.removeHandler(manageBindings.getPacketID());
+            successHandlers.removeHandler(manageBindings.getPacketID());
             errorHandlers.removeHandler(manageBindings.getPacketID());
         }
     }
@@ -76,7 +71,7 @@ public class SetBindingsCommand extends Command {
         try {
             errorHandlers.handle(manageBindings.getPacketID(), manageBindings.getLopError());
         } finally {
-            resultHandlers.removeHandler(manageBindings.getPacketID());
+            successHandlers.removeHandler(manageBindings.getPacketID());
             errorHandlers.removeHandler(manageBindings.getPacketID());
         }
     }

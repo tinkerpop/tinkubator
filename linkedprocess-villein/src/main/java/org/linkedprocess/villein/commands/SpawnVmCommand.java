@@ -26,16 +26,16 @@ import org.linkedprocess.villein.proxies.VmProxy;
  * @version LoPSideD 0.1
  */
 public class SpawnVmCommand extends Command {
-    private final HandlerSet<VmProxy> resultHandlers;
+    private final HandlerSet<VmProxy> successHandler;
     private final HandlerSet<LopError> errorHandlers;
 
     public SpawnVmCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
-        this.resultHandlers = new HandlerSet<VmProxy>();
+        this.successHandler = new HandlerSet<VmProxy>();
         this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(final FarmProxy farmStruct, final String vmSpecies, final Handler<VmProxy> resultHandler, final Handler<LopError> errorHandler) {
+    public void send(final FarmProxy farmStruct, final String vmSpecies, final Handler<VmProxy> successHandler, final Handler<LopError> errorHandler) {
         String id = Packet.nextID();
         SpawnVm spawnVm = new SpawnVm();
         spawnVm.setTo(farmStruct.getFullJid());
@@ -47,24 +47,24 @@ public class SpawnVmCommand extends Command {
         spawnVm.setType(IQ.Type.GET);
         spawnVm.setPacketID(id);
 
-        this.resultHandlers.addHandler(id, resultHandler);
+        this.successHandler.addHandler(id, successHandler);
         this.errorHandlers.addHandler(id, errorHandler);
 
         xmppVillein.getConnection().sendPacket(spawnVm);
     }
 
-    public void receiveNormal(final SpawnVm spawnVm) {
+    public void receiveSuccess(final SpawnVm spawnVm) {
         VmProxy vmProxy = new VmProxy(spawnVm.getVmJid(), xmppVillein.getDispatcher());
         vmProxy.setVmPassword(spawnVm.getVmPassword());
         vmProxy.setVmSpecies(spawnVm.getVmSpecies());
         vmProxy.setAvailable(true);
         try {
             this.xmppVillein.getLopCloud().addVmProxy(spawnVm.getFrom(), vmProxy);
-            resultHandlers.handle(spawnVm.getPacketID(), vmProxy);
+            successHandler.handle(spawnVm.getPacketID(), vmProxy);
         } catch (ParentProxyNotFoundException e) {
             XmppVillein.LOGGER.warning(e.getMessage());
         } finally {
-            resultHandlers.removeHandler(spawnVm.getPacketID());
+            successHandler.removeHandler(spawnVm.getPacketID());
             errorHandlers.removeHandler(spawnVm.getPacketID());
         }
 
@@ -74,7 +74,7 @@ public class SpawnVmCommand extends Command {
         try {
             errorHandlers.handle(spawnVm.getPacketID(), spawnVm.getLopError());
         } finally {
-            resultHandlers.removeHandler(spawnVm.getPacketID());
+            successHandler.removeHandler(spawnVm.getPacketID());
             errorHandlers.removeHandler(spawnVm.getPacketID());
         }
     }

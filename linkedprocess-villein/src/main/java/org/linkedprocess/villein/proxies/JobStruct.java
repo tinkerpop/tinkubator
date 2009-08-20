@@ -7,6 +7,7 @@
 
 package org.linkedprocess.villein.proxies;
 
+import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.LopError;
 
@@ -26,52 +27,121 @@ public class JobStruct implements Comparable {
     protected LopError lopError;
     protected boolean complete = false;
 
+    /**
+     * Get the identifier of the job.
+     *
+     * @return the identifier of the job
+     */
     public String getJobId() {
         return jobId;
     }
 
+    /**
+     * Set the identified of the job. It is very important to ensure that jobs have unique identifiers as the handler mechanisms of the villein assume unique ids.
+     *
+     * @param jobId the identifier to set for the job.
+     */
     public void setJobId(String jobId) {
         this.jobId = jobId;
     }
 
+    /**
+     * Get the result of a successfully executed/evaluated expression.
+     *
+     * @return the result of the expression
+     */
     public String getResult() {
         return result;
     }
 
+    /**
+     * Set the result of a successfully executed/evaluated expression.
+     *
+     * @param result the result of the expression
+     */
     public void setResult(String result) {
         this.result = result;
     }
 
+    /**
+     * Get the error that occured during an execution/evaulation.
+     *
+     * @return the error of an evaluation if an error has occurred
+     */
     public LopError getLopError() {
         return lopError;
     }
 
+    /**
+     * Set the error that has occurred during an execution/evaluation.
+     *
+     * @param lopError the error of an evaluation if an error has occurred
+     */
     public void setLopError(LopError lopError) {
         this.lopError = lopError;
     }
 
+    /**
+     * Get the expression of the job.
+     *
+     * @return the expression of the job
+     */
     public String getExpression() {
         return this.expression;
     }
 
+    /**
+     * Set the expression of the job.
+     *
+     * @param expression the expression of the job
+     */
     public void setExpression(String expression) {
         this.expression = expression;
     }
 
+    /**
+     * If the job is complete.
+     *
+     * @return is the job complete
+     */
     public boolean isComplete() {
         return complete;
     }
 
+    /**
+     * Set whether the job is complete.
+     *
+     * @param complete if the job is complete
+     */
     public void setComplete(boolean complete) {
         this.complete = complete;
     }
 
+    /**
+     * Determines if the job was aborted. This is a helper method that checks for an error and if there is an error, whether its a job_aborted error.
+     *
+     * @return whether the job was aborted
+     */
     public boolean wasAborted() {
         return (null != lopError && LinkedProcess.LopErrorType.JOB_ABORTED != lopError.getLopErrorType());
     }
 
+    /**
+     * Determines if the job was succesful. This is a helper method that checks if the job is complete and if there was not an error.
+     *
+     * @return whether the job was completed successfully
+     */
     public boolean wasSuccessful() {
         return (complete && null == lopError);
+    }
+
+    /**
+     * Generate a random job identifier (guaranted to be unique)
+     *
+     * @return the randomly generated job identifier
+     */
+    public static String generateRandomId() {
+        return Packet.nextID();
     }
 
     public int compareTo(Object job) {

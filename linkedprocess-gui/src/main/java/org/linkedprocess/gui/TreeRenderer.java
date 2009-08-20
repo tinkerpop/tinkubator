@@ -52,7 +52,7 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
         } else if (x instanceof FarmProxy) {
             FarmProxy farmProxy = (FarmProxy) x;
             this.setText(LinkedProcess.generateResource(farmProxy.getFullJid()));
-            if (farmProxy.requiresPassword())
+            if (farmProxy.requiresFarmPassword())
                 this.setIcon(ImageHolder.farmPasswordIcon);
             else
                 this.setIcon(ImageHolder.farmIcon);

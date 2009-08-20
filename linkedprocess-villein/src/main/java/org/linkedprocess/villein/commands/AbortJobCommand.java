@@ -26,16 +26,16 @@ import org.linkedprocess.vm.AbortJob;
  */
 public class AbortJobCommand extends Command {
 
-    private final HandlerSet<String> resultHandlers;
+    private final HandlerSet<String> successHandlers;
     private final HandlerSet<LopError> errorHandlers;
 
     public AbortJobCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
-        this.resultHandlers = new HandlerSet<String>();
+        this.successHandlers = new HandlerSet<String>();
         this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(final VmProxy vmStruct, final JobStruct jobStruct, final Handler<String> resultHandler, final Handler<LopError> errorHandler) {
+    public void send(final VmProxy vmStruct, final JobStruct jobStruct, final Handler<String> successHandler, final Handler<LopError> errorHandler) {
         String id = Packet.nextID();
         AbortJob abortJob = new AbortJob();
         abortJob.setTo(vmStruct.getFullJid());
@@ -44,18 +44,18 @@ public class AbortJobCommand extends Command {
         abortJob.setVmPassword(vmStruct.getVmPassword());
         abortJob.setType(IQ.Type.GET);
         abortJob.setPacketID(id);
-        this.resultHandlers.addHandler(id, resultHandler);
+        this.successHandlers.addHandler(id, successHandler);
         this.errorHandlers.addHandler(id, errorHandler);
         xmppVillein.getConnection().sendPacket(abortJob);
     }
 
-    public void receiveNormal(final AbortJob abortJob) {
+    public void receiveSuccess(final AbortJob abortJob) {
         try {
             JobStruct jobStruct = new JobStruct();
             jobStruct.setJobId(abortJob.getJobId());
-            this.resultHandlers.handle(abortJob.getPacketID(), abortJob.getJobId());
+            this.successHandlers.handle(abortJob.getPacketID(), abortJob.getJobId());
         } finally {
-            this.resultHandlers.removeHandler(abortJob.getPacketID());
+            this.successHandlers.removeHandler(abortJob.getPacketID());
             this.errorHandlers.removeHandler(abortJob.getPacketID());
         }
 
@@ -65,7 +65,7 @@ public class AbortJobCommand extends Command {
         try {
             this.errorHandlers.handle(abortJob.getPacketID(), abortJob.getLopError());
         } finally {
-            this.resultHandlers.removeHandler(abortJob.getPacketID());
+            this.successHandlers.removeHandler(abortJob.getPacketID());
             this.errorHandlers.removeHandler(abortJob.getPacketID());
         }
     }

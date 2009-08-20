@@ -376,7 +376,7 @@ public class LopCloudArea extends JPanel implements ActionListener, MouseListene
         JMenuItem probeResource = new JMenuItem(PROBE);
         JMenuItem discoInfo = new JMenuItem(DISCOVER_INFORMATION);
         JMenuItem addFarmPassword = null;
-        if (farmProxy.requiresPassword()) {
+        if (farmProxy.requiresFarmPassword()) {
             addFarmPassword = new JMenuItem(SET_FARM_PASSWORD);
             addFarmPassword.addActionListener(this);
         }

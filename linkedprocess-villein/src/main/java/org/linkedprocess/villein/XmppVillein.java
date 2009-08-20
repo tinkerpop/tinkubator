@@ -124,7 +124,7 @@ public class XmppVillein extends XmppClient {
         for (RosterEntry entry : this.getRoster().getEntries()) {
             CountrysideProxy countrysideProxy = this.lopCloud.getCountrysideProxy(entry.getUser());
             if (countrysideProxy == null && (entry.getType() == RosterPacket.ItemType.to || entry.getType() == RosterPacket.ItemType.both)) {
-                countrysideProxy = new CountrysideProxy(entry.getUser(), this.dispatcher);
+                countrysideProxy = new CountrysideProxy(entry.getUser());
                 this.lopCloud.addCountrysideProxy(countrysideProxy);
             }
         }

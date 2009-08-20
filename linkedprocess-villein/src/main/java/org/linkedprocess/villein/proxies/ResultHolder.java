@@ -10,6 +10,8 @@ package org.linkedprocess.villein.proxies;
 import org.linkedprocess.LopError;
 
 /**
+ * ResultHolder is a "helper class" that is used to hold both succesful- and error-based results in a single data structure.
+ *  
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */

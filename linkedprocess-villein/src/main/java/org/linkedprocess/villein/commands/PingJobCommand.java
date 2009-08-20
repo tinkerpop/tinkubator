@@ -26,16 +26,16 @@ import org.linkedprocess.villein.proxies.VmProxy;
  * @version LoPSideD 0.1
  */
 public class PingJobCommand extends Command {
-    private final HandlerSet<LinkedProcess.JobStatus> resultHandlers;
+    private final HandlerSet<LinkedProcess.JobStatus> successHandlers;
     private final HandlerSet<LopError> errorHandlers;
 
     public PingJobCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
-        this.resultHandlers = new HandlerSet<LinkedProcess.JobStatus>();
+        this.successHandlers = new HandlerSet<LinkedProcess.JobStatus>();
         this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(VmProxy vmStruct, JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> statusHandler, final Handler<LopError> errorHandler) {
+    public void send(VmProxy vmStruct, JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> successHandler, final Handler<LopError> errorHandler) {
 
         String id = Packet.nextID();
         PingJob pingJob = new PingJob();
@@ -46,17 +46,17 @@ public class PingJobCommand extends Command {
         pingJob.setType(IQ.Type.GET);
         pingJob.setPacketID(id);
 
-        this.resultHandlers.addHandler(id, statusHandler);
+        this.successHandlers.addHandler(id, successHandler);
         this.errorHandlers.addHandler(id, errorHandler);
 
         xmppVillein.getConnection().sendPacket(pingJob);
     }
 
-    public void receiveNormal(final PingJob pingJob) {
+    public void receiveSuccess(final PingJob pingJob) {
         try {
-            resultHandlers.handle(pingJob.getPacketID(), LinkedProcess.JobStatus.valueOf(pingJob.getValue()));
+            successHandlers.handle(pingJob.getPacketID(), LinkedProcess.JobStatus.valueOf(pingJob.getValue()));
         } finally {
-            resultHandlers.removeHandler(pingJob.getPacketID());
+            successHandlers.removeHandler(pingJob.getPacketID());
             errorHandlers.removeHandler(pingJob.getPacketID());
         }
     }
@@ -65,7 +65,7 @@ public class PingJobCommand extends Command {
         try {
             errorHandlers.handle(pingJob.getPacketID(), pingJob.getLopError());
         } finally {
-            resultHandlers.removeHandler(pingJob.getPacketID());
+            successHandlers.removeHandler(pingJob.getPacketID());
             errorHandlers.removeHandler(pingJob.getPacketID());
         }
     }

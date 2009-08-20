@@ -10,25 +10,40 @@ package org.linkedprocess.villein.proxies;
 import org.jdom.Document;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.LopError;
-import org.linkedprocess.villein.Dispatcher;
-import org.linkedprocess.villein.Handler;
 import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.os.errors.InvalidValueException;
+import org.linkedprocess.villein.Dispatcher;
+import org.linkedprocess.villein.Handler;
+import org.linkedprocess.villein.XmppVillein;
 
 import java.util.Set;
 
 /**
- * A VmProxy is a proxy to a virtual machine. A virtual machine is an XMPP client that has a full-qualified JID.
+ * A VmProxy is a proxy to a virtual machine. A virtual machine is an XMPP client that has a fully-qualified JID.
  * The bare JID component of the virtual machine is the virtual machine's countryside. A virtual machine is spawned from
- * a farm. Nearly all the computation that happens in LoP is through virtual machines.
+ * a farm. Nearly all the computation that happens in an LoP cloud is through virtual machines.
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
 public class VmProxy extends Proxy {
 
+    /**
+     * The password of this virtual machine.
+     */
     protected String vmPassword;
+    /**
+     * The species of this virtual machine.
+     */
     protected String vmSpecies;
+    /**
+     * The current bindings of the virtual machine proxy. Note that the virtual machine proxy bindinds <i>are not</i>
+     * in direct correspondence with the bindings of the virtual machine that this proxy represents.
+     * The bindings of the virtual machine proxy need not be up to date nor be complete. These bindings are only updated
+     * when bindings are retrieved using getBindings() and can not be guarenteed to be valid/up-to-date upon receipt.
+     * It is up to the developer of the migrated code to understand how their bindings are being manipulated at the remote
+     * virtual machine and to design around these constriants appropriately.
+     */
     private VmBindings vmBindings = new VmBindings();
 
     public VmProxy(final String fullJid, final Dispatcher dispatcher) {
@@ -39,59 +54,146 @@ public class VmProxy extends Proxy {
         super(fullJid, dispatcher, discoInfoDocument);
     }
 
-    // FIXME: why Handler<JobStruct> for errors? Seems kind of weird, even if it works.
-    public void submitJob(final JobStruct jobStruct, final Handler<JobStruct> resultHandler, final Handler<JobStruct> errorHandler) {
-        dispatcher.getSubmitJobCommand().send(this, jobStruct, resultHandler, errorHandler);
+    /**
+     * Submit a job to the virtual machine for execution.
+     *
+     * @param jobStruct      the job to submit (requires at least an expression)
+     * @param successHandler the handler called when a sucessful result has occurred
+     * @param errorHandler   the handler called when an error result has occurred
+     */
+    public void submitJob(final JobStruct jobStruct, final Handler<JobStruct> successHandler, final Handler<JobStruct> errorHandler) {
+        dispatcher.getSubmitJobCommand().send(this, jobStruct, successHandler, errorHandler);
     }
 
-    public void pingJob(final JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> resultHandler, final Handler<LopError> errorHandler) {
-        dispatcher.getPingJobCommand().send(this, jobStruct, resultHandler, errorHandler);
+    /**
+     * Ping a job that is being executed by the virtual machine to determine its status.
+     *
+     * @param jobStruct      the job to ping (requires at least the job id)
+     * @param successHandler the handler called when a sucessful result has occurred
+     * @param errorHandler   the handler called when an error result has occurred
+     */
+    public void pingJob(final JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> successHandler, final Handler<LopError> errorHandler) {
+        dispatcher.getPingJobCommand().send(this, jobStruct, successHandler, errorHandler);
     }
 
-    public void abortJob(final JobStruct jobStruct, final Handler<String> resultHandler, final Handler<LopError> errorHandler) {
-        dispatcher.getAbortJobCommand().send(this, jobStruct, resultHandler, errorHandler);
+    /**
+     * Abort a job that is being executed by the virtual machine.
+     *
+     * @param jobStruct      the job to abort (requires at least the job id)
+     * @param successHandler the handler called when a sucessful result has occurred
+     * @param errorHandler   the handler called when an error result has occurred
+     */
+    public void abortJob(final JobStruct jobStruct, final Handler<String> successHandler, final Handler<LopError> errorHandler) {
+        dispatcher.getAbortJobCommand().send(this, jobStruct, successHandler, errorHandler);
     }
 
-    public void getBindings(final Set<String> bindingNames, final Handler<VmBindings> resultHandler, final Handler<LopError> errorHandler) {
-        dispatcher.getGetBindingsCommand().send(this, bindingNames, resultHandler, errorHandler);
+    /**
+     * Get the binding values at the virtual machine.
+     *
+     * @param bindingNames   the name of the bindings to get
+     * @param successHandler the handler called when a sucessful result has occurred
+     * @param errorHandler   the handler called when an error result has occurred
+     */
+    public void getBindings(final Set<String> bindingNames, final Handler<VmBindings> successHandler, final Handler<LopError> errorHandler) {
+        dispatcher.getGetBindingsCommand().send(this, bindingNames, successHandler, errorHandler);
     }
 
-    public void setBindings(final VmBindings vmBindings, final Handler<VmBindings> resultHandler, final Handler<LopError> errorHandler) {
-        dispatcher.getSetBindingsCommand().send(this, vmBindings, resultHandler, errorHandler);
+    /**
+     * Set values to bindings at the virtual machine.
+     *
+     * @param vmBindings     the bindings to set
+     * @param successHandler the handler called when a sucessful result has occurred
+     * @param errorHandler   the handler called when an error result has occurred
+     */
+    public void setBindings(final VmBindings vmBindings, final Handler<VmBindings> successHandler, final Handler<LopError> errorHandler) {
+        dispatcher.getSetBindingsCommand().send(this, vmBindings, successHandler, errorHandler);
     }
 
-    public void terminateVm(final Handler<Object> resultHandler, final Handler<LopError> errorHandler) {
-        dispatcher.getTerminateVmCommand().send(this, resultHandler, errorHandler);
+    /**
+     * Terminate the virtual machine.
+     *
+     * @param successHandler the handler called when a sucessful result has occurred
+     * @param errorHandler   the handler called when an error result has occurred
+     */
+    public void terminateVm(final Handler<Object> successHandler, final Handler<LopError> errorHandler) {
+        dispatcher.getTerminateVmCommand().send(this, successHandler, errorHandler);
     }
 
+    /**
+     * Set the password of the virtual machine. This is set when the virtual machine is spawned and in general, should not be changed.
+     *
+     * @param vmPassword the password to set for the virtual machine
+     */
     public void setVmPassword(final String vmPassword) {
         this.vmPassword = vmPassword;
     }
 
+    /**
+     * Get the password of the virtual machine.
+     *
+     * @return the password of the virtual machine
+     */
     public String getVmPassword() {
         return this.vmPassword;
     }
 
+    /**
+     * Set the species of the virtual machine. This is set when the virtual machine is spawned and in general, should not be changed.
+     *
+     * @param vmSpecies the species to set for the virtual machine
+     */
     public void setVmSpecies(final String vmSpecies) {
         this.vmSpecies = vmSpecies;
     }
 
+    /**
+     * Get the species of the virtual machine.
+     *
+     * @return the species of the virtual machine
+     */
     public String getVmSpecies() {
         return this.vmSpecies;
     }
 
-    public void addVmBindings(VmBindings bindings) throws InvalidValueException {
-        for (String bindingName : bindings.keySet()) {
-            this.vmBindings.putTyped(bindingName, bindings.getTyped(bindingName));
+    /**
+     * Add the provided bindings to the bindings maintained at this virtual machine proxy.
+     * This method is called when a get bindings is successfully returned
+     *
+     * @param bindings the bindings to add to the local virtual machine proxy bindings
+     */
+    public void addVmBindings(VmBindings bindings) {
+        try {
+            for (String bindingName : bindings.keySet()) {
+                this.vmBindings.putTyped(bindingName, bindings.getTyped(bindingName));
+            }
+        } catch (InvalidValueException e) {
+            XmppVillein.LOGGER.warning(e.getMessage());
         }
     }
 
+    /**
+     * Remove the bindings from the local virtual machine proxy.
+     * Note this does not remove the bindings from the remote virtual machine that this proxy represents.
+     *
+     * @param bindings the bindings to remove
+     */
     public void removeVmBindings(VmBindings bindings) {
         for (String bindingName : bindings.keySet()) {
             this.vmBindings.remove(bindingName);
         }
     }
 
+    /**
+     * Get the bindings that are local to virtual machine proxy.
+     * Note that the virtual machine proxy bindinds <i>are not</i>
+     * in direct correspondence with the bindings of the virtual machine that this proxy represents.
+     * The bindings of the virtual machine proxy need not be up to date nor be complete. These bindings are only updated
+     * when bindings are retrieved using getBindings() and can not be guarenteed to be valid/up-to-date upon receipt.
+     * It is up to the developer of the migrated code to understand how their bindings are being manipulated at the remote
+     * virtual machine and to design around these constriants appropriately.
+     *
+     * @return the current bindings at the virtual machine proxy
+     */
     public VmBindings getVmBindings() {
         return this.vmBindings;
     }

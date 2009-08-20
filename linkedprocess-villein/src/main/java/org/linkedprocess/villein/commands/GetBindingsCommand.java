@@ -28,16 +28,16 @@ import java.util.Set;
  */
 public class GetBindingsCommand extends Command {
 
-    private final HandlerSet<VmBindings> resultHandlers;
+    private final HandlerSet<VmBindings> successHandlers;
     private final HandlerSet<LopError> errorHandlers;
 
     public GetBindingsCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
-        this.resultHandlers = new HandlerSet<VmBindings>();
+        this.successHandlers = new HandlerSet<VmBindings>();
         this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(VmProxy vmStruct, Set<String> bindingNames, final Handler<VmBindings> resultHandler, final Handler<LopError> errorHandler) {
+    public void send(VmProxy vmStruct, Set<String> bindingNames, final Handler<VmBindings> successHandler, final Handler<LopError> errorHandler) {
 
         String id = Packet.nextID();
         ManageBindings manageBindings = new ManageBindings();
@@ -52,17 +52,17 @@ public class GetBindingsCommand extends Command {
         }
         manageBindings.setBindings(vmBindings);
 
-        this.resultHandlers.addHandler(id, resultHandler);
+        this.successHandlers.addHandler(id, successHandler);
         this.errorHandlers.addHandler(id, errorHandler);
 
         xmppVillein.getConnection().sendPacket(manageBindings);
     }
 
-    public void receiveNormal(final ManageBindings manageBindings) {
+    public void receiveSuccess(final ManageBindings manageBindings) {
         try {
-            resultHandlers.handle(manageBindings.getPacketID(), manageBindings.getBindings());
+            successHandlers.handle(manageBindings.getPacketID(), manageBindings.getBindings());
         } finally {
-            resultHandlers.removeHandler(manageBindings.getPacketID());
+            successHandlers.removeHandler(manageBindings.getPacketID());
             errorHandlers.removeHandler(manageBindings.getPacketID());
         }
     }
@@ -71,7 +71,7 @@ public class GetBindingsCommand extends Command {
         try {
             errorHandlers.handle(manageBindings.getPacketID(), manageBindings.getLopError());
         } finally {
-            resultHandlers.removeHandler(manageBindings.getPacketID());
+            successHandlers.removeHandler(manageBindings.getPacketID());
             errorHandlers.removeHandler(manageBindings.getPacketID());
         }
     }

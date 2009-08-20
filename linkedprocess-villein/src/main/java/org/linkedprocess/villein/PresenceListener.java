@@ -43,7 +43,7 @@ class PresenceListener extends LopVilleinListener {
             }
         } else {
             if (LinkedProcess.isBareJid(presence.getFrom())) {
-                CountrysideProxy countrysideProxy = new CountrysideProxy(presence.getFrom(), this.getXmppVillein().getDispatcher());
+                CountrysideProxy countrysideProxy = new CountrysideProxy(presence.getFrom());
                 countrysideProxy.setAvailable(PresenceListener.isAvailable(presence));
                 this.getXmppVillein().getLopCloud().addCountrysideProxy(countrysideProxy);
                 proxy = countrysideProxy;

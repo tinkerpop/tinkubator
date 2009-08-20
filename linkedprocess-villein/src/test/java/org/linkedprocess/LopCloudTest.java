@@ -5,10 +5,13 @@
  * http://linkedprocess.org and LICENSE.txt for more information.
  */
 
-package org.linkedprocess.villein.proxies;
+package org.linkedprocess;
 
 import junit.framework.TestCase;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.villein.proxies.LopCloud;
+import org.linkedprocess.villein.proxies.CountrysideProxy;
+import org.linkedprocess.villein.proxies.FarmProxy;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -18,7 +21,7 @@ public class LopCloudTest extends TestCase {
 
     public void testFarmFilters() {
         LopCloud lopCloud = new LopCloud();
-        CountrysideProxy countrysideProxy = new CountrysideProxy("test@test", null);
+        CountrysideProxy countrysideProxy = new CountrysideProxy("test@test");
         lopCloud.addCountrysideProxy(countrysideProxy);
         for (int i = 0; i < 10; i++) {
             FarmProxy farmProxy = new FarmProxy("test@test/" + LinkedProcess.generateRandomResourceId(), null);

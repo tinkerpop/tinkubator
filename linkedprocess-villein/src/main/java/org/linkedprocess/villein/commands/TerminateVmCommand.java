@@ -25,16 +25,16 @@ import org.linkedprocess.vm.TerminateVm;
  */
 public class TerminateVmCommand extends Command {
 
-    private final HandlerSet<Object> resultHandlers;
+    private final HandlerSet<Object> successHandlers;
     private final HandlerSet<LopError> errorHandlers;
 
     public TerminateVmCommand(XmppVillein xmppVillein) {
         super(xmppVillein);
-        this.resultHandlers = new HandlerSet<Object>();
+        this.successHandlers = new HandlerSet<Object>();
         this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(final VmProxy vmStruct, final Handler<Object> resultHandler, final Handler<LopError> errorHandler) {
+    public void send(final VmProxy vmStruct, final Handler<Object> successHandler, final Handler<LopError> errorHandler) {
         String id = Packet.nextID();
         TerminateVm terminateVm = new TerminateVm();
         terminateVm.setTo(vmStruct.getFullJid());
@@ -44,16 +44,16 @@ public class TerminateVmCommand extends Command {
         terminateVm.setPacketID(id);
 
         this.errorHandlers.addHandler(id, errorHandler);
-        this.resultHandlers.addHandler(id, resultHandler);
+        this.successHandlers.addHandler(id, successHandler);
 
         xmppVillein.getConnection().sendPacket(terminateVm);
     }
 
-    public void receiveNormal(final TerminateVm terminateVm) {
+    public void receiveSuccess(final TerminateVm terminateVm) {
         try {
-            this.resultHandlers.handle(terminateVm.getPacketID(), null);
+            this.successHandlers.handle(terminateVm.getPacketID(), null);
         } finally {
-            this.resultHandlers.removeHandler(terminateVm.getPacketID());
+            this.successHandlers.removeHandler(terminateVm.getPacketID());
             this.errorHandlers.removeHandler(terminateVm.getPacketID());
         }
     }
@@ -63,7 +63,7 @@ public class TerminateVmCommand extends Command {
             this.errorHandlers.handle(terminateVm.getPacketID(), terminateVm.getLopError());
         } finally {
             this.errorHandlers.removeHandler(terminateVm.getPacketID());
-            this.resultHandlers.removeHandler(terminateVm.getPacketID());
+            this.successHandlers.removeHandler(terminateVm.getPacketID());
         }
     }
 }

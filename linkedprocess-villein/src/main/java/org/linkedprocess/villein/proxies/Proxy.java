@@ -42,11 +42,7 @@ public class Proxy implements Comparable {
     public Proxy(final String fullJid, final Dispatcher dispatcher) {
         this.fullJid = fullJid;
         this.dispatcher = dispatcher;
-        try {
-            this.refreshDiscoInfo();
-        } catch (Exception e) {
-            XmppVillein.LOGGER.warning("Problem loading disco#info: " + e.getMessage());
-        }
+        this.refreshDiscoInfo();
     }
 
     public Proxy(final String fullJid, final Dispatcher dispatcher, final Document discoInfoDocument) {
@@ -71,10 +67,16 @@ public class Proxy implements Comparable {
         return this.fullJid;
     }
 
-    public void refreshDiscoInfo() throws XMPPException, JDOMException, IOException {
-        ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();
-        DiscoverInfo discoInfo = discoManager.discoverInfo(this.getFullJid());
-        this.discoInfoDocument = LinkedProcess.createXMLDocument(discoInfo.toXML());
+    public void refreshDiscoInfo() {
+        if(this.dispatcher != null) {
+            ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();
+            try {
+                DiscoverInfo discoInfo = discoManager.discoverInfo(this.getFullJid());
+                this.discoInfoDocument = LinkedProcess.createXMLDocument(discoInfo.toXML());
+            } catch (Exception e) {
+                XmppVillein.LOGGER.warning("Problem loading disco#info: " + e.getMessage());
+            }
+        }
     }
 
     public Set<String> getFeatures() {

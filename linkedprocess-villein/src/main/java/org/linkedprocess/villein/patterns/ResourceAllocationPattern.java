@@ -13,6 +13,7 @@ import org.linkedprocess.villein.proxies.FarmHolder;
 import org.linkedprocess.villein.proxies.FarmProxy;
 import org.linkedprocess.villein.proxies.LopCloud;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -71,6 +72,72 @@ public class ResourceAllocationPattern {
                 LOGGER.warning(e.getMessage());
             }
         }
+    }
+
+    /**
+     * Filters a collection of farm proxies down to only those that support a particular virtual machine species.
+     *
+     * @param farmProxies the collection of farm proxies to filter
+     * @param vmSpecies   the virtual machine species that must be supported
+     * @return a filtered farm proxy set (this is a new set as the original collection was not altered)
+     */
+    public static Set<FarmProxy> filterFarmProxiesByVmSpeciesSupport(Collection<FarmProxy> farmProxies, String vmSpecies) {
+        Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
+        for (FarmProxy farmProxy : farmProxies) {
+            if (farmProxy.supportsSpecies(vmSpecies))
+                returnFarmProxies.add(farmProxy);
+        }
+        return returnFarmProxies;
+    }
+
+    /**
+     * Filters a collection of farm proxies down to only those that have at least the mimimum virtual machine time to live.
+     *
+     * @param farmProxies         the collection of farm proxies to filter
+     * @param minimumVmTimeToLive the minimum time to live in milliseconds
+     * @return a filtered farm proxy set (this is a new set as the original collection was not altered)
+     */
+    public static Set<FarmProxy> filterFarmProxiesByVmTimeToLive(Collection<FarmProxy> farmProxies, long minimumVmTimeToLive) {
+        Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
+        for (FarmProxy farmProxy : farmProxies) {
+            if (farmProxy.getVmTimeToLive() >= minimumVmTimeToLive) {
+                returnFarmProxies.add(farmProxy);
+            }
+        }
+        return returnFarmProxies;
+    }
+
+    /**
+     * Filters a collection of farm proxies down to only those that have at least the supplied minimum job timeout value.
+     *
+     * @param farmProxies       the collection of farm proxies to filter
+     * @param minimumJobTimeout the minimum job timeout in milliseconds
+     * @return a filtered farm proxy set (this is a new set as the original collection was not altered)
+     */
+    public static Set<FarmProxy> filterFarmProxiesByJobTimeout(Collection<FarmProxy> farmProxies, long minimumJobTimeout) {
+        Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
+        for (FarmProxy farmProxy : farmProxies) {
+            if (farmProxy.getJobTimeout() >= minimumJobTimeout) {
+                returnFarmProxies.add(farmProxy);
+            }
+        }
+        return returnFarmProxies;
+    }
+
+    /**
+     * Filters a collection of farm proxies down to only those that require (or don't require) a farm password.
+     *
+     * @param farmProxies              the collection of farm proxies to filter
+     * @param wantFarmPasswordRequired whether a farm password is desired or not
+     * @return a filtered farm proxy set (this is a new set as the original collection was not altered)
+     */
+    public static Set<FarmProxy> filterFarmProxiesByPasswordRequired(Collection<FarmProxy> farmProxies, boolean wantFarmPasswordRequired) {
+        Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
+        for (FarmProxy farmProxy : farmProxies) {
+            if (farmProxy.requiresFarmPassword() == wantFarmPasswordRequired)
+                returnFarmProxies.add(farmProxy);
+        }
+        return returnFarmProxies;
     }
 
 }
