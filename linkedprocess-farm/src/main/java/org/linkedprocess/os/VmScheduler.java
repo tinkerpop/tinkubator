@@ -68,7 +68,7 @@ public class VmScheduler {
         Properties conf = LinkedProcess.getConfiguration();
 
         long timeSlice = new Long(conf.getProperty(
-                LinkedProcess.ROUND_ROBIN_TIME_SLICE_PROPERTY));
+                LinkedProcess.ROUND_ROBIN_QUANTUM_PROPERTY));
 
         workerQueue = new SimpleBlockingQueue<VmWorker>();
         workersByJID = new HashMap<String, VmWorker>();

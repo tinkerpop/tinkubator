@@ -12,10 +12,14 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.security.VMSecurityManager;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.Properties;
 import java.util.Random;
 import java.util.logging.LogManager;
@@ -294,7 +298,7 @@ public class LinkedProcess {
             JOB_TIMEOUT_PROPERTY = "org.linkedprocess.jobTimeout",
             MAX_CONCURRENT_VIRTUAL_MACHINES_PROPERTY = "org.linkedprocess.maxConcurrentVirtualMachines",
             JOB_QUEUE_CAPACITY_PROPERTY = "org.linkedprocess.jobQueueCapacity",
-            ROUND_ROBIN_TIME_SLICE_PROPERTY = "org.linkedprocess.roundRobinTimeSlice",
+            ROUND_ROBIN_QUANTUM_PROPERTY = "org.linkedprocess.roundRobinQuantum",
             VIRTUAL_MACHINE_TIME_TO_LIVE_PROPERTY = "org.linkedprocess.virtualMachineTimeToLive",
             SCHEDULER_CLEANUP_INTERVAL_PROPERTY = "org.linkedprocess.schedulerCleanupInterval";
 
