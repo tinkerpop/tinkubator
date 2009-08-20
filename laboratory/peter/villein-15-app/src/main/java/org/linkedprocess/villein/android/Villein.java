@@ -1,5 +1,12 @@
 package org.linkedprocess.villein.android;
 
+import java.io.IOException;
+import java.util.Properties;
+
+import javax.naming.Context;
+
+import org.linkedprocess.LinkedProcess;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +25,14 @@ public class Villein extends Activity {
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		Properties lopProps = new Properties();
+		try {
+			lopProps.load(getAssets().open("lop-default.properties"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		LinkedProcess.setConfiguration(lopProps);
 		this.bundle = savedInstanceState;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);

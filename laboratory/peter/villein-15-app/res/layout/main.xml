@@ -19,7 +19,7 @@ android:layout_width="wrap_content"
 android:layout_height="wrap_content">
 </TextView>
 <EditText 
-	android:text="linked.process.1" 
+	android:text="linked.process.2" 
 	android:id="@+id/username" 
 	android:layout_width="fill_parent" 
 	android:layout_height="wrap_content" 
@@ -35,7 +35,7 @@ android:layout_width="wrap_content"
 android:layout_height="wrap_content">
 </TextView>
 <EditText 
-	android:text="linked12" 
+	android:text="linked23" 
 	android:id="@+id/password" 
 	android:layout_width="fill_parent" 
 	android:layout_height="wrap_content" 
@@ -67,7 +67,7 @@ android:layout_width="wrap_content"
 android:layout_height="wrap_content">
 </TextView>
 <EditText 
-	android:text="sweden.linkedprocess.org" 
+	android:text="talk.l.google.com" 
 	android:id="@+id/server" 
 	android:layout_width="fill_parent" 
 	android:layout_height="wrap_content" 

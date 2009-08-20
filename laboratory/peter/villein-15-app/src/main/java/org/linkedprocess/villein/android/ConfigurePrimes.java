@@ -1,10 +1,8 @@
 package org.linkedprocess.villein.android;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.linkedprocess.demos.primes.PrimeFinder;
 import org.linkedprocess.smack.AndroidProviderManager;
 
 import android.app.Activity;
@@ -13,7 +11,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -48,7 +45,7 @@ public class ConfigurePrimes extends Activity {
 		try {
 			is = getAssets().open("findPrimes.groovy");
 			byte[] bytes = new byte[4000];
-			is.read(bytes , 0, 4000);
+			is.read(bytes, 0, 4000);
 			script = (TextView) findViewById(R.id.jobScript);
 			script.setText(new String(bytes).trim());
 		} catch (IOException e) {
@@ -57,16 +54,19 @@ public class ConfigurePrimes extends Activity {
 		}
 
 	}
+
 	protected void findPrimes() {
 		try {
 			AndroidProviderManager.init(this);
-			
+
 			String scriptString = script.getText().toString();
 			Bundle extras = getIntent().getExtras();
-			int nrOfFarms = Integer.parseInt((String)numberOfMachines.getSelectedItem());
-			PrimeFinder primeFinder = new PrimeFinder(1, 1000, scriptString,(String)language2.getSelectedItem(), nrOfFarms, nrOfFarms, 
-					extras.getString(Villein.USERNAME), extras.getString(Villein.PASSWORD), extras.getInt(Villein.PORT), extras.getString(Villein.SERVER));
-			// primeFinder.shutDown(new Presence(Presence.Type.unavailable));
+			int nrOfFarms = Integer.parseInt((String) numberOfMachines
+					.getSelectedItem());
+			org.linkedprocess.demos.primes.PrimeFinderAsynchWithProgress.findAsynch(1, 10000, 1, 2, extras
+					.getString(Villein.USERNAME), extras
+					.getString(Villein.PASSWORD), extras
+					.getString(Villein.SERVER), extras.getInt(Villein.PORT), 1.0, 500, System.currentTimeMillis());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
