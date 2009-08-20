@@ -1,5 +1,6 @@
 package org.linkedprocess.os;
 
+import junit.framework.TestCase;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.LinkedProcessFarm;
 
@@ -10,9 +11,13 @@ import javax.script.ScriptEngine;
  * Date: Aug 20, 2009
  * Time: 11:53:03 AM
  */
-public class VmWorkerTest {
+public class VmWorkerTest extends TestCase {
     public static void main(final String[] args) throws Exception {
         new VmWorkerTest().findContextSwitchingTime();    
+    }
+
+    public void testNothing() {
+        // This will pass!
     }
 
     public void findContextSwitchingTime() throws Exception {
