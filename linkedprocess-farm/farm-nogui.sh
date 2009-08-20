@@ -20,7 +20,7 @@ if [ $# -ge 1 ] ; then
 fi
 
 # Launch the application
-$JAVA $JAVA_OPTIONS -cp $JAR org.linkedprocess.farm.XmppFarm
+$JAVA $JAVA_OPTIONS -cp $JAR org.linkedprocess.farm.LopFarm
 
 # Return the program's exit code
 exit $?
