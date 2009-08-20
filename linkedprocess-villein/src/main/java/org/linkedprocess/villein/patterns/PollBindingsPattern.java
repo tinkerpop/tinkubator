@@ -66,7 +66,7 @@ public class PollBindingsPattern implements Runnable {
     }
 
     /**
-     * This initiates the polling thread. Note that a thread is created and started in the constructor of this method.
+     * This initiates the polling thread. Note that a thread is created and started in the constructor of this class.
      */
     public void run() {
         Object monitor = new Object();

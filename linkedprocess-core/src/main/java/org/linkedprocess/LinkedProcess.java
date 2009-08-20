@@ -12,7 +12,7 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import org.linkedprocess.security.VMSecurityManager;
+import org.linkedprocess.security.VmSecurityManager;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -336,7 +336,7 @@ public class LinkedProcess {
         }
 
         // Necessary for sandboxing of VM threads.
-        System.setSecurityManager(new VMSecurityManager(PROPERTIES));
+        System.setSecurityManager(new VmSecurityManager(PROPERTIES));
     }
 
     public static Logger getLogger(final Class c) {

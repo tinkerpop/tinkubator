@@ -8,13 +8,13 @@
 package org.linkedprocess.registry;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.LopListener;
+import org.linkedprocess.LopPacketListener;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public abstract class RegistryPacketListener extends LopListener {
+public abstract class RegistryPacketListener extends LopPacketListener {
 
     public static final LinkedProcess.ClientType LOP_CLIENT_TYPE = LinkedProcess.ClientType.REGISTRY;
 

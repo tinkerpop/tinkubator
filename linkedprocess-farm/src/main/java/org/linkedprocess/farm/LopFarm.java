@@ -24,7 +24,7 @@ import org.linkedprocess.os.errors.VmSchedulerIsFullException;
 import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 import org.linkedprocess.security.ServiceDiscoveryConfiguration;
 import org.linkedprocess.security.SystemInfo;
-import org.linkedprocess.security.VMSecurityManager;
+import org.linkedprocess.security.VmSecurityManager;
 import org.linkedprocess.LopClient;
 import org.linkedprocess.vm.LopVm;
 
@@ -189,7 +189,7 @@ public class LopFarm extends LopClient {
         this.serviceExtension.addField(field);
 
         // Add security-related fields
-        VMSecurityManager man = (VMSecurityManager) System.getSecurityManager();
+        VmSecurityManager man = (VmSecurityManager) System.getSecurityManager();
         ServiceDiscoveryConfiguration conf = new ServiceDiscoveryConfiguration(man);
         conf.addFields(this.serviceExtension);
 

@@ -10,7 +10,7 @@ package org.linkedprocess.os;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.errors.JobAlreadyExistsException;
 import org.linkedprocess.os.errors.JobNotFoundException;
-import org.linkedprocess.security.VMSandboxedThread;
+import org.linkedprocess.security.VmSandboxedThread;
 import org.mozilla.javascript.WrappedException;
 
 import javax.script.Bindings;
@@ -443,7 +443,7 @@ public class VmWorker {
     }
 
     private Thread createWorkerThread() {
-        Thread t = new VMSandboxedThread(new WorkerRunnable(), nextThreadName());
+        Thread t = new VmSandboxedThread(new WorkerRunnable(), nextThreadName());
         // Worker threads have less priority than sequencer threads, which have
         // less priority than the scheduler's thread.
         t.setPriority(Thread.currentThread().getPriority() - 2);

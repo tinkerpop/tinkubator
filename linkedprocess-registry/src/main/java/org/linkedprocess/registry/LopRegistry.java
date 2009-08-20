@@ -109,7 +109,7 @@ public class LopRegistry extends LopClient {
         String username = props.getProperty(LinkedProcess.REGISTRY_USERNAME_PROPERTY);
         String password = props.getProperty(LinkedProcess.REGISTRY_PASSWORD_PROPERTY);
 
-        LopRegistry xmppRegistry = new LopRegistry(server, port, username, password);
+        LopRegistry lopRegistry = new LopRegistry(server, port, username, password);
 
         Object monitor = new Object();
         try {

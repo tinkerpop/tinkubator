@@ -17,10 +17,10 @@ import org.linkedprocess.LinkedProcess;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public abstract class LopListener implements PacketListener {
+public abstract class LopPacketListener implements PacketListener {
     public LopClient lopClient;
 
-    public LopListener(LopClient lopClient) {
+    public LopPacketListener(LopClient lopClient) {
         this.lopClient = lopClient;
     }
 

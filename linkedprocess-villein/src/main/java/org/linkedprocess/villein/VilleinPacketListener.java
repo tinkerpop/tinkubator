@@ -10,7 +10,7 @@ package org.linkedprocess.villein;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.LopListener;
+import org.linkedprocess.LopPacketListener;
 import org.linkedprocess.vm.*;
 import org.linkedprocess.farm.SpawnVm;
 
@@ -21,7 +21,7 @@ import org.linkedprocess.farm.SpawnVm;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-class VilleinPacketListener extends LopListener {
+class VilleinPacketListener extends LopPacketListener {
 
     public static final LinkedProcess.ClientType LOP_CLIENT_TYPE = LinkedProcess.ClientType.VILLEIN;
 

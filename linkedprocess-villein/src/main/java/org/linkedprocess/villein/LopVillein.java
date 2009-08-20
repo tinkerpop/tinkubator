@@ -34,7 +34,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * XmppVillein is the primary class used when creating an LoP villein. An LoP villein is an XMPP client that is identified by a fully-qualified JID.
+ * LopVillein is the primary class used when creating an LoP villein. An LoP villein is an XMPP client that is identified by a fully-qualified JID.
  * The bare JID of a villein is the villein's countryside. A villein is able to leverage the resources of an LoP cloud and thus,
  * can utilize the resources on other countrysides. For anyone wishing to make use of the computing resource of an LoP cloud, a villein is the
  * means by which this is done.
