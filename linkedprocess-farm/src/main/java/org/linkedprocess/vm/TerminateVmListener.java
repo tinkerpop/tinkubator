@@ -7,7 +7,7 @@ import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.vm.TerminateVm;
 import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 import org.linkedprocess.LopError;
-import org.linkedprocess.farm.XmppFarm;
+import org.linkedprocess.farm.LopFarm;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -15,8 +15,8 @@ import org.linkedprocess.farm.XmppFarm;
  */
 public class TerminateVmListener extends LopVmListener {
 
-    public TerminateVmListener(XmppVm xmppVm) {
-        super(xmppVm);
+    public TerminateVmListener(LopVm lopVm) {
+        super(lopVm);
     }
 
     public void processPacket(Packet terminateVm) {
@@ -31,8 +31,8 @@ public class TerminateVmListener extends LopVmListener {
     }
 
     private void processTerminateVmPacket(TerminateVm terminateVm) {
-        XmppFarm.LOGGER.info("Arrived " + TerminateVmListener.class.getName());
-        XmppFarm.LOGGER.info(terminateVm.toXML());
+        LopFarm.LOGGER.info("Arrived " + TerminateVmListener.class.getName());
+        LopFarm.LOGGER.info(terminateVm.toXML());
 
         TerminateVm returnTerminateVm = new TerminateVm();
         returnTerminateVm.setTo(terminateVm.getFrom());
@@ -45,7 +45,7 @@ public class TerminateVmListener extends LopVmListener {
         if (null == vmPassword) {
             returnTerminateVm.setType(IQ.Type.ERROR);
             returnTerminateVm.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "terminate_vm XML packet is missing the vm_password attribute", LOP_CLIENT_TYPE, terminateVm.getPacketID()));
-        } else if (!((XmppVm) this.xmppClient).checkVmPassword(vmPassword)) {
+        } else if (!((LopVm) this.lopClient).checkVmPassword(vmPassword)) {
             returnTerminateVm.setType(IQ.Type.ERROR);
             returnTerminateVm.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, terminateVm.getPacketID()));
         } else {
@@ -53,13 +53,13 @@ public class TerminateVmListener extends LopVmListener {
             returnTerminateVm.setType(IQ.Type.RESULT);
         }
 
-        XmppFarm.LOGGER.info("Sent " + TerminateVmListener.class.getName());
-        XmppFarm.LOGGER.info(returnTerminateVm.toXML());
+        LopFarm.LOGGER.info("Sent " + TerminateVmListener.class.getName());
+        LopFarm.LOGGER.info(returnTerminateVm.toXML());
         this.getXmppVm().getConnection().sendPacket(returnTerminateVm);
 
         if (terminate) {
             try {
-                this.getXmppVm().getFarm().getVmScheduler().terminateVirtualMachine(xmppClient.getFullJid());
+                this.getXmppVm().getFarm().getVmScheduler().terminateVirtualMachine(lopClient.getFullJid());
             } catch (VmWorkerNotFoundException e) {
                 this.getXmppVm().shutdown();
             }

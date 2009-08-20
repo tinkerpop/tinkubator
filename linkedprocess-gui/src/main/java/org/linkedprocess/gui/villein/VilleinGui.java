@@ -1,7 +1,7 @@
 package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.Connection;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
 import org.linkedprocess.villein.proxies.VmProxy;
 
@@ -17,8 +17,8 @@ public class VilleinGui extends JFrame {
 
     protected static final String FRAME_TITLE = "LoPSideD Villein";
 
-    protected XmppVillein xmppVillein;
-    protected LopCloudArea lopCloudArea;
+    protected LopVillein xmppVillein;
+    protected CloudArea cloudArea;
     protected Map<String, VmControlFrame> vmFrames = new HashMap<String, VmControlFrame>();
 
     public VilleinGui() {
@@ -40,14 +40,14 @@ public class VilleinGui extends JFrame {
         this.setVisible(true);
     }
 
-    public void loadLopCloudArea(XmppVillein xmppVillein) {
+    public void loadLopCloudArea(LopVillein xmppVillein) {
         this.xmppVillein = xmppVillein;
 
         this.getContentPane().removeAll();
-        this.lopCloudArea = new LopCloudArea(this);
-        this.lopCloudArea.createTree();
-        this.xmppVillein.addPresenceHandler(this.lopCloudArea);
-        this.getContentPane().add(lopCloudArea);
+        this.cloudArea = new CloudArea(this);
+        this.cloudArea.createTree();
+        this.xmppVillein.addPresenceHandler(this.cloudArea);
+        this.getContentPane().add(cloudArea);
         this.setResizable(true);
         this.pack();
         this.setVisible(true);
@@ -69,7 +69,7 @@ public class VilleinGui extends JFrame {
         return this.vmFrames.get(vmJid);
     }
 
-    public XmppVillein getXmppVillein() {
+    public LopVillein getXmppVillein() {
         return this.xmppVillein;
     }
 

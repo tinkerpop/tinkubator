@@ -11,7 +11,7 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.LopError;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.villein.proxies.VmProxy;
 import org.linkedprocess.vm.TerminateVm;
 
@@ -28,7 +28,7 @@ public class TerminateVmCommand extends Command {
     private final HandlerSet<Object> successHandlers;
     private final HandlerSet<LopError> errorHandlers;
 
-    public TerminateVmCommand(XmppVillein xmppVillein) {
+    public TerminateVmCommand(LopVillein xmppVillein) {
         super(xmppVillein);
         this.successHandlers = new HandlerSet<Object>();
         this.errorHandlers = new HandlerSet<LopError>();

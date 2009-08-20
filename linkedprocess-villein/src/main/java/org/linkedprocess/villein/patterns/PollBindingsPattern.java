@@ -33,14 +33,14 @@ public class PollBindingsPattern implements Runnable {
     protected VmBindings desiredBindings;
     protected long pollingInterval;
     protected BindingsChecker bindingsChecker;
-    protected Handler<VmBindings> resultHandler;
+    protected Handler<VmBindings> successHandler;
     protected Handler<LopError> errorHandler;
 
-    public void startPattern(final VmProxy vmProxy, final VmBindings desiredBindings, final BindingsChecker bindingsChecker, Handler<VmBindings> resultHandler, Handler<LopError> errorHandler, long pollingInterval) {
+    public void startPattern(final VmProxy vmProxy, final VmBindings desiredBindings, final BindingsChecker bindingsChecker, Handler<VmBindings> successHandler, Handler<LopError> errorHandler, long pollingInterval) {
         this.vmProxy = vmProxy;
         this.desiredBindings = desiredBindings;
         this.bindingsChecker = bindingsChecker;
-        this.resultHandler = resultHandler;
+        this.successHandler = successHandler;
         this.errorHandler = errorHandler;
         this.pollingInterval = pollingInterval;
         new Thread(this).start();
@@ -86,7 +86,7 @@ public class PollBindingsPattern implements Runnable {
                     break;
                 } else {
                     if (this.bindingsChecker.areEquivalent(resultBindings.getResult(), this.desiredBindings)) {
-                        resultHandler.handle(resultBindings.getResult());
+                        successHandler.handle(resultBindings.getResult());
                         break;
                     } else {
                         monitorSleep(monitor, this.pollingInterval);

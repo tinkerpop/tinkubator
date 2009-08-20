@@ -19,13 +19,13 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.XmppConnectionWrapper;
-import org.linkedprocess.XmppClient;
+import org.linkedprocess.LopClient;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { XmppClient.class, ServiceDiscoveryManager.class })
+@PrepareForTest( { LopClient.class, ServiceDiscoveryManager.class })
 // ignore fishy stuff
 @PowerMockIgnore( { "javax.script", "org.apache.log4j" })
 public class OfflineTest {

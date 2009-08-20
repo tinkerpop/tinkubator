@@ -16,8 +16,8 @@ import org.linkedprocess.os.errors.JobAlreadyExistsException;
 import org.linkedprocess.os.errors.JobNotFoundException;
 import org.linkedprocess.os.errors.VmWorkerIsFullException;
 import org.linkedprocess.os.errors.VmWorkerNotFoundException;
-import org.linkedprocess.XmppClient;
-import org.linkedprocess.farm.XmppFarm;
+import org.linkedprocess.LopClient;
+import org.linkedprocess.farm.LopFarm;
 
 import java.util.Set;
 import java.util.logging.Logger;
@@ -26,18 +26,18 @@ import java.util.logging.Logger;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class XmppVm extends XmppClient {
+public class LopVm extends LopClient {
 
-    public static Logger LOGGER = LinkedProcess.getLogger(XmppVm.class);
+    public static Logger LOGGER = LinkedProcess.getLogger(LopVm.class);
     public static String RESOURCE_PREFIX = "LoPVM";
     public static String STATUS_MESSAGE = "LoPSideD Virtual Machine";
 
-    protected final XmppFarm farm;
+    protected final LopFarm farm;
     protected final String vmPassword;
     protected final String vmSpecies;
     protected final String spawningVilleinJid;
 
-    public XmppVm(final String server, final int port, final String username, final String password, XmppFarm farm, final String spawningVilleinJid, final String vmSpecies, final String vmPassword) {
+    public LopVm(final String server, final int port, final String username, final String password, LopFarm farm, final String spawningVilleinJid, final String vmSpecies, final String vmPassword) {
 
         this.farm = farm;
         this.vmPassword = vmPassword;
@@ -80,7 +80,7 @@ public class XmppVm extends XmppClient {
         super.logon(server, port, username, password, RESOURCE_PREFIX);
     }
 
-    public XmppFarm getFarm() {
+    public LopFarm getFarm() {
         return this.farm;
     }
 
@@ -88,9 +88,9 @@ public class XmppVm extends XmppClient {
 
         switch (status) {
             case ACTIVE:
-                return new Presence(Presence.Type.available, XmppVm.STATUS_MESSAGE, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.available);
+                return new Presence(Presence.Type.available, LopVm.STATUS_MESSAGE, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.available);
             case ACTIVE_FULL:
-                return new Presence(Presence.Type.available, XmppVm.STATUS_MESSAGE, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.dnd);
+                return new Presence(Presence.Type.available, LopVm.STATUS_MESSAGE, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.dnd);
             case NOT_FOUND:
                 return new Presence(Presence.Type.unavailable);
             case INACTIVE:
@@ -122,7 +122,7 @@ public class XmppVm extends XmppClient {
 
     protected void initiateFeatures() {
         super.initiateFeatures();
-        ServiceDiscoveryManager.setIdentityName(XmppVm.RESOURCE_PREFIX);
+        ServiceDiscoveryManager.setIdentityName(LopVm.RESOURCE_PREFIX);
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
         this.getDiscoManager().addFeature(LinkedProcess.LOP_VM_NAMESPACE);
 

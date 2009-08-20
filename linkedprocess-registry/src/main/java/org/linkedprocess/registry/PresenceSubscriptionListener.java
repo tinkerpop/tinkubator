@@ -17,8 +17,8 @@ import org.jivesoftware.smack.packet.Presence;
 public class PresenceSubscriptionListener extends LopRegistryListener {
 
 
-    public PresenceSubscriptionListener(XmppRegistry xmppRegistry) {
-        super(xmppRegistry);
+    public PresenceSubscriptionListener(LopRegistry lopRegistry) {
+        super(lopRegistry);
     }
 
     public void processPacket(Packet packet) {
@@ -33,7 +33,7 @@ public class PresenceSubscriptionListener extends LopRegistryListener {
 
         Presence.Type type = presence.getType();
         if (type == Presence.Type.subscribe) {
-            XmppRegistry.LOGGER.info("Subscribing to " + presence.getFrom());
+            LopRegistry.LOGGER.info("Subscribing to " + presence.getFrom());
             Presence subscribed = new Presence(Presence.Type.subscribed);
             Presence subscribe = new Presence(Presence.Type.subscribe);
             subscribed.setTo(presence.getFrom());
@@ -48,7 +48,7 @@ public class PresenceSubscriptionListener extends LopRegistryListener {
 
         } else
         if (type == Presence.Type.unsubscribe && !presence.getFrom().equals(this.getXmppRegistry().getBareJid()) && !presence.getFrom().equals(this.getXmppRegistry().getFullJid())) {
-            XmppRegistry.LOGGER.info("Unsubscribing from " + presence.getFrom());
+            LopRegistry.LOGGER.info("Unsubscribing from " + presence.getFrom());
             Presence unsubscribed = new Presence(Presence.Type.unsubscribed);
             Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
             unsubscribed.setTo(presence.getFrom());
@@ -62,6 +62,6 @@ public class PresenceSubscriptionListener extends LopRegistryListener {
 
             return;
         }
-        XmppRegistry.LOGGER.severe("This shouldn't have happened.");  // TODO: make this an exception or something -- however, this has yet to happen. Perhaps just remove.
+        LopRegistry.LOGGER.severe("This shouldn't have happened.");  // TODO: make this an exception or something -- however, this has yet to happen. Perhaps just remove.
     }
 }

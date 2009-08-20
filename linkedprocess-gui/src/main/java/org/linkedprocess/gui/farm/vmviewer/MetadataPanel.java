@@ -1,7 +1,7 @@
 package org.linkedprocess.gui.farm.vmviewer;
 
 import org.linkedprocess.gui.ImageHolder;
-import org.linkedprocess.vm.XmppVm;
+import org.linkedprocess.vm.LopVm;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,14 +14,14 @@ import java.awt.event.ActionListener;
  */
 public class MetadataPanel extends JPanel implements ActionListener {
 
-    protected XmppVm xmppVm;
+    protected LopVm lopVm;
     protected JLabel timeLabel;
     protected JLabel statusLabel;
     protected final static String REFRESH = "refresh";
 
-    public MetadataPanel(XmppVm xmppVm) {
+    public MetadataPanel(LopVm lopVm) {
         super(new BorderLayout());
-        this.xmppVm = xmppVm;
+        this.lopVm = lopVm;
         JPanel metaPanel = new JPanel(new GridBagLayout());
         metaPanel.setBackground(Color.WHITE);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -35,18 +35,18 @@ public class MetadataPanel extends JPanel implements ActionListener {
         c.gridx = 0;
         c.gridy = 0;
         c.ipady = 10;
-        metaPanel.add(new JLabel(this.xmppVm.getFullJid(), ImageHolder.vmIcon, JLabel.LEFT), c);
+        metaPanel.add(new JLabel(this.lopVm.getFullJid(), ImageHolder.vmIcon, JLabel.LEFT), c);
         c.gridy = 1;
-        metaPanel.add(new JLabel(this.xmppVm.getSpawningVilleinJid(), ImageHolder.villeinIcon, JLabel.LEFT), c);
+        metaPanel.add(new JLabel(this.lopVm.getSpawningVilleinJid(), ImageHolder.villeinIcon, JLabel.LEFT), c);
         c.gridy = 2;
-        this.statusLabel = new JLabel(this.xmppVm.getVmStatus().toString(), ImageHolder.statusIcon, JLabel.LEFT);
+        this.statusLabel = new JLabel(this.lopVm.getVmStatus().toString(), ImageHolder.statusIcon, JLabel.LEFT);
         metaPanel.add(this.statusLabel, c);
         c.gridy = 3;
-        metaPanel.add(new JLabel(this.xmppVm.getVmSpecies(), ImageHolder.speciesIcon, JLabel.LEFT), c);
+        metaPanel.add(new JLabel(this.lopVm.getVmSpecies(), ImageHolder.speciesIcon, JLabel.LEFT), c);
         c.gridy = 4;
-        metaPanel.add(new JLabel(this.xmppVm.getVmPassword(), ImageHolder.passwordIcon, JLabel.LEFT), c);
+        metaPanel.add(new JLabel(this.lopVm.getVmPassword(), ImageHolder.passwordIcon, JLabel.LEFT), c);
         c.gridy = 5;
-        this.timeLabel = new JLabel(this.xmppVm.getRunningTimeInSeconds() + " seconds", ImageHolder.timeIcon, JLabel.LEFT);
+        this.timeLabel = new JLabel(this.lopVm.getRunningTimeInSeconds() + " seconds", ImageHolder.timeIcon, JLabel.LEFT);
         metaPanel.add(this.timeLabel, c);
         this.add(metaPanel, BorderLayout.NORTH);
         this.setBackground(Color.WHITE);
@@ -57,8 +57,8 @@ public class MetadataPanel extends JPanel implements ActionListener {
 
     public void actionPerformed(ActionEvent event) {
         if (event.getActionCommand().equals(REFRESH)) {
-            this.timeLabel.setText(this.xmppVm.getRunningTimeInSeconds() + " seconds");
-            this.statusLabel.setText(this.xmppVm.getVmStatus().toString());
+            this.timeLabel.setText(this.lopVm.getRunningTimeInSeconds() + " seconds");
+            this.statusLabel.setText(this.lopVm.getVmStatus().toString());
         }
     }
 

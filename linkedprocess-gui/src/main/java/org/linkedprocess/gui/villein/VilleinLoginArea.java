@@ -3,7 +3,7 @@ package org.linkedprocess.gui.villein;
 import org.jivesoftware.smack.XMPPException;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.LoginArea;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 
 import javax.swing.*;
 import java.awt.*;
@@ -94,7 +94,7 @@ public class VilleinLoginArea extends LoginArea {
 
         try {
             if (event.getActionCommand().equals(LOGIN)) {
-                XmppVillein villein = new XmppVillein(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText());
+                LopVillein villein = new LopVillein(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText());
                 this.villeinGui.loadLopCloudArea(villein);
             } else if (event.getActionCommand().equals(QUIT)) {
                 System.exit(0);

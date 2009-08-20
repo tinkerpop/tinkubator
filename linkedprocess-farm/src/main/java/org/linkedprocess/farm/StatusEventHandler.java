@@ -3,7 +3,7 @@ package org.linkedprocess.farm;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.VmScheduler;
 import org.linkedprocess.os.errors.VmWorkerNotFoundException;
-import org.linkedprocess.vm.XmppVm;
+import org.linkedprocess.vm.LopVm;
 
 /**
  * User: marko
@@ -12,20 +12,20 @@ import org.linkedprocess.vm.XmppVm;
  */
 public class StatusEventHandler implements VmScheduler.LopStatusEventHandler {
 
-    protected XmppFarm xmppFarm;
+    protected LopFarm lopFarm;
 
-    public StatusEventHandler(XmppFarm xmppFarm) {
-        this.xmppFarm = xmppFarm;
+    public StatusEventHandler(LopFarm lopFarm) {
+        this.lopFarm = lopFarm;
     }
 
     public void schedulerStatusChanged(LinkedProcess.FarmStatus status) {
-        this.xmppFarm.getConnection().sendPacket(this.xmppFarm.createPresence(status));
+        this.lopFarm.getConnection().sendPacket(this.lopFarm.createPresence(status));
     }
 
     public void virtualMachineStatusChanged(String vmJid, LinkedProcess.VmStatus status) {
         try {
 
-            XmppVm vm = this.xmppFarm.getVirtualMachine(vmJid);
+            LopVm vm = this.lopFarm.getVirtualMachine(vmJid);
             if (status == LinkedProcess.VmStatus.NOT_FOUND) {
                 vm.terminateSelf();
             } else {
@@ -33,7 +33,7 @@ public class StatusEventHandler implements VmScheduler.LopStatusEventHandler {
             }
 
         } catch (VmWorkerNotFoundException e) {
-            XmppFarm.LOGGER.severe(e.getMessage());
+            LopFarm.LOGGER.severe(e.getMessage());
         }
     }
 }

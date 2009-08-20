@@ -18,12 +18,12 @@ public abstract class LopRegistryListener extends LopListener {
 
     public static final LinkedProcess.ClientType LOP_CLIENT_TYPE = LinkedProcess.ClientType.REGISTRY;
 
-    public LopRegistryListener(XmppRegistry xmppRegistry) {
-        super(xmppRegistry);
+    public LopRegistryListener(LopRegistry lopRegistry) {
+        super(lopRegistry);
     }
 
-    public XmppRegistry getXmppRegistry() {
-        return (XmppRegistry) this.xmppClient;
+    public LopRegistry getXmppRegistry() {
+        return (LopRegistry) this.lopClient;
     }
 
 }

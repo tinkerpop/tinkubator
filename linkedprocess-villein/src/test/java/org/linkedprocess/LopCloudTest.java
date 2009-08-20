@@ -9,7 +9,7 @@ package org.linkedprocess;
 
 import junit.framework.TestCase;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.villein.proxies.LopCloud;
+import org.linkedprocess.villein.proxies.Cloud;
 import org.linkedprocess.villein.proxies.CountrysideProxy;
 import org.linkedprocess.villein.proxies.FarmProxy;
 
@@ -20,14 +20,14 @@ import org.linkedprocess.villein.proxies.FarmProxy;
 public class LopCloudTest extends TestCase {
 
     public void testFarmFilters() {
-        LopCloud lopCloud = new LopCloud();
+        Cloud cloud = new Cloud();
         CountrysideProxy countrysideProxy = new CountrysideProxy("test@test");
-        lopCloud.addCountrysideProxy(countrysideProxy);
+        cloud.addCountrysideProxy(countrysideProxy);
         for (int i = 0; i < 10; i++) {
             FarmProxy farmProxy = new FarmProxy("test@test/" + LinkedProcess.generateRandomResourceId(), null);
-            lopCloud.addFarmProxy(farmProxy);
+            cloud.addFarmProxy(farmProxy);
         }
-        assertEquals(lopCloud.getFarmProxies().size(), 10);
+        assertEquals(cloud.getFarmProxies().size(), 10);
     }
 
 }

@@ -1,7 +1,7 @@
 package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.gui.ImageHolder;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.villein.proxies.CountrysideProxy;
 import org.linkedprocess.villein.proxies.RegistryProxy;
 
@@ -58,7 +58,7 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
                 this.registryProxy.refreshDiscoItems();
                 this.refreshCountrysideFarms();
             } catch (Exception e) {
-                XmppVillein.LOGGER.severe(e.getMessage());
+                LopVillein.LOGGER.severe(e.getMessage());
             }
         } else if (event.getActionCommand().equals(SUBSCRIBE)) {
             for (Object farmlandJid : this.farmlandList.getSelectedValues()) {

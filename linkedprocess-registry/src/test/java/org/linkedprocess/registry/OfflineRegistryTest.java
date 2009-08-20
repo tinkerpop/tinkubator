@@ -24,11 +24,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.testing.offline.OfflineTest;
-import org.linkedprocess.registry.XmppRegistry;
+import org.linkedprocess.registry.LopRegistry;
 
 public class OfflineRegistryTest extends OfflineTest {
 
-	private XmppRegistry reg;
+	private LopRegistry reg;
 	private ArrayList<Packet> sentPackets;
 	private MockRegistryXmppConnection connection;
 
@@ -42,7 +42,7 @@ public class OfflineRegistryTest extends OfflineTest {
 		sentPackets = connection.sentPackets;
 		replayAll();
 		// start the farm
-		reg = new XmppRegistry(server, port, username, password);
+		reg = new LopRegistry(server, port, username, password);
 	}
 
 	@Test

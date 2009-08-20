@@ -7,7 +7,7 @@
 
 package org.linkedprocess.villein.commands;
 
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 
 /**
  * The base class of all LoP command proxies.
@@ -18,9 +18,9 @@ import org.linkedprocess.villein.XmppVillein;
  */
 public abstract class Command {
 
-    protected final XmppVillein xmppVillein;
+    protected final LopVillein xmppVillein;
 
-    public Command(final XmppVillein xmppVillein) {
+    public Command(final LopVillein xmppVillein) {
         this.xmppVillein = xmppVillein;
     }
 

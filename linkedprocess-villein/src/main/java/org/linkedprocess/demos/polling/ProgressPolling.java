@@ -11,7 +11,7 @@ import org.linkedprocess.os.TypedValue;
 import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.LopError;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.villein.patterns.BindingsChecker;
 import org.linkedprocess.villein.patterns.PollBindingsPattern;
 import org.linkedprocess.villein.patterns.ResourceAllocationPattern;
@@ -41,7 +41,7 @@ public class ProgressPolling {
     public static void doProgressPolling(double meterMax, long pollingInterval, String username, String password, String server, int port) throws Exception {
 
         final Object monitor = new Object();
-        XmppVillein villein = new XmppVillein(server, port, username, password);
+        LopVillein villein = new LopVillein(server, port, username, password);
         villein.createLopCloudFromRoster();
 
         //////////////// ALLOCATE FARMS

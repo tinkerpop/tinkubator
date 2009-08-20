@@ -11,7 +11,7 @@ import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.villein.proxies.CountrysideProxy;
 import org.linkedprocess.villein.proxies.FarmHolder;
 import org.linkedprocess.villein.proxies.FarmProxy;
-import org.linkedprocess.villein.proxies.LopCloud;
+import org.linkedprocess.villein.proxies.Cloud;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -58,12 +58,12 @@ public class ResourceAllocationPattern {
         }
     }
 
-    public static CountrysideProxy allocateCountryside(final LopCloud lopCloud, final String countrysideJid, final long timeout) throws TimeoutException {
+    public static CountrysideProxy allocateCountryside(final Cloud cloud, final String countrysideJid, final long timeout) throws TimeoutException {
         CountrysideProxy countrysideProxy = null;
         long startTime = System.currentTimeMillis();
         while (true) {
             checkTimeout(startTime, timeout);
-            countrysideProxy = lopCloud.getCountrysideProxy(countrysideJid);
+            countrysideProxy = cloud.getCountrysideProxy(countrysideJid);
             if (null != countrysideProxy)
                 return countrysideProxy;
             try {

@@ -20,13 +20,13 @@ import org.jivesoftware.smack.packet.RosterPacket;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.XmppClient;
+import org.linkedprocess.LopClient;
 import org.linkedprocess.vm.*;
 import org.linkedprocess.farm.SpawnVmProvider;
 import org.linkedprocess.villein.Dispatcher;
 import org.linkedprocess.villein.proxies.CountrysideProxy;
 import org.linkedprocess.villein.proxies.FarmProxy;
-import org.linkedprocess.villein.proxies.LopCloud;
+import org.linkedprocess.villein.proxies.Cloud;
 import org.linkedprocess.villein.proxies.VmProxy;
 
 import java.util.HashSet;
@@ -42,16 +42,16 @@ import java.util.logging.Logger;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class XmppVillein extends XmppClient {
+public class LopVillein extends LopClient {
 
-    public static Logger LOGGER = LinkedProcess.getLogger(XmppVillein.class);
+    public static Logger LOGGER = LinkedProcess.getLogger(LopVillein.class);
     public static final String RESOURCE_PREFIX = "LoPVillein";
     public static final String STATUS_MESSAGE = "LoPSideD Villein";
     protected LinkedProcess.VilleinStatus status;
     protected Dispatcher dispatcher;
 
     protected Set<PresenceHandler> presenceHandlers = new HashSet<PresenceHandler>();
-    protected LopCloud lopCloud = new LopCloud();
+    protected Cloud cloud = new Cloud();
 
     /**
      * Creates a new LoP villein.
@@ -62,7 +62,7 @@ public class XmppVillein extends XmppClient {
      * @param password the password to use to log into the XMPP server with
      * @throws XMPPException is thrown when some communication error occurs with the XMPP server
      */
-    public XmppVillein(final String server, final int port, final String username, final String password) throws XMPPException {
+    public LopVillein(final String server, final int port, final String username, final String password) throws XMPPException {
         LOGGER.info("Starting " + STATUS_MESSAGE);
 
         ProviderManager pm = ProviderManager.getInstance();
@@ -91,7 +91,7 @@ public class XmppVillein extends XmppClient {
     public final Presence createPresence(final LinkedProcess.VilleinStatus status) {
         switch (status) {
             case ACTIVE:
-                return new Presence(Presence.Type.available, XmppVillein.STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
+                return new Presence(Presence.Type.available, LopVillein.STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
             case INACTIVE:
                 return new Presence(Presence.Type.unavailable);
             default:
@@ -112,8 +112,8 @@ public class XmppVillein extends XmppClient {
      *
      * @return an LoP cloud data structure
      */
-    public LopCloud getLopCloud() {
-        return this.lopCloud;
+    public Cloud getLopCloud() {
+        return this.cloud;
     }
 
     /**
@@ -122,10 +122,10 @@ public class XmppVillein extends XmppClient {
      */
     public void createLopCloudFromRoster() {
         for (RosterEntry entry : this.getRoster().getEntries()) {
-            CountrysideProxy countrysideProxy = this.lopCloud.getCountrysideProxy(entry.getUser());
+            CountrysideProxy countrysideProxy = this.cloud.getCountrysideProxy(entry.getUser());
             if (countrysideProxy == null && (entry.getType() == RosterPacket.ItemType.to || entry.getType() == RosterPacket.ItemType.both)) {
                 countrysideProxy = new CountrysideProxy(entry.getUser());
-                this.lopCloud.addCountrysideProxy(countrysideProxy);
+                this.cloud.addCountrysideProxy(countrysideProxy);
             }
         }
     }
@@ -137,7 +137,7 @@ public class XmppVillein extends XmppClient {
      */
     public void requestUnsubscription(String bareJid) {
         super.requestUnsubscription(bareJid);
-        CountrysideProxy countrysideProxy = this.lopCloud.getCountrysideProxy(bareJid);
+        CountrysideProxy countrysideProxy = this.cloud.getCountrysideProxy(bareJid);
         if (countrysideProxy != null) {
             for (FarmProxy farmProxy : countrysideProxy.getFarmProxies()) {
                 for (VmProxy vmProxy : farmProxy.getVmProxies()) {
@@ -147,7 +147,7 @@ public class XmppVillein extends XmppClient {
                 }
             }
         }
-        this.lopCloud.removeCountrysideProxy(bareJid);
+        this.cloud.removeCountrysideProxy(bareJid);
     }
 
     /**
@@ -155,7 +155,7 @@ public class XmppVillein extends XmppClient {
      */
     protected void initiateFeatures() {
         super.initiateFeatures();
-        ServiceDiscoveryManager.setIdentityName(XmppVillein.RESOURCE_PREFIX);
+        ServiceDiscoveryManager.setIdentityName(LopVillein.RESOURCE_PREFIX);
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
     }
 

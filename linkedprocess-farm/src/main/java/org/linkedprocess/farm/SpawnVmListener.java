@@ -9,7 +9,7 @@ import org.linkedprocess.farm.SpawnVm;
 import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
 import org.linkedprocess.os.errors.VmAlreadyExistsException;
 import org.linkedprocess.os.errors.VmSchedulerIsFullException;
-import org.linkedprocess.vm.XmppVm;
+import org.linkedprocess.vm.LopVm;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -17,8 +17,8 @@ import org.linkedprocess.vm.XmppVm;
  */
 public class SpawnVmListener extends LopFarmListener {
 
-    public SpawnVmListener(XmppFarm xmppFarm) {
-        super(xmppFarm);
+    public SpawnVmListener(LopFarm lopFarm) {
+        super(lopFarm);
     }
 
     public void processPacket(Packet packet) {
@@ -30,13 +30,13 @@ public class SpawnVmListener extends LopFarmListener {
     }
 
     private void processSpawnVmPacket(SpawnVm spawnVm) {
-        XmppFarm.LOGGER.info("Arrived " + SpawnVmListener.class.getName());
-        XmppFarm.LOGGER.info(spawnVm.toXML());
+        LopFarm.LOGGER.info("Arrived " + SpawnVmListener.class.getName());
+        LopFarm.LOGGER.info(spawnVm.toXML());
 
 
         SpawnVm returnSpawnVm = new SpawnVm();
         returnSpawnVm.setTo(spawnVm.getFrom());
-        returnSpawnVm.setFrom(xmppClient.getFullJid());
+        returnSpawnVm.setFrom(lopClient.getFullJid());
         returnSpawnVm.setPacketID(spawnVm.getPacketID());
 
         String vmSpecies = spawnVm.getVmSpecies();
@@ -52,7 +52,7 @@ public class SpawnVmListener extends LopFarmListener {
             returnSpawnVm.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_FARM_PASSWORD, null, LOP_CLIENT_TYPE, spawnVm.getPacketID()));
         } else {
             try {
-                XmppVm vm = this.getXmppFarm().spawnVirtualMachine(spawnVm.getFrom(), vmSpecies);
+                LopVm vm = this.getXmppFarm().spawnVirtualMachine(spawnVm.getFrom(), vmSpecies);
                 returnSpawnVm.setVmJid(vm.getFullJid());
                 returnSpawnVm.setVmPassword(vm.getVmPassword());
                 returnSpawnVm.setVmSpecies(vmSpecies);
@@ -70,8 +70,8 @@ public class SpawnVmListener extends LopFarmListener {
             }
         }
 
-        XmppFarm.LOGGER.info("Sent " + SpawnVmListener.class.getName());
-        XmppFarm.LOGGER.info(returnSpawnVm.toXML());
+        LopFarm.LOGGER.info("Sent " + SpawnVmListener.class.getName());
+        LopFarm.LOGGER.info(returnSpawnVm.toXML());
         this.getXmppFarm().getConnection().sendPacket(returnSpawnVm);
 
 

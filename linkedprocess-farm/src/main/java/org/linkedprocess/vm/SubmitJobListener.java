@@ -18,8 +18,8 @@ import org.linkedprocess.LopError;
 public class SubmitJobListener extends LopVmListener {
 
 
-    public SubmitJobListener(XmppVm xmppVm) {
-        super(xmppVm);
+    public SubmitJobListener(LopVm lopVm) {
+        super(lopVm);
     }
 
     public void processPacket(Packet packet) {
@@ -33,8 +33,8 @@ public class SubmitJobListener extends LopVmListener {
     }
 
     private void processSubmitJobPacket(SubmitJob submitJob) {
-        XmppVm.LOGGER.info("Arrived " + SubmitJobListener.class.getName());
-        XmppVm.LOGGER.info(submitJob.toXML());
+        LopVm.LOGGER.info("Arrived " + SubmitJobListener.class.getName());
+        LopVm.LOGGER.info(submitJob.toXML());
 
         String expression = submitJob.getExpression();
         String iqId = submitJob.getPacketID();
@@ -63,13 +63,13 @@ public class SubmitJobListener extends LopVmListener {
             returnSubmitJob.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, errorMessage, LOP_CLIENT_TYPE, submitJob.getPacketID()));
 
 
-        } else if (!((XmppVm) this.xmppClient).checkVmPassword(vmPassword)) {
+        } else if (!((LopVm) this.lopClient).checkVmPassword(vmPassword)) {
             returnSubmitJob.setType(IQ.Type.ERROR);
             returnSubmitJob.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, submitJob.getPacketID()));
         } else {
-            Job job = new Job(this.xmppClient.getFullJid(), villeinJid, iqId, expression);
+            Job job = new Job(this.lopClient.getFullJid(), villeinJid, iqId, expression);
             try {
-                ((XmppVm) xmppClient).scheduleJob(job);
+                ((LopVm) lopClient).scheduleJob(job);
                 submitJob = null;
             } catch (VmWorkerNotFoundException e) {
                 returnSubmitJob.setType(IQ.Type.ERROR);
@@ -84,8 +84,8 @@ public class SubmitJobListener extends LopVmListener {
         }
 
         if (submitJob != null) {
-            XmppVm.LOGGER.fine("Sent " + PingJobListener.class.getName());
-            XmppVm.LOGGER.fine(returnSubmitJob.toXML());
+            LopVm.LOGGER.fine("Sent " + PingJobListener.class.getName());
+            LopVm.LOGGER.fine(returnSubmitJob.toXML());
             this.getXmppVm().getConnection().sendPacket(returnSubmitJob);
         }
 

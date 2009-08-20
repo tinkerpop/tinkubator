@@ -11,8 +11,8 @@ import org.jivesoftware.smack.packet.Presence;
 public class PresenceSubscriptionListener extends LopFarmListener {
 
 
-    public PresenceSubscriptionListener(XmppFarm xmppFarm) {
-        super(xmppFarm);
+    public PresenceSubscriptionListener(LopFarm lopFarm) {
+        super(lopFarm);
     }
 
     public void processPacket(Packet packet) {
@@ -27,7 +27,7 @@ public class PresenceSubscriptionListener extends LopFarmListener {
 
         Presence.Type type = presence.getType();
         if (type == Presence.Type.subscribe) {
-            XmppFarm.LOGGER.info("Subscribing to " + presence.getFrom());
+            LopFarm.LOGGER.info("Subscribing to " + presence.getFrom());
             Presence subscribed = new Presence(Presence.Type.subscribed);
             subscribed.setTo(presence.getFrom());
             subscribed.setFrom(this.getXmppFarm().getFullJid());
@@ -36,7 +36,7 @@ public class PresenceSubscriptionListener extends LopFarmListener {
             return;
 
         } else if (type == Presence.Type.unsubscribe && !presence.getFrom().equals(this.getXmppFarm().getBareJid()) && !presence.getFrom().equals(this.getXmppFarm().getFullJid())) {
-            XmppFarm.LOGGER.info("Unsubscribing from " + presence.getFrom());
+            LopFarm.LOGGER.info("Unsubscribing from " + presence.getFrom());
             Presence unsubscribed = new Presence(Presence.Type.unsubscribed);
             Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
             unsubscribed.setTo(presence.getFrom());

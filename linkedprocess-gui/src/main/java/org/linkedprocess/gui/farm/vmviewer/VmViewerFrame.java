@@ -1,7 +1,7 @@
 package org.linkedprocess.gui.farm.vmviewer;
 
 import org.linkedprocess.gui.PacketSnifferPanel;
-import org.linkedprocess.vm.XmppVm;
+import org.linkedprocess.vm.LopVm;
 
 import javax.swing.*;
 
@@ -11,21 +11,21 @@ import javax.swing.*;
  */
 public class VmViewerFrame extends JFrame {
 
-    protected XmppVm xmppVm;
+    protected LopVm lopVm;
 
 
-    public VmViewerFrame(XmppVm xmppVm) {
-        super(xmppVm.getResource());
-        this.xmppVm = xmppVm;
+    public VmViewerFrame(LopVm lopVm) {
+        super(lopVm.getResource());
+        this.lopVm = lopVm;
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel(this.xmppVm.getFullJid());
+        PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel(this.lopVm.getFullJid());
 
-        xmppVm.getConnection().addPacketWriterInterceptor(packetSnifferPanel, null);
-        xmppVm.getConnection().addPacketListener(packetSnifferPanel, null);
+        lopVm.getConnection().addPacketWriterInterceptor(packetSnifferPanel, null);
+        lopVm.getConnection().addPacketListener(packetSnifferPanel, null);
 
-        tabbedPane.addTab("virtual machine", new MetadataPanel(this.xmppVm));
-        tabbedPane.addTab("bindings", new ViewBindingsPanel(this.xmppVm));
+        tabbedPane.addTab("virtual machine", new MetadataPanel(this.lopVm));
+        tabbedPane.addTab("bindings", new ViewBindingsPanel(this.lopVm));
         tabbedPane.addTab("packets", packetSnifferPanel);
         this.getContentPane().add(tabbedPane);
         this.setResizable(true);

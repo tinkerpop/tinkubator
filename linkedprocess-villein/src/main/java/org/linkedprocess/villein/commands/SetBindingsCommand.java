@@ -12,7 +12,7 @@ import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.LopError;
 import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.villein.proxies.VmProxy;
 import org.linkedprocess.vm.ManageBindings;
 
@@ -28,7 +28,7 @@ public class SetBindingsCommand extends Command {
     private final HandlerSet<VmBindings> successHandlers;
     private final HandlerSet<LopError> errorHandlers;
 
-    public SetBindingsCommand(XmppVillein xmppVillein) {
+    public SetBindingsCommand(LopVillein xmppVillein) {
         super(xmppVillein);
         this.successHandlers = new HandlerSet<VmBindings>();
         this.errorHandlers = new HandlerSet<LopError>();

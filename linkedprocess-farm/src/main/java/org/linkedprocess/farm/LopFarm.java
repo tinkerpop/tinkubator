@@ -25,8 +25,8 @@ import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 import org.linkedprocess.security.ServiceDiscoveryConfiguration;
 import org.linkedprocess.security.SystemInfo;
 import org.linkedprocess.security.VMSecurityManager;
-import org.linkedprocess.XmppClient;
-import org.linkedprocess.vm.XmppVm;
+import org.linkedprocess.LopClient;
+import org.linkedprocess.vm.LopVm;
 
 import javax.script.ScriptEngineFactory;
 import java.util.*;
@@ -36,19 +36,19 @@ import java.util.logging.Logger;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class XmppFarm extends XmppClient {
+public class LopFarm extends LopClient {
 
-    public static Logger LOGGER = LinkedProcess.getLogger(XmppFarm.class);
+    public static Logger LOGGER = LinkedProcess.getLogger(LopFarm.class);
     public static final String RESOURCE_PREFIX = "LoPFarm";
     public static final String STATUS_MESSAGE = "LoPSideD Farm";
 
     protected String farmPassword;
 
-    protected final Map<String, XmppVm> machines;
+    protected final Map<String, LopVm> machines;
     protected final VmScheduler vmScheduler;
     protected DataForm serviceExtension;
 
-    public XmppFarm(final String server, final int port, final String username, final String password, final String farmPassword) throws XMPPException {
+    public LopFarm(final String server, final int port, final String username, final String password, final String farmPassword) throws XMPPException {
         LOGGER.info("Starting " + STATUS_MESSAGE);
         if (null == farmPassword) {
             this.farmPassword = LinkedProcess.getConfiguration().getProperty(LinkedProcess.FARM_PASSWORD_PROPERTY);
@@ -69,7 +69,7 @@ public class XmppFarm extends XmppClient {
 
         this.roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
         this.vmScheduler = new VmScheduler(new VmJobResultHandler(this), new StatusEventHandler(this));
-        this.machines = new HashMap<String, XmppVm>();
+        this.machines = new HashMap<String, LopVm>();
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter subscribeFilter = new AndFilter(new PacketTypeFilter(Presence.class), new PresenceSubscriptionFilter());
@@ -99,8 +99,8 @@ public class XmppFarm extends XmppClient {
         return this.vmScheduler;
     }
 
-    public XmppVm spawnVirtualMachine(String spawningVilleinJid, String vmSpecies) throws VmAlreadyExistsException, VmSchedulerIsFullException, UnsupportedScriptEngineException {
-        XmppVm vm = new XmppVm(this.getServer(), this.getPort(), this.getUsername(), this.getPassword(), this, spawningVilleinJid, vmSpecies, LinkedProcess.generateRandomPassword());
+    public LopVm spawnVirtualMachine(String spawningVilleinJid, String vmSpecies) throws VmAlreadyExistsException, VmSchedulerIsFullException, UnsupportedScriptEngineException {
+        LopVm vm = new LopVm(this.getServer(), this.getPort(), this.getUsername(), this.getPassword(), this, spawningVilleinJid, vmSpecies, LinkedProcess.generateRandomPassword());
         String vmJid = vm.getFullJid();
         this.machines.put(vmJid, vm);
         boolean exceptionThrown = true;
@@ -118,15 +118,15 @@ public class XmppFarm extends XmppClient {
     }
 
     public void terminateVirtualMachine(String vmJid) throws VmWorkerNotFoundException {
-        XmppVm vm = this.machines.get(vmJid);
+        LopVm vm = this.machines.get(vmJid);
         if (null != vm) {
             vm.shutdown();
             this.machines.remove(vmJid);
         }
     }
 
-    public XmppVm getVirtualMachine(String vmJid) throws VmWorkerNotFoundException {
-        XmppVm vm = this.machines.get(vmJid);
+    public LopVm getVirtualMachine(String vmJid) throws VmWorkerNotFoundException {
+        LopVm vm = this.machines.get(vmJid);
         if (vm == null) {
             throw new VmWorkerNotFoundException(vmJid);
         } else {
@@ -134,7 +134,7 @@ public class XmppFarm extends XmppClient {
         }
     }
 
-    public Collection<XmppVm> getVirtualMachines() {
+    public Collection<LopVm> getVirtualMachines() {
         return this.machines.values();
     }
 
@@ -157,7 +157,7 @@ public class XmppFarm extends XmppClient {
 
     protected void initiateFeatures() {
         super.initiateFeatures();
-        ServiceDiscoveryManager.setIdentityName(XmppFarm.RESOURCE_PREFIX);
+        ServiceDiscoveryManager.setIdentityName(LopFarm.RESOURCE_PREFIX);
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
         this.getDiscoManager().addFeature(LinkedProcess.LOP_FARM_NAMESPACE);
 
@@ -281,7 +281,7 @@ public class XmppFarm extends XmppClient {
         String username = props.getProperty(LinkedProcess.FARM_USERNAME_PROPERTY);
         String password = props.getProperty(LinkedProcess.FARM_USERPASSWORD_PROPERTY);
 
-        XmppFarm farm = new XmppFarm(server, port, username, password, null);
+        LopFarm farm = new LopFarm(server, port, username, password, null);
         StatusEventHandler h = new StatusEventHandler(farm);
         farm.setStatusEventHandler(h);
 

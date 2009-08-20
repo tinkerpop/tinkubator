@@ -25,7 +25,7 @@ import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.TypedValue;
 import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.villein.patterns.ResourceAllocationPattern;
 import org.linkedprocess.villein.patterns.ScatterGatherPattern;
 import org.linkedprocess.villein.patterns.TimeoutException;
@@ -56,7 +56,7 @@ public class PrimeFinderAsynchWithProgress {
 			int farmCount, int vmsPerFarm, String username, String password,
 			String server, int port, Double meterMax, long pollingInterval, final long startTime) throws Exception {
 
-		XmppVillein villein = new XmppVillein(server, port, username, password);
+		LopVillein villein = new LopVillein(server, port, username, password);
 		villein.createLopCloudFromRoster();
 
 		// ////////////// ALLOCATE FARMS

@@ -8,7 +8,7 @@
 package org.linkedprocess.villein.proxies;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 
 import java.util.*;
 
@@ -23,7 +23,7 @@ import java.util.*;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class LopCloud implements FarmHolder {
+public class Cloud implements FarmHolder {
 
     /**
      * The types of proxies that exist.
@@ -206,10 +206,10 @@ public class LopCloud implements FarmHolder {
         } else if (parentProxy instanceof CountrysideProxy) {
             ((CountrysideProxy) parentProxy).removeFarmProxy(jid);
             ((CountrysideProxy) parentProxy).removeRegistryProxy(jid);
-            XmppVillein.LOGGER.info("Removing proxy for " + jid);
+            LopVillein.LOGGER.info("Removing proxy for " + jid);
         } else {
             ((FarmProxy) parentProxy).removeVmProxy(jid);
-            XmppVillein.LOGGER.info("Removing proxy for " + jid);
+            LopVillein.LOGGER.info("Removing proxy for " + jid);
         }
     }
 

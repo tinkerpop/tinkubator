@@ -18,10 +18,10 @@ import org.junit.runner.RunWith;
 import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 import org.linkedprocess.testing.offline.MockXmppConnection;
 import org.linkedprocess.testing.offline.OfflineTest;
-import org.linkedprocess.XmppClient;
-import org.linkedprocess.vm.XmppVm;
+import org.linkedprocess.LopClient;
+import org.linkedprocess.vm.LopVm;
 import org.linkedprocess.farm.SpawnVm;
-import org.linkedprocess.farm.XmppFarm;
+import org.linkedprocess.farm.LopFarm;
 import static org.powermock.api.easymock.PowerMock.*;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -30,12 +30,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({XmppFarm.class, XmppClient.class,
+@PrepareForTest({LopFarm.class, LopClient.class,
         ServiceDiscoveryManager.class})
 public class OfflineFarmTest extends OfflineTest {
 
     private static final String FARM = "farm";
-    private XmppFarm farm;
+    private LopFarm farm;
     private MockFarmXmppConnection connection;
     private ArrayList<Packet> sentPackets;
 
@@ -49,24 +49,24 @@ public class OfflineFarmTest extends OfflineTest {
 
         sentPackets = connection.sentPackets;
         // first VM
-        expectNew(XmppVm.class, isA(String.class),
+        expectNew(LopVm.class, isA(String.class),
                 isA(Integer.class), isA(String.class), isA(String.class),
-                isA(XmppFarm.class), isA(String.class), isA(String.class),
+                isA(LopFarm.class), isA(String.class), isA(String.class),
                 isA(String.class))
                 .andReturn(createMockVM(username + "LoPVM/1")).times(0, 1);
-        expectNew(XmppVm.class, isA(String.class),
+        expectNew(LopVm.class, isA(String.class),
                 isA(Integer.class), isA(String.class), isA(String.class),
-                isA(XmppFarm.class), isA(String.class), isA(String.class),
+                isA(LopFarm.class), isA(String.class), isA(String.class),
                 isA(String.class))
                 .andReturn(createMockVM(username + "LoPVM/2")).times(0, 1);
         replayAll();
         // start the farm
         connection.clearPackets();
-        farm = new XmppFarm(server, port, username, password, null);
+        farm = new LopFarm(server, port, username, password, null);
     }
 
-    private XmppVm createMockVM(String id) {
-        XmppVm mockVM = createMock(XmppVm.class);
+    private LopVm createMockVM(String id) {
+        LopVm mockVM = createMock(LopVm.class);
 
         expect(mockVM.getFullJid()).andReturn(id).anyTimes();
         mockVM.shutdown();

@@ -1,9 +1,9 @@
 package org.linkedprocess.gui;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.vm.XmppVm;
-import org.linkedprocess.farm.XmppFarm;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.vm.LopVm;
+import org.linkedprocess.farm.LopFarm;
+import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.villein.proxies.CountrysideProxy;
 import org.linkedprocess.villein.proxies.FarmProxy;
 import org.linkedprocess.villein.proxies.RegistryProxy;
@@ -28,20 +28,20 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
         super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 
         Object x = ((DefaultMutableTreeNode) value).getUserObject();
-        if (x instanceof XmppFarm) {
-            this.setText(LinkedProcess.generateResource(((XmppFarm) x).getFullJid()));
-            if (null == ((XmppFarm) x).getFarmPassword())
+        if (x instanceof LopFarm) {
+            this.setText(LinkedProcess.generateResource(((LopFarm) x).getFullJid()));
+            if (null == ((LopFarm) x).getFarmPassword())
                 this.setIcon(ImageHolder.farmIcon);
             else
                 this.setIcon(ImageHolder.farmPasswordIcon);
             this.setToolTipText("farm");
-        } else if (x instanceof XmppVm) {
-            XmppVm vm = (XmppVm) x;
+        } else if (x instanceof LopVm) {
+            LopVm vm = (LopVm) x;
             this.setText(LinkedProcess.generateResource(vm.getFullJid()));
             this.setIcon(ImageHolder.vmIcon);
             this.setToolTipText("virtual machine");
-        } else if (x instanceof XmppVillein) {
-            this.setText(LinkedProcess.generateResource(((XmppVillein) x).getFullJid()));
+        } else if (x instanceof LopVillein) {
+            this.setText(LinkedProcess.generateResource(((LopVillein) x).getFullJid()));
             this.setIcon(ImageHolder.villeinIcon);
             this.setToolTipText("villein");
         } else if (x instanceof RegistryProxy) {

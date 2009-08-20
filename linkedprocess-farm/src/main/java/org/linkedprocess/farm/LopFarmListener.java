@@ -12,12 +12,12 @@ public abstract class LopFarmListener extends LopListener {
 
     public static final LinkedProcess.ClientType LOP_CLIENT_TYPE = LinkedProcess.ClientType.FARM;
 
-    public LopFarmListener(XmppFarm xmppFarm) {
-        super(xmppFarm);
+    public LopFarmListener(LopFarm lopFarm) {
+        super(lopFarm);
     }
 
-    public XmppFarm getXmppFarm() {
-        return (XmppFarm) this.xmppClient;
+    public LopFarm getXmppFarm() {
+        return (LopFarm) this.lopClient;
     }
 
 }

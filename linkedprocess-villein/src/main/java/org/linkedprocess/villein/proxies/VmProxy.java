@@ -14,7 +14,7 @@ import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.os.errors.InvalidValueException;
 import org.linkedprocess.villein.Dispatcher;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 
 import java.util.Set;
 
@@ -167,7 +167,7 @@ public class VmProxy extends Proxy {
                 this.vmBindings.putTyped(bindingName, bindings.getTyped(bindingName));
             }
         } catch (InvalidValueException e) {
-            XmppVillein.LOGGER.warning(e.getMessage());
+            LopVillein.LOGGER.warning(e.getMessage());
         }
     }
 

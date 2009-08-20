@@ -9,16 +9,13 @@ package org.linkedprocess.villein.proxies;
 
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.JDOMException;
 import org.jdom.Namespace;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.villein.Dispatcher;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -74,7 +71,7 @@ public class Proxy implements Comparable {
                 DiscoverInfo discoInfo = discoManager.discoverInfo(this.getFullJid());
                 this.discoInfoDocument = LinkedProcess.createXMLDocument(discoInfo.toXML());
             } catch (Exception e) {
-                XmppVillein.LOGGER.warning("Problem loading disco#info: " + e.getMessage());
+                LopVillein.LOGGER.warning("Problem loading disco#info: " + e.getMessage());
             }
         }
     }

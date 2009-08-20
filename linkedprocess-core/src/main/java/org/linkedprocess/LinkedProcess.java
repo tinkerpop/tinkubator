@@ -52,10 +52,6 @@ public class LinkedProcess {
         return generateRandomResourceId();
     }
 
-    public static String generateRandomJobId() {
-        return Packet.nextID();
-    }
-
     public static String convertStreamToString(InputStream inputStream) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder stringBuilder = new StringBuilder();

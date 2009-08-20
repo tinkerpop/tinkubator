@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.testing.offline.OfflineTest;
-import org.linkedprocess.farm.XmppFarm;
+import org.linkedprocess.farm.LopFarm;
 import org.linkedprocess.vm.*;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
@@ -25,8 +25,8 @@ public class OfflineVmTest extends OfflineTest {
     private static final String FULL_NAME = "full_name";
     private MockVmXmppConnection connection;
     private ArrayList<Packet> sentPackets;
-    private XmppFarm farm;
-    private XmppVm vm;
+    private LopFarm farm;
+    private LopVm vm;
 
     @Before
     public void startVM() throws Exception {
@@ -41,7 +41,7 @@ public class OfflineVmTest extends OfflineTest {
         sentPackets = connection.sentPackets;
         replayAll();
         // start the farm
-        farm = new XmppFarm(server, port, username, password, null);
+        farm = new LopFarm(server, port, username, password, null);
         vm = farm.spawnVirtualMachine(CLIENT_JID, JAVASCRIPT);
 
     }

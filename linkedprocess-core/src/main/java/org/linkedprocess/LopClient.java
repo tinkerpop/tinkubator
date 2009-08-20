@@ -23,9 +23,9 @@ import java.util.logging.Logger;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public abstract class XmppClient {
+public abstract class LopClient {
 
-    public static Logger LOGGER = LinkedProcess.getLogger(XmppClient.class);
+    public static Logger LOGGER = LinkedProcess.getLogger(LopClient.class);
     protected Connection connection;
     protected Roster roster;
     protected boolean shutdownRequested = false;

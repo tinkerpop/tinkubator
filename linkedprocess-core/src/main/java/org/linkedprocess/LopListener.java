@@ -18,18 +18,18 @@ import org.linkedprocess.LinkedProcess;
  * @version LoPSideD 0.1
  */
 public abstract class LopListener implements PacketListener {
-    public XmppClient xmppClient;
+    public LopClient lopClient;
 
-    public LopListener(XmppClient xmppClient) {
-        this.xmppClient = xmppClient;
+    public LopListener(LopClient lopClient) {
+        this.lopClient = lopClient;
     }
 
     protected DiscoverInfo getDiscoInfo(String jid) {
-        ServiceDiscoveryManager discoManager = this.xmppClient.getDiscoManager();
+        ServiceDiscoveryManager discoManager = this.lopClient.getDiscoManager();
         try {
             return discoManager.discoverInfo(jid);
         } catch (XMPPException e) {
-            XmppClient.LOGGER.warning("XmppException with DiscoveryManager on " + jid + ": " + e.getMessage());
+            LopClient.LOGGER.warning("XmppException with DiscoveryManager on " + jid + ": " + e.getMessage());
             return null;
         }
     }

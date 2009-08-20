@@ -25,18 +25,18 @@ class LopVilleinListener extends LopListener {
 
     public static final LinkedProcess.ClientType LOP_CLIENT_TYPE = LinkedProcess.ClientType.VILLEIN;
 
-    public LopVilleinListener(XmppVillein xmppVillein) {
-        super(xmppVillein);
+    public LopVilleinListener(LopVillein lopVillein) {
+        super(lopVillein);
     }
 
-    public XmppVillein getXmppVillein() {
-        return (XmppVillein) this.xmppClient;
+    public LopVillein getXmppVillein() {
+        return (LopVillein) this.lopClient;
     }
 
     public void processPacket(Packet packet) {
 
-        XmppVillein.LOGGER.info("Arrived " + packet.getClass().getName());
-        XmppVillein.LOGGER.info(packet.toXML());
+        LopVillein.LOGGER.info("Arrived " + packet.getClass().getName());
+        LopVillein.LOGGER.info(packet.toXML());
 
         if (packet instanceof SpawnVm) {
             SpawnVm spawnVm = (SpawnVm) packet;

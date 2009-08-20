@@ -8,7 +8,7 @@
 package org.linkedprocess.villein.commands;
 
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -51,7 +51,7 @@ public class HandlerSet<T> {
         if (null != r) {
             r.getHandler().handle(t);
         } else {
-            XmppVillein.LOGGER.warning("No handler found for packet " + id);
+            LopVillein.LOGGER.warning("No handler found for packet " + id);
         }
     }
 

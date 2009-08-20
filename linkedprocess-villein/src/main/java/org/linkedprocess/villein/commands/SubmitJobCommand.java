@@ -10,7 +10,7 @@ package org.linkedprocess.villein.commands;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.villein.proxies.JobStruct;
 import org.linkedprocess.villein.proxies.VmProxy;
 import org.linkedprocess.vm.SubmitJob;
@@ -28,7 +28,7 @@ public class SubmitJobCommand extends Command {
     private final HandlerSet<JobStruct> successHandlers;
     private final HandlerSet<JobStruct> errorHandlers;
 
-    public SubmitJobCommand(XmppVillein xmppVillein) {
+    public SubmitJobCommand(LopVillein xmppVillein) {
         super(xmppVillein);
         this.successHandlers = new HandlerSet<JobStruct>();
         this.errorHandlers = new HandlerSet<JobStruct>();
@@ -37,7 +37,7 @@ public class SubmitJobCommand extends Command {
     public void send(final VmProxy vmStruct, final JobStruct jobStruct, final Handler<JobStruct> successHandler, final Handler<JobStruct> errorHandler) {
 
         if (null == jobStruct.getJobId())
-            jobStruct.setJobId(Packet.nextID());
+            jobStruct.setJobId(JobStruct.generateRandomId());
 
         SubmitJob submitJob = new SubmitJob();
         submitJob.setTo(vmStruct.getFullJid());

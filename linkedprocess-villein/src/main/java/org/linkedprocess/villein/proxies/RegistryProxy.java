@@ -11,7 +11,7 @@ import org.jdom.Document;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.linkedprocess.villein.Dispatcher;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -53,7 +53,7 @@ public class RegistryProxy extends Proxy {
                 this.discoItems.add(itty.next());
             }
         } catch (Exception e) {
-            XmppVillein.LOGGER.warning("Problem loading disco#items: " + e.getMessage());
+            LopVillein.LOGGER.warning("Problem loading disco#items: " + e.getMessage());
         }
     }
 

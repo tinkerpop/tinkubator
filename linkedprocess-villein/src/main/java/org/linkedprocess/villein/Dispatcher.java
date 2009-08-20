@@ -9,7 +9,7 @@ package org.linkedprocess.villein;
 
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.villein.commands.*;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 
 /**
  * User: josh
@@ -26,15 +26,15 @@ public class Dispatcher {
     private final SetBindingsCommand setBindingsCommand;
     protected final ServiceDiscoveryManager discoManager;
 
-    public Dispatcher(XmppVillein xmppVillein) {
-        this.pingJobCommand = new PingJobCommand(xmppVillein);
-        this.spawnVmCommand = new SpawnVmCommand(xmppVillein);
-        this.submitJobCommand = new SubmitJobCommand(xmppVillein);
-        this.abortJobCommand = new AbortJobCommand(xmppVillein);
-        this.terminateVmCommand = new TerminateVmCommand(xmppVillein);
-        this.getBindingsCommand = new GetBindingsCommand(xmppVillein);
-        this.setBindingsCommand = new SetBindingsCommand(xmppVillein);
-        this.discoManager = xmppVillein.getDiscoManager();
+    public Dispatcher(LopVillein lopVillein) {
+        this.pingJobCommand = new PingJobCommand(lopVillein);
+        this.spawnVmCommand = new SpawnVmCommand(lopVillein);
+        this.submitJobCommand = new SubmitJobCommand(lopVillein);
+        this.abortJobCommand = new AbortJobCommand(lopVillein);
+        this.terminateVmCommand = new TerminateVmCommand(lopVillein);
+        this.getBindingsCommand = new GetBindingsCommand(lopVillein);
+        this.setBindingsCommand = new SetBindingsCommand(lopVillein);
+        this.discoManager = lopVillein.getDiscoManager();
     }
 
     public PingJobCommand getPingJobCommand() {

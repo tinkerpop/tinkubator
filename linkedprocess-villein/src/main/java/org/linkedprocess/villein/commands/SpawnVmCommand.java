@@ -12,7 +12,7 @@ import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.LopError;
 import org.linkedprocess.farm.SpawnVm;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.villein.proxies.FarmProxy;
 import org.linkedprocess.villein.proxies.ParentProxyNotFoundException;
 import org.linkedprocess.villein.proxies.VmProxy;
@@ -29,7 +29,7 @@ public class SpawnVmCommand extends Command {
     private final HandlerSet<VmProxy> successHandler;
     private final HandlerSet<LopError> errorHandlers;
 
-    public SpawnVmCommand(XmppVillein xmppVillein) {
+    public SpawnVmCommand(LopVillein xmppVillein) {
         super(xmppVillein);
         this.successHandler = new HandlerSet<VmProxy>();
         this.errorHandlers = new HandlerSet<LopError>();
@@ -62,7 +62,7 @@ public class SpawnVmCommand extends Command {
             this.xmppVillein.getLopCloud().addVmProxy(spawnVm.getFrom(), vmProxy);
             successHandler.handle(spawnVm.getPacketID(), vmProxy);
         } catch (ParentProxyNotFoundException e) {
-            XmppVillein.LOGGER.warning(e.getMessage());
+            LopVillein.LOGGER.warning(e.getMessage());
         } finally {
             successHandler.removeHandler(spawnVm.getPacketID());
             errorHandlers.removeHandler(spawnVm.getPacketID());

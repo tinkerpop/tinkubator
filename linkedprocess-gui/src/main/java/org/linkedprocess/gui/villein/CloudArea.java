@@ -5,7 +5,7 @@ import org.linkedprocess.villein.Handler;
 import org.linkedprocess.gui.*;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
 import org.linkedprocess.villein.PresenceHandler;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.villein.proxies.*;
 
 import javax.swing.*;
@@ -25,7 +25,7 @@ import java.util.Set;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class LopCloudArea extends JPanel implements ActionListener, MouseListener, PresenceHandler {
+public class CloudArea extends JPanel implements ActionListener, MouseListener, PresenceHandler {
 
     protected VilleinGui villeinGui;
     protected JTree tree;
@@ -44,7 +44,7 @@ public class LopCloudArea extends JPanel implements ActionListener, MouseListene
     protected final static String VM_CONTROL = "vm control";
     protected final static String PROBE = "probe";
 
-    public LopCloudArea(VilleinGui villeinGui) {
+    public CloudArea(VilleinGui villeinGui) {
         super(new BorderLayout());
         this.villeinGui = villeinGui;
         this.treeRoot = new DefaultMutableTreeNode(null);
@@ -238,7 +238,7 @@ public class LopCloudArea extends JPanel implements ActionListener, MouseListene
                     this.tree.scrollPathToVisible(new TreePath(node.getPath()));
                     model.reload(node);
                 } else {
-                    XmppVillein.LOGGER.severe("Unknown node/proxy object: " + node.getUserObject());
+                    LopVillein.LOGGER.severe("Unknown node/proxy object: " + node.getUserObject());
                 }
             }
         } else {

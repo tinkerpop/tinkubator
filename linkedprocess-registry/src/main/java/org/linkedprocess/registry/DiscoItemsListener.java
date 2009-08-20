@@ -17,8 +17,8 @@ import org.jivesoftware.smackx.packet.DiscoverItems;
  */
 public class DiscoItemsListener extends LopRegistryListener {
 
-    public DiscoItemsListener(XmppRegistry xmppRegistry) {
-        super(xmppRegistry);
+    public DiscoItemsListener(LopRegistry lopRegistry) {
+        super(lopRegistry);
     }
 
     public void processPacket(Packet packet) {

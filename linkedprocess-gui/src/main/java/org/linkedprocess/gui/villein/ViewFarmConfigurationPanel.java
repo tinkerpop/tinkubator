@@ -1,7 +1,7 @@
 package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.villein.proxies.FarmProxy;
 import org.linkedprocess.villein.proxies.Proxy;
 
@@ -114,7 +114,7 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
                 this.refreshFarmFeatures();
                 this.refreshFarmConfiguration();
             } catch (Exception e) {
-                XmppVillein.LOGGER.warning(e.getMessage());
+                LopVillein.LOGGER.warning(e.getMessage());
             }
         }
 

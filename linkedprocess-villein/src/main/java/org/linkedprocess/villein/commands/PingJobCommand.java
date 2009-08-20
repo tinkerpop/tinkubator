@@ -13,7 +13,7 @@ import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.vm.PingJob;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.LopError;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.villein.proxies.JobStruct;
 import org.linkedprocess.villein.proxies.VmProxy;
 
@@ -29,7 +29,7 @@ public class PingJobCommand extends Command {
     private final HandlerSet<LinkedProcess.JobStatus> successHandlers;
     private final HandlerSet<LopError> errorHandlers;
 
-    public PingJobCommand(XmppVillein xmppVillein) {
+    public PingJobCommand(LopVillein xmppVillein) {
         super(xmppVillein);
         this.successHandlers = new HandlerSet<LinkedProcess.JobStatus>();
         this.errorHandlers = new HandlerSet<LopError>();

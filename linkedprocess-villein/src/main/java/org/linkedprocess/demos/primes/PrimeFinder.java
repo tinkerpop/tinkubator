@@ -8,7 +8,7 @@
 package org.linkedprocess.demos.primes;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.villein.XmppVillein;
+import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.villein.patterns.ResourceAllocationPattern;
 import org.linkedprocess.villein.patterns.ScatterGatherPattern;
 import org.linkedprocess.villein.proxies.FarmProxy;
@@ -34,7 +34,7 @@ public class PrimeFinder {
     public static List<Integer> findPrimesUsingLop(int startInteger, int endInteger, int farmCount, int vmsPerFarm, String username, String password, String server, int port) throws Exception {
 
 
-        XmppVillein villein = new XmppVillein(server, port, username, password);
+        LopVillein villein = new LopVillein(server, port, username, password);
         villein.createLopCloudFromRoster();
 
         //////////////// ALLOCATE FARMS

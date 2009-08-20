@@ -147,7 +147,7 @@
                     <tarLongFileMode>warn</tarLongFileMode>
                     <archive>
                         <manifest>
-                            <mainClass>org.linkedprocess.registry.XmppRegistry</mainClass>
+                            <mainClass>org.linkedprocess.registry.LopRegistry</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
