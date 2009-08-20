@@ -21,10 +21,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.linkedprocess.LinkedProcess;
+
+import org.linkedprocess.os.TypedValue;
+import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.XmppVillein;
 import org.linkedprocess.villein.patterns.ResourceAllocationPattern;
 import org.linkedprocess.villein.patterns.ScatterGatherPattern;
+import org.linkedprocess.villein.patterns.TimeoutException;
 import org.linkedprocess.villein.proxies.FarmProxy;
 import org.linkedprocess.villein.proxies.JobStruct;
 import org.linkedprocess.villein.proxies.ResultHolder;
@@ -36,9 +40,9 @@ import org.linkedprocess.villein.proxies.VmProxy;
  * dependent upon how many virtual machines are spawned. The integer ranges are
  * distributed to the spawned virtual machines for primality testing. The
  * virtual machines execute Groovy code and create an array of all primes found
- * in their interval range. During the execution, the different LoPVMs are polled
- * for the VMBinding "meter" and displayed on the console.
- * When the binding on all VMs has reached 100, the result is displayed
+ * in their interval range. During the execution, the different LoPVMs are
+ * polled for the VMBinding "meter" and displayed on the console. When the
+ * binding on all VMs has reached 100, the result is displayed
  * 
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @author Peter Neubauer
@@ -47,13 +51,10 @@ import org.linkedprocess.villein.proxies.VmProxy;
 public class PrimeFinderAsynchWithProgress {
 
 	private static Map<VmProxy, JobStruct> vmJobMap;
-	private static long startTime;
-	private static Double meterMax;
-	private static long pollingInterval = 500;
 
 	public static void findAsynch(int startInteger, int endInteger,
 			int farmCount, int vmsPerFarm, String username, String password,
-			String server, int port) throws Exception {
+			String server, int port, Double meterMax, long pollingInterval, final long startTime) throws Exception {
 
 		XmppVillein villein = new XmppVillein(server, port, username, password);
 		villein.createLopCloudFromRoster();
@@ -89,7 +90,20 @@ public class PrimeFinderAsynchWithProgress {
 		System.out
 				.println("Scattering find primes function definition jobs...");
 		vmJobMap = ScatterGatherPattern.scatterSubmitJob(vmJobMap, -1);
-
+		// ////////////// DISTRIBUTE VM BINDINGS
+		System.out.println("Scattering vm bindings...");
+		VmBindings bindings = new VmBindings();
+		bindings.putTyped("meter", new TypedValue(
+				VmBindings.XMLSchemaDatatype.DOUBLE, "" + 0));
+		Map<VmProxy, VmBindings> bindingsMap = new HashMap<VmProxy, VmBindings>();
+		for (ResultHolder<VmProxy> proxy : vmProxies) {
+			bindingsMap.put(proxy.getResult(), bindings);
+		}
+		try {
+			ScatterGatherPattern.scatterSetBindings(bindingsMap, 20000);
+		} catch (TimeoutException tue) {
+			//don't do anything, this is from the receiving TODO in LoPVilleinListener
+		}
 		// ////////////// DISTRIBUTE PRIME FINDER FUNCTION CALLS
 
 		int intervalInteger = Math.round((endInteger - startInteger)
@@ -105,6 +119,7 @@ public class PrimeFinderAsynchWithProgress {
 			vmJobMap.put(vmProxy, jobStruct);
 			currentStartInteger = currentEndInteger + 1;
 		}
+
 		System.out.println("Scattering find primes function call jobs...");
 		ScatterGatherPattern.scatterSubmitJob(vmJobMap,
 				new Handler<Map<VmProxy, JobStruct>>() {
@@ -148,37 +163,41 @@ public class PrimeFinderAsynchWithProgress {
 
 				});
 
+
+		// ////////////// START POLLING THE BINDINGS
 		ExecutorService pool = Executors.newFixedThreadPool(vmProxies.size());
 		Collection<Callable<Object>> tasks = new ArrayList<Callable<Object>>();
 		for (ResultHolder<VmProxy> vmProxyResult : vmProxies) {
-			tasks.add(Executors.callable(new VmPollProgressTask(vmProxyResult.getResult(), meterMax, pollingInterval)));
+			tasks.add(Executors.callable(new VmPollProgressTask(vmProxyResult
+					.getResult(), meterMax, pollingInterval)));
 		}
 		List<Future<Object>> invokeAll = pool.invokeAll(tasks);
-		//pool.awaitTermination(200000, TimeUnit.SECONDS);
-
 	}
-
-	
 
 	public static void main(String[] args) throws Exception {
 		Properties props = new Properties();
-        props.load(PrimeFinder.class.getResourceAsStream("../demo.properties"));
-        String username = props.getProperty("username");
-        String password = props.getProperty("password");
-        String server = props.getProperty("server");
-        int port = Integer.valueOf(props.getProperty("port"));
+		props.load(PrimeFinder.class.getResourceAsStream("../demo.properties"));
+		String username = props.getProperty("username");
+		String password = props.getProperty("password");
+		String server = props.getProperty("server");
+		int port = Integer.valueOf(props.getProperty("port"));
 
-        int startInteger = Integer.valueOf(props.getProperty("primeFinder.startInteger"));
-        int endInteger = Integer.valueOf(props.getProperty("primeFinder.endInteger"));
-        int farmCount = Integer.valueOf(props.getProperty("primeFinder.farmCount"));
-        int vmsPerFarm = Integer.valueOf(props.getProperty("primeFinder.vmsPerFarm"));
-        meterMax = Double.valueOf(props.getProperty("progressPolling.meterMax"));
-        pollingInterval = Long.valueOf(props.getProperty("progressPolling.pollingInterval"));
+		int startInteger = Integer.valueOf(props
+				.getProperty("primeFinder.startInteger"));
+		int endInteger = Integer.valueOf(props
+				.getProperty("primeFinder.endInteger"));
+		int farmCount = Integer.valueOf(props
+				.getProperty("primeFinder.farmCount"));
+		int vmsPerFarm = Integer.valueOf(props
+				.getProperty("primeFinder.vmsPerFarm"));
+		Double meterMax = Double
+				.valueOf(props.getProperty("progressPolling.meterMax"));
+		Long pollingInterval = Long.valueOf(props
+				.getProperty("progressPolling.pollingInterval"));
 
-
-		startTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 		PrimeFinderAsynchWithProgress.findAsynch(startInteger, endInteger,
-				farmCount, vmsPerFarm, username, password, server, port);
+				farmCount, vmsPerFarm, username, password, server, port, meterMax, pollingInterval, startTime);
 	}
 
 }
