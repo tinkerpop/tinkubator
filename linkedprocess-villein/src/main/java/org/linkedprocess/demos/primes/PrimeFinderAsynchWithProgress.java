@@ -7,6 +7,7 @@
 
 package org.linkedprocess.demos.primes;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,10 +21,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.jivesoftware.smack.XMPPException;
 import org.linkedprocess.LinkedProcess;
 
 import org.linkedprocess.os.TypedValue;
 import org.linkedprocess.os.VmBindings;
+import org.linkedprocess.os.errors.InvalidValueException;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.villein.patterns.ResourceAllocationPattern;
@@ -50,62 +53,106 @@ import org.linkedprocess.villein.proxies.VmProxy;
  */
 public class PrimeFinderAsynchWithProgress {
 
-	private static Map<VmProxy, JobStruct> vmJobMap;
+	public static Map<VmProxy, JobStruct> vmJobMap;
+	public static Set<FarmProxy> farmProxies;
+	public static Set<ResultHolder<VmProxy>> vmProxies;
+	public static LopVillein villein;
+	public static ExecutorService pool;
 
 	public static void findAsynch(int startInteger, int endInteger,
 			int farmCount, int vmsPerFarm, String username, String password,
 			String server, int port, Double meterMax, long pollingInterval, final long startTime) throws Exception {
 
-		LopVillein villein = new LopVillein(server, port, username, password);
-		villein.createLopCloudFromRoster();
+		init(username, password, server, port);
 
 		// ////////////// ALLOCATE FARMS
 
-		System.out.println("Waiting for " + farmCount + " available farms...");
-		Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(
-				villein.getLopCloud(), farmCount, 200000);
-		for (FarmProxy farmProxy : farmProxies) {
-			System.out.println("farm allocated: " + farmProxy.getJid());
-		}
+		allocateFarms(farmCount);
 
 		// ////////////// SPAWN VIRTUAL MACHINES ON ALLOCATED FARMS
 
-		Set<ResultHolder<VmProxy>> vmProxies = ScatterGatherPattern
-				.scatterSpawnVm(farmProxies, "groovy", vmsPerFarm, -1);
-		System.out.println(vmProxies.size()
-				+ " virtual machines have been spawned...");
+		spawnVms(vmsPerFarm);
 
 		// ////////////// DISTRIBUTE PRIME FINDER FUNCTION DEFINITION
 
-		vmJobMap = new HashMap<VmProxy, JobStruct>();
-		for (ResultHolder<VmProxy> vmProxyResult : vmProxies) {
-			JobStruct jobStruct = new JobStruct();
-			jobStruct
-					.setExpression(LinkedProcess
-							.convertStreamToString(PrimeFinderAsynchWithProgress.class
-									.getResourceAsStream("findPrimesWithProgress.groovy")));
-			vmJobMap.put(vmProxyResult.getResult(), jobStruct);
-		}
-
-		System.out
-				.println("Scattering find primes function definition jobs...");
-		vmJobMap = ScatterGatherPattern.scatterSubmitJob(vmJobMap, -1);
+		scatterPrimeCalcFunction();
 		// ////////////// DISTRIBUTE VM BINDINGS
-		System.out.println("Scattering vm bindings...");
-		VmBindings bindings = new VmBindings();
-		bindings.putTyped("meter", new TypedValue(
-				VmBindings.XMLSchemaDatatype.DOUBLE, "" + 0));
-		Map<VmProxy, VmBindings> bindingsMap = new HashMap<VmProxy, VmBindings>();
-		for (ResultHolder<VmProxy> proxy : vmProxies) {
-			bindingsMap.put(proxy.getResult(), bindings);
-		}
-		try {
-			ScatterGatherPattern.scatterSetBindings(bindingsMap, 20000);
-		} catch (TimeoutException tue) {
-			//don't do anything, this is from the receiving TODO in LoPVilleinListener
-		}
+		scatterVmBindings();
 		// ////////////// DISTRIBUTE PRIME FINDER FUNCTION CALLS
 
+		scatterWorkerJob(startInteger, endInteger, startTime, new Handler<Map<VmProxy, JobStruct>>() {
+
+			public void handle(Map<VmProxy, JobStruct> t) {
+				// TODO Auto-generated method stub
+				// ////////////// TERMINATE ALL SPAWNED VIRTUAL MACHINES
+
+				System.out.println("Terminating virtual machines...");
+				ScatterGatherPattern.scatterTerminateVm(vmJobMap
+						.keySet());
+
+				// ////////////// SORT AND DISPLAY JOB RESULT PRIME
+				// VALUES
+
+				System.out
+						.println("Gathering find primes function results...");
+				ArrayList<Integer> primes = new ArrayList<Integer>();
+				for (JobStruct jobStruct : vmJobMap.values()) {
+					if (jobStruct.wasSuccessful()) {
+						for (String primeString : jobStruct.getResult()
+								.replace("[", "").replace("]", "")
+								.split(",")) {
+							if (!primeString.trim().equals(""))
+								primes.add(Integer.valueOf(primeString
+										.trim()));
+						}
+					} else {
+						System.out.println("Job "
+								+ jobStruct.getJobId()
+								+ " was unsuccessful.");
+					}
+				}
+				Collections.sort(primes);
+				System.out.println("Running time: "
+						+ (System.currentTimeMillis() - startTime)
+						/ 1000.0f + " seconds.");
+				System.out.println("Prime finder results: " + primes);
+
+			}
+
+		});
+
+		poll(meterMax, pollingInterval);
+	}
+
+	public static void init(String username, String password, String server,
+			int port) throws XMPPException {
+		villein = new LopVillein(server, port, username, password);
+		villein.createLopCloudFromRoster();
+	}
+
+	public static void poll(Double meterMax, long pollingInterval)
+			throws InterruptedException {
+		Collection<Callable<Object>> tasks = new ArrayList<Callable<Object>>();
+		for (ResultHolder<VmProxy> vmProxyResult : vmProxies) {
+			tasks.add(Executors.callable(new VmPollProgressTask(vmProxyResult
+					.getResult(), meterMax, pollingInterval)));
+		}
+		startPolling(tasks);
+	}
+
+	public static void startPolling(Collection<Callable<Object>> tasks) {
+		pool = Executors.newFixedThreadPool(vmProxies.size());
+		try {
+			List<Future<Object>> invokeAll = pool.invokeAll(tasks);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	public static void scatterWorkerJob(int startInteger, int endInteger,
+			final long startTime, Handler<Map<VmProxy, JobStruct>> handler) {
 		int intervalInteger = Math.round((endInteger - startInteger)
 				/ vmJobMap.keySet().size());
 		int currentStartInteger = startInteger;
@@ -122,56 +169,56 @@ public class PrimeFinderAsynchWithProgress {
 
 		System.out.println("Scattering find primes function call jobs...");
 		ScatterGatherPattern.scatterSubmitJob(vmJobMap,
-				new Handler<Map<VmProxy, JobStruct>>() {
+				handler);
+	}
 
-					public void handle(Map<VmProxy, JobStruct> t) {
-						// TODO Auto-generated method stub
-						// ////////////// TERMINATE ALL SPAWNED VIRTUAL MACHINES
-
-						System.out.println("Terminating virtual machines...");
-						ScatterGatherPattern.scatterTerminateVm(vmJobMap
-								.keySet());
-
-						// ////////////// SORT AND DISPLAY JOB RESULT PRIME
-						// VALUES
-
-						System.out
-								.println("Gathering find primes function results...");
-						ArrayList<Integer> primes = new ArrayList<Integer>();
-						for (JobStruct jobStruct : vmJobMap.values()) {
-							if (jobStruct.wasSuccessful()) {
-								for (String primeString : jobStruct.getResult()
-										.replace("[", "").replace("]", "")
-										.split(",")) {
-									if (!primeString.trim().equals(""))
-										primes.add(Integer.valueOf(primeString
-												.trim()));
-								}
-							} else {
-								System.out.println("Job "
-										+ jobStruct.getJobId()
-										+ " was unsuccessful.");
-							}
-						}
-						Collections.sort(primes);
-						System.out.println("Running time: "
-								+ (System.currentTimeMillis() - startTime)
-								/ 1000.0f + " seconds.");
-						System.out.println("Prime finder results: " + primes);
-
-					}
-
-				});
-
-
-		// ////////////// START POLLING THE BINDINGS
-		ExecutorService pool = Executors.newFixedThreadPool(vmProxies.size());
-		Collection<Callable<Object>> tasks = new ArrayList<Callable<Object>>();
-		for (ResultHolder<VmProxy> vmProxyResult : vmProxies) {
-			tasks.add(Executors.callable(new VmPollProgressTask(vmProxyResult
-					.getResult(), meterMax, pollingInterval)));
+	public static void scatterVmBindings() throws InvalidValueException {
+		System.out.println("Scattering vm bindings...");
+		VmBindings bindings = new VmBindings();
+		bindings.putTyped("meter", new TypedValue(
+				VmBindings.XMLSchemaDatatype.DOUBLE, "" + 0));
+		Map<VmProxy, VmBindings> bindingsMap = new HashMap<VmProxy, VmBindings>();
+		for (ResultHolder<VmProxy> proxy : vmProxies) {
+			bindingsMap.put(proxy.getResult(), bindings);
 		}
-		List<Future<Object>> invokeAll = pool.invokeAll(tasks);
+		try {
+			ScatterGatherPattern.scatterSetBindings(bindingsMap, 20000);
+		} catch (TimeoutException tue) {
+			//don't do anything, this is from the receiving TODO in LoPVilleinListener
+		}
+	}
+
+	public static void scatterPrimeCalcFunction() throws IOException,
+			TimeoutException {
+		vmJobMap = new HashMap<VmProxy, JobStruct>();
+		for (ResultHolder<VmProxy> vmProxyResult : vmProxies) {
+			JobStruct jobStruct = new JobStruct();
+			jobStruct
+					.setExpression(LinkedProcess
+							.convertStreamToString(PrimeFinderAsynchWithProgress.class
+									.getResourceAsStream("findPrimesWithProgress.groovy")));
+			vmJobMap.put(vmProxyResult.getResult(), jobStruct);
+		}
+
+		System.out
+				.println("Scattering find primes function definition jobs...");
+		vmJobMap = ScatterGatherPattern.scatterSubmitJob(vmJobMap, -1);
+	}
+
+	public static void spawnVms(int vmsPerFarm) throws TimeoutException {
+		vmProxies = ScatterGatherPattern
+				.scatterSpawnVm(farmProxies, "groovy", vmsPerFarm, -1);
+		System.out.println(vmProxies.size()
+				+ " virtual machines have been spawned...");
+	}
+
+	public static void allocateFarms(int farmCount) throws TimeoutException {
+		System.out.println("Waiting for " + farmCount + " available farms...");
+		farmProxies = ResourceAllocationPattern.allocateFarms(
+				villein.getLopCloud(), farmCount, 200000);
+		for (FarmProxy farmProxy : farmProxies) {
+			System.out.println("farm allocated: " + farmProxy.getJid());
+		}
 	}
 
 	public static void main(String[] args) throws Exception {
