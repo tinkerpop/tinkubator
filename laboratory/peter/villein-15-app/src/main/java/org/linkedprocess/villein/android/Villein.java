@@ -21,6 +21,8 @@ public class Villein extends Activity {
 	public static final String PASSWORD = "password";
 	public static final String SERVER = "server";
 	public static final String PORT = "port";
+	protected static final String SCRIPT = "script";
+	protected static final String NUMBER_OF_VMS = "number_of_vms";
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -40,8 +42,8 @@ public class Villein extends Activity {
 		Button findViewById = (Button) findViewById(R.id.primefinder);
 		findViewById.setOnClickListener(new OnClickListener() {
 
-			public void onClick(View v) {
-				Intent i = new Intent(Villein.this, ConfigurePrimes.class);
+				public void onClick(View v) {
+					Intent i = new Intent(Villein.this, ConfigurePrimes.class);
 				i.putExtra(USERNAME,((EditText)findViewById(R.id.username)).getText().toString());
 				i.putExtra(PASSWORD,((EditText)findViewById(R.id.password)).getText().toString());
 				i.putExtra(SERVER,((EditText)findViewById(R.id.server)).getText().toString());

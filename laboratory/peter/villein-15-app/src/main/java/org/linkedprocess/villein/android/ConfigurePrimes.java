@@ -6,6 +6,8 @@ import java.io.InputStream;
 import org.linkedprocess.smack.AndroidProviderManager;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,7 +40,21 @@ public class ConfigurePrimes extends Activity {
 		submitButton.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				findPrimes();
+
+				Intent i = new Intent(ConfigurePrimes.this, ShowProgress.class);
+				Bundle extras = getIntent().getExtras();
+				i.putExtra(Villein.USERNAME, extras 
+						 .getString(Villein.USERNAME));
+				i.putExtra(Villein.PASSWORD, extras 
+						 .getString(Villein.PASSWORD));
+				i.putExtra(Villein.PORT, extras 
+						 .getInt(Villein.PORT));
+				i.putExtra(Villein.SERVER, extras 
+						 .getString(Villein.SERVER));
+				i.putExtra(Villein.SCRIPT, script.getText().toString());
+				i.putExtra(Villein.NUMBER_OF_VMS, Integer.parseInt((String) numberOfMachines
+						.getSelectedItem()));
+				startActivity(i);
 			}
 		});
 		InputStream is;
@@ -55,22 +71,4 @@ public class ConfigurePrimes extends Activity {
 
 	}
 
-	protected void findPrimes() {
-		try {
-			AndroidProviderManager.init(this);
-
-			String scriptString = script.getText().toString();
-			Bundle extras = getIntent().getExtras();
-			int nrOfFarms = Integer.parseInt((String) numberOfMachines
-					.getSelectedItem());
-			org.linkedprocess.demos.primes.PrimeFinderAsynchWithProgress.findAsynch(1, 10000, 1, 2, extras
-					.getString(Villein.USERNAME), extras
-					.getString(Villein.PASSWORD), extras
-					.getString(Villein.SERVER), extras.getInt(Villein.PORT), 1.0, 500, System.currentTimeMillis());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
 }
