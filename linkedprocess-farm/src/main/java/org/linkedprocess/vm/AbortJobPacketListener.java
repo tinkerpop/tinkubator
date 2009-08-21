@@ -3,8 +3,8 @@ package org.linkedprocess.vm;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.XMPPError;
-import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.LopError;
+import org.linkedprocess.Error;
+import org.linkedprocess.*;
 import org.linkedprocess.vm.AbortJob;
 import org.linkedprocess.os.errors.JobNotFoundException;
 import org.linkedprocess.os.errors.VmWorkerNotFoundException;
@@ -55,20 +55,20 @@ public class AbortJobPacketListener extends VmPacketListener {
             if (errorMessage.length() == 0)
                 errorMessage = null;
             returnAbortJob.setType(IQ.Type.ERROR);
-            returnAbortJob.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, errorMessage, LOP_CLIENT_TYPE, abortJob.getPacketID()));
+            returnAbortJob.setLopError(new Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, errorMessage, LOP_CLIENT_TYPE, abortJob.getPacketID()));
         } else if (!((LopVm) this.lopClient).checkVmPassword(vmPassword)) {
             returnAbortJob.setType(IQ.Type.ERROR);
-            returnAbortJob.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, abortJob.getPacketID()));
+            returnAbortJob.setLopError(new Error(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, abortJob.getPacketID()));
         } else {
             try {
                 ((LopVm) this.lopClient).abortJob(jobId);
                 returnAbortJob.setType(IQ.Type.RESULT);
             } catch (VmWorkerNotFoundException e) {
                 returnAbortJob.setType(IQ.Type.ERROR);
-                returnAbortJob.setLopError(new LopError(XMPPError.Condition.interna_server_error, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE, abortJob.getPacketID()));
+                returnAbortJob.setLopError(new org.linkedprocess.Error(XMPPError.Condition.interna_server_error, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE, abortJob.getPacketID()));
             } catch (JobNotFoundException e) {
                 returnAbortJob.setType(IQ.Type.ERROR);
-                returnAbortJob.setLopError(new LopError(XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.JOB_NOT_FOUND, e.getMessage(), LOP_CLIENT_TYPE, abortJob.getPacketID()));
+                returnAbortJob.setLopError(new Error(XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.JOB_NOT_FOUND, e.getMessage(), LOP_CLIENT_TYPE, abortJob.getPacketID()));
             }
         }
 

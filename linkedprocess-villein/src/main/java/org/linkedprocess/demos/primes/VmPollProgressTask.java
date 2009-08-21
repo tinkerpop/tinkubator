@@ -2,7 +2,7 @@ package org.linkedprocess.demos.primes;
 
 import org.linkedprocess.os.TypedValue;
 import org.linkedprocess.os.VmBindings;
-import org.linkedprocess.LopError;
+import org.linkedprocess.Error;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.patterns.BindingsChecker;
 import org.linkedprocess.villein.patterns.PollBindingsPattern;
@@ -31,7 +31,7 @@ public class VmPollProgressTask implements Runnable {
 							.valueOf(actualValue.getValue());
 					Double desiredDouble = Double.valueOf(desiredValue
 							.getValue());
-					System.out.println(vmProxy.getFullJid() + ": "
+					System.out.println(vmProxy.getJid() + ": "
 							+ actualDouble + " out of " + desiredDouble);
 					return (actualDouble != null && desiredDouble != null && actualDouble >= desiredDouble);
 				} else {
@@ -42,7 +42,7 @@ public class VmPollProgressTask implements Runnable {
 		Handler<VmBindings> resultHandler = new Handler<VmBindings>() {
 
 			public void handle(VmBindings vmBindings) {
-				System.out.println(vmProxy.getFullJid()
+				System.out.println(vmProxy.getJid()
 						+ ": progress meter value has been reached: "
 						+ vmBindings);
 				synchronized (monitor) {
@@ -51,8 +51,8 @@ public class VmPollProgressTask implements Runnable {
 				//System.exit(0);
 			}
 		};
-		Handler<LopError> errorHandler = new Handler<LopError>() {
-			public void handle(LopError lopError) {
+		Handler<Error> errorHandler = new Handler<Error>() {
+			public void handle(Error lopError) {
 				System.out.println("an error has occured: " + lopError);
 				synchronized (monitor) {
 					monitor.notify();

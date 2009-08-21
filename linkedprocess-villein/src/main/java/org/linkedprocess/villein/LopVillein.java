@@ -133,11 +133,11 @@ public class LopVillein extends LopClient {
     /**
      * When a unsubscription is requested, all virtual machines that this villein has access to on the countryside are terminatd.
      *
-     * @param bareJid the countryside JID to unsubscribe from
+     * @param jid the jid to unsubscribe from (subscriptions are only to and from countrysides)
      */
-    public void requestUnsubscription(String bareJid) {
-        super.requestUnsubscription(bareJid);
-        CountrysideProxy countrysideProxy = this.cloud.getCountrysideProxy(bareJid);
+    public void requestUnsubscription(String jid) {
+        super.requestUnsubscription(jid);
+        CountrysideProxy countrysideProxy = this.cloud.getCountrysideProxy(jid);
         if (countrysideProxy != null) {
             for (FarmProxy farmProxy : countrysideProxy.getFarmProxies()) {
                 for (VmProxy vmProxy : farmProxy.getVmProxies()) {
@@ -147,7 +147,7 @@ public class LopVillein extends LopClient {
                 }
             }
         }
-        this.cloud.removeCountrysideProxy(bareJid);
+        this.cloud.removeCountrysideProxy(jid);
     }
 
     /**

@@ -3,8 +3,8 @@ package org.linkedprocess.vm;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.XMPPError;
-import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.LopError;
+import org.linkedprocess.Error;
+import org.linkedprocess.*;
 import org.linkedprocess.vm.PingJob;
 import org.linkedprocess.os.errors.JobNotFoundException;
 import org.linkedprocess.os.errors.VmWorkerNotFoundException;
@@ -55,20 +55,20 @@ public class PingJobPacketListener extends VmPacketListener {
                 errorMessage = null;
 
             returnPingJob.setType(IQ.Type.ERROR);
-            returnPingJob.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, errorMessage, LOP_CLIENT_TYPE, pingJob.getPacketID()));
+            returnPingJob.setLopError(new org.linkedprocess.Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, errorMessage, LOP_CLIENT_TYPE, pingJob.getPacketID()));
         } else if (!((LopVm) this.lopClient).checkVmPassword(vmPassword)) {
             returnPingJob.setType(IQ.Type.ERROR);
-            returnPingJob.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, pingJob.getPacketID()));
+            returnPingJob.setLopError(new Error(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, pingJob.getPacketID()));
         } else {
             try {
                 returnPingJob.setValue(((LopVm) this.lopClient).getJobStatus(jobId));
                 returnPingJob.setType(IQ.Type.RESULT);
             } catch (VmWorkerNotFoundException e) {
                 returnPingJob.setType(IQ.Type.ERROR);
-                returnPingJob.setLopError(new LopError(XMPPError.Condition.interna_server_error, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE, pingJob.getPacketID()));
+                returnPingJob.setLopError(new Error(XMPPError.Condition.interna_server_error, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE, pingJob.getPacketID()));
             } catch (JobNotFoundException e) {
                 returnPingJob.setType(IQ.Type.ERROR);
-                returnPingJob.setLopError(new LopError(XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.JOB_NOT_FOUND, e.getMessage(), LOP_CLIENT_TYPE, pingJob.getPacketID()));
+                returnPingJob.setLopError(new Error(XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.JOB_NOT_FOUND, e.getMessage(), LOP_CLIENT_TYPE, pingJob.getPacketID()));
             }
         }
 

@@ -48,7 +48,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
 
 
     public VmControlFrame(VmProxy vmProxy, VilleinGui villeinGui) {
-        super(vmProxy.getFullJid());
+        super(vmProxy.getJid());
         this.vmProxy = vmProxy;
         this.villeinGui = villeinGui;
 
@@ -101,7 +101,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         this.jobList.setSelectedValue(jobPane, true);
 
         PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel(this.villeinGui.getXmppVillein().getFullJid());
-        PacketFilter fromToFilter = new OrFilter(new FromContainsFilter(vmProxy.getFullJid()), new ToContainsFilter(vmProxy.getFullJid()));
+        PacketFilter fromToFilter = new OrFilter(new FromContainsFilter(vmProxy.getJid()), new ToContainsFilter(vmProxy.getJid()));
         this.villeinGui.getXmppVillein().getConnection().addPacketListener(packetSnifferPanel, fromToFilter);
         this.villeinGui.getXmppVillein().getConnection().addPacketWriterInterceptor(packetSnifferPanel, fromToFilter);
 

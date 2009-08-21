@@ -46,12 +46,12 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
             this.setToolTipText("villein");
         } else if (x instanceof RegistryProxy) {
             RegistryProxy registryProxy = (RegistryProxy) x;
-            this.setText(LinkedProcess.generateResource(registryProxy.getFullJid()));
+            this.setText(LinkedProcess.generateResource(registryProxy.getJid()));
             this.setIcon(ImageHolder.registryIcon);
             this.setToolTipText("registry_jid");
         } else if (x instanceof FarmProxy) {
             FarmProxy farmProxy = (FarmProxy) x;
-            this.setText(LinkedProcess.generateResource(farmProxy.getFullJid()));
+            this.setText(LinkedProcess.generateResource(farmProxy.getJid()));
             if (farmProxy.requiresFarmPassword())
                 this.setIcon(ImageHolder.farmPasswordIcon);
             else
@@ -59,12 +59,12 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
             this.setToolTipText("farm_jid");
         } else if (x instanceof VmProxy) {
             VmProxy vmProxy = (VmProxy) x;
-            this.setText(LinkedProcess.generateResource(vmProxy.getFullJid()));
+            this.setText(LinkedProcess.generateResource(vmProxy.getJid()));
             this.setIcon(ImageHolder.vmIcon);
             this.setToolTipText("vm_jid");
         } else if (x instanceof CountrysideProxy) {
             CountrysideProxy countrysideProxy = (CountrysideProxy) x;
-            this.setText(countrysideProxy.getFullJid());
+            this.setText(countrysideProxy.getJid());
             this.setIcon(ImageHolder.countrysideIcon);
             this.setToolTipText("countryside_jid");
         } else if (x instanceof TreeNodeProperty) {

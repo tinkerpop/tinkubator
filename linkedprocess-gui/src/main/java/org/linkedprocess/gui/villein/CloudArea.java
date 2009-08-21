@@ -96,7 +96,7 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
         } else if (event.getActionCommand().equals(VM_CONTROL)) {
             if (this.popupTreeObject instanceof VmProxy) {
                 VmProxy vmProxy = (VmProxy) this.popupTreeObject;
-                VmControlFrame vmControlFrame = this.villeinGui.getVmFrame(vmProxy.getFullJid());
+                VmControlFrame vmControlFrame = this.villeinGui.getVmFrame(vmProxy.getJid());
                 if (vmControlFrame == null) {
                     this.villeinGui.addVmFrame(vmProxy);
                 } else {
@@ -107,12 +107,12 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
         } else if (event.getActionCommand().equals(PROBE)) {
             if (this.popupTreeObject instanceof Proxy) {
                 Proxy proxy = (Proxy) this.popupTreeObject;
-                this.villeinGui.getXmppVillein().probeJid(proxy.getFullJid());
+                this.villeinGui.getXmppVillein().probeJid(proxy.getJid());
             }
         } else if (event.getActionCommand().equals(DISCOVER_INFORMATION)) {
             if (this.popupTreeObject instanceof FarmProxy) {
                 FarmProxy farmProxy = (FarmProxy) this.popupTreeObject;
-                JFrame farmFrame = new JFrame(farmProxy.getFullJid());
+                JFrame farmFrame = new JFrame(farmProxy.getJid());
                 farmFrame.getContentPane().add(new ViewFarmConfigurationPanel(farmProxy, villeinGui));
                 farmFrame.pack();
                 farmFrame.setSize(600, 600);
@@ -122,7 +122,7 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
         } else if (event.getActionCommand().equals(DISCOVER_COUNTRYSIDES)) {
             if (this.popupTreeObject instanceof RegistryProxy) {
                 RegistryProxy registryProxy = (RegistryProxy) this.popupTreeObject;
-                JFrame farmFrame = new JFrame(registryProxy.getFullJid());
+                JFrame farmFrame = new JFrame(registryProxy.getJid());
                 farmFrame.getContentPane().add(new ViewRegistryCountrysidesPanel(registryProxy, villeinGui));
                 farmFrame.pack();
                 farmFrame.setVisible(true);
@@ -144,7 +144,7 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
                         FarmProxy farmProxy = (FarmProxy) this.popupTreeObject;
                         Handler<VmProxy> resultHandler = new Handler<VmProxy>() {
                             public void handle(VmProxy vmProxy) {
-                                updateTree(vmProxy.getFullJid(), false);
+                                updateTree(vmProxy.getJid(), false);
                             }
                         };
                         farmProxy.spawnVm(vmSpecies, resultHandler, new GenericErrorHandler());
@@ -196,7 +196,7 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
     private DefaultMutableTreeNode getNode(DefaultMutableTreeNode root, String jid) {
         if (root.getUserObject() instanceof Proxy) {
             Proxy temp = (Proxy) root.getUserObject();
-            if (temp.getFullJid().equals(jid)) {
+            if (temp.getJid().equals(jid)) {
                 return root;
             }
         }
@@ -246,7 +246,7 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
                 Proxy parentProxy = this.villeinGui.getXmppVillein().getLopCloud().getParentProxy(jid);
                 DefaultMutableTreeNode parentNode = null;
                 if (parentProxy != null) {
-                    parentNode = this.getNode(this.treeRoot, parentProxy.getFullJid());
+                    parentNode = this.getNode(this.treeRoot, parentProxy.getJid());
                 }
 
                 Proxy proxy = this.villeinGui.getXmppVillein().getLopCloud().getProxy(jid);
@@ -263,7 +263,7 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
                         model.reload(otherNode);
                     } else {
                         parentProxy = this.villeinGui.getXmppVillein().getLopCloud().getParentProxy(LinkedProcess.generateBareJid(jid));
-                        parentNode = this.getNode(this.treeRoot, parentProxy.getFullJid());
+                        parentNode = this.getNode(this.treeRoot, parentProxy.getJid());
                         if (parentNode != null) {
                             DefaultMutableTreeNode otherNode = new DefaultMutableTreeNode(proxy);
                             model.insertNodeInto(otherNode, parentNode, parentNode.getChildCount());
@@ -328,7 +328,7 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
             } else if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
                 if (this.popupTreeObject instanceof VmProxy) {
                     VmProxy vmProxy = (VmProxy) this.popupTreeObject;
-                    VmControlFrame vmControlFrame = this.villeinGui.getVmFrame(vmProxy.getFullJid());
+                    VmControlFrame vmControlFrame = this.villeinGui.getVmFrame(vmProxy.getJid());
                     if (vmControlFrame == null) {
                         this.villeinGui.addVmFrame(vmProxy);
                     } else {
@@ -357,23 +357,23 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
         this.popupMenu = new JPopupMenu();
         this.popupMenu.setBorder(new BevelBorder(6));
         JLabel menuLabel = new JLabel("Registry");
-        JMenuItem probeResource = new JMenuItem(PROBE);
+        //JMenuItem probeResource = new JMenuItem(PROBE);
         JMenuItem discoItems = new JMenuItem(DISCOVER_COUNTRYSIDES);
 
         menuLabel.setHorizontalTextPosition(JLabel.CENTER);
         this.popupMenu.add(menuLabel);
         this.popupMenu.addSeparator();
-        this.popupMenu.add(probeResource);
+        //this.popupMenu.add(probeResource);
         this.popupMenu.add(discoItems);
         discoItems.addActionListener(this);
-        probeResource.addActionListener(this);
+        //probeResource.addActionListener(this);
     }
 
     public void createFarmPopupMenu(FarmProxy farmProxy) {
         this.popupMenu = new JPopupMenu();
         this.popupMenu.setBorder(new BevelBorder(6));
         JLabel menuLabel = new JLabel("Farm");
-        JMenuItem probeResource = new JMenuItem(PROBE);
+        //JMenuItem probeResource = new JMenuItem(PROBE);
         JMenuItem discoInfo = new JMenuItem(DISCOVER_INFORMATION);
         JMenuItem addFarmPassword = null;
         if (farmProxy.requiresFarmPassword()) {
@@ -392,31 +392,31 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
         menuLabel.setHorizontalTextPosition(JLabel.CENTER);
         this.popupMenu.add(menuLabel);
         this.popupMenu.addSeparator();
-        this.popupMenu.add(probeResource);
+        //this.popupMenu.add(probeResource);
         this.popupMenu.add(discoInfo);
         if (null != addFarmPassword)
             this.popupMenu.add(addFarmPassword);
         this.popupMenu.add(spawnMenu);
         discoInfo.addActionListener(this);
-        probeResource.addActionListener(this);
+        //probeResource.addActionListener(this);
     }
 
     public void createVmPopupMenu() {
         this.popupMenu = new JPopupMenu();
         this.popupMenu.setBorder(new BevelBorder(6));
         JLabel menuLabel = new JLabel("Virtual Machine");
-        JMenuItem probeResource = new JMenuItem(PROBE);
+        //JMenuItem probeResource = new JMenuItem(PROBE);
         JMenuItem vmControlItem = new JMenuItem(VM_CONTROL);
         JMenuItem terminateVmItem = new JMenuItem(TERMINATE_VM);
         menuLabel.setHorizontalTextPosition(JLabel.CENTER);
         this.popupMenu.add(menuLabel);
         this.popupMenu.addSeparator();
-        this.popupMenu.add(probeResource);
+        //this.popupMenu.add(probeResource);
         this.popupMenu.add(vmControlItem);
         this.popupMenu.add(terminateVmItem);
         terminateVmItem.addActionListener(this);
         vmControlItem.addActionListener(this);
-        probeResource.addActionListener(this);
+        //probeResource.addActionListener(this);
     }
 
     public void mouseReleased(MouseEvent e) {
@@ -436,6 +436,6 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
     }
 
     public void handlePresenceUpdate(Proxy proxy, boolean available) {
-        updateTree(proxy.getFullJid(), !available);
+        updateTree(proxy.getJid(), !available);
     }
 }

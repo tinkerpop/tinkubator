@@ -12,8 +12,6 @@ import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.linkedprocess.Connection;
-import org.linkedprocess.LinkedProcess;
 
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
@@ -179,23 +177,19 @@ public abstract class LopClient {
     }
 
     public void requestSubscription(String jid) {
-        if (jid.equals(this.getFullJid()) || jid.equals(this.getBareJid()))
-            return;
-
-        Presence subscribe = new Presence(Presence.Type.subscribe);
-        subscribe.setTo(jid);
-        subscribe.setFrom(this.getFullJid());
-        this.connection.sendPacket(subscribe);
+        try {
+            this.roster.createEntry(jid, null, null);
+        } catch (XMPPException e) {
+            LOGGER.warning(e.getMessage());
+        }
     }
 
     public void requestUnsubscription(String jid) {
-        if (jid.equals(this.getFullJid()) || jid.equals(this.getBareJid()))
-            return;
-
-        Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
-        unsubscribe.setTo(jid);
-        unsubscribe.setFrom(this.getFullJid());
-        this.connection.sendPacket(unsubscribe);
+        try {
+            this.roster.removeEntry(this.roster.getEntry(jid));
+        } catch (XMPPException e) {
+            LOGGER.warning(e.getMessage());
+        }
     }
 
     public void probeJid(String jid) {

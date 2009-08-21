@@ -8,7 +8,6 @@
 package org.linkedprocess.villein.commands;
 
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.villein.proxies.JobStruct;
@@ -40,7 +39,7 @@ public class SubmitJobCommand extends Command {
             jobStruct.setJobId(JobStruct.generateRandomId());
 
         SubmitJob submitJob = new SubmitJob();
-        submitJob.setTo(vmStruct.getFullJid());
+        submitJob.setTo(vmStruct.getJid());
         submitJob.setFrom(xmppVillein.getFullJid());
         submitJob.setExpression(jobStruct.getExpression());
         submitJob.setVmPassword(vmStruct.getVmPassword());

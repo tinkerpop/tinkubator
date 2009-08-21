@@ -9,7 +9,7 @@ package org.linkedprocess.villein.commands;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.LopError;
+import org.linkedprocess.Error;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.villein.proxies.JobStruct;
@@ -27,18 +27,18 @@ import org.linkedprocess.vm.AbortJob;
 public class AbortJobCommand extends Command {
 
     private final HandlerSet<String> successHandlers;
-    private final HandlerSet<LopError> errorHandlers;
+    private final HandlerSet<Error> errorHandlers;
 
     public AbortJobCommand(LopVillein xmppVillein) {
         super(xmppVillein);
         this.successHandlers = new HandlerSet<String>();
-        this.errorHandlers = new HandlerSet<LopError>();
+        this.errorHandlers = new HandlerSet<org.linkedprocess.Error>();
     }
 
-    public void send(final VmProxy vmStruct, final JobStruct jobStruct, final Handler<String> successHandler, final Handler<LopError> errorHandler) {
+    public void send(final VmProxy vmStruct, final JobStruct jobStruct, final Handler<String> successHandler, final Handler<Error> errorHandler) {
         String id = Packet.nextID();
         AbortJob abortJob = new AbortJob();
-        abortJob.setTo(vmStruct.getFullJid());
+        abortJob.setTo(vmStruct.getJid());
         abortJob.setFrom(this.xmppVillein.getFullJid());
         abortJob.setJobId(jobStruct.getJobId());
         abortJob.setVmPassword(vmStruct.getVmPassword());

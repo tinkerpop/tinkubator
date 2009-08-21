@@ -19,9 +19,9 @@ import java.util.Map;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class LopError extends XMPPError implements Comparable {
+public class Error extends XMPPError implements Comparable {
 
-    protected LinkedProcess.LopErrorType lopErrorType;
+    protected LinkedProcess.LopErrorType errorType;
     protected LinkedProcess.ClientType clientType;
     protected String packetId;
 
@@ -111,15 +111,15 @@ public class LopError extends XMPPError implements Comparable {
     }
 
 
-    public LopError(XMPPError.Condition condition, LinkedProcess.LopErrorType lopErrorType, String errorMessage, LinkedProcess.ClientType clientType, String packetId) {
-        super(LopError.conditionCodeMap.get(condition), LopError.conditionErrorMap.get(condition), condition.toString().toLowerCase(), errorMessage, null);
-        this.lopErrorType = lopErrorType;
+    public Error(XMPPError.Condition condition, LinkedProcess.LopErrorType errorType, String errorMessage, LinkedProcess.ClientType clientType, String packetId) {
+        super(Error.conditionCodeMap.get(condition), Error.conditionErrorMap.get(condition), condition.toString().toLowerCase(), errorMessage, null);
+        this.errorType = errorType;
         this.clientType = clientType;
         this.packetId = packetId;
     }
 
-    public LinkedProcess.LopErrorType getLopErrorType() {
-        return this.lopErrorType;
+    public LinkedProcess.LopErrorType getErrorType() {
+        return this.errorType;
     }
 
     public LinkedProcess.ClientType getClientType() {
@@ -135,7 +135,7 @@ public class LopError extends XMPPError implements Comparable {
         errorElement.setAttribute(LinkedProcess.CODE_ATTRIBUTE, "" + this.getCode());
         errorElement.setAttribute(LinkedProcess.TYPE_ATTRIBUTE, this.getType().toString().toLowerCase());
         Element conditionElement = new Element(this.getCondition(), Namespace.getNamespace(LinkedProcess.XMPP_STANZAS_NAMESPACE));
-        Element lopElement = new Element(lopErrorType.toString(), this.clientType == LinkedProcess.ClientType.FARM ? Namespace.getNamespace(LinkedProcess.LOP_FARM_NAMESPACE) : Namespace.getNamespace(LinkedProcess.LOP_VM_NAMESPACE));
+        Element lopElement = new Element(errorType.toString(), this.clientType == LinkedProcess.ClientType.FARM ? Namespace.getNamespace(LinkedProcess.LOP_FARM_NAMESPACE) : Namespace.getNamespace(LinkedProcess.LOP_VM_NAMESPACE));
         errorElement.addContent(conditionElement);
         errorElement.addContent(lopElement);
         if (this.getMessage() != null) {
@@ -147,15 +147,15 @@ public class LopError extends XMPPError implements Comparable {
     }
 
     public String toString() {
-        if (null != lopErrorType)
-            return lopErrorType.toString() + ":" + this.getCondition() + "[" + this.getCode() + "]: " + this.getMessage();
+        if (null != errorType)
+            return errorType.toString() + ":" + this.getCondition() + "[" + this.getCode() + "]: " + this.getMessage();
         else
             return this.getCondition() + "[" + this.getCode() + "]: " + this.getMessage();
     }
 
     public int compareTo(Object object) {
-        if (object instanceof LopError)
-            return packetId.compareTo(((LopError) object).getPacketId());
+        if (object instanceof Error)
+            return packetId.compareTo(((Error) object).getPacketId());
         else
             throw new ClassCastException();
     }

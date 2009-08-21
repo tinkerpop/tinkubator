@@ -9,7 +9,7 @@ package org.linkedprocess.demos.polling;
 
 import org.linkedprocess.os.TypedValue;
 import org.linkedprocess.os.VmBindings;
-import org.linkedprocess.LopError;
+import org.linkedprocess.Error;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.villein.patterns.BindingsChecker;
@@ -57,13 +57,13 @@ public class ProgressPolling {
             System.exit(1);
         }
         for (FarmProxy farmProxy : farmProxies) {
-            System.out.println("farm allocated: " + farmProxy.getFullJid());
+            System.out.println("farm allocated: " + farmProxy.getJid());
         }
 
         //////////////// SPAWN VIRTUAL MACHINES ON ALLOCATED FARMS
 
         ResultHolder<VmProxy> vmProxyResult = SynchronousPattern.spawnVm(farmProxies.iterator().next(), "javascript", -1);
-        System.out.println("virtual machine spawned: " + vmProxyResult.getResult().getFullJid());
+        System.out.println("virtual machine spawned: " + vmProxyResult.getResult().getJid());
 
         //////////////// DISTRIBUTE PROGRESS METER INCREMENTING CODE
 
@@ -97,8 +97,8 @@ public class ProgressPolling {
                 System.exit(0);
             }
         };
-        Handler<LopError> errorHandler = new Handler<LopError>() {
-            public void handle(LopError lopError) {
+        Handler<org.linkedprocess.Error> errorHandler = new Handler<Error>() {
+            public void handle(Error lopError) {
                 System.out.println("an error has occured: " + lopError);
                 synchronized (monitor) {
                     monitor.notify();

@@ -55,11 +55,11 @@ public class VilleinGui extends JFrame {
 
     public void addVmFrame(VmProxy vmProxy) {
         VmControlFrame vmControlFrame = new VmControlFrame(vmProxy, this);
-        this.vmFrames.put(vmProxy.getFullJid(), vmControlFrame);
+        this.vmFrames.put(vmProxy.getJid(), vmControlFrame);
     }
 
     public void removeVmFrame(VmProxy vmProxy) {
-        VmControlFrame vmControlFrame = this.vmFrames.remove(vmProxy.getFullJid());
+        VmControlFrame vmControlFrame = this.vmFrames.remove(vmProxy.getJid());
         if (vmControlFrame != null) {
             vmControlFrame.setVisible(false);
         }

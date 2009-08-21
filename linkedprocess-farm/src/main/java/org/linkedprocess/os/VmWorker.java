@@ -507,7 +507,7 @@ public class VmWorker {
     // exception.
     private SecurityException findSecurityException(Throwable c) {
         while (null != c) {
-            System.out.println("c = " + c);
+            LOGGER.warning("c = " + c);
             if (c instanceof SecurityException) {
                 return (SecurityException) c;
             } else {

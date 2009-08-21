@@ -65,7 +65,7 @@ public class PrimeFinderAsynchWithProgress {
 		Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(
 				villein.getLopCloud(), farmCount, 200000);
 		for (FarmProxy farmProxy : farmProxies) {
-			System.out.println("farm allocated: " + farmProxy.getFullJid());
+			System.out.println("farm allocated: " + farmProxy.getJid());
 		}
 
 		// ////////////// SPAWN VIRTUAL MACHINES ON ALLOCATED FARMS

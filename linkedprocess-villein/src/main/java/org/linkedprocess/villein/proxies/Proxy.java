@@ -32,18 +32,18 @@ import java.util.Set;
 public class Proxy implements Comparable {
 
     protected boolean available = false;
-    protected String fullJid;
+    protected String jid;
     protected final Dispatcher dispatcher;
     protected Document discoInfoDocument;
 
-    public Proxy(final String fullJid, final Dispatcher dispatcher) {
-        this.fullJid = fullJid;
+    public Proxy(final String jid, final Dispatcher dispatcher) {
+        this.jid = jid;
         this.dispatcher = dispatcher;
         this.refreshDiscoInfo();
     }
 
-    public Proxy(final String fullJid, final Dispatcher dispatcher, final Document discoInfoDocument) {
-        this.fullJid = fullJid;
+    public Proxy(final String jid, final Dispatcher dispatcher, final Document discoInfoDocument) {
+        this.jid = jid;
         this.dispatcher = dispatcher;
         this.discoInfoDocument = discoInfoDocument;
     }
@@ -56,19 +56,19 @@ public class Proxy implements Comparable {
         return this.available;
     }
 
-    public void setFullJid(String fullJid) {
-        this.fullJid = fullJid;
+    public void setJid(String jid) {
+        this.jid = jid;
     }
 
-    public String getFullJid() {
-        return this.fullJid;
+    public String getJid() {
+        return this.jid;
     }
 
     public void refreshDiscoInfo() {
         if (this.dispatcher != null) {
             ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();
             try {
-                DiscoverInfo discoInfo = discoManager.discoverInfo(this.getFullJid());
+                DiscoverInfo discoInfo = discoManager.discoverInfo(this.getJid());
                 this.discoInfoDocument = LinkedProcess.createXMLDocument(discoInfo.toXML());
             } catch (Exception e) {
                 LopVillein.LOGGER.warning("Problem loading disco#info: " + e.getMessage());
@@ -144,14 +144,14 @@ public class Proxy implements Comparable {
 
     public int compareTo(Object proxy) {
         if (proxy instanceof Proxy) {
-            return this.fullJid.compareTo(((Proxy) proxy).getFullJid());
+            return this.jid.compareTo(((Proxy) proxy).getJid());
         } else {
             throw new ClassCastException();
         }
     }
 
     public String toString() {
-        return this.getClass().getName() + "[" + this.fullJid + "]";
+        return this.getClass().getName() + "[" + this.jid + "]";
     }
 
 

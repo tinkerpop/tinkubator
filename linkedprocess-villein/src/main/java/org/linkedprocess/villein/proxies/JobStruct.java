@@ -8,8 +8,8 @@
 package org.linkedprocess.villein.proxies;
 
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.LopError;
+import org.linkedprocess.Error;
+import org.linkedprocess.*;
 
 /**
  * A JobStruct is a data structure representing a job. A job is submitted to and returned by a virtual machine.
@@ -24,7 +24,7 @@ public class JobStruct implements Comparable {
     protected String jobId;
     protected String result;
     protected String expression;
-    protected LopError lopError;
+    protected Error error;
     protected boolean complete = false;
 
     /**
@@ -68,17 +68,17 @@ public class JobStruct implements Comparable {
      *
      * @return the error of an evaluation if an error has occurred
      */
-    public LopError getLopError() {
-        return lopError;
+    public Error getLopError() {
+        return error;
     }
 
     /**
      * Set the error that has occurred during an execution/evaluation.
      *
-     * @param lopError the error of an evaluation if an error has occurred
+     * @param error the error of an evaluation if an error has occurred
      */
-    public void setLopError(LopError lopError) {
-        this.lopError = lopError;
+    public void setLopError(org.linkedprocess.Error error) {
+        this.error = error;
     }
 
     /**
@@ -123,7 +123,7 @@ public class JobStruct implements Comparable {
      * @return whether the job was aborted
      */
     public boolean wasAborted() {
-        return (null != lopError && LinkedProcess.LopErrorType.JOB_ABORTED != lopError.getLopErrorType());
+        return (null != error && LinkedProcess.LopErrorType.JOB_ABORTED != error.getErrorType());
     }
 
     /**
@@ -132,7 +132,7 @@ public class JobStruct implements Comparable {
      * @return whether the job was completed successfully
      */
     public boolean wasSuccessful() {
-        return (complete && null == lopError);
+        return (complete && null == error);
     }
 
     /**
@@ -153,10 +153,10 @@ public class JobStruct implements Comparable {
     }
 
     public String toString() {
-        if (null == lopError)
+        if (null == error)
             return "job id[" + jobId + "], complete[" + complete + "], result[" + result + "]";
         else
-            return "job id[" + jobId + "], complete[" + complete + "], error[" + lopError.getLopErrorType().toString() + "]";
+            return "job id[" + jobId + "], complete[" + complete + "], error[" + error.getErrorType().toString() + "]";
     }
 
 

@@ -7,8 +7,8 @@
 
 package org.linkedprocess.villein.patterns;
 
-import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.LopError;
+import org.linkedprocess.Error;
+import org.linkedprocess.*;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.villein.proxies.FarmProxy;
@@ -90,8 +90,8 @@ public class ScatterGatherPattern {
                     }
                 };
 
-                Handler<LopError> errorHandler = new Handler<LopError>() {
-                    public void handle(LopError lopError) {
+                Handler<Error> errorHandler = new Handler<Error>() {
+                    public void handle(Error lopError) {
                         resultHolders.add(new ResultHolder<VmProxy>(lopError));
                         if (resultHolders.size() == (farmProxies.size() * vmsPerFarm)) {
                             synchronized (monitor) {
@@ -131,8 +131,8 @@ public class ScatterGatherPattern {
                         }
                     }
                 };
-                Handler<LopError> spawnErrorHandler = new Handler<LopError>() {
-                    public void handle(LopError lopError) {
+                Handler<Error> spawnErrorHandler = new Handler<Error>() {
+                    public void handle(Error lopError) {
                         resultHolders.add(new ResultHolder<VmProxy>(lopError));
                         if (resultHolders.size() == vmsPerFarm * farmProxies.size()) {
                             resultHandler.handle(resultHolders);
@@ -232,8 +232,8 @@ public class ScatterGatherPattern {
                 }
             };
 
-            Handler<LopError> abortErrorHandler = new Handler<LopError>() {
-                public void handle(LopError lopError) {
+            Handler<Error> abortErrorHandler = new Handler<Error>() {
+                public void handle(Error lopError) {
                     resultHolders.add(new ResultHolder<String>(lopError));
                     if (resultHolders.size() == vmJobMap.size()) {
                         synchronized (monitor) {
@@ -271,8 +271,8 @@ public class ScatterGatherPattern {
                 }
             };
 
-            Handler<LopError> abortErrorHandler = new Handler<LopError>() {
-                public void handle(LopError lopError) {
+            Handler<Error> abortErrorHandler = new Handler<Error>() {
+                public void handle(Error lopError) {
                     resultHolders.add(new ResultHolder<String>(lopError));
                     if (resultHolders.size() == vmJobMap.size()) {
                         resultHandler.handle(resultHolders);
@@ -307,8 +307,8 @@ public class ScatterGatherPattern {
                 }
             };
 
-            Handler<LopError> pingErrorHandler = new Handler<LopError>() {
-                public void handle(LopError lopError) {
+            Handler<Error> pingErrorHandler = new Handler<Error>() {
+                public void handle(Error lopError) {
                     resultHolders.add(new ResultHolder<LinkedProcess.JobStatus>(lopError));
                     if (resultHolders.size() == vmJobMap.size()) {
                         synchronized (monitor) {
@@ -346,8 +346,8 @@ public class ScatterGatherPattern {
                 }
             };
 
-            Handler<LopError> pingErrorHandler = new Handler<LopError>() {
-                public void handle(LopError lopError) {
+            Handler<Error> pingErrorHandler = new Handler<Error>() {
+                public void handle(Error lopError) {
                     resultHolders.add(new ResultHolder<LinkedProcess.JobStatus>(lopError));
                     if (resultHolders.size() == vmJobMap.size()) {
                         resultHandler.handle(resultHolders);
@@ -381,8 +381,8 @@ public class ScatterGatherPattern {
                 }
             };
 
-            Handler<LopError> scatterErrorHandler = new Handler<LopError>() {
-                public void handle(LopError lopError) {
+            Handler<Error> scatterErrorHandler = new Handler<Error>() {
+                public void handle(Error lopError) {
                     resultHolders.put(vmProxy, new ResultHolder<VmBindings>(lopError));
                     if (resultHolders.size() == vmBindingNamesMap.size()) {
                         synchronized (monitor) {
@@ -420,8 +420,8 @@ public class ScatterGatherPattern {
                 }
             };
 
-            Handler<LopError> bindingsErrorHandler = new Handler<LopError>() {
-                public void handle(LopError lopError) {
+            Handler<Error> bindingsErrorHandler = new Handler<Error>() {
+                public void handle(org.linkedprocess.Error lopError) {
                     resultHolders.put(vmProxy, new ResultHolder<VmBindings>(lopError));
                     if (resultHolders.size() == vmBindingNamesMap.size()) {
                         resultHandler.handle(resultHolders);
@@ -456,8 +456,8 @@ public class ScatterGatherPattern {
                 }
             };
 
-            Handler<LopError> scatterErrorHandler = new Handler<LopError>() {
-                public void handle(LopError lopError) {
+            Handler<Error> scatterErrorHandler = new Handler<Error>() {
+                public void handle(Error lopError) {
                     resultHolders.put(vmProxy, new ResultHolder<VmBindings>(lopError));
                     if (resultHolders.size() == vmBindingsMap.size()) {
                         synchronized (monitor) {
@@ -495,8 +495,8 @@ public class ScatterGatherPattern {
                 }
             };
 
-            Handler<LopError> bindingsErrorHandler = new Handler<LopError>() {
-                public void handle(LopError lopError) {
+            Handler<Error> bindingsErrorHandler = new Handler<Error>() {
+                public void handle(Error lopError) {
                     resultHolders.put(vmProxy, new ResultHolder<VmBindings>(lopError));
                     if (resultHolders.size() == vmBindingsMap.size()) {
                         resultHandler.handle(resultHolders);

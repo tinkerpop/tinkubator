@@ -3,8 +3,8 @@ package org.linkedprocess.vm;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.XMPPError;
-import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.LopError;
+import org.linkedprocess.Error;
+import org.linkedprocess.*;
 import org.linkedprocess.vm.ManageBindings;
 import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 
@@ -43,16 +43,16 @@ public class ManageBindingsPacketListener extends VmPacketListener {
 
         if (null == vmPassword) {
             returnManageBindings.setType(IQ.Type.ERROR);
-            returnManageBindings.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "manage_bindings XML packet is missing the vm_password attribute", LOP_CLIENT_TYPE, manageBindings.getPacketID()));
+            returnManageBindings.setLopError(new org.linkedprocess.Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "manage_bindings XML packet is missing the vm_password attribute", LOP_CLIENT_TYPE, manageBindings.getPacketID()));
         } else if (null != manageBindings.getBadDatatypeMessage()) {
             returnManageBindings.setType(IQ.Type.ERROR);
-            returnManageBindings.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.UNKNOWN_DATATYPE, manageBindings.getBadDatatypeMessage(), LOP_CLIENT_TYPE, manageBindings.getPacketID()));
+            returnManageBindings.setLopError(new Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.UNKNOWN_DATATYPE, manageBindings.getBadDatatypeMessage(), LOP_CLIENT_TYPE, manageBindings.getPacketID()));
         } else if (null != manageBindings.getInvalidValueMessage()) {
             returnManageBindings.setType(IQ.Type.ERROR);
-            returnManageBindings.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.INVALID_VALUE, manageBindings.getInvalidValueMessage(), LOP_CLIENT_TYPE, manageBindings.getPacketID()));
+            returnManageBindings.setLopError(new Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.INVALID_VALUE, manageBindings.getInvalidValueMessage(), LOP_CLIENT_TYPE, manageBindings.getPacketID()));
         } else if (!((LopVm) this.lopClient).checkVmPassword(vmPassword)) {
             returnManageBindings.setType(IQ.Type.ERROR);
-            returnManageBindings.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, manageBindings.getPacketID()));
+            returnManageBindings.setLopError(new Error(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, manageBindings.getPacketID()));
         } else {
             try {
 
@@ -66,7 +66,7 @@ public class ManageBindingsPacketListener extends VmPacketListener {
 
             } catch (VmWorkerNotFoundException e) {
                 returnManageBindings.setType(IQ.Type.ERROR);
-                returnManageBindings.setLopError(new LopError(XMPPError.Condition.interna_server_error, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE, manageBindings.getPacketID()));
+                returnManageBindings.setLopError(new Error(XMPPError.Condition.interna_server_error, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE, manageBindings.getPacketID()));
             }
         }
 

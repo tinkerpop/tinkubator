@@ -80,7 +80,7 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
         DefaultListModel listModel = (DefaultListModel) this.farmlandList.getModel();
         listModel.removeAllElements();
         for (CountrysideProxy countrysideProxy : registryProxy.getActiveCountrysides()) {
-            listModel.addElement(countrysideProxy.getFullJid());
+            listModel.addElement(countrysideProxy.getJid());
         }
     }
 

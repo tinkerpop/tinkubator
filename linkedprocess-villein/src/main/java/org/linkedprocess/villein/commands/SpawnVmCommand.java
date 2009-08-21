@@ -9,7 +9,7 @@ package org.linkedprocess.villein.commands;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.LopError;
+import org.linkedprocess.Error;
 import org.linkedprocess.farm.SpawnVm;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.LopVillein;
@@ -27,18 +27,18 @@ import org.linkedprocess.villein.proxies.VmProxy;
  */
 public class SpawnVmCommand extends Command {
     private final HandlerSet<VmProxy> successHandler;
-    private final HandlerSet<LopError> errorHandlers;
+    private final HandlerSet<org.linkedprocess.Error> errorHandlers;
 
     public SpawnVmCommand(LopVillein xmppVillein) {
         super(xmppVillein);
         this.successHandler = new HandlerSet<VmProxy>();
-        this.errorHandlers = new HandlerSet<LopError>();
+        this.errorHandlers = new HandlerSet<Error>();
     }
 
-    public void send(final FarmProxy farmStruct, final String vmSpecies, final Handler<VmProxy> successHandler, final Handler<LopError> errorHandler) {
+    public void send(final FarmProxy farmStruct, final String vmSpecies, final Handler<VmProxy> successHandler, final Handler<Error> errorHandler) {
         String id = Packet.nextID();
         SpawnVm spawnVm = new SpawnVm();
-        spawnVm.setTo(farmStruct.getFullJid());
+        spawnVm.setTo(farmStruct.getJid());
         spawnVm.setFrom(this.xmppVillein.getFullJid());
         spawnVm.setVmSpecies(vmSpecies);
         if (null != farmStruct.getFarmPassword()) {

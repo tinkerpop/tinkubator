@@ -35,7 +35,7 @@ public class CloudTest extends TestCase {
         for (int i = 0; i < 10; i++) {
             FarmProxy farmProxy = new FarmProxy("test@test/" + LinkedProcess.generateRandomResourceId(), null);
             cloud.addFarmProxy(farmProxy);
-            assertEquals(countrysideProxy, cloud.getParentProxy(farmProxy.getFullJid()));
+            assertEquals(countrysideProxy, cloud.getParentProxy(farmProxy.getJid()));
         }
         assertEquals(cloud.getFarmProxies().size(), 10);
     }

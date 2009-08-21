@@ -3,10 +3,10 @@ package org.linkedprocess.vm;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.XMPPError;
-import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.vm.TerminateVm;
 import org.linkedprocess.os.errors.VmWorkerNotFoundException;
-import org.linkedprocess.LopError;
+import org.linkedprocess.Error;
+import org.linkedprocess.*;
 import org.linkedprocess.farm.LopFarm;
 
 /**
@@ -44,10 +44,10 @@ public class TerminateVmPacketListener extends VmPacketListener {
 
         if (null == vmPassword) {
             returnTerminateVm.setType(IQ.Type.ERROR);
-            returnTerminateVm.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "terminate_vm XML packet is missing the vm_password attribute", LOP_CLIENT_TYPE, terminateVm.getPacketID()));
+            returnTerminateVm.setLopError(new Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "terminate_vm XML packet is missing the vm_password attribute", LOP_CLIENT_TYPE, terminateVm.getPacketID()));
         } else if (!((LopVm) this.lopClient).checkVmPassword(vmPassword)) {
             returnTerminateVm.setType(IQ.Type.ERROR);
-            returnTerminateVm.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, terminateVm.getPacketID()));
+            returnTerminateVm.setLopError(new org.linkedprocess.Error(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, terminateVm.getPacketID()));
         } else {
             terminate = true;
             returnTerminateVm.setType(IQ.Type.RESULT);

@@ -29,8 +29,8 @@ public class CountrysideProxy extends Proxy implements FarmHolder {
      */
     protected Map<String, RegistryProxy> registryProxies = new HashMap<String, RegistryProxy>();
 
-    public CountrysideProxy(final String fullJid) {
-        super(fullJid, null);
+    public CountrysideProxy(final String bareJid) {
+        super(bareJid, null);
     }
 
     /**
@@ -59,7 +59,7 @@ public class CountrysideProxy extends Proxy implements FarmHolder {
      * @param farmProxy the farm proxy to add
      */
     public void addFarmProxy(FarmProxy farmProxy) {
-        this.farmProxies.put(farmProxy.getFullJid(), farmProxy);
+        this.farmProxies.put(farmProxy.getJid(), farmProxy);
     }
 
     /**
@@ -68,7 +68,7 @@ public class CountrysideProxy extends Proxy implements FarmHolder {
      * @param registryProxy the registry proxy to add
      */
     public void addRegistryProxy(RegistryProxy registryProxy) {
-        this.registryProxies.put(registryProxy.getFullJid(), registryProxy);
+        this.registryProxies.put(registryProxy.getJid(), registryProxy);
     }
 
     /**

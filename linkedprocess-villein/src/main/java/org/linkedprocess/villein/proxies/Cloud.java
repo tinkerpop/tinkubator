@@ -43,7 +43,7 @@ public class Cloud implements FarmHolder {
      * @param countrysideProxy the countryside proxy to add
      */
     public void addCountrysideProxy(CountrysideProxy countrysideProxy) {
-        this.countrysideProxies.put(countrysideProxy.getFullJid(), countrysideProxy);
+        this.countrysideProxies.put(countrysideProxy.getJid(), countrysideProxy);
     }
 
     /**
@@ -123,17 +123,17 @@ public class Cloud implements FarmHolder {
      */
     public Proxy getProxy(String jid, ProxyType type) {
         for (CountrysideProxy countrysideProxy : this.countrysideProxies.values()) {
-            if (countrysideProxy.getFullJid().equals(jid) && (type == null || type == ProxyType.COUNTRYSIDE))
+            if (countrysideProxy.getJid().equals(jid) && (type == null || type == ProxyType.COUNTRYSIDE))
                 return countrysideProxy;
             for (RegistryProxy registryProxy : countrysideProxy.getRegistryProxies()) {
-                if (registryProxy.getFullJid().equals(jid) && (type == null || type == ProxyType.REGISTRY))
+                if (registryProxy.getJid().equals(jid) && (type == null || type == ProxyType.REGISTRY))
                     return registryProxy;
             }
             for (FarmProxy farmProxy : countrysideProxy.getFarmProxies()) {
-                if (farmProxy.getFullJid().equals(jid) && (type == null || type == ProxyType.FARM))
+                if (farmProxy.getJid().equals(jid) && (type == null || type == ProxyType.FARM))
                     return farmProxy;
                 for (VmProxy vmProxy : farmProxy.getVmProxies()) {
-                    if (vmProxy.getFullJid().equals(jid) && (type == null || type == ProxyType.VM))
+                    if (vmProxy.getJid().equals(jid) && (type == null || type == ProxyType.VM))
                         return vmProxy;
                 }
             }
@@ -176,17 +176,17 @@ public class Cloud implements FarmHolder {
      */
     public Proxy getParentProxy(String jid) {
         for (CountrysideProxy countrysideProxy : this.countrysideProxies.values()) {
-            if (countrysideProxy.getFullJid().equals(jid))
+            if (countrysideProxy.getJid().equals(jid))
                 return null;
             for (RegistryProxy registryProxy : countrysideProxy.getRegistryProxies()) {
-                if (registryProxy.getFullJid().equals(jid))
+                if (registryProxy.getJid().equals(jid))
                     return countrysideProxy;
             }
             for (FarmProxy farmProxy : countrysideProxy.getFarmProxies()) {
-                if (farmProxy.getFullJid().equals(jid))
+                if (farmProxy.getJid().equals(jid))
                     return countrysideProxy;
                 for (VmProxy vmProxy : farmProxy.getVmProxies()) {
-                    if (vmProxy.getFullJid().equals(jid))
+                    if (vmProxy.getJid().equals(jid))
                         return farmProxy;
                 }
             }
@@ -221,11 +221,11 @@ public class Cloud implements FarmHolder {
      * @throws ParentProxyNotFoundException when the parent countryside proxy of the farm proxy is not found in the cloud
      */
     public void addFarmProxy(FarmProxy farmProxy) throws ParentProxyNotFoundException {
-        Proxy countrysideProxy = this.getProxy(LinkedProcess.generateBareJid(farmProxy.getFullJid()), ProxyType.COUNTRYSIDE);
+        Proxy countrysideProxy = this.getProxy(LinkedProcess.generateBareJid(farmProxy.getJid()), ProxyType.COUNTRYSIDE);
         if (countrysideProxy != null && countrysideProxy instanceof CountrysideProxy)
             ((CountrysideProxy) countrysideProxy).addFarmProxy(farmProxy);
         else
-            throw new ParentProxyNotFoundException("countryside proxy null for " + farmProxy.getFullJid());
+            throw new ParentProxyNotFoundException("countryside proxy null for " + farmProxy.getJid());
     }
 
     /**
@@ -236,11 +236,11 @@ public class Cloud implements FarmHolder {
      * @throws ParentProxyNotFoundException when the parent countryside proxy of the registry proxy is not found in the cloud
      */
     public void addRegistryProxy(RegistryProxy registryProxy) throws ParentProxyNotFoundException {
-        Proxy countrysideProxy = this.getProxy(LinkedProcess.generateBareJid(registryProxy.getFullJid()), ProxyType.COUNTRYSIDE);
+        Proxy countrysideProxy = this.getProxy(LinkedProcess.generateBareJid(registryProxy.getJid()), ProxyType.COUNTRYSIDE);
         if (countrysideProxy != null && countrysideProxy instanceof CountrysideProxy)
             ((CountrysideProxy) countrysideProxy).addRegistryProxy(registryProxy);
         else
-            throw new ParentProxyNotFoundException("countryside proxy null for " + registryProxy.getFullJid());
+            throw new ParentProxyNotFoundException("countryside proxy null for " + registryProxy.getJid());
     }
 
     /**
@@ -255,7 +255,7 @@ public class Cloud implements FarmHolder {
         if (farmProxy != null && farmProxy instanceof FarmProxy)
             ((FarmProxy) farmProxy).addVmProxy(vmProxy);
         else
-            throw new ParentProxyNotFoundException("farm proxy null for " + vmProxy.getFullJid());
+            throw new ParentProxyNotFoundException("farm proxy null for " + vmProxy.getJid());
     }
 
 

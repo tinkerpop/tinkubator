@@ -47,7 +47,7 @@ public class RegistryProxy extends Proxy {
 
             this.discoItems = new HashSet<DiscoverItems.Item>();
             ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();
-            DiscoverItems discoItems = discoManager.discoverItems(this.getFullJid());
+            DiscoverItems discoItems = discoManager.discoverItems(this.getJid());
             Iterator<DiscoverItems.Item> itty = discoItems.getItems();
             while (itty.hasNext()) {
                 this.discoItems.add(itty.next());

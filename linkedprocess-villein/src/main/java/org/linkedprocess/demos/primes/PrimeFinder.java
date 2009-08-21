@@ -42,7 +42,7 @@ public class PrimeFinder {
         System.out.println("Waiting for " + farmCount + " available farms...");
         Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(villein.getLopCloud(), farmCount, 20000);
         for (FarmProxy farmProxy : farmProxies) {
-            System.out.println("farm allocated: " + farmProxy.getFullJid());
+            System.out.println("farm allocated: " + farmProxy.getJid());
         }
 
         //////////////// SPAWN VIRTUAL MACHINES ON ALLOCATED FARMS

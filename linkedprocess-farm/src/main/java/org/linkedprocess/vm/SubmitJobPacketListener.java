@@ -3,13 +3,13 @@ package org.linkedprocess.vm;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.XMPPError;
-import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.vm.SubmitJob;
 import org.linkedprocess.os.Job;
 import org.linkedprocess.os.errors.JobAlreadyExistsException;
 import org.linkedprocess.os.errors.VmWorkerIsFullException;
 import org.linkedprocess.os.errors.VmWorkerNotFoundException;
-import org.linkedprocess.LopError;
+import org.linkedprocess.Error;
+import org.linkedprocess.*;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -49,23 +49,23 @@ public class SubmitJobPacketListener extends VmPacketListener {
         if (null == vmPassword || null == expression) {
             String errorMessage = "";
             if (null == vmPassword) {
-                errorMessage = "submitJob XML packet is missing the vm_password attribute";
+                errorMessage = "submit_job XML packet is missing the vm_password attribute";
             }
             if (null == expression) {
                 if (errorMessage.length() > 0)
                     errorMessage = errorMessage + "\n";
-                errorMessage = errorMessage + "submitJob XML stanza is missing the expression text body";
+                errorMessage = errorMessage + "submit_job XML stanza is missing the expression text body";
             }
             if (errorMessage.length() == 0)
                 errorMessage = null;
 
             returnSubmitJob.setType(IQ.Type.ERROR);
-            returnSubmitJob.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, errorMessage, LOP_CLIENT_TYPE, submitJob.getPacketID()));
+            returnSubmitJob.setLopError(new Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, errorMessage, LOP_CLIENT_TYPE, submitJob.getPacketID()));
 
 
         } else if (!((LopVm) this.lopClient).checkVmPassword(vmPassword)) {
             returnSubmitJob.setType(IQ.Type.ERROR);
-            returnSubmitJob.setLopError(new LopError(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, submitJob.getPacketID()));
+            returnSubmitJob.setLopError(new Error(XMPPError.Condition.not_authorized, LinkedProcess.LopErrorType.WRONG_VM_PASSWORD, null, LOP_CLIENT_TYPE, submitJob.getPacketID()));
         } else {
             Job job = new Job(this.lopClient.getFullJid(), villeinJid, iqId, expression);
             try {
@@ -73,13 +73,13 @@ public class SubmitJobPacketListener extends VmPacketListener {
                 submitJob = null;
             } catch (VmWorkerNotFoundException e) {
                 returnSubmitJob.setType(IQ.Type.ERROR);
-                returnSubmitJob.setLopError(new LopError(XMPPError.Condition.interna_server_error, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE, submitJob.getPacketID()));
+                returnSubmitJob.setLopError(new Error(XMPPError.Condition.interna_server_error, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), LOP_CLIENT_TYPE, submitJob.getPacketID()));
             } catch (VmWorkerIsFullException e) {
                 returnSubmitJob.setType(IQ.Type.ERROR);
-                returnSubmitJob.setLopError(new LopError(XMPPError.Condition.service_unavailable, LinkedProcess.LopErrorType.VM_IS_BUSY, e.getMessage(), LOP_CLIENT_TYPE, submitJob.getPacketID()));
+                returnSubmitJob.setLopError(new Error(XMPPError.Condition.service_unavailable, LinkedProcess.LopErrorType.VM_IS_BUSY, e.getMessage(), LOP_CLIENT_TYPE, submitJob.getPacketID()));
             } catch (JobAlreadyExistsException e) {
                 returnSubmitJob.setType(IQ.Type.ERROR);
-                returnSubmitJob.setLopError(new LopError(XMPPError.Condition.conflict, LinkedProcess.LopErrorType.JOB_ALREADY_EXISTS, e.getMessage(), LOP_CLIENT_TYPE, submitJob.getPacketID()));
+                returnSubmitJob.setLopError(new org.linkedprocess.Error(XMPPError.Condition.conflict, LinkedProcess.LopErrorType.JOB_ALREADY_EXISTS, e.getMessage(), LOP_CLIENT_TYPE, submitJob.getPacketID()));
             }
         }
 

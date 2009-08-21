@@ -9,7 +9,7 @@ package org.linkedprocess.villein.commands;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.LopError;
+import org.linkedprocess.Error;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.villein.proxies.VmProxy;
@@ -26,18 +26,18 @@ import org.linkedprocess.vm.TerminateVm;
 public class TerminateVmCommand extends Command {
 
     private final HandlerSet<Object> successHandlers;
-    private final HandlerSet<LopError> errorHandlers;
+    private final HandlerSet<org.linkedprocess.Error> errorHandlers;
 
     public TerminateVmCommand(LopVillein xmppVillein) {
         super(xmppVillein);
         this.successHandlers = new HandlerSet<Object>();
-        this.errorHandlers = new HandlerSet<LopError>();
+        this.errorHandlers = new HandlerSet<Error>();
     }
 
-    public void send(final VmProxy vmStruct, final Handler<Object> successHandler, final Handler<LopError> errorHandler) {
+    public void send(final VmProxy vmStruct, final Handler<Object> successHandler, final Handler<Error> errorHandler) {
         String id = Packet.nextID();
         TerminateVm terminateVm = new TerminateVm();
-        terminateVm.setTo(vmStruct.getFullJid());
+        terminateVm.setTo(vmStruct.getJid());
         terminateVm.setFrom(this.xmppVillein.getFullJid());
         terminateVm.setVmPassword(vmStruct.getVmPassword());
         terminateVm.setType(IQ.Type.GET);

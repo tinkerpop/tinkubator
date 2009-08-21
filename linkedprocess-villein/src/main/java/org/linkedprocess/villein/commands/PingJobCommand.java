@@ -9,10 +9,10 @@ package org.linkedprocess.villein.commands;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.vm.PingJob;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.LopError;
+import org.linkedprocess.Error;
+import org.linkedprocess.*;
 import org.linkedprocess.villein.LopVillein;
 import org.linkedprocess.villein.proxies.JobStruct;
 import org.linkedprocess.villein.proxies.VmProxy;
@@ -27,19 +27,19 @@ import org.linkedprocess.villein.proxies.VmProxy;
  */
 public class PingJobCommand extends Command {
     private final HandlerSet<LinkedProcess.JobStatus> successHandlers;
-    private final HandlerSet<LopError> errorHandlers;
+    private final HandlerSet<Error> errorHandlers;
 
     public PingJobCommand(LopVillein xmppVillein) {
         super(xmppVillein);
         this.successHandlers = new HandlerSet<LinkedProcess.JobStatus>();
-        this.errorHandlers = new HandlerSet<LopError>();
+        this.errorHandlers = new HandlerSet<Error>();
     }
 
-    public void send(VmProxy vmStruct, JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> successHandler, final Handler<LopError> errorHandler) {
+    public void send(VmProxy vmStruct, JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> successHandler, final Handler<org.linkedprocess.Error> errorHandler) {
 
         String id = Packet.nextID();
         PingJob pingJob = new PingJob();
-        pingJob.setTo(vmStruct.getFullJid());
+        pingJob.setTo(vmStruct.getJid());
         pingJob.setFrom(this.xmppVillein.getFullJid());
         pingJob.setJobId(jobStruct.getJobId());
         pingJob.setVmPassword(vmStruct.getVmPassword());
