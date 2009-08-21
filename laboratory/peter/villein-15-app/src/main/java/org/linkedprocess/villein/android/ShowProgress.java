@@ -94,7 +94,7 @@ public class ShowProgress extends Activity {
 								android.R.attr.progressBarStyleHorizontal);
 						progress.setLayoutParams(tlp);
 						final TextView vm = new TextView(ShowProgress.this);
-						vm.setText(proxy.getResult().getFullJid());
+						vm.setText(proxy.getResult().getJid());
 						handler.post(new Runnable() {
 							public void run() {
 								l.addView(vm);
