@@ -26,13 +26,14 @@ public class PacketSnifferPanel extends JPanel implements ListSelectionListener,
     protected JTextArea packetTextArea;
     protected JTextField maxSavedField;
     protected List<Packet> packetList;
-    protected String jid;
+
+    private static String INCOMING = "incoming";
+    private static String OUTGOING = "outgoing";
 
     protected final static String CLEAR = "clear";
 
-    public PacketSnifferPanel(String jid) {
+    public PacketSnifferPanel() {
         super(new BorderLayout());
-        this.jid = jid;
         DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{"i/o", "type", "from", "to"});
         this.packetTable = new JTable(tableModel) {
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -76,7 +77,7 @@ public class PacketSnifferPanel extends JPanel implements ListSelectionListener,
         this.add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    public void addPacket(Packet packet) {
+    public void addPacket(Packet packet, String status) {
         DefaultTableModel tableModel = (DefaultTableModel) this.packetTable.getModel();
         int max = Integer.MAX_VALUE;
         if (this.maxSavedField.getText().length() > 0) {
@@ -94,15 +95,7 @@ public class PacketSnifferPanel extends JPanel implements ListSelectionListener,
 
 
         if (max > 0) {
-            Integer sentOrRecieved;
-            if (packet.getFrom() != null && packet.getFrom().equals(this.jid)) {
-                sentOrRecieved = 0;
-            } else if (packet.getTo() != null && packet.getTo().equals(this.jid)) {
-                sentOrRecieved = 1;
-            } else {
-                sentOrRecieved = 0;
-            }
-            tableModel.addRow(new Object[]{sentOrRecieved, LinkedProcess.getBareClassName(packet.getClass()), packet.getFrom(), packet.getTo()});
+            tableModel.addRow(new Object[]{status, LinkedProcess.getBareClassName(packet.getClass()), packet.getFrom(), packet.getTo()});
             this.packetList.add(packet);
         }
 
@@ -145,18 +138,18 @@ public class PacketSnifferPanel extends JPanel implements ListSelectionListener,
     }
 
     public void interceptPacket(Packet packet) {
-        this.addPacket(packet);
+        this.addPacket(packet, OUTGOING);
     }
 
     public void processPacket(Packet packet) {
-        this.addPacket(packet);
+        this.addPacket(packet, INCOMING);
     }
 
     private class PacketSnifferTableCellRenderer extends DefaultTableCellRenderer {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if ((Integer) table.getValueAt(row, 0) == 0)
+            if (table.getValueAt(row, 0).equals(OUTGOING))
                 this.setIcon(ImageHolder.letterIcon);
             else
                 this.setIcon(ImageHolder.mailboxIcon);

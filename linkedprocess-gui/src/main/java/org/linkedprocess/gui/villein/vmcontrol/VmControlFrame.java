@@ -100,7 +100,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         // select the new job and fire selection event
         this.jobList.setSelectedValue(jobPane, true);
 
-        PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel(this.villeinGui.getXmppVillein().getFullJid());
+        PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel();
         PacketFilter fromToFilter = new OrFilter(new FromContainsFilter(vmProxy.getJid()), new ToContainsFilter(vmProxy.getJid()));
         this.villeinGui.getXmppVillein().getConnection().addPacketListener(packetSnifferPanel, fromToFilter);
         this.villeinGui.getXmppVillein().getConnection().addPacketWriterInterceptor(packetSnifferPanel, fromToFilter);

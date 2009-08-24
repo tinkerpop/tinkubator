@@ -15,8 +15,7 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.LinkedProcessFarm;
-import org.linkedprocess.farm.SpawnVm;
-import org.linkedprocess.farm.SpawnVmProvider;
+import org.linkedprocess.LopClient;
 import org.linkedprocess.os.VmScheduler;
 import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
 import org.linkedprocess.os.errors.VmAlreadyExistsException;
@@ -25,7 +24,6 @@ import org.linkedprocess.os.errors.VmWorkerNotFoundException;
 import org.linkedprocess.security.ServiceDiscoveryConfiguration;
 import org.linkedprocess.security.SystemInfo;
 import org.linkedprocess.security.VmSecurityManager;
-import org.linkedprocess.LopClient;
 import org.linkedprocess.vm.LopVm;
 
 import javax.script.ScriptEngineFactory;
@@ -82,17 +80,19 @@ public class LopFarm extends LopClient {
         super.logon(server, port, username, password, RESOURCE_PREFIX);
     }
 
-    public Presence createPresence(final LinkedProcess.FarmStatus status) {
-        switch (status) {
-            case ACTIVE:
-                return new Presence(Presence.Type.available, STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
-            case ACTIVE_FULL:
-                return new Presence(Presence.Type.unavailable);
-            case INACTIVE:
-                return new Presence(Presence.Type.unavailable);
-            default:
-                throw new IllegalStateException("unhandled state: " + status);
+    public void sendPresence(final LinkedProcess.FarmStatus status) {
+        Presence presence;
+        if (status == LinkedProcess.FarmStatus.ACTIVE) {
+            presence = new Presence(Presence.Type.available, STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
+        } else if (status == LinkedProcess.FarmStatus.ACTIVE_FULL) {
+            presence = new Presence(Presence.Type.available, LopVm.STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.dnd);
+        } else if (status == LinkedProcess.FarmStatus.INACTIVE) {
+            presence = new Presence(Presence.Type.unavailable);
+        } else {
+            throw new IllegalStateException("unhandled state: " + status);
         }
+        presence.setFrom(this.getFullJid());
+        this.connection.sendPacket(presence);
     }
 
     public VmScheduler getVmScheduler() {
@@ -184,7 +184,6 @@ public class LopFarm extends LopClient {
             String value = langName.toLowerCase();
             String label = langName + " " + langVersion + " (" + engName + " " + engVersion + ")";
             field.addOption(new FormField.Option(label, value));
-            //field.addOption(new FormField.Option(engName + ":" + engVersion, factory.getNames().get(0)));
         }
         this.serviceExtension.addField(field);
 

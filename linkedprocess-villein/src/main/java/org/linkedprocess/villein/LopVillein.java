@@ -21,13 +21,12 @@ import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.LopClient;
-import org.linkedprocess.vm.*;
 import org.linkedprocess.farm.SpawnVmProvider;
-import org.linkedprocess.villein.Dispatcher;
+import org.linkedprocess.villein.proxies.Cloud;
 import org.linkedprocess.villein.proxies.CountrysideProxy;
 import org.linkedprocess.villein.proxies.FarmProxy;
-import org.linkedprocess.villein.proxies.Cloud;
 import org.linkedprocess.villein.proxies.VmProxy;
+import org.linkedprocess.vm.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -85,18 +84,21 @@ public class LopVillein extends LopClient {
         this.connection.addPacketListener(new PresencePacketListener(this), presenceFilter);
         this.connection.addPacketListener(new VilleinPacketListener(this), lopFilter);
         this.status = LinkedProcess.VilleinStatus.ACTIVE;
-        this.connection.sendPacket(this.createPresence(this.status));
+        this.sendPresence(this.status);
     }
 
-    public final Presence createPresence(final LinkedProcess.VilleinStatus status) {
-        switch (status) {
-            case ACTIVE:
-                return new Presence(Presence.Type.available, LopVillein.STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
-            case INACTIVE:
-                return new Presence(Presence.Type.unavailable);
-            default:
-                throw new IllegalStateException("unhandled state: " + status);
+    public final void sendPresence(final LinkedProcess.VilleinStatus status) {
+        Presence presence;
+        if (status == LinkedProcess.VilleinStatus.ACTIVE) {
+            presence = new Presence(Presence.Type.available, LopVillein.STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
+
+        } else if (status == LinkedProcess.VilleinStatus.INACTIVE) {
+            presence = new Presence(Presence.Type.unavailable);
+        } else {
+            throw new IllegalStateException("unhandled state: " + status);
         }
+        presence.setFrom(this.getFullJid());
+        this.connection.sendPacket(presence);
     }
 
     public void setStatus(LinkedProcess.VilleinStatus status) {

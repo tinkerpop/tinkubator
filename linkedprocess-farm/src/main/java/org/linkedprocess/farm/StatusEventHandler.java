@@ -19,7 +19,7 @@ public class StatusEventHandler implements VmScheduler.LopStatusEventHandler {
     }
 
     public void schedulerStatusChanged(LinkedProcess.FarmStatus status) {
-        this.lopFarm.getConnection().sendPacket(this.lopFarm.createPresence(status));
+        this.lopFarm.sendPresence(status);
     }
 
     public void virtualMachineStatusChanged(String vmJid, LinkedProcess.VmStatus status) {
@@ -29,7 +29,7 @@ public class StatusEventHandler implements VmScheduler.LopStatusEventHandler {
             if (status == LinkedProcess.VmStatus.NOT_FOUND) {
                 vm.terminateSelf();
             } else {
-                vm.getConnection().sendPacket(vm.createPresence(status));
+                vm.sendPresence(status);
             }
 
         } catch (VmWorkerNotFoundException e) {

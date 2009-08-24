@@ -10,14 +10,14 @@ import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.LopClient;
+import org.linkedprocess.farm.LopFarm;
 import org.linkedprocess.os.Job;
 import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.os.errors.JobAlreadyExistsException;
 import org.linkedprocess.os.errors.JobNotFoundException;
 import org.linkedprocess.os.errors.VmWorkerIsFullException;
 import org.linkedprocess.os.errors.VmWorkerNotFoundException;
-import org.linkedprocess.LopClient;
-import org.linkedprocess.farm.LopFarm;
 
 import java.util.Set;
 import java.util.logging.Logger;
@@ -84,20 +84,23 @@ public class LopVm extends LopClient {
         return this.farm;
     }
 
-    public final Presence createPresence(final LinkedProcess.VmStatus status) {
+    public final void sendPresence(final LinkedProcess.VmStatus status) {
 
-        switch (status) {
-            case ACTIVE:
-                return new Presence(Presence.Type.available, LopVm.STATUS_MESSAGE, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.available);
-            case ACTIVE_FULL:
-                return new Presence(Presence.Type.available, LopVm.STATUS_MESSAGE, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.dnd);
-            case NOT_FOUND:
-                return new Presence(Presence.Type.unavailable);
-            case INACTIVE:
-                return new Presence(Presence.Type.unavailable);
-            default:
-                throw new IllegalStateException("unhandled state: " + status);
+        Presence presence;
+        if (status == LinkedProcess.VmStatus.ACTIVE) {
+            presence = new Presence(Presence.Type.available, LopVm.STATUS_MESSAGE, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.available);
+        } else if (status == LinkedProcess.VmStatus.ACTIVE_FULL) {
+            presence = new Presence(Presence.Type.available, LopVm.STATUS_MESSAGE, LinkedProcess.LOWEST_PRIORITY, Presence.Mode.dnd);
+        } else if (status == LinkedProcess.VmStatus.NOT_FOUND) {
+            presence = new Presence(Presence.Type.unavailable);
+        } else if (status == LinkedProcess.VmStatus.INACTIVE) {
+            presence = new Presence(Presence.Type.unavailable);
+
+        } else {
+            throw new IllegalStateException("unhandled state: " + status);
         }
+        presence.setFrom(this.getFullJid());
+        this.connection.sendPacket(presence);
     }
 
     public void abortJob(String jobId) throws VmWorkerNotFoundException, JobNotFoundException {

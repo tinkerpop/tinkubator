@@ -19,7 +19,7 @@ public class VmViewerFrame extends JFrame {
         this.lopVm = lopVm;
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel(this.lopVm.getFullJid());
+        PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel();
 
         lopVm.getConnection().addPacketWriterInterceptor(packetSnifferPanel, null);
         lopVm.getConnection().addPacketListener(packetSnifferPanel, null);

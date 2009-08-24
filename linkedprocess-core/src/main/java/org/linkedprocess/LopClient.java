@@ -115,7 +115,9 @@ public abstract class LopClient {
     public void shutdown() {
         LOGGER.info("Requesting shutdown");
         shutdownRequested = true;
-        logout(new Presence(Presence.Type.unavailable));
+        Presence presence = new Presence(Presence.Type.unavailable);
+        presence.setFrom(this.getFullJid());
+        logout(presence);
     }
 
     public String getUsername() {

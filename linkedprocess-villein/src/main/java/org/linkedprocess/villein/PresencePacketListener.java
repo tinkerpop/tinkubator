@@ -42,37 +42,39 @@ class PresencePacketListener extends VilleinPacketListener {
                 this.getLopVillein().getLopCloud().removeProxy(presence.getFrom());
             }
         } else {
-            if (LinkedProcess.isBareJid(presence.getFrom())) {
-                CountrysideProxy countrysideProxy = new CountrysideProxy(presence.getFrom());
-                countrysideProxy.setAvailable(PresencePacketListener.isAvailable(presence));
-                this.getLopVillein().getLopCloud().addCountrysideProxy(countrysideProxy);
-                proxy = countrysideProxy;
-            } else {
-                DiscoverInfo discoInfo = this.getDiscoInfo(presence.getFrom());
-                Document discoInfoDocument = null;
-                try {
-                    discoInfoDocument = LinkedProcess.createXMLDocument(discoInfo.toXML());
-                } catch (Exception e) {
-                    LopVillein.LOGGER.warning("disco#info document is not valid XML: " + e.getMessage());
-                }
-
-                if (isFarm(discoInfo)) {
-                    FarmProxy farmProxy = new FarmProxy(presence.getFrom(), this.getLopVillein().getDispatcher(), discoInfoDocument);
-                    farmProxy.setAvailable(PresencePacketListener.isAvailable(presence));
+            if (PresencePacketListener.isAvailable(presence)) {
+                if (LinkedProcess.isBareJid(presence.getFrom())) {
+                    CountrysideProxy countrysideProxy = new CountrysideProxy(presence.getFrom());
+                    countrysideProxy.setAvailable(PresencePacketListener.isAvailable(presence));
+                    this.getLopVillein().getLopCloud().addCountrysideProxy(countrysideProxy);
+                    proxy = countrysideProxy;
+                } else {
+                    DiscoverInfo discoInfo = this.getDiscoInfo(presence.getFrom());
+                    Document discoInfoDocument = null;
                     try {
-                        this.getLopVillein().getLopCloud().addFarmProxy(farmProxy);
-                        proxy = farmProxy;
-                    } catch (ParentProxyNotFoundException e) {
-                        LopVillein.LOGGER.warning("Parent proxy was not found: " + e.getMessage());
+                        discoInfoDocument = LinkedProcess.createXMLDocument(discoInfo.toXML());
+                    } catch (Exception e) {
+                        LopVillein.LOGGER.warning("disco#info document is not valid XML: " + e.getMessage());
                     }
-                } else if (isRegistry(discoInfo)) {
-                    RegistryProxy registryProxy = new RegistryProxy(presence.getFrom(), this.getLopVillein().getDispatcher(), discoInfoDocument);
-                    registryProxy.setAvailable(PresencePacketListener.isAvailable(presence));
-                    try {
-                        this.getLopVillein().getLopCloud().addRegistryProxy(registryProxy);
-                        proxy = registryProxy;
-                    } catch (ParentProxyNotFoundException e) {
-                        LopVillein.LOGGER.warning("Parent proxy was not found: " + e.getMessage());
+
+                    if (isFarm(discoInfo)) {
+                        FarmProxy farmProxy = new FarmProxy(presence.getFrom(), this.getLopVillein().getDispatcher(), discoInfoDocument);
+                        farmProxy.setAvailable(PresencePacketListener.isAvailable(presence));
+                        try {
+                            this.getLopVillein().getLopCloud().addFarmProxy(farmProxy);
+                            proxy = farmProxy;
+                        } catch (ParentProxyNotFoundException e) {
+                            LopVillein.LOGGER.warning("Parent proxy was not found: " + e.getMessage());
+                        }
+                    } else if (isRegistry(discoInfo)) {
+                        RegistryProxy registryProxy = new RegistryProxy(presence.getFrom(), this.getLopVillein().getDispatcher(), discoInfoDocument);
+                        registryProxy.setAvailable(PresencePacketListener.isAvailable(presence));
+                        try {
+                            this.getLopVillein().getLopCloud().addRegistryProxy(registryProxy);
+                            proxy = registryProxy;
+                        } catch (ParentProxyNotFoundException e) {
+                            LopVillein.LOGGER.warning("Parent proxy was not found: " + e.getMessage());
+                        }
                     }
                 }
             }
