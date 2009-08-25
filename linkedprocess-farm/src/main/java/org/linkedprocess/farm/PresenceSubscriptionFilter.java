@@ -5,9 +5,8 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 
 /**
- * User: marko
- * Date: Jun 25, 2009
- * Time: 6:47:07 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class PresenceSubscriptionFilter implements PacketFilter {
 

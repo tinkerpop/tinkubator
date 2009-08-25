@@ -32,6 +32,7 @@ public class RegistryProxy extends XmppProxy {
     public RegistryProxy(final String fullJid, final Dispatcher dispatcher) {
         this.fullJid = fullJid;
         this.dispatcher = dispatcher;
+        this.refreshDiscoInfo();
         this.refreshDiscoItems();
 
 

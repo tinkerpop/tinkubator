@@ -4,9 +4,8 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 
 /**
- * User: marko
- * Date: Jun 26, 2009
- * Time: 10:04:14 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class PresenceSubscriptionPacketListener extends FarmPacketListener {
 

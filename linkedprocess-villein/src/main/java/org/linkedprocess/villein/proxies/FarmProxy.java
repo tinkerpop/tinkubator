@@ -46,6 +46,7 @@ public class FarmProxy extends XmppProxy implements Comparable {
     public FarmProxy(final String fullJid, final Dispatcher dispatcher) {
         this.fullJid = fullJid;
         this.dispatcher = dispatcher;
+        this.refreshDiscoInfo();
     }
 
     /**

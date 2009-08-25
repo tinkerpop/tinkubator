@@ -4,9 +4,8 @@ import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.LopPacketListener;
 
 /**
- * User: marko
- * Date: Jul 24, 2009
- * Time: 10:50:06 AM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public abstract class FarmPacketListener extends LopPacketListener {
 

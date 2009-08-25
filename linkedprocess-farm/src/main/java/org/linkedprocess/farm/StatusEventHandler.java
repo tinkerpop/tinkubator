@@ -6,9 +6,8 @@ import org.linkedprocess.farm.os.Vm;
 import org.linkedprocess.farm.os.errors.VmNotFoundException;
 
 /**
- * User: marko
- * Date: Jul 1, 2009
- * Time: 3:12:44 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class StatusEventHandler implements VmScheduler.LopStatusEventHandler {
 

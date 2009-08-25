@@ -14,11 +14,6 @@ package org.linkedprocess.farm.security;
  */
 public interface VmSecurityManagerListener {
     void notPermitted(SecurityException exception);
-
-    void notPermittedByType(SecurityException exception,
-                            PermissionType type);
-
-    void notPermittedByTypeAndPath(SecurityException exception,
-                                   PermissionType type,
-                                   String path);
+    void notPermittedByType(SecurityException exception, PermissionType type);
+    void notPermittedByTypeAndPath(SecurityException exception, PermissionType type, String path);
 }
