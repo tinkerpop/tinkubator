@@ -8,10 +8,10 @@
 package org.linkedprocess.farm;
 
 import org.jivesoftware.smack.packet.IQ;
-import org.linkedprocess.os.JobResult;
-import org.linkedprocess.os.VmScheduler;
-import org.linkedprocess.os.errors.VmNotFoundException;
-import org.linkedprocess.os.Vm;
+import org.linkedprocess.farm.os.JobResult;
+import org.linkedprocess.farm.os.VmScheduler;
+import org.linkedprocess.farm.os.errors.VmNotFoundException;
+import org.linkedprocess.farm.os.Vm;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)

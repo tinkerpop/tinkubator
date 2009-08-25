@@ -3,7 +3,7 @@ package org.linkedprocess;
 import junit.framework.TestCase;
 import org.jivesoftware.smack.packet.IQ;
 import org.junit.Test;
-import org.linkedprocess.os.VmBindings;
+import org.linkedprocess.farm.os.VmBindings;
 import org.linkedprocess.farm.SpawnVm;
 import org.linkedprocess.farm.SubmitJob;
 import org.linkedprocess.farm.AbortJob;

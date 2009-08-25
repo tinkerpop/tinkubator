@@ -1,7 +1,7 @@
 package org.linkedprocess.gui.farm;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.Vm;
+import org.linkedprocess.farm.os.Vm;
 import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.gui.RosterPanel;
 import org.linkedprocess.gui.TreeRenderer;
@@ -30,8 +30,8 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
     protected JTree tree;
     protected JTextArea farmFeaturesText;
     protected DefaultMutableTreeNode treeRoot;
-    protected Map<String, DefaultMutableTreeNode> treeMap;
-    protected Map<String, VmViewerFrame> vmViewerMap;
+    protected Map<String, DefaultMutableTreeNode> treeMap = new HashMap<String, DefaultMutableTreeNode>();
+    protected Map<String, VmViewerFrame> vmViewerMap = new HashMap<String, VmViewerFrame>();
 
     protected final static String SHUTDOWN = "shutdown";
 
@@ -71,8 +71,6 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
 
         this.add(tabbedPane, BorderLayout.CENTER);
 
-        this.treeMap = new HashMap<String, DefaultMutableTreeNode>();
-        this.vmViewerMap = new HashMap<String, VmViewerFrame>();
         this.createTree();
         this.setVisible(true);
     }
@@ -164,7 +162,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
                     Vm vm = (Vm) selectedNode.getUserObject();
                     VmViewerFrame vmViewer = this.vmViewerMap.get(vm.getVmId());
                     if (vmViewer == null) {
-                        vmViewer = new VmViewerFrame(vm);
+                        vmViewer = new VmViewerFrame(vm, farmGui.getFarm());
                         this.vmViewerMap.put(vm.getVmId(), vmViewer);
                     } else {
                         vmViewer.setVisible(true);

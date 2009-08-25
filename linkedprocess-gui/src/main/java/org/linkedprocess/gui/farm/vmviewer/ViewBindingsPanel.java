@@ -1,9 +1,9 @@
 package org.linkedprocess.gui.farm.vmviewer;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.TypedValue;
-import org.linkedprocess.os.VmBindings;
-import org.linkedprocess.os.Vm;
+import org.linkedprocess.farm.os.Vm;
+import org.linkedprocess.farm.os.TypedValue;
+import org.linkedprocess.farm.os.VmBindings;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;

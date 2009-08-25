@@ -1,7 +1,7 @@
 package org.linkedprocess.gui.farm.vmviewer;
 
 import org.linkedprocess.gui.ImageHolder;
-import org.linkedprocess.os.Vm;
+import org.linkedprocess.farm.os.Vm;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,7 +45,7 @@ public class MetadataPanel extends JPanel implements ActionListener {
         metaPanel.add(new JLabel(this.vm.getVmSpecies(), ImageHolder.speciesIcon, JLabel.LEFT), c);
         //c.gridy = 4;
         //this.timeLabel = new JLabel(this.vm.getRunningTimeInSeconds() + " seconds", ImageHolder.timeIcon, JLabel.LEFT);
-        metaPanel.add(this.timeLabel, c);
+        //metaPanel.add(this.timeLabel, c);
         this.add(metaPanel, BorderLayout.NORTH);
         this.setBackground(Color.WHITE);
         this.add(buttonPanel, BorderLayout.SOUTH);

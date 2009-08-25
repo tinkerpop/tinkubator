@@ -1,7 +1,7 @@
 package org.linkedprocess.gui;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.Vm;
+import org.linkedprocess.farm.os.Vm;
 import org.linkedprocess.farm.Farm;
 import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.proxies.CountrysideProxy;

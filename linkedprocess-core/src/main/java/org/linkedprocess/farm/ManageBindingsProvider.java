@@ -11,7 +11,7 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.ManageBindings;
-import org.linkedprocess.os.errors.InvalidValueException;
+import org.linkedprocess.farm.os.errors.InvalidValueException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 

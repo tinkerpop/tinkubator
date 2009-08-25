@@ -5,8 +5,8 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.Error;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.Vm;
-import org.linkedprocess.os.errors.VmNotFoundException;
+import org.linkedprocess.farm.os.Vm;
+import org.linkedprocess.farm.os.errors.VmNotFoundException;
 import org.linkedprocess.farm.ManageBindings;
 
 /**

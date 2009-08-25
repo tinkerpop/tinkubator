@@ -1,7 +1,7 @@
 package org.linkedprocess.demos.primes;
 
-import org.linkedprocess.os.TypedValue;
-import org.linkedprocess.os.VmBindings;
+import org.linkedprocess.farm.os.TypedValue;
+import org.linkedprocess.farm.os.VmBindings;
 import org.linkedprocess.Error;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.patterns.BindingsChecker;

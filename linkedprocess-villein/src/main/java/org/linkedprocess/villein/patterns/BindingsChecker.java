@@ -7,7 +7,7 @@
 
 package org.linkedprocess.villein.patterns;
 
-import org.linkedprocess.os.VmBindings;
+import org.linkedprocess.farm.os.VmBindings;
 
 /**
  * A BindingsChecker allows a user to define a bindings equivalence relationship that is utilized by the PollBindingsPattern.

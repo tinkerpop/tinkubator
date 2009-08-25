@@ -1,12 +1,12 @@
 package org.linkedprocess.gui.villein.vmcontrol;
 
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.farm.os.TypedValue;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.gui.GenericErrorHandler;
 import org.linkedprocess.gui.ImageHolder;
-import org.linkedprocess.os.TypedValue;
-import org.linkedprocess.os.VmBindings;
-import org.linkedprocess.os.errors.InvalidValueException;
+import org.linkedprocess.farm.os.VmBindings;
+import org.linkedprocess.farm.os.errors.InvalidValueException;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;

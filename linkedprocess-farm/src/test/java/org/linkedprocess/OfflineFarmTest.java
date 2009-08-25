@@ -1,6 +1,5 @@
 package org.linkedprocess;
 
-import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.PacketListener;
@@ -15,8 +14,8 @@ import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.linkedprocess.os.errors.VmNotFoundException;
-import org.linkedprocess.os.Vm;
+import org.linkedprocess.farm.os.errors.VmNotFoundException;
+import org.linkedprocess.farm.os.Vm;
 import org.linkedprocess.testing.offline.MockXmppConnection;
 import org.linkedprocess.testing.offline.OfflineTest;
 import org.linkedprocess.LopClient;

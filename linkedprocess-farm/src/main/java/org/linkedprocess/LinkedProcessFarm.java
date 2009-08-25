@@ -1,7 +1,7 @@
 package org.linkedprocess;
 
-import org.linkedprocess.os.JobResult;
-import org.linkedprocess.os.VmWorker;
+import org.linkedprocess.farm.os.JobResult;
+import org.linkedprocess.farm.os.VmWorker;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;

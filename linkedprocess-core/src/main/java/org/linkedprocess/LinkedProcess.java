@@ -12,7 +12,7 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import org.linkedprocess.security.VmSecurityManager;
+import org.linkedprocess.farm.security.VmSecurityManager;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;

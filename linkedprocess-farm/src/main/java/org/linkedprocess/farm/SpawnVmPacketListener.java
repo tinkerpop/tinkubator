@@ -6,10 +6,10 @@ import org.jivesoftware.smack.packet.XMPPError;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.Error;
 import org.linkedprocess.farm.SpawnVm;
-import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
-import org.linkedprocess.os.errors.VmAlreadyExistsException;
-import org.linkedprocess.os.errors.VmSchedulerIsFullException;
-import org.linkedprocess.os.Vm;
+import org.linkedprocess.farm.os.errors.UnsupportedScriptEngineException;
+import org.linkedprocess.farm.os.errors.VmAlreadyExistsException;
+import org.linkedprocess.farm.os.errors.VmSchedulerIsFullException;
+import org.linkedprocess.farm.os.Vm;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)

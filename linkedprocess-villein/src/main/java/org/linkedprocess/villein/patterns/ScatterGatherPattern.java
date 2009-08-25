@@ -9,8 +9,8 @@ package org.linkedprocess.villein.patterns;
 
 import org.linkedprocess.Error;
 import org.linkedprocess.*;
+import org.linkedprocess.farm.os.VmBindings;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.villein.proxies.FarmProxy;
 import org.linkedprocess.villein.proxies.JobStruct;
 import org.linkedprocess.villein.proxies.ResultHolder;

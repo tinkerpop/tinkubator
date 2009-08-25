@@ -9,8 +9,8 @@ package org.linkedprocess.villein.proxies;
 
 import org.linkedprocess.Error;
 import org.linkedprocess.*;
-import org.linkedprocess.os.VmBindings;
-import org.linkedprocess.os.errors.InvalidValueException;
+import org.linkedprocess.farm.os.VmBindings;
+import org.linkedprocess.farm.os.errors.InvalidValueException;
 import org.linkedprocess.villein.Dispatcher;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.Villein;

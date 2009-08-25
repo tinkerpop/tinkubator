@@ -10,9 +10,9 @@ package org.linkedprocess.farm;
 import org.jdom.Element;
 import org.jivesoftware.smack.packet.IQ;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.TypedValue;
-import org.linkedprocess.os.VmBindings;
-import org.linkedprocess.os.errors.InvalidValueException;
+import org.linkedprocess.farm.os.TypedValue;
+import org.linkedprocess.farm.os.VmBindings;
+import org.linkedprocess.farm.os.errors.InvalidValueException;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)

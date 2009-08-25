@@ -1,9 +1,9 @@
 package org.linkedprocess.farm;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.os.VmScheduler;
-import org.linkedprocess.os.Vm;
-import org.linkedprocess.os.errors.VmNotFoundException;
+import org.linkedprocess.farm.os.VmScheduler;
+import org.linkedprocess.farm.os.Vm;
+import org.linkedprocess.farm.os.errors.VmNotFoundException;
 
 /**
  * User: marko

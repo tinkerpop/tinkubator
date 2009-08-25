@@ -2,8 +2,10 @@ package org.linkedprocess.gui;
 
 import org.jivesoftware.smack.PacketInterceptor;
 import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.LopIq;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -157,6 +159,23 @@ public class PacketSnifferPanel extends JPanel implements ListSelectionListener,
             this.setText("");
 
             return this;
+        }
+    }
+
+    public static class VmFilter implements PacketFilter {
+        public String vmId;
+
+        public VmFilter(String vmId) {
+            this.vmId = vmId;
+        }
+
+        public boolean accept(Packet packet) {
+            if (packet instanceof LopIq) {
+                String vmId = ((LopIq) packet).getVmId();
+                if (null != vmId)
+                    return vmId.equals(vmId);
+            }
+            return false;
         }
     }
 
