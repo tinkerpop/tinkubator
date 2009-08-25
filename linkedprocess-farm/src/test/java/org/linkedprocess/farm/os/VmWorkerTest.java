@@ -2,7 +2,7 @@ package org.linkedprocess.farm.os;
 
 import junit.framework.TestCase;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.LinkedProcessFarm;
+import org.linkedprocess.farm.LinkedProcessFarm;
 import org.linkedprocess.farm.os.JobResult;
 import org.linkedprocess.farm.os.Job;
 import org.linkedprocess.farm.os.VmScheduler;

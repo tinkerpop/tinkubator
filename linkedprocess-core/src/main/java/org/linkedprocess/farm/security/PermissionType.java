@@ -73,7 +73,7 @@ public enum PermissionType {
     }
 
     public String getPropertyName() {
-        return "org.linkedprocess.security." + this;
+        return "org.linkedprocess.farm.security." + this;
     }
 
     public String getSpecName() {

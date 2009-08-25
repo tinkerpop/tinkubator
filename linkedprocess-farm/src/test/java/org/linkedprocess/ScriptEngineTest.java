@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.linkedprocess.farm.os.errors.UnsupportedScriptEngineException;
+import org.linkedprocess.farm.LinkedProcessFarm;
 
 import javax.script.*;
 import java.util.List;

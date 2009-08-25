@@ -8,7 +8,7 @@
 package org.linkedprocess.farm.os;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.LinkedProcessFarm;
+import org.linkedprocess.farm.LinkedProcessFarm;
 import org.linkedprocess.farm.os.Job;
 import org.linkedprocess.farm.os.VmBindings;
 import org.linkedprocess.farm.os.JobResult;

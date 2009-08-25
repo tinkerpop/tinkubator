@@ -11,7 +11,7 @@ import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.LinkedProcessFarm;
+import org.linkedprocess.farm.LinkedProcessFarm;
 import org.linkedprocess.LopClient;
 import org.linkedprocess.farm.os.VmScheduler;
 import org.linkedprocess.farm.os.Vm;

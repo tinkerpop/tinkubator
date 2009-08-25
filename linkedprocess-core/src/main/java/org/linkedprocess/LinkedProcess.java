@@ -288,13 +288,13 @@ public class LinkedProcess {
             REGISTRY_PORT_PROPERTY = "org.linkedprocess.registryPort",
             REGISTRY_USERNAME_PROPERTY = "org.linkedprocess.registryUsername",
             REGISTRY_PASSWORD_PROPERTY = "org.linkedprocess.registryPassword",
-            CONCURRENT_WORKER_THREADS_PROPERTY = "org.linkedprocess.concurrentWorkerThreads",
-            JOB_TIMEOUT_PROPERTY = "org.linkedprocess.jobTimeout",
-            MAX_CONCURRENT_VIRTUAL_MACHINES_PROPERTY = "org.linkedprocess.maxConcurrentVirtualMachines",
-            JOB_QUEUE_CAPACITY_PROPERTY = "org.linkedprocess.jobQueueCapacity",
-            ROUND_ROBIN_QUANTUM_PROPERTY = "org.linkedprocess.roundRobinQuantum",
-            VIRTUAL_MACHINE_TIME_TO_LIVE_PROPERTY = "org.linkedprocess.virtualMachineTimeToLive",
-            SCHEDULER_CLEANUP_INTERVAL_PROPERTY = "org.linkedprocess.schedulerCleanupInterval";
+            CONCURRENT_WORKER_THREADS_PROPERTY = "org.linkedprocess.farm.concurrentWorkerThreads",
+            JOB_TIMEOUT_PROPERTY = "org.linkedprocess.farm.jobTimeout",
+            MAX_CONCURRENT_VIRTUAL_MACHINES_PROPERTY = "org.linkedprocess.farm.maxConcurrentVirtualMachines",
+            JOB_QUEUE_CAPACITY_PROPERTY = "org.linkedprocess.farm.jobQueueCapacity",
+            ROUND_ROBIN_QUANTUM_PROPERTY = "org.linkedprocess.farm.roundRobinQuantum",
+            VIRTUAL_MACHINE_TIME_TO_LIVE_PROPERTY = "org.linkedprocess.farm.virtualMachineTimeToLive",
+            SCHEDULER_CLEANUP_INTERVAL_PROPERTY = "org.linkedprocess.farm.schedulerCleanupInterval";
 
     private static final Properties PROPERTIES;
     private static final Logger LOGGER;

@@ -1,7 +1,8 @@
-package org.linkedprocess;
+package org.linkedprocess.farm;
 
 import org.linkedprocess.farm.os.JobResult;
 import org.linkedprocess.farm.os.VmWorker;
+import org.linkedprocess.LinkedProcess;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
@@ -42,7 +43,7 @@ public class LinkedProcessFarm {
             Properties props = LinkedProcess.getConfiguration();
             Set<String> classNames = new HashSet<String>();
             for (Object key : props.keySet()) {
-                if (key.toString().startsWith("org.linkedprocess.supportedScriptEngineFactory")) {
+                if (key.toString().startsWith("org.linkedprocess.farm.supportedScriptEngineFactory")) {
                     classNames.add(props.get(key).toString().trim());
                 }
             }
