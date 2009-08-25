@@ -9,10 +9,10 @@ package org.linkedprocess.villein.commands;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.LopVillein;
+import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.proxies.JobStruct;
 import org.linkedprocess.villein.proxies.VmProxy;
-import org.linkedprocess.vm.SubmitJob;
+import org.linkedprocess.farm.SubmitJob;
 
 /**
  * The proxy by which an submit_job is sent to a virtual machine.
@@ -27,29 +27,29 @@ public class SubmitJobCommand extends Command {
     private final HandlerSet<JobStruct> successHandlers;
     private final HandlerSet<JobStruct> errorHandlers;
 
-    public SubmitJobCommand(LopVillein xmppVillein) {
+    public SubmitJobCommand(Villein xmppVillein) {
         super(xmppVillein);
         this.successHandlers = new HandlerSet<JobStruct>();
         this.errorHandlers = new HandlerSet<JobStruct>();
     }
 
-    public void send(final VmProxy vmStruct, final JobStruct jobStruct, final Handler<JobStruct> successHandler, final Handler<JobStruct> errorHandler) {
+    public void send(final VmProxy vmProxy, final JobStruct jobStruct, final Handler<JobStruct> successHandler, final Handler<JobStruct> errorHandler) {
 
         if (null == jobStruct.getJobId())
             jobStruct.setJobId(JobStruct.generateRandomId());
 
         SubmitJob submitJob = new SubmitJob();
-        submitJob.setTo(vmStruct.getJid());
-        submitJob.setFrom(xmppVillein.getFullJid());
+        submitJob.setTo(vmProxy.getFarmJid());
+        submitJob.setFrom(villein.getFullJid());
         submitJob.setExpression(jobStruct.getExpression());
-        submitJob.setVmPassword(vmStruct.getVmPassword());
+        submitJob.setVmId(vmProxy.getVmId());
         submitJob.setType(IQ.Type.GET);
         submitJob.setPacketID(jobStruct.getJobId());
 
         this.successHandlers.addHandler(jobStruct.getJobId(), successHandler);
         this.errorHandlers.addHandler(jobStruct.getJobId(), errorHandler);
 
-        xmppVillein.getConnection().sendPacket(submitJob);
+        villein.getConnection().sendPacket(submitJob);
     }
 
     public void receiveSuccess(final SubmitJob submitJob) {

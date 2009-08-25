@@ -21,8 +21,10 @@ import java.util.*;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class FarmProxy extends Proxy {
+public class FarmProxy extends XmppProxy implements Comparable {
 
+
+    
     /**
      * The virtual machine proxies maintained by this farm proxy.
      */
@@ -33,6 +35,8 @@ public class FarmProxy extends Proxy {
     protected String farmPassword;
 
 
+
+
     /**
      * Create a new farm proxy with a provided fully-qualified jid.
      *
@@ -40,7 +44,8 @@ public class FarmProxy extends Proxy {
      * @param dispatcher
      */
     public FarmProxy(final String fullJid, final Dispatcher dispatcher) {
-        super(fullJid, dispatcher);
+        this.fullJid = fullJid;
+        this.dispatcher = dispatcher;
     }
 
     /**
@@ -51,8 +56,12 @@ public class FarmProxy extends Proxy {
      * @param discoInfoDocument
      */
     public FarmProxy(final String fullJid, final Dispatcher dispatcher, final Document discoInfoDocument) {
-        super(fullJid, dispatcher, discoInfoDocument);
+        this.fullJid = fullJid;
+        this.dispatcher = dispatcher;
+        this.discoInfoDocument = discoInfoDocument;
     }
+
+
 
     /**
      * Given a fully-qualified virtual machine jid, get its virtual machine proxy representation
@@ -70,7 +79,7 @@ public class FarmProxy extends Proxy {
      * @param vmProxy the virtual maching proxy to add
      */
     public void addVmProxy(VmProxy vmProxy) {
-        this.vmProxies.put(vmProxy.getJid(), vmProxy);
+        this.vmProxies.put(vmProxy.getVmId(), vmProxy);
     }
 
     /**
@@ -193,5 +202,13 @@ public class FarmProxy extends Proxy {
      */
     public void spawnVm(final String vmSpecies, final Handler<VmProxy> successHandler, final Handler<org.linkedprocess.Error> errorHandler) {
         this.dispatcher.getSpawnVmCommand().send(this, vmSpecies, successHandler, errorHandler);
+    }
+
+    public int compareTo(Object farmProxy) {
+        if (farmProxy instanceof FarmProxy) {
+            return this.fullJid.compareTo(((FarmProxy) farmProxy).getFullJid());
+        } else {
+            throw new ClassCastException();
+        }
     }
 }

@@ -11,7 +11,7 @@ import org.linkedprocess.os.TypedValue;
 import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.Error;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.LopVillein;
+import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.patterns.BindingsChecker;
 import org.linkedprocess.villein.patterns.PollBindingsPattern;
 import org.linkedprocess.villein.patterns.ResourceAllocationPattern;
@@ -35,29 +35,29 @@ public class ProgressPollingAbortJob {
     public static void doProgressPollingAbortJob(double meterMax, long pollingInterval, String username, String password, String server, int port) throws Exception {
 
         final Object monitor = new Object();
-        LopVillein villein = new LopVillein(server, port, username, password);
-        villein.createLopCloudFromRoster();
+        Villein villein = new Villein(server, port, username, password);
+        villein.createCloudFromRoster();
 
         //////////////// ALLOCATE FARMS
 
         System.out.println("Waiting for 1 available farm...");
 
-        //CountrysideProxy testProxy = ResourceAllocationPattern.allocateCountryside(villein.getLopCloud(), "test_countryside@lanl.linkedprocess.org", -1);
+        //CountrysideProxy testProxy = ResourceAllocationPattern.allocateCountryside(villein.getCloud(), "test_countryside@lanl.linkedprocess.org", -1);
         //Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(testProxy, 1, 20000);
-        Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(villein.getLopCloud(), 1, 20000);
+        Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(villein.getCloud(), 1, 20000);
         farmProxies = ResourceAllocationPattern.filterFarmProxiesByPasswordRequired(farmProxies, false);
         if (farmProxies.size() == 0) {
             System.out.println("Could not allocate a password free farm.");
             System.exit(1);
         }
         for (FarmProxy farmProxy : farmProxies) {
-            System.out.println("farm allocated: " + farmProxy.getJid());
+            System.out.println("farm allocated: " + farmProxy.getFullJid());
         }
 
         //////////////// SPAWN VIRTUAL MACHINES ON ALLOCATED FARMS
 
         ResultHolder<VmProxy> vmProxyResult = SynchronousPattern.spawnVm(farmProxies.iterator().next(), "javascript", -1);
-        System.out.println("virtual machine spawned: " + vmProxyResult.getResult().getJid());
+        System.out.println("virtual machine spawned: " + vmProxyResult.getResult().getVmId());
 
         //////////////// DISTRIBUTE PROGRESS METER INCREMENTING CODE
 

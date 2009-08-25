@@ -28,7 +28,7 @@ import org.linkedprocess.os.TypedValue;
 import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.os.errors.InvalidValueException;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.LopVillein;
+import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.patterns.ResourceAllocationPattern;
 import org.linkedprocess.villein.patterns.ScatterGatherPattern;
 import org.linkedprocess.villein.patterns.TimeoutException;
@@ -56,7 +56,7 @@ public class PrimeFinderAsynchWithProgress {
 	public static Map<VmProxy, JobStruct> vmJobMap;
 	public static Set<FarmProxy> farmProxies;
 	public static Set<ResultHolder<VmProxy>> vmProxies;
-	public static LopVillein villein;
+	public static Villein villein;
 	public static ExecutorService pool;
 
 	public static void findAsynch(int startInteger, int endInteger,
@@ -126,8 +126,8 @@ public class PrimeFinderAsynchWithProgress {
 
 	public static void init(String username, String password, String server,
 			int port) throws XMPPException {
-		villein = new LopVillein(server, port, username, password);
-		villein.createLopCloudFromRoster();
+		villein = new Villein(server, port, username, password);
+		villein.createCloudFromRoster();
 	}
 
 	public static void poll(Double meterMax, long pollingInterval)
@@ -215,9 +215,9 @@ public class PrimeFinderAsynchWithProgress {
 	public static void allocateFarms(int farmCount) throws TimeoutException {
 		System.out.println("Waiting for " + farmCount + " available farms...");
 		farmProxies = ResourceAllocationPattern.allocateFarms(
-				villein.getLopCloud(), farmCount, 200000);
+				villein.getCloud(), farmCount, 200000);
 		for (FarmProxy farmProxy : farmProxies) {
-			System.out.println("farm allocated: " + farmProxy.getJid());
+			System.out.println("farm allocated: " + farmProxy.getFullJid());
 		}
 	}
 

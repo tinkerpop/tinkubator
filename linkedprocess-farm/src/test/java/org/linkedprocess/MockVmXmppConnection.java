@@ -5,7 +5,7 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.linkedprocess.testing.offline.MockXmppConnection;
-import org.linkedprocess.vm.*;
+import org.linkedprocess.farm.*;
 
 public class MockVmXmppConnection extends MockXmppConnection {
 

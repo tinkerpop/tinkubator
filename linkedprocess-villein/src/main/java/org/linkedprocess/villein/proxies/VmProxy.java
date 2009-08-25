@@ -7,14 +7,13 @@
 
 package org.linkedprocess.villein.proxies;
 
-import org.jdom.Document;
 import org.linkedprocess.Error;
 import org.linkedprocess.*;
 import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.os.errors.InvalidValueException;
 import org.linkedprocess.villein.Dispatcher;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.LopVillein;
+import org.linkedprocess.villein.Villein;
 
 import java.util.Set;
 
@@ -26,12 +25,15 @@ import java.util.Set;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class VmProxy extends Proxy {
+public class VmProxy implements Comparable {
 
     /**
      * The password of this virtual machine.
      */
     protected String vmPassword;
+    protected FarmProxy farmProxy;
+    protected String vmId;
+    protected Dispatcher dispatcher;
     /**
      * The species of this virtual machine.
      */
@@ -46,12 +48,10 @@ public class VmProxy extends Proxy {
      */
     private VmBindings vmBindings = new VmBindings();
 
-    public VmProxy(final String fullJid, final Dispatcher dispatcher) {
-        super(fullJid, dispatcher);
-    }
-
-    public VmProxy(final String fullJid, final Dispatcher dispatcher, final Document discoInfoDocument) {
-        super(fullJid, dispatcher, discoInfoDocument);
+    public VmProxy(final FarmProxy farmProxy, final String vmId, final Dispatcher dispatcher) {
+        this.farmProxy = farmProxy;
+        this.vmId = vmId;
+        this.dispatcher = dispatcher;
     }
 
     /**
@@ -119,22 +119,14 @@ public class VmProxy extends Proxy {
         dispatcher.getTerminateVmCommand().send(this, successHandler, errorHandler);
     }
 
-    /**
-     * Set the password of the virtual machine. This is set when the virtual machine is spawned and in general, should not be changed.
-     *
-     * @param vmPassword the password to set for the virtual machine
-     */
-    public void setVmPassword(final String vmPassword) {
-        this.vmPassword = vmPassword;
+
+    public void setVmId(final String vmId) {
+        this.vmId = vmId;
     }
 
-    /**
-     * Get the password of the virtual machine.
-     *
-     * @return the password of the virtual machine
-     */
-    public String getVmPassword() {
-        return this.vmPassword;
+
+    public String getVmId() {
+        return this.vmId;
     }
 
     /**
@@ -155,6 +147,10 @@ public class VmProxy extends Proxy {
         return this.vmSpecies;
     }
 
+    public String getFarmJid() {
+        return this.farmProxy.getFullJid();
+    }
+
     /**
      * Add the provided bindings to the bindings maintained at this virtual machine proxy.
      * This method is called when a get bindings is successfully returned
@@ -167,7 +163,7 @@ public class VmProxy extends Proxy {
                 this.vmBindings.putTyped(bindingName, bindings.getTyped(bindingName));
             }
         } catch (InvalidValueException e) {
-            LopVillein.LOGGER.warning(e.getMessage());
+            Villein.LOGGER.warning(e.getMessage());
         }
     }
 
@@ -196,6 +192,14 @@ public class VmProxy extends Proxy {
      */
     public VmBindings getVmBindings() {
         return this.vmBindings;
+    }
+
+    public int compareTo(Object vmStruct) {
+        if (vmStruct instanceof VmProxy) {
+            return this.vmId.compareTo(((VmProxy) vmStruct).getVmId());
+        } else {
+            throw new ClassCastException();
+        }
     }
 }
 

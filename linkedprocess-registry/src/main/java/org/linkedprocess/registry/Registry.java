@@ -28,15 +28,15 @@ import java.util.logging.Logger;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class LopRegistry extends LopClient {
+public class Registry extends LopClient {
 
-    public static Logger LOGGER = LinkedProcess.getLogger(LopRegistry.class);
+    public static Logger LOGGER = LinkedProcess.getLogger(Registry.class);
     public static final String RESOURCE_PREFIX = "LoPRegistry";
     public static final String STATUS_MESSAGE = "LoP Registry v0.1";
     protected LinkedProcess.RegistryStatus status;
     protected Set<String> activeFarms = new HashSet<String>();
 
-    public LopRegistry(final String server, final int port, final String username, final String password) throws XMPPException {
+    public Registry(final String server, final int port, final String username, final String password) throws XMPPException {
         LOGGER.info("Starting " + STATUS_MESSAGE);
 
 
@@ -61,7 +61,7 @@ public class LopRegistry extends LopClient {
     public final Presence createPresence(final LinkedProcess.RegistryStatus status) {
         switch (status) {
             case ACTIVE:
-                return new Presence(Presence.Type.available, LopRegistry.STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
+                return new Presence(Presence.Type.available, Registry.STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
             case INACTIVE:
                 return new Presence(Presence.Type.unavailable);
             default:
@@ -71,7 +71,7 @@ public class LopRegistry extends LopClient {
 
     protected void initiateFeatures() {
         super.initiateFeatures();
-        ServiceDiscoveryManager.setIdentityName(LopRegistry.RESOURCE_PREFIX);
+        ServiceDiscoveryManager.setIdentityName(Registry.RESOURCE_PREFIX);
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
         this.getDiscoManager().addFeature(LinkedProcess.DISCO_ITEMS_NAMESPACE);
         this.getDiscoManager().addFeature(LinkedProcess.LOP_REGISTRY_NAMESPACE);
@@ -109,7 +109,7 @@ public class LopRegistry extends LopClient {
         String username = props.getProperty(LinkedProcess.REGISTRY_USERNAME_PROPERTY);
         String password = props.getProperty(LinkedProcess.REGISTRY_PASSWORD_PROPERTY);
 
-        LopRegistry lopRegistry = new LopRegistry(server, port, username, password);
+        Registry registry = new Registry(server, port, username, password);
 
         Object monitor = new Object();
         try {

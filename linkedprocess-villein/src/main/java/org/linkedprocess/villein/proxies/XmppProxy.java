@@ -14,7 +14,7 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.villein.Dispatcher;
-import org.linkedprocess.villein.LopVillein;
+import org.linkedprocess.villein.Villein;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,49 +29,28 @@ import java.util.Set;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class Proxy implements Comparable {
+public abstract class XmppProxy {
 
-    protected boolean available = false;
-    protected String jid;
-    protected final Dispatcher dispatcher;
-    protected Document discoInfoDocument;
+   protected Document discoInfoDocument;
+   protected Dispatcher dispatcher;
+   protected String fullJid;
 
-    public Proxy(final String jid, final Dispatcher dispatcher) {
-        this.jid = jid;
-        this.dispatcher = dispatcher;
-        this.refreshDiscoInfo();
+    public String getFullJid() {
+        return this.fullJid;
     }
 
-    public Proxy(final String jid, final Dispatcher dispatcher, final Document discoInfoDocument) {
-        this.jid = jid;
-        this.dispatcher = dispatcher;
-        this.discoInfoDocument = discoInfoDocument;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
-    }
-
-    public boolean isAvailable() {
-        return this.available;
-    }
-
-    public void setJid(String jid) {
-        this.jid = jid;
-    }
-
-    public String getJid() {
-        return this.jid;
+    public void setFullJid(String fullJid) {
+        this.fullJid = fullJid;
     }
 
     public void refreshDiscoInfo() {
         if (this.dispatcher != null) {
             ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();
             try {
-                DiscoverInfo discoInfo = discoManager.discoverInfo(this.getJid());
+                DiscoverInfo discoInfo = discoManager.discoverInfo(this.fullJid);
                 this.discoInfoDocument = LinkedProcess.createXMLDocument(discoInfo.toXML());
             } catch (Exception e) {
-                LopVillein.LOGGER.warning("Problem loading disco#info: " + e.getMessage());
+                Villein.LOGGER.warning("Problem loading disco#info: " + e.getMessage());
             }
         }
     }
@@ -142,16 +121,8 @@ public class Proxy implements Comparable {
         return proxyFields;
     }
 
-    public int compareTo(Object proxy) {
-        if (proxy instanceof Proxy) {
-            return this.jid.compareTo(((Proxy) proxy).getJid());
-        } else {
-            throw new ClassCastException();
-        }
-    }
-
     public String toString() {
-        return this.getClass().getName() + "[" + this.jid + "]";
+        return this.getClass().getName() + "[" + this.fullJid + "]";
     }
 
 

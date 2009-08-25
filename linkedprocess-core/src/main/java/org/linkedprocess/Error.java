@@ -22,7 +22,6 @@ import java.util.Map;
 public class Error extends XMPPError implements Comparable {
 
     protected LinkedProcess.LopErrorType errorType;
-    protected LinkedProcess.ClientType clientType;
     protected String packetId;
 
     public static final Map<Condition, Integer> conditionCodeMap = new HashMap<Condition, Integer>();
@@ -111,19 +110,14 @@ public class Error extends XMPPError implements Comparable {
     }
 
 
-    public Error(XMPPError.Condition condition, LinkedProcess.LopErrorType errorType, String errorMessage, LinkedProcess.ClientType clientType, String packetId) {
+    public Error(XMPPError.Condition condition, LinkedProcess.LopErrorType errorType, String errorMessage, String packetId) {
         super(Error.conditionCodeMap.get(condition), Error.conditionErrorMap.get(condition), condition.toString().toLowerCase(), errorMessage, null);
         this.errorType = errorType;
-        this.clientType = clientType;
         this.packetId = packetId;
     }
 
     public LinkedProcess.LopErrorType getErrorType() {
         return this.errorType;
-    }
-
-    public LinkedProcess.ClientType getClientType() {
-        return this.clientType;
     }
 
     public String getPacketId() {
@@ -135,7 +129,7 @@ public class Error extends XMPPError implements Comparable {
         errorElement.setAttribute(LinkedProcess.CODE_ATTRIBUTE, "" + this.getCode());
         errorElement.setAttribute(LinkedProcess.TYPE_ATTRIBUTE, this.getType().toString().toLowerCase());
         Element conditionElement = new Element(this.getCondition(), Namespace.getNamespace(LinkedProcess.XMPP_STANZAS_NAMESPACE));
-        Element lopElement = new Element(errorType.toString(), this.clientType == LinkedProcess.ClientType.FARM ? Namespace.getNamespace(LinkedProcess.LOP_FARM_NAMESPACE) : Namespace.getNamespace(LinkedProcess.LOP_VM_NAMESPACE));
+        Element lopElement = new Element(errorType.toString(), Namespace.getNamespace(LinkedProcess.LOP_FARM_NAMESPACE));
         errorElement.addContent(conditionElement);
         errorElement.addContent(lopElement);
         if (this.getMessage() != null) {

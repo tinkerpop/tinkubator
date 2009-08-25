@@ -11,8 +11,8 @@ import org.jivesoftware.smack.packet.Presence;
 public class PresenceSubscriptionPacketListener extends FarmPacketListener {
 
 
-    public PresenceSubscriptionPacketListener(LopFarm lopFarm) {
-        super(lopFarm);
+    public PresenceSubscriptionPacketListener(Farm farm) {
+        super(farm);
     }
 
     public void processPacket(Packet packet) {
@@ -27,25 +27,25 @@ public class PresenceSubscriptionPacketListener extends FarmPacketListener {
 
         Presence.Type type = presence.getType();
         if (type == Presence.Type.subscribe) {
-            LopFarm.LOGGER.info("Subscribing to " + presence.getFrom());
+            Farm.LOGGER.info("Subscribing to " + presence.getFrom());
             Presence subscribed = new Presence(Presence.Type.subscribed);
             subscribed.setTo(presence.getFrom());
-            subscribed.setFrom(this.getLopFarm().getFullJid());
-            this.getLopFarm().getConnection().sendPacket(subscribed);
+            subscribed.setFrom(this.getFarm().getFullJid());
+            this.getFarm().getConnection().sendPacket(subscribed);
 
             return;
 
-        } else if (type == Presence.Type.unsubscribe && !presence.getFrom().equals(this.getLopFarm().getBareJid()) && !presence.getFrom().equals(this.getLopFarm().getFullJid())) {
-            LopFarm.LOGGER.info("Unsubscribing from " + presence.getFrom());
+        } else if (type == Presence.Type.unsubscribe && !presence.getFrom().equals(this.getFarm().getBareJid()) && !presence.getFrom().equals(this.getFarm().getFullJid())) {
+            Farm.LOGGER.info("Unsubscribing from " + presence.getFrom());
             Presence unsubscribed = new Presence(Presence.Type.unsubscribed);
             Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
             unsubscribed.setTo(presence.getFrom());
-            unsubscribed.setFrom(this.getLopFarm().getFullJid());
+            unsubscribed.setFrom(this.getFarm().getFullJid());
             unsubscribe.setTo(presence.getFrom());
-            unsubscribe.setFrom(this.getLopFarm().getFullJid());
+            unsubscribe.setFrom(this.getFarm().getFullJid());
 
-            this.getLopFarm().getConnection().sendPacket(unsubscribed);
-            this.getLopFarm().getConnection().sendPacket(unsubscribe);
+            this.getFarm().getConnection().sendPacket(unsubscribed);
+            this.getFarm().getConnection().sendPacket(unsubscribe);
             return;
         }
         throw new IllegalStateException();

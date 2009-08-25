@@ -9,11 +9,11 @@ package org.linkedprocess.villein.commands;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.vm.PingJob;
+import org.linkedprocess.farm.PingJob;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.Error;
 import org.linkedprocess.*;
-import org.linkedprocess.villein.LopVillein;
+import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.proxies.JobStruct;
 import org.linkedprocess.villein.proxies.VmProxy;
 
@@ -29,27 +29,27 @@ public class PingJobCommand extends Command {
     private final HandlerSet<LinkedProcess.JobStatus> successHandlers;
     private final HandlerSet<Error> errorHandlers;
 
-    public PingJobCommand(LopVillein xmppVillein) {
+    public PingJobCommand(Villein xmppVillein) {
         super(xmppVillein);
         this.successHandlers = new HandlerSet<LinkedProcess.JobStatus>();
         this.errorHandlers = new HandlerSet<Error>();
     }
 
-    public void send(VmProxy vmStruct, JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> successHandler, final Handler<org.linkedprocess.Error> errorHandler) {
+    public void send(VmProxy vmProxy, JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> successHandler, final Handler<org.linkedprocess.Error> errorHandler) {
 
         String id = Packet.nextID();
         PingJob pingJob = new PingJob();
-        pingJob.setTo(vmStruct.getJid());
-        pingJob.setFrom(this.xmppVillein.getFullJid());
+        pingJob.setTo(vmProxy.getFarmJid());
+        pingJob.setFrom(this.villein.getFullJid());
         pingJob.setJobId(jobStruct.getJobId());
-        pingJob.setVmPassword(vmStruct.getVmPassword());
+        pingJob.setVmId(vmProxy.getVmId());
         pingJob.setType(IQ.Type.GET);
         pingJob.setPacketID(id);
 
         this.successHandlers.addHandler(id, successHandler);
         this.errorHandlers.addHandler(id, errorHandler);
 
-        xmppVillein.getConnection().sendPacket(pingJob);
+        villein.getConnection().sendPacket(pingJob);
     }
 
     public void receiveSuccess(final PingJob pingJob) {

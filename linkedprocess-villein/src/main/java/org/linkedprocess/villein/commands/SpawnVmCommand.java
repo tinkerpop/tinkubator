@@ -12,7 +12,7 @@ import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.Error;
 import org.linkedprocess.farm.SpawnVm;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.LopVillein;
+import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.proxies.FarmProxy;
 import org.linkedprocess.villein.proxies.ParentProxyNotFoundException;
 import org.linkedprocess.villein.proxies.VmProxy;
@@ -29,20 +29,20 @@ public class SpawnVmCommand extends Command {
     private final HandlerSet<VmProxy> successHandler;
     private final HandlerSet<org.linkedprocess.Error> errorHandlers;
 
-    public SpawnVmCommand(LopVillein xmppVillein) {
+    public SpawnVmCommand(Villein xmppVillein) {
         super(xmppVillein);
         this.successHandler = new HandlerSet<VmProxy>();
         this.errorHandlers = new HandlerSet<Error>();
     }
 
-    public void send(final FarmProxy farmStruct, final String vmSpecies, final Handler<VmProxy> successHandler, final Handler<Error> errorHandler) {
+    public void send(final FarmProxy farmProxy, final String vmSpecies, final Handler<VmProxy> successHandler, final Handler<Error> errorHandler) {
         String id = Packet.nextID();
         SpawnVm spawnVm = new SpawnVm();
-        spawnVm.setTo(farmStruct.getJid());
-        spawnVm.setFrom(this.xmppVillein.getFullJid());
+        spawnVm.setTo(farmProxy.getFullJid());
+        spawnVm.setFrom(this.villein.getFullJid());
         spawnVm.setVmSpecies(vmSpecies);
-        if (null != farmStruct.getFarmPassword()) {
-            spawnVm.setFarmPassword(farmStruct.getFarmPassword());
+        if (null != farmProxy.getFarmPassword()) {
+            spawnVm.setFarmPassword(farmProxy.getFarmPassword());
         }
         spawnVm.setType(IQ.Type.GET);
         spawnVm.setPacketID(id);
@@ -50,19 +50,19 @@ public class SpawnVmCommand extends Command {
         this.successHandler.addHandler(id, successHandler);
         this.errorHandlers.addHandler(id, errorHandler);
 
-        xmppVillein.getConnection().sendPacket(spawnVm);
+        villein.getConnection().sendPacket(spawnVm);
     }
 
     public void receiveSuccess(final SpawnVm spawnVm) {
-        VmProxy vmProxy = new VmProxy(spawnVm.getVmJid(), xmppVillein.getDispatcher());
-        vmProxy.setVmPassword(spawnVm.getVmPassword());
+        VmProxy vmProxy = new VmProxy(this.villein.getCloud().getFarmProxy(spawnVm.getFrom()), spawnVm.getVmId(), villein.getDispatcher());
+        vmProxy.setVmId(spawnVm.getVmId());
         vmProxy.setVmSpecies(spawnVm.getVmSpecies());
-        vmProxy.setAvailable(true);
+        //vmStruct.setAvailable(true);
         try {
-            this.xmppVillein.getLopCloud().addVmProxy(spawnVm.getFrom(), vmProxy);
+            this.villein.getCloud().addVmProxy(spawnVm.getFrom(), vmProxy);
             successHandler.handle(spawnVm.getPacketID(), vmProxy);
         } catch (ParentProxyNotFoundException e) {
-            LopVillein.LOGGER.warning(e.getMessage());
+            Villein.LOGGER.warning(e.getMessage());
         } finally {
             successHandler.removeHandler(spawnVm.getPacketID());
             errorHandlers.removeHandler(spawnVm.getPacketID());

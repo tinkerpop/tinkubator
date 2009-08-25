@@ -5,17 +5,16 @@
  * http://linkedprocess.org and LICENSE.txt for more information.
  */
 
-package org.linkedprocess.vm;
+package org.linkedprocess.farm;
 
 import org.jdom.Element;
 import org.linkedprocess.LinkedProcess;
 
 /**
- * User: marko
- * Date: Jun 24, 2009
- * Time: 12:12:20 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
-public class SubmitJob extends VirtualMachineIq {
+public class SubmitJob extends FarmIq {
 
     String expression;
 
@@ -29,10 +28,10 @@ public class SubmitJob extends VirtualMachineIq {
 
     public String getChildElementXML() {
 
-        Element submitJobElement = new Element(LinkedProcess.SUBMIT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE);
+        Element submitJobElement = new Element(LinkedProcess.SUBMIT_JOB_TAG, LinkedProcess.LOP_FARM_NAMESPACE);
 
-        if (this.vmPassword != null) {
-            submitJobElement.setAttribute(LinkedProcess.VM_PASSWORD_ATTRIBUTE, this.vmPassword);
+        if(this.getVmId() != null) {
+            submitJobElement.setAttribute(LinkedProcess.VM_ID_ATTRIBUTE, this.getVmId());
         }
 
         if (this.expression != null) {

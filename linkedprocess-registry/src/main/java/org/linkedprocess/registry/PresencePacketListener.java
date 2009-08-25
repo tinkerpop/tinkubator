@@ -19,15 +19,15 @@ import org.jivesoftware.smackx.packet.DiscoverInfo;
 public class PresencePacketListener extends RegistryPacketListener {
 
 
-    public PresencePacketListener(LopRegistry lopRegistry) {
-        super(lopRegistry);
+    public PresencePacketListener(Registry registry) {
+        super(registry);
     }
 
     public void processPacket(Packet packet) {
         Presence presence = (Presence) packet;
 
-        LopRegistry.LOGGER.info("Arrived " + PresencePacketListener.class.getName());
-        LopRegistry.LOGGER.info(presence.toXML());
+        Registry.LOGGER.info("Arrived " + PresencePacketListener.class.getName());
+        Registry.LOGGER.info(presence.toXML());
 
         if (presence.isAvailable()) {
             DiscoverInfo discoInfo = this.getDiscoInfo(packet.getFrom());

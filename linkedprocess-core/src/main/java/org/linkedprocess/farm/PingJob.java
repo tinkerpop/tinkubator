@@ -5,17 +5,16 @@
  * http://linkedprocess.org and LICENSE.txt for more information.
  */
 
-package org.linkedprocess.vm;
+package org.linkedprocess.farm;
 
 import org.jdom.Element;
 import org.linkedprocess.LinkedProcess;
 
 /**
- * User: marko
- * Date: Jun 25, 2009
- * Time: 12:54:02 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
-public class PingJob extends VirtualMachineIq {
+public class PingJob extends FarmIq {
 
     protected LinkedProcess.JobStatus value;
     protected String jobId;
@@ -38,9 +37,9 @@ public class PingJob extends VirtualMachineIq {
 
     public String getChildElementXML() {
 
-        Element pingJobElement = new Element(LinkedProcess.PING_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE);
-        if (this.vmPassword != null) {
-            pingJobElement.setAttribute(LinkedProcess.VM_PASSWORD_ATTRIBUTE, this.vmPassword);
+        Element pingJobElement = new Element(LinkedProcess.PING_JOB_TAG, LinkedProcess.LOP_FARM_NAMESPACE);
+        if (this.vmId != null) {
+            pingJobElement.setAttribute(LinkedProcess.VM_ID_ATTRIBUTE, this.vmId);
         }
         if (this.jobId != null) {
             pingJobElement.setAttribute(LinkedProcess.JOB_ID_ATTRIBUTE, this.jobId);

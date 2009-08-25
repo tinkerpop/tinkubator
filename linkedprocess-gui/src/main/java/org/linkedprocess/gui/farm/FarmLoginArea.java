@@ -3,7 +3,7 @@ package org.linkedprocess.gui.farm;
 import org.jivesoftware.smack.XMPPException;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.LoginArea;
-import org.linkedprocess.farm.LopFarm;
+import org.linkedprocess.farm.Farm;
 
 import javax.swing.*;
 import java.awt.*;
@@ -104,7 +104,7 @@ public class FarmLoginArea extends LoginArea {
                 String farmPassword = this.farmPasswordField.getText().trim();
                 if (farmPassword.equals(""))
                     farmPassword = null;
-                LopFarm farm = new LopFarm(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText(), farmPassword);
+                Farm farm = new Farm(serverField.getText(), new Integer(this.portField.getText()), this.usernameField.getText(), this.passwordField.getText(), farmPassword);
                 this.farmGui.loadVmArea(farm);
             } else if (event.getActionCommand().equals(QUIT)) {
                 System.exit(0);

@@ -10,33 +10,33 @@ package org.linkedprocess.farm;
 import org.jivesoftware.smack.packet.IQ;
 import org.linkedprocess.os.JobResult;
 import org.linkedprocess.os.VmScheduler;
-import org.linkedprocess.os.errors.VmWorkerNotFoundException;
-import org.linkedprocess.vm.LopVm;
+import org.linkedprocess.os.errors.VmNotFoundException;
+import org.linkedprocess.os.Vm;
 
 /**
- * User: marko
- * Date: Jun 26, 2009
- * Time: 4:23:32 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
 public class VmJobResultHandler implements VmScheduler.VmResultHandler {
 
-    LopFarm lopFarm;
+    Farm farm;
 
-    public VmJobResultHandler(LopFarm lopFarm) {
-        this.lopFarm = lopFarm;
+    public VmJobResultHandler(Farm farm) {
+        this.farm = farm;
     }
 
     public void handleResult(JobResult result) {
         try {
-            LopVm vm = lopFarm.getVirtualMachine(result.getJob().getVmJid());
+            Vm vm = farm.getVm(result.getJob().getVmId());
             IQ returnSubmitJob = result.generateReturnEvalulate();
-            vm.getConnection().sendPacket(returnSubmitJob);
+            returnSubmitJob.setFrom(farm.getFullJid());
+            farm.getConnection().sendPacket(returnSubmitJob);
 
-            LopVm.LOGGER.info("Sent " + VmJobResultHandler.class.getName());
-            LopVm.LOGGER.info(returnSubmitJob.toXML());
+            Farm.LOGGER.info("Sent " + VmJobResultHandler.class.getName());
+            Farm.LOGGER.info(returnSubmitJob.toXML());
 
-        } catch (VmWorkerNotFoundException e) {
-            LopVm.LOGGER.severe("Could not find virtual machine. Thus, can not send error message");
+        } catch (VmNotFoundException e) {
+            Farm.LOGGER.severe("Could not find virtual machine. Thus, can not send error message");
         }
 
     }

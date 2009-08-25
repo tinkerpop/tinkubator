@@ -1,7 +1,7 @@
 package org.linkedprocess.gui.farm;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.vm.LopVm;
+import org.linkedprocess.os.Vm;
 import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.gui.RosterPanel;
 import org.linkedprocess.gui.TreeRenderer;
@@ -39,7 +39,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
     public VmArea(FarmGui farmGui) {
         super(new BorderLayout());
         this.farmGui = farmGui;
-        CountrysideProxy countrysideProxy = new CountrysideProxy(LinkedProcess.generateBareJid(farmGui.getXmppFarm().getFullJid()));
+        CountrysideProxy countrysideProxy = new CountrysideProxy(LinkedProcess.generateBareJid(farmGui.getFarm().getFullJid()));
         this.treeRoot = new DefaultMutableTreeNode(countrysideProxy);
         this.tree = new JTree(this.treeRoot);
         this.tree.setCellRenderer(new TreeRenderer());
@@ -58,10 +58,10 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
 
         //JPanel securityPanel = new JPanel();
         PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel();
-        this.farmGui.getXmppFarm().getConnection().addPacketListener(packetSnifferPanel, null);
-        this.farmGui.getXmppFarm().getConnection().addPacketWriterInterceptor(packetSnifferPanel, null);
+        this.farmGui.getFarm().getConnection().addPacketListener(packetSnifferPanel, null);
+        this.farmGui.getFarm().getConnection().addPacketWriterInterceptor(packetSnifferPanel, null);
 
-        RosterPanel rosterPanel = new RosterPanel(this.farmGui.getXmppFarm().getRoster());
+        RosterPanel rosterPanel = new RosterPanel(this.farmGui.getFarm().getRoster());
 
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("virtual machines", treePanel);
@@ -77,7 +77,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
         this.setVisible(true);
     }
 
-    public boolean containsVmNode(LopVm vm) {
+    public boolean containsVmNode(Vm vm) {
         for (int i = 0; i < treeRoot.getChildCount(); i++) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeRoot.getChildAt(i);
             if (node.getUserObject() == vm) {
@@ -90,16 +90,14 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
     public void createTree() {
         treeRoot.removeAllChildren();
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-        DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(this.farmGui.getXmppFarm());
-        this.treeMap.put(this.farmGui.getXmppFarm().getFullJid(), farmNode);
-        for (LopVm lopVm : this.farmGui.getXmppFarm().getVirtualMachines()) {
-            DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(lopVm);
-            this.treeMap.put(lopVm.getFullJid(), vmNode);
-            vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", lopVm.getSpawningVilleinJid())));
-            vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", ""+VmArea.isAvailable(lopVm.getVmStatus()))));
-            vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", lopVm.getVmSpecies())));
-            //vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", xmppVm.getVmPassword())));
-            //vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", xmppVm.getRunningTimeInSeconds() + " seconds")));
+        DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(this.farmGui.getFarm());
+        this.treeMap.put(this.farmGui.getFarm().getFullJid(), farmNode);
+        for (Vm vm : this.farmGui.getFarm().getVms()) {
+            DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(vm);
+            this.treeMap.put(vm.getVmId(), vmNode);
+            vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", vm.getSpawningVilleinJid())));
+            vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", ""+VmArea.isAvailable(vm.getVmStatus()))));
+            vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", vm.getVmSpecies())));
             model.insertNodeInto(vmNode, farmNode, farmNode.getChildCount());
             this.tree.scrollPathToVisible(new TreePath(vmNode.getPath()));
         }
@@ -108,39 +106,35 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
         model.reload();
     }
 
-    public void updateTree(String vmJid, LinkedProcess.VmStatus status) {
+    public void updateTree(String vmId, LinkedProcess.VmStatus status) {
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-        DefaultMutableTreeNode farmNode = this.treeMap.get(this.farmGui.getXmppFarm().getFullJid());
-        DefaultMutableTreeNode node = this.treeMap.get(vmJid);
+        DefaultMutableTreeNode farmNode = this.treeMap.get(this.farmGui.getFarm().getFullJid());
+        DefaultMutableTreeNode node = this.treeMap.get(vmId);
         if (node == null && status != LinkedProcess.VmStatus.NOT_FOUND) {
             try {
-                LopVm lopVm = this.farmGui.getXmppFarm().getVirtualMachine(vmJid);
-                DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(lopVm);
-                vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", lopVm.getSpawningVilleinJid())));
-                vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", ""+VmArea.isAvailable(lopVm.getVmStatus()))));
-                vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", lopVm.getVmSpecies())));
-                //vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", xmppVm.getVmPassword())));
-                //vmNode.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", xmppVm.getRunningTimeInSeconds() + " seconds")));
+                Vm vm = this.farmGui.getFarm().getVm(vmId);
+                DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(vm);
+                vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", vm.getSpawningVilleinJid())));
+                vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", ""+VmArea.isAvailable(vm.getVmStatus()))));
+                vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", vm.getVmSpecies())));
                 model.insertNodeInto(vmNode, farmNode, farmNode.getChildCount());
                 this.tree.scrollPathToVisible(new TreePath(vmNode.getPath()));
-                this.treeMap.put(vmJid, vmNode);
+                this.treeMap.put(vmId, vmNode);
                 model.reload(vmNode);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else if (node != null && (status == LinkedProcess.VmStatus.ACTIVE || status == LinkedProcess.VmStatus.ACTIVE_FULL)) {
             node.removeAllChildren();
-            LopVm lopVm = (LopVm) node.getUserObject();
-            node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", lopVm.getSpawningVilleinJid())));
-            node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", ""+VmArea.isAvailable(lopVm.getVmStatus()))));
-            node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", lopVm.getVmSpecies())));
-            //node.add(new DefaultMutableTreeNode(new TreeNodeProperty("vm_password", xmppVm.getVmPassword())));
-            //node.add(new DefaultMutableTreeNode(new TreeNodeProperty("running_time", xmppVm.getRunningTimeInSeconds() + " seconds")));
+            Vm vm = (Vm) node.getUserObject();
+            node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", vm.getSpawningVilleinJid())));
+            node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", ""+VmArea.isAvailable(vm.getVmStatus()))));
+            node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", vm.getVmSpecies())));
             model.reload(node);
         } else if (node != null && status == LinkedProcess.VmStatus.NOT_FOUND) {
             node.removeAllChildren();
             model.removeNodeFromParent(node);
-            this.treeMap.remove(vmJid);
+            this.treeMap.remove(vmId);
         }
     }
 
@@ -150,7 +144,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
 
     public void actionPerformed(ActionEvent event) {
         if (event.getActionCommand().equals(SHUTDOWN)) {
-            this.farmGui.getXmppFarm().shutdown();
+            this.farmGui.getFarm().shutdown();
             this.farmGui.loadLoginFrame();
         }
     }
@@ -166,12 +160,12 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
             DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectedPath.getLastPathComponent();
 
             if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
-                if (selectedNode.getUserObject() instanceof LopVm) {
-                    LopVm lopVm = (LopVm) selectedNode.getUserObject();
-                    VmViewerFrame vmViewer = this.vmViewerMap.get(lopVm.getFullJid());
+                if (selectedNode.getUserObject() instanceof Vm) {
+                    Vm vm = (Vm) selectedNode.getUserObject();
+                    VmViewerFrame vmViewer = this.vmViewerMap.get(vm.getVmId());
                     if (vmViewer == null) {
-                        vmViewer = new VmViewerFrame(lopVm);
-                        this.vmViewerMap.put(lopVm.getFullJid(), vmViewer);
+                        vmViewer = new VmViewerFrame(vm);
+                        this.vmViewerMap.put(vm.getVmId(), vmViewer);
                     } else {
                         vmViewer.setVisible(true);
                     }

@@ -67,10 +67,6 @@ public class LinkedProcess {
         return stringBuilder.toString();
     }
 
-    public enum ClientType {
-        VM, FARM, REGISTRY, VILLEIN
-    }
-
     // TODO: how about a "queued" status for jobs?
     public enum JobStatus {
         IN_PROGRESS("in_progress");
@@ -156,8 +152,8 @@ public class LinkedProcess {
         SPECIES_NOT_SUPPORTED("species_not_supported"), // UnsupportedScriptEngineException
         UNKNOWN_DATATYPE("unknown_datatype"),
         VM_IS_BUSY("vm_is_busy"), // VMWorkerIsFullException
-        WRONG_FARM_PASSWORD("wrong_farm_password"),
-        WRONG_VM_PASSWORD("wrong_vm_password");
+        VM_NOT_FOUND("vm_not_found"), // when a virtual machine id doesn't point to an actual virtual machine
+        WRONG_FARM_PASSWORD("wrong_farm_password");
 
         private final String name;
 
@@ -214,7 +210,6 @@ public class LinkedProcess {
 
     private static final String LOP_NAMESPACE = "http://linkedprocess.org/2009/06/";
     public static final String LOP_FARM_NAMESPACE = LOP_NAMESPACE + "Farm#";
-    public static final String LOP_VM_NAMESPACE = LOP_NAMESPACE + "VirtualMachine#";
     public static final String LOP_REGISTRY_NAMESPACE = LOP_NAMESPACE + "Registry#";
     public static final String BLANK_NAMESPACE = "";
     public static final String DISCO_INFO_NAMESPACE = "http://jabber.org/protocol/disco#info";
@@ -245,8 +240,7 @@ public class LinkedProcess {
     // attribute names
     public static final String FARM_PASSWORD_ATTRIBUTE = "farm_password";
     public static final String VM_SPECIES_ATTRIBUTE = "vm_species";
-    public static final String VM_JID_ATTRIBUTE = "vm_jid";
-    public static final String VM_PASSWORD_ATTRIBUTE = "vm_password";
+    public static final String VM_ID_ATTRIBUTE = "vm_id";
     // Lop VM XMPP tag and attribute names
     // tag names
     public static final String SUBMIT_JOB_TAG = "submit_job";

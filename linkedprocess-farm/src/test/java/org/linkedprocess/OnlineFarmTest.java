@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.linkedprocess.farm.LopFarm;
+import org.linkedprocess.farm.Farm;
 
 /**
  * User: marko Date: Jun 25, 2009 Time: 12:10:47 PM
@@ -25,7 +25,7 @@ public class OnlineFarmTest extends TestCase {
 
     private static int port = 5222;
 
-    private static LopFarm lopFarm;
+    private static Farm farm;
 
     //public static void main(String[] args) throws Exception {
     //	new XmppFarm(server1, port, username1, password1);

@@ -10,33 +10,26 @@ package org.linkedprocess.farm;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.farm.PingJob;
 import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.IOException;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class SpawnVmProvider implements IQProvider {
+public class PingJobProvider implements IQProvider {
 
-    public IQ parseIQ(XmlPullParser parser) throws IOException, XmlPullParserException {
-        SpawnVm spawnVm = new SpawnVm();
+    public IQ parseIQ(XmlPullParser parser) throws Exception {
+        PingJob pingJob = new PingJob();
+        String jobId = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.JOB_ID_ATTRIBUTE);
+        if (null != jobId) {
+            pingJob.setJobId(jobId);
+        }
         String vmId = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VM_ID_ATTRIBUTE);
         if (null != vmId) {
-            spawnVm.setVmId(vmId);
+            pingJob.setVmId(vmId);
         }
-        String vmSpecies = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VM_SPECIES_ATTRIBUTE);
-        if (null != vmSpecies) {
-            spawnVm.setVmSpecies(vmSpecies);
-        }
-        String farmPassword = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.FARM_PASSWORD_ATTRIBUTE);
-        if (null != farmPassword) {
-            spawnVm.setFarmPassword(farmPassword);
-        }
-
         parser.next();
-        return spawnVm;
+        return pingJob;
     }
 }

@@ -10,10 +10,11 @@ package org.linkedprocess.villein.commands;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.Error;
+import org.linkedprocess.farm.TerminateVm;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.LopVillein;
+import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.proxies.VmProxy;
-import org.linkedprocess.vm.TerminateVm;
+import org.linkedprocess.villein.proxies.FarmProxy;
 
 /**
  * The proxy by which a terminate_job is sent to a virtual machine.
@@ -28,28 +29,33 @@ public class TerminateVmCommand extends Command {
     private final HandlerSet<Object> successHandlers;
     private final HandlerSet<org.linkedprocess.Error> errorHandlers;
 
-    public TerminateVmCommand(LopVillein xmppVillein) {
+    public TerminateVmCommand(Villein xmppVillein) {
         super(xmppVillein);
         this.successHandlers = new HandlerSet<Object>();
         this.errorHandlers = new HandlerSet<Error>();
     }
 
-    public void send(final VmProxy vmStruct, final Handler<Object> successHandler, final Handler<Error> errorHandler) {
+    public void send(final VmProxy vmProxy, final Handler<Object> successHandler, final Handler<Error> errorHandler) {
         String id = Packet.nextID();
         TerminateVm terminateVm = new TerminateVm();
-        terminateVm.setTo(vmStruct.getJid());
-        terminateVm.setFrom(this.xmppVillein.getFullJid());
-        terminateVm.setVmPassword(vmStruct.getVmPassword());
+        terminateVm.setTo(vmProxy.getFarmJid());
+        terminateVm.setFrom(this.villein.getFullJid());
+        terminateVm.setVmId(vmProxy.getVmId());
         terminateVm.setType(IQ.Type.GET);
         terminateVm.setPacketID(id);
 
         this.errorHandlers.addHandler(id, errorHandler);
         this.successHandlers.addHandler(id, successHandler);
 
-        xmppVillein.getConnection().sendPacket(terminateVm);
+        villein.getConnection().sendPacket(terminateVm);
     }
 
     public void receiveSuccess(final TerminateVm terminateVm) {
+        FarmProxy farmProxy = this.villein.getCloud().getFarmProxy(terminateVm.getFrom());
+        if(null != farmProxy) {
+            farmProxy.removeVmProxy(terminateVm.getVmId());
+        }
+
         try {
             this.successHandlers.handle(terminateVm.getPacketID(), null);
         } finally {

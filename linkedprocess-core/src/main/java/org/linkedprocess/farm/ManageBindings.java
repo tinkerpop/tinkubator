@@ -5,7 +5,7 @@
  * http://linkedprocess.org and LICENSE.txt for more information.
  */
 
-package org.linkedprocess.vm;
+package org.linkedprocess.farm;
 
 import org.jdom.Element;
 import org.jivesoftware.smack.packet.IQ;
@@ -15,11 +15,10 @@ import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.os.errors.InvalidValueException;
 
 /**
- * User: marko
- * Date: Jul 17, 2009
- * Time: 6:37:57 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
-public class ManageBindings extends VirtualMachineIq {
+public class ManageBindings extends FarmIq {
 
     protected VmBindings bindings = new VmBindings();
     protected String badDatatypeMessage;
@@ -64,21 +63,21 @@ public class ManageBindings extends VirtualMachineIq {
 
     public String getChildElementXML() {
 
-        Element manageBindingsElement = new Element(LinkedProcess.MANAGE_BINDINGS_TAG, LinkedProcess.LOP_VM_NAMESPACE);
+        Element manageBindingsElement = new Element(LinkedProcess.MANAGE_BINDINGS_TAG, LinkedProcess.LOP_FARM_NAMESPACE);
 
-        if (this.vmPassword != null) {
-            manageBindingsElement.setAttribute(LinkedProcess.VM_PASSWORD_ATTRIBUTE, this.vmPassword);
+        if (this.vmId != null) {
+            manageBindingsElement.setAttribute(LinkedProcess.VM_ID_ATTRIBUTE, this.vmId);
         }
 
         if (this.getType() == IQ.Type.GET) {
             for (String key : this.bindings.keySet()) {
-                Element b = new Element(LinkedProcess.BINDING_TAG, LinkedProcess.LOP_VM_NAMESPACE);
+                Element b = new Element(LinkedProcess.BINDING_TAG, LinkedProcess.LOP_FARM_NAMESPACE);
                 b.setAttribute(LinkedProcess.NAME_ATTRIBUTE, key);
                 manageBindingsElement.addContent(b);
             }
         } else if (this.getType() == IQ.Type.SET || this.getType() == IQ.Type.RESULT) {
             for (String key : this.bindings.keySet()) {
-                Element b = new Element(LinkedProcess.BINDING_TAG, LinkedProcess.LOP_VM_NAMESPACE);
+                Element b = new Element(LinkedProcess.BINDING_TAG, LinkedProcess.LOP_FARM_NAMESPACE);
                 b.setAttribute(LinkedProcess.NAME_ATTRIBUTE, key);
                 TypedValue value = this.bindings.getTyped(key);
                 if (null != value) {

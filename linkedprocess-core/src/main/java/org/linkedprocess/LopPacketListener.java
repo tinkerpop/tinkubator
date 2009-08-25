@@ -34,13 +34,6 @@ public abstract class LopPacketListener implements PacketListener {
         }
     }
 
-    protected boolean isVirtualMachine(DiscoverInfo discoInfo) {
-        if (discoInfo != null)
-            return discoInfo.containsFeature(LinkedProcess.LOP_VM_NAMESPACE);
-        else
-            return false;
-    }
-
     protected boolean isFarm(DiscoverInfo discoInfo) {
         if (discoInfo != null)
             return discoInfo.containsFeature(LinkedProcess.LOP_FARM_NAMESPACE);

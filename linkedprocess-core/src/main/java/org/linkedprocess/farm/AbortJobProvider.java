@@ -5,31 +5,34 @@
  * http://linkedprocess.org and LICENSE.txt for more information.
  */
 
-package org.linkedprocess.vm;
+package org.linkedprocess.farm;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.farm.AbortJob;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 
 /**
- * User: marko
- * Date: Jun 25, 2009
- * Time: 12:54:19 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
-public class PingJobProvider implements IQProvider {
+public class AbortJobProvider implements IQProvider {
 
-    public IQ parseIQ(XmlPullParser parser) throws Exception {
-        PingJob pingJob = new PingJob();
+    public IQ parseIQ(XmlPullParser parser) throws IOException, XmlPullParserException {
+        AbortJob abortJob = new AbortJob();
         String jobId = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.JOB_ID_ATTRIBUTE);
         if (null != jobId) {
-            pingJob.setJobId(jobId);
+            abortJob.setJobId(jobId);
         }
-        String vmPassword = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VM_PASSWORD_ATTRIBUTE);
-        if (null != vmPassword) {
-            pingJob.setVmPassword(vmPassword);
+        String vmId = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VM_ID_ATTRIBUTE);
+        if (null != vmId) {
+            abortJob.setVmId(vmId);
         }
         parser.next();
-        return pingJob;
+        return abortJob;
     }
 }

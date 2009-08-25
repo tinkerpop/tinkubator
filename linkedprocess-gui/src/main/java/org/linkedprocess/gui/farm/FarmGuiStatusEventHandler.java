@@ -13,7 +13,7 @@ public class FarmGuiStatusEventHandler extends StatusEventHandler {
 
 
     public FarmGuiStatusEventHandler(FarmGui farmGui) {
-        super(farmGui.getXmppFarm());
+        super(farmGui.getFarm());
         this.farmGui = farmGui;
     }
 
@@ -21,8 +21,9 @@ public class FarmGuiStatusEventHandler extends StatusEventHandler {
         super.schedulerStatusChanged(status);
     }
 
-    public void virtualMachineStatusChanged(String vmJid, LinkedProcess.VmStatus status) {
-        super.virtualMachineStatusChanged(vmJid, status);
-        farmGui.updateVirtualMachineTree(vmJid, status);
+    public void virtualMachineStatusChanged(String vmId, LinkedProcess.VmStatus status) {
+        super.virtualMachineStatusChanged(vmId, status);
+        farmGui.updateVirtualMachineTree(vmId, status);
     }
+
 }

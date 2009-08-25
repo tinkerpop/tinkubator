@@ -3,7 +3,7 @@ package org.linkedprocess.gui.farm.vmviewer;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.TypedValue;
 import org.linkedprocess.os.VmBindings;
-import org.linkedprocess.vm.LopVm;
+import org.linkedprocess.os.Vm;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -20,15 +20,15 @@ import java.awt.event.ActionListener;
 public class ViewBindingsPanel extends JPanel implements ActionListener, ListSelectionListener {
 
     protected JTable bindingsTable;
-    protected LopVm lopVm;
+    protected Vm vm;
     protected JTextArea valueTextArea;
     protected int count = 0;
     protected static final String REFRESH = "refresh";
 
 
-    public ViewBindingsPanel(LopVm lopVm) {
+    public ViewBindingsPanel(Vm vm) {
         super(new BorderLayout());
-        this.lopVm = lopVm;
+        this.vm = vm;
         DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{LinkedProcess.NAME_ATTRIBUTE, LinkedProcess.VALUE_ATTRIBUTE, LinkedProcess.DATATYPE_ATTRIBUTE, "null"});
 
         this.bindingsTable = new JTable(tableModel) {
@@ -74,7 +74,7 @@ public class ViewBindingsPanel extends JPanel implements ActionListener, ListSel
 
     public void refreshBindings() {
         try {
-            VmBindings bindings = this.lopVm.getFarm().getVmScheduler().getAllBindings(this.lopVm.getFullJid());
+            VmBindings bindings = this.vm.getFarm().getVmScheduler().getAllBindings(this.vm.getVmId());
             DefaultTableModel tableModel = (DefaultTableModel) this.bindingsTable.getModel();
             this.clearAllRows();
             for (String key : bindings.keySet()) {

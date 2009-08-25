@@ -1,7 +1,7 @@
 package org.linkedprocess.gui.farm;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.farm.LopFarm;
+import org.linkedprocess.farm.Farm;
 import org.linkedprocess.gui.ImageHolder;
 
 import javax.swing.*;
@@ -19,7 +19,7 @@ public class FarmGui extends JFrame implements ActionListener {
     protected static final String SHOW_FARM = "show farm";
     protected static final String HIDE_FARM = "hide farm";
     protected static final String QUIT_FARM = "quit farm";
-    protected LopFarm lopFarm;
+    protected Farm farm;
 
     protected SystemTray systemTray;
     protected TrayIcon systemTrayIcon;
@@ -34,15 +34,15 @@ public class FarmGui extends JFrame implements ActionListener {
         this.setVisible(true);
     }
 
-    public void loadVmArea(LopFarm lopFarm) {
-        this.lopFarm = lopFarm;
+    public void loadVmArea(Farm farm) {
+        this.farm = farm;
         this.getContentPane().removeAll();
         this.vmArea = new VmArea(this);
         this.getContentPane().add(this.vmArea);
         this.setResizable(true);
         this.pack();
         //this.setSize(442, 491);
-        lopFarm.setStatusEventHandler(new FarmGuiStatusEventHandler(this));
+        farm.setStatusEventHandler(new FarmGuiStatusEventHandler(this));
     }
 
     public void createVirtualMachineTree() {
@@ -81,13 +81,13 @@ public class FarmGui extends JFrame implements ActionListener {
         this.loadLoginFrame();
     }
 
-    public LopFarm getXmppFarm() {
-        return this.lopFarm;
+    public Farm getFarm() {
+        return this.farm;
     }
 
     public void shutDown() {
-        if (this.lopFarm != null)
-            this.lopFarm.shutdown();
+        if (this.farm != null)
+            this.farm.shutdown();
         System.exit(0);
     }
 

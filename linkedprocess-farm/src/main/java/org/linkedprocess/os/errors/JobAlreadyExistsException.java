@@ -9,6 +9,6 @@ import org.linkedprocess.os.Job;
  */
 public class JobAlreadyExistsException extends SchedulerException {
     public JobAlreadyExistsException(final Job job) {
-        super("job with id '" + job.getJobId() + "' already exists on virtual machine with JID '" + job.getVmJid() + "'");
+        super("job with id '" + job.getJobId() + "' already exists on virtual machine with JID '" + job.getVmId() + "'");
     }
 }

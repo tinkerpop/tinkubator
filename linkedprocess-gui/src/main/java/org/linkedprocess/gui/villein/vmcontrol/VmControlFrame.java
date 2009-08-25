@@ -1,15 +1,14 @@
 package org.linkedprocess.gui.villein.vmcontrol;
 
-import org.jivesoftware.smack.filter.FromContainsFilter;
-import org.jivesoftware.smack.filter.OrFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.ToContainsFilter;
 import org.jivesoftware.smack.packet.Packet;
+import org.linkedprocess.LopIq;
 import org.linkedprocess.gui.GenericErrorHandler;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.gui.villein.VilleinGui;
 import org.linkedprocess.os.VmBindings;
+import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.proxies.JobStruct;
 import org.linkedprocess.villein.proxies.VmProxy;
 
@@ -48,7 +47,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
 
 
     public VmControlFrame(VmProxy vmProxy, VilleinGui villeinGui) {
-        super(vmProxy.getJid());
+        super(vmProxy.getVmId());
         this.vmProxy = vmProxy;
         this.villeinGui = villeinGui;
 
@@ -101,7 +100,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         this.jobList.setSelectedValue(jobPane, true);
 
         PacketSnifferPanel packetSnifferPanel = new PacketSnifferPanel();
-        PacketFilter fromToFilter = new OrFilter(new FromContainsFilter(vmProxy.getJid()), new ToContainsFilter(vmProxy.getJid()));
+        PacketFilter fromToFilter = new VmFilter(vmProxy.getVmId());
         this.villeinGui.getXmppVillein().getConnection().addPacketListener(packetSnifferPanel, fromToFilter);
         this.villeinGui.getXmppVillein().getConnection().addPacketWriterInterceptor(packetSnifferPanel, fromToFilter);
 
@@ -186,7 +185,13 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
             }
 
         } else if (event.getActionCommand().equals(TERMINATE_VM)) {
-            this.vmProxy.terminateVm(null, new GenericErrorHandler());
+
+            Handler<Object> resultHandler = new Handler<Object>() {
+                public void handle(Object object) {
+                    villeinGui.getCloudArea().updateTree(vmProxy.getVmId(), true);
+                }
+            };
+            this.vmProxy.terminateVm(resultHandler, new GenericErrorHandler());
             this.villeinGui.removeVmFrame(this.vmProxy);
         } else if (event.getActionCommand().equals(CLOSE)) {
             this.setVisible(false);
@@ -195,6 +200,23 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
 
     public VilleinGui getVilleinGui() {
         return this.villeinGui;
+    }
+
+    private class VmFilter implements PacketFilter {
+        public String vmId;
+
+        public VmFilter(String vmId) {
+            this.vmId = vmId;
+        }
+
+        public boolean accept(Packet packet) {
+            if (packet instanceof LopIq) {
+                String vmId = ((LopIq) packet).getVmId();
+                if (null != vmId)
+                    return vmId.equals(vmId);
+            }
+            return false;
+        }
     }
 
     private class JobListRenderer extends DefaultListCellRenderer {

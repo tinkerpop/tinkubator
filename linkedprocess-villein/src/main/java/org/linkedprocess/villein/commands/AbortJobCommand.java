@@ -10,11 +10,11 @@ package org.linkedprocess.villein.commands;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.Error;
+import org.linkedprocess.farm.AbortJob;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.LopVillein;
+import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.proxies.JobStruct;
 import org.linkedprocess.villein.proxies.VmProxy;
-import org.linkedprocess.vm.AbortJob;
 
 /**
  * The proxy by which an abort_job is sent to a virtual machine.
@@ -29,24 +29,24 @@ public class AbortJobCommand extends Command {
     private final HandlerSet<String> successHandlers;
     private final HandlerSet<Error> errorHandlers;
 
-    public AbortJobCommand(LopVillein xmppVillein) {
+    public AbortJobCommand(Villein xmppVillein) {
         super(xmppVillein);
         this.successHandlers = new HandlerSet<String>();
         this.errorHandlers = new HandlerSet<org.linkedprocess.Error>();
     }
 
-    public void send(final VmProxy vmStruct, final JobStruct jobStruct, final Handler<String> successHandler, final Handler<Error> errorHandler) {
+    public void send(final VmProxy vmProxy, final JobStruct jobStruct, final Handler<String> successHandler, final Handler<Error> errorHandler) {
         String id = Packet.nextID();
         AbortJob abortJob = new AbortJob();
-        abortJob.setTo(vmStruct.getJid());
-        abortJob.setFrom(this.xmppVillein.getFullJid());
+        abortJob.setTo(vmProxy.getFarmJid());
+        abortJob.setFrom(this.villein.getFullJid());
         abortJob.setJobId(jobStruct.getJobId());
-        abortJob.setVmPassword(vmStruct.getVmPassword());
+        abortJob.setVmId(vmProxy.getVmId());
         abortJob.setType(IQ.Type.GET);
         abortJob.setPacketID(id);
         this.successHandlers.addHandler(id, successHandler);
         this.errorHandlers.addHandler(id, errorHandler);
-        xmppVillein.getConnection().sendPacket(abortJob);
+        villein.getConnection().sendPacket(abortJob);
     }
 
     public void receiveSuccess(final AbortJob abortJob) {

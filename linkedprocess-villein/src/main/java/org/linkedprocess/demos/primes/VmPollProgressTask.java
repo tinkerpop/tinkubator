@@ -13,7 +13,7 @@ public class VmPollProgressTask implements Runnable {
 	private final long pollingInterval;
 	private final Double meterMax;
 
-	public VmPollProgressTask(final VmProxy vmProxy, Double meterMax2, long pollingInterval) {
+    public VmPollProgressTask(final VmProxy vmProxy, Double meterMax2, long pollingInterval) {
 		this.vmProxy = vmProxy;
 		this.meterMax = meterMax2;
 		this.pollingInterval = pollingInterval;
@@ -31,7 +31,7 @@ public class VmPollProgressTask implements Runnable {
 							.valueOf(actualValue.getValue());
 					Double desiredDouble = Double.valueOf(desiredValue
 							.getValue());
-					System.out.println(vmProxy.getJid() + ": "
+					System.out.println(vmProxy.getVmId() + ": "
 							+ actualDouble + " out of " + desiredDouble);
 					return (actualDouble != null && desiredDouble != null && actualDouble >= desiredDouble);
 				} else {
@@ -42,7 +42,7 @@ public class VmPollProgressTask implements Runnable {
 		Handler<VmBindings> resultHandler = new Handler<VmBindings>() {
 
 			public void handle(VmBindings vmBindings) {
-				System.out.println(vmProxy.getJid()
+				System.out.println(vmProxy.getVmId()
 						+ ": progress meter value has been reached: "
 						+ vmBindings);
 				synchronized (monitor) {

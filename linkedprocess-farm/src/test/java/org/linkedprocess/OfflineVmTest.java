@@ -10,9 +10,9 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.linkedprocess.os.VmBindings;
+import org.linkedprocess.os.Vm;
 import org.linkedprocess.testing.offline.OfflineTest;
-import org.linkedprocess.farm.LopFarm;
-import org.linkedprocess.vm.*;
+import org.linkedprocess.farm.*;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 
@@ -25,8 +25,8 @@ public class OfflineVmTest extends OfflineTest {
     private static final String FULL_NAME = "full_name";
     private MockVmXmppConnection connection;
     private ArrayList<Packet> sentPackets;
-    private LopFarm farm;
-    private LopVm vm;
+    private Farm farm;
+    private Vm vm;
 
     @Before
     public void startVM() throws Exception {
@@ -41,8 +41,8 @@ public class OfflineVmTest extends OfflineTest {
         sentPackets = connection.sentPackets;
         replayAll();
         // start the farm
-        farm = new LopFarm(server, port, username, password, null);
-        vm = farm.spawnVirtualMachine(CLIENT_JID, JAVASCRIPT);
+        farm = new Farm(server, port, username, password, null);
+        vm = farm.spawnVm(CLIENT_JID, JAVASCRIPT);
 
     }
 
@@ -52,7 +52,7 @@ public class OfflineVmTest extends OfflineTest {
 
         // check without job id
         PingJob status = new PingJob();
-        status.setVmPassword(vm.getVmPassword());
+        status.setVmId(vm.getVmId());
         connection.clearPackets();
         connection.pingJob.processPacket(status);
         connection.waitForResponse(1000);
@@ -80,7 +80,7 @@ public class OfflineVmTest extends OfflineTest {
         // send the eval packet, password missing
         SubmitJob eval = new SubmitJob();
         eval.setExpression("20 + 52;");
-        eval.setTo(vm.getFullJid());
+        eval.setTo(vm.getVmId());
         eval.setFrom(CLIENT_JID);
         connection.clearPackets();
         connection.submitJob.processPacket(eval);
@@ -94,7 +94,7 @@ public class OfflineVmTest extends OfflineTest {
                 LinkedProcess.LopErrorType.MALFORMED_PACKET.toString()));
 
         // now, try with a wrong password
-        eval.setVmPassword("wrong");
+        eval.setVmId("wrong");
         connection.clearPackets();
         connection.submitJob.processPacket(eval);
         connection.waitForResponse(1000);
@@ -104,10 +104,10 @@ public class OfflineVmTest extends OfflineTest {
         result = (SubmitJob) sentPackets.get(0);
         assertEquals(IQ.Type.ERROR, result.getType());
         assertTrue(result.toXML().contains(
-                LinkedProcess.LopErrorType.WRONG_VM_PASSWORD.toString()));
+                LinkedProcess.LopErrorType.VM_NOT_FOUND.toString()));
 
         // now, try with a valid password
-        eval.setVmPassword(vm.getVmPassword());
+        eval.setVmId(vm.getVmId());
         connection.clearPackets();
         connection.submitJob.processPacket(eval);
         connection.waitForResponse(1000);
@@ -133,15 +133,15 @@ public class OfflineVmTest extends OfflineTest {
     public void sendingATerminatePacketShouldCloseTheVM() throws Exception {
         connection.clearPackets();
         TerminateVm terminate = new TerminateVm();
-        terminate.setVmPassword(vm.getVmPassword());
-        terminate.setTo(vm.getFullJid());
+        terminate.setVmId(vm.getVmId());
+        terminate.setTo(vm.getVmId());
         connection.terminateVm.processPacket(terminate);
 
         assertEquals(1, sentPackets.size());
         // first one - IQ
         TerminateVm result = (TerminateVm) sentPackets.get(0);
         assertEquals(IQ.Type.RESULT, result.getType());
-        assertEquals(0, farm.getVirtualMachines().size());
+        assertEquals(0, farm.getVms().size());
     }
 
     @Test
@@ -149,7 +149,7 @@ public class OfflineVmTest extends OfflineTest {
         connection.clearPackets();
         ManageBindings bindings = new ManageBindings();
         bindings.setType(IQ.Type.SET);
-        bindings.setVmPassword(vm.getVmPassword());
+        //bindings.setVmPassword(vm.getVmPassword());
         bindings.addBinding(FIRST_NAME, "Peter",
                 VmBindings.XMLSchemaDatatype.STRING.getURI());
         bindings.addBinding(FULL_NAME, "", VmBindings.XMLSchemaDatatype.STRING
@@ -161,7 +161,7 @@ public class OfflineVmTest extends OfflineTest {
 
         connection.clearPackets();
         SubmitJob job = new SubmitJob();
-        job.setVmPassword(vm.getVmPassword());
+        //job.setVmPassword(vm.getVmPassword());
         job
                 .setExpression("full_name = name + ' har sett många snygga flickor'");
         connection.submitJob.processPacket(job);
@@ -175,7 +175,7 @@ public class OfflineVmTest extends OfflineTest {
         ManageBindings getResult = new ManageBindings();
         getResult.addBinding(FULL_NAME, "", VmBindings.XMLSchemaDatatype.STRING
                 .getURI());
-        getResult.setVmPassword(vm.getVmPassword());
+        //getResult.setVmPassword(vm.getVmPassword());
         getResult.setType(IQ.Type.GET);
         connection.manageBindings.processPacket(getResult);
         // connection.waitForResponse(1000);
@@ -202,14 +202,14 @@ public class OfflineVmTest extends OfflineTest {
         assertNotNull(connection.manageBindings);
         assertNotNull(connection.abortJob);
         assertNull(connection.spawn);
-        assertEquals(1, farm.getVirtualMachines().size());
+        assertEquals(1, farm.getVms().size());
 
         // shut down
         connection.clearPackets();
-        farm.terminateVirtualMachine(farm.getVirtualMachines().iterator()
-                .next().getFullJid());
+        //farm.terminateVm(farm.getVms().iterator()
+         //       .next().getFullJid());
         assertEquals("No packets should be sent on shutdown", 0, sentPackets
                 .size());
-        assertEquals(0, farm.getVirtualMachines().size());
+        assertEquals(0, farm.getVms().size());
     }
 }

@@ -1,7 +1,7 @@
 package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.gui.ImageHolder;
-import org.linkedprocess.villein.LopVillein;
+import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.proxies.CountrysideProxy;
 import org.linkedprocess.villein.proxies.RegistryProxy;
 
@@ -58,7 +58,7 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
                 this.registryProxy.refreshDiscoItems();
                 this.refreshCountrysideFarms();
             } catch (Exception e) {
-                LopVillein.LOGGER.severe(e.getMessage());
+                Villein.LOGGER.severe(e.getMessage());
             }
         } else if (event.getActionCommand().equals(SUBSCRIBE)) {
             for (Object farmlandJid : this.farmlandList.getSelectedValues()) {
@@ -69,9 +69,9 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
     }
 
     /*private void generateDiscoItemsDocument() throws XMPPException, JDOMException, IOException {
-        ServiceDiscoveryManager discoManager = this.villeinGui.getLopVillein().getDiscoManager();
+        ServiceDiscoveryManager discoManager = this.villeinGui.getVillein().getDiscoManager();
         this.discoItemsDocument = LinkedProcess.createXMLDocument(discoManager.discoverItems(this.registryProxy.getFullJid()).toXML());
-        //PacketCollector collector = this.villeinGui.getLopVillein().getConnection().createPacketCollector(new PacketTypeFilter(DiscoverItems.class));
+        //PacketCollector collector = this.villeinGui.getVillein().getConnection().createPacketCollector(new PacketTypeFilter(DiscoverItems.class));
         //this.discoItemsDocument = LinkedProcess.createXMLDocument(collector.nextResult().toXML());
         //collector.cancel();
     }*/
@@ -80,7 +80,7 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
         DefaultListModel listModel = (DefaultListModel) this.farmlandList.getModel();
         listModel.removeAllElements();
         for (CountrysideProxy countrysideProxy : registryProxy.getActiveCountrysides()) {
-            listModel.addElement(countrysideProxy.getJid());
+            listModel.addElement(countrysideProxy.getBareJid());
         }
     }
 

@@ -2,10 +2,7 @@ package org.linkedprocess.farm;
 
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.filter.IQTypeFilter;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.*;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -17,14 +14,14 @@ import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.LinkedProcessFarm;
 import org.linkedprocess.LopClient;
 import org.linkedprocess.os.VmScheduler;
+import org.linkedprocess.os.Vm;
 import org.linkedprocess.os.errors.UnsupportedScriptEngineException;
 import org.linkedprocess.os.errors.VmAlreadyExistsException;
 import org.linkedprocess.os.errors.VmSchedulerIsFullException;
-import org.linkedprocess.os.errors.VmWorkerNotFoundException;
+import org.linkedprocess.os.errors.VmNotFoundException;
 import org.linkedprocess.security.ServiceDiscoveryConfiguration;
 import org.linkedprocess.security.SystemInfo;
 import org.linkedprocess.security.VmSecurityManager;
-import org.linkedprocess.vm.LopVm;
 
 import javax.script.ScriptEngineFactory;
 import java.util.*;
@@ -34,19 +31,19 @@ import java.util.logging.Logger;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class LopFarm extends LopClient {
+public class Farm extends LopClient {
 
-    public static Logger LOGGER = LinkedProcess.getLogger(LopFarm.class);
+    public static Logger LOGGER = LinkedProcess.getLogger(Farm.class);
     public static final String RESOURCE_PREFIX = "LoPFarm";
     public static final String STATUS_MESSAGE = "LoPSideD Farm";
 
     protected String farmPassword;
 
-    protected final Map<String, LopVm> machines;
+    protected final Map<String, Vm> machines;
     protected final VmScheduler vmScheduler;
     protected DataForm serviceExtension;
 
-    public LopFarm(final String server, final int port, final String username, final String password, final String farmPassword) throws XMPPException {
+    public Farm(final String server, final int port, final String username, final String password, final String farmPassword) throws XMPPException {
         LOGGER.info("Starting " + STATUS_MESSAGE);
         if (null == farmPassword) {
             this.farmPassword = LinkedProcess.getConfiguration().getProperty(LinkedProcess.FARM_PASSWORD_PROPERTY);
@@ -60,19 +57,33 @@ public class LopFarm extends LopClient {
 
         ProviderManager pm = ProviderManager.getInstance();
         pm.addIQProvider(LinkedProcess.SPAWN_VM_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new SpawnVmProvider());
-
+        pm.addIQProvider(LinkedProcess.SUBMIT_JOB_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new SubmitJobProvider());
+        pm.addIQProvider(LinkedProcess.PING_JOB_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new PingJobProvider());
+        pm.addIQProvider(LinkedProcess.ABORT_JOB_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new AbortJobProvider());
+        pm.addIQProvider(LinkedProcess.MANAGE_BINDINGS_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new ManageBindingsProvider());
+        pm.addIQProvider(LinkedProcess.TERMINATE_VM_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new TerminateVmProvider());
+       
         this.logon(server, port, username, password);
         this.initiateFeatures();
-        //this.printClientStatistics();
 
         this.roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
         this.vmScheduler = new VmScheduler(new VmJobResultHandler(this), new StatusEventHandler(this));
-        this.machines = new HashMap<String, LopVm>();
+        this.machines = new HashMap<String, Vm>();
 
         PacketFilter spawnFilter = new AndFilter(new PacketTypeFilter(SpawnVm.class), new IQTypeFilter(IQ.Type.GET));
         PacketFilter subscribeFilter = new AndFilter(new PacketTypeFilter(Presence.class), new PresenceSubscriptionFilter());
+        PacketFilter submitFilter = new AndFilter(new PacketTypeFilter(SubmitJob.class), new IQTypeFilter(IQ.Type.GET));
+        PacketFilter statusFilter = new AndFilter(new PacketTypeFilter(PingJob.class), new IQTypeFilter(IQ.Type.GET));
+        PacketFilter abandonFilter = new AndFilter(new PacketTypeFilter(AbortJob.class), new IQTypeFilter(IQ.Type.GET));
+        PacketFilter terminateFilter = new AndFilter(new PacketTypeFilter(TerminateVm.class), new IQTypeFilter(IQ.Type.GET));
+        PacketFilter bindingsFilter = new AndFilter(new PacketTypeFilter(ManageBindings.class), new OrFilter(new IQTypeFilter(IQ.Type.GET), new IQTypeFilter(IQ.Type.SET)));
 
         this.connection.addPacketListener(new SpawnVmPacketListener(this), spawnFilter);
+        this.connection.addPacketListener(new SubmitJobPacketListener(this), submitFilter);
+        this.connection.addPacketListener(new PingJobPacketListener(this), statusFilter);
+        this.connection.addPacketListener(new AbortJobPacketListener(this), abandonFilter);
+        this.connection.addPacketListener(new ManageBindingsPacketListener(this), bindingsFilter);
+        this.connection.addPacketListener(new TerminateVmPacketListener(this), terminateFilter);
         this.connection.addPacketListener(new PresenceSubscriptionPacketListener(this), subscribeFilter);
     }
 
@@ -85,7 +96,7 @@ public class LopFarm extends LopClient {
         if (status == LinkedProcess.FarmStatus.ACTIVE) {
             presence = new Presence(Presence.Type.available, STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
         } else if (status == LinkedProcess.FarmStatus.ACTIVE_FULL) {
-            presence = new Presence(Presence.Type.available, LopVm.STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.dnd);
+            presence = new Presence(Presence.Type.available, Vm.STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.dnd);
         } else if (status == LinkedProcess.FarmStatus.INACTIVE) {
             presence = new Presence(Presence.Type.unavailable);
         } else {
@@ -99,47 +110,45 @@ public class LopFarm extends LopClient {
         return this.vmScheduler;
     }
 
-    public LopVm spawnVirtualMachine(String spawningVilleinJid, String vmSpecies) throws VmAlreadyExistsException, VmSchedulerIsFullException, UnsupportedScriptEngineException {
-        LopVm vm = new LopVm(this.getServer(), this.getPort(), this.getUsername(), this.getPassword(), this, spawningVilleinJid, vmSpecies, LinkedProcess.generateRandomPassword());
-        String vmJid = vm.getFullJid();
-        this.machines.put(vmJid, vm);
+    public Vm spawnVm(String spawningVilleinJid, String vmSpecies) throws VmAlreadyExistsException, VmSchedulerIsFullException, UnsupportedScriptEngineException {
+        String vmId = this.generateVmId();
+        Vm vm = new Vm(this, vmId, spawningVilleinJid, vmSpecies);
+        this.machines.put(vmId, vm);
         boolean exceptionThrown = true;
         try {
-            this.vmScheduler.spawnVirtualMachine(vmJid, vmSpecies);
+            this.vmScheduler.spawnVirtualMachine(vmId, vmSpecies);
             exceptionThrown = false;
 
         } finally {
             if (exceptionThrown) {
-                vm.shutdown();
-                this.machines.remove(vmJid);
+                this.machines.remove(vmId);
             }
         }
         return vm;
     }
 
-    public void terminateVirtualMachine(String vmJid) throws VmWorkerNotFoundException {
-        LopVm vm = this.machines.get(vmJid);
+    public void terminateVm(String vmId) throws VmNotFoundException {
+        Vm vm = this.machines.get(vmId);
         if (null != vm) {
-            vm.shutdown();
-            this.machines.remove(vmJid);
+            this.machines.remove(vmId);
         }
     }
 
-    public LopVm getVirtualMachine(String vmJid) throws VmWorkerNotFoundException {
-        LopVm vm = this.machines.get(vmJid);
+    public Vm getVm(String vmId) throws VmNotFoundException {
+        Vm vm = this.machines.get(vmId);
         if (vm == null) {
-            throw new VmWorkerNotFoundException(vmJid);
+            throw new VmNotFoundException(vmId);
         } else {
             return vm;
         }
     }
 
-    public Collection<LopVm> getVirtualMachines() {
+    public Collection<Vm> getVms() {
         return this.machines.values();
     }
 
     public void shutdown() {
-        LOGGER.info("shutting down XmppFarm");
+        LOGGER.info("shutting down farm " + this.getFullJid());
 
         this.vmScheduler.shutdown();
         try {
@@ -157,7 +166,7 @@ public class LopFarm extends LopClient {
 
     protected void initiateFeatures() {
         super.initiateFeatures();
-        ServiceDiscoveryManager.setIdentityName(LopFarm.RESOURCE_PREFIX);
+        ServiceDiscoveryManager.setIdentityName(Farm.RESOURCE_PREFIX);
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
         this.getDiscoManager().addFeature(LinkedProcess.LOP_FARM_NAMESPACE);
 
@@ -273,6 +282,10 @@ public class LopFarm extends LopClient {
         return this.farmPassword;
     }
 
+    public String generateVmId() {
+        return UUID.randomUUID().toString();
+    }
+
     public static void main(final String[] args) throws Exception {
         Properties props = LinkedProcess.getConfiguration();
         String server = props.getProperty(LinkedProcess.FARM_SERVER_PROPERTY);
@@ -280,7 +293,7 @@ public class LopFarm extends LopClient {
         String username = props.getProperty(LinkedProcess.FARM_USERNAME_PROPERTY);
         String password = props.getProperty(LinkedProcess.FARM_USERPASSWORD_PROPERTY);
 
-        LopFarm farm = new LopFarm(server, port, username, password, null);
+        Farm farm = new Farm(server, port, username, password, null);
         StatusEventHandler h = new StatusEventHandler(farm);
         farm.setStatusEventHandler(h);
 

@@ -5,7 +5,7 @@ import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.os.errors.JobAlreadyExistsException;
 import org.linkedprocess.os.errors.JobNotFoundException;
 import org.linkedprocess.os.errors.VmAlreadyExistsException;
-import org.linkedprocess.os.errors.VmWorkerNotFoundException;
+import org.linkedprocess.os.errors.VmNotFoundException;
 
 import java.util.*;
 
@@ -75,7 +75,7 @@ public class VmSchedulerTest extends TestCase {
         String vm1 = randomJID();
         scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);
         assertEquals(LinkedProcess.VmStatus.ACTIVE, scheduler.getVirtualMachineStatus(vm1));
-        scheduler.terminateVirtualMachine(vm1);
+        scheduler.terminateVm(vm1);
         assertEquals(LinkedProcess.VmStatus.NOT_FOUND, scheduler.getVirtualMachineStatus(vm1));
         scheduler.shutdown();
     }
@@ -280,7 +280,7 @@ public class VmSchedulerTest extends TestCase {
         // Remove a VM
         int vmEventsBefore = vmStatusEventJIDs.size();
         int removedVmIndex = vmJIDs.length / 2;
-        scheduler.terminateVirtualMachine(vmJIDs[removedVmIndex]);
+        scheduler.terminateVm(vmJIDs[removedVmIndex]);
         int index = vmStatusEventTypes.size() - 1;
         assertEquals(vmJIDs[removedVmIndex], vmStatusEventJIDs.get(index));
         assertEquals(LinkedProcess.VmStatus.NOT_FOUND, vmStatusEventTypes.get(index));
@@ -328,13 +328,13 @@ public class VmSchedulerTest extends TestCase {
         } catch (VmAlreadyExistsException e) {
         }
 
-        scheduler.terminateVirtualMachine(vm1);
+        scheduler.terminateVm(vm1);
 
         // Try to terminate a non-existent virtual machine.
         try {
-            scheduler.terminateVirtualMachine(vm1);
+            scheduler.terminateVm(vm1);
             assertTrue(false);
-        } catch (VmWorkerNotFoundException e) {
+        } catch (VmNotFoundException e) {
         }
 
         // Try to assign a job to a non-existent Vm.
@@ -342,7 +342,7 @@ public class VmSchedulerTest extends TestCase {
         try {
             scheduler.submitJob(vm1, job1);
             assertTrue(false);
-        } catch (VmWorkerNotFoundException e) {
+        } catch (VmNotFoundException e) {
         }
 
         scheduler.spawnVirtualMachine(vm1, LinkedProcess.JAVASCRIPT);

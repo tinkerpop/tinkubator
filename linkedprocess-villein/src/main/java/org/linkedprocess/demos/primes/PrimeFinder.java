@@ -8,7 +8,7 @@
 package org.linkedprocess.demos.primes;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.villein.LopVillein;
+import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.patterns.ResourceAllocationPattern;
 import org.linkedprocess.villein.patterns.ScatterGatherPattern;
 import org.linkedprocess.villein.proxies.FarmProxy;
@@ -34,15 +34,15 @@ public class PrimeFinder {
     public static List<Integer> findPrimesUsingLop(int startInteger, int endInteger, int farmCount, int vmsPerFarm, String username, String password, String server, int port) throws Exception {
 
 
-        LopVillein villein = new LopVillein(server, port, username, password);
-        villein.createLopCloudFromRoster();
+        Villein villein = new Villein(server, port, username, password);
+        villein.createCloudFromRoster();
 
         //////////////// ALLOCATE FARMS
 
         System.out.println("Waiting for " + farmCount + " available farms...");
-        Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(villein.getLopCloud(), farmCount, 20000);
+        Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(villein.getCloud(), farmCount, 20000);
         for (FarmProxy farmProxy : farmProxies) {
-            System.out.println("farm allocated: " + farmProxy.getJid());
+            System.out.println("farm allocated: " + farmProxy.getFullJid());
         }
 
         //////////////// SPAWN VIRTUAL MACHINES ON ALLOCATED FARMS

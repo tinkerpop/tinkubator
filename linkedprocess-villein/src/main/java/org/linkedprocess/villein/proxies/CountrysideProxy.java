@@ -18,7 +18,9 @@ import java.util.Map;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class CountrysideProxy extends Proxy implements FarmHolder {
+public class CountrysideProxy implements FarmHolder {
+
+    protected String bareJid;
 
     /**
      * The set of farm proxies contained in this countryside proxy.
@@ -30,7 +32,11 @@ public class CountrysideProxy extends Proxy implements FarmHolder {
     protected Map<String, RegistryProxy> registryProxies = new HashMap<String, RegistryProxy>();
 
     public CountrysideProxy(final String bareJid) {
-        super(bareJid, null);
+        this.bareJid = bareJid;
+    }
+
+    public String getBareJid() {
+        return this.bareJid;
     }
 
     /**
@@ -59,7 +65,7 @@ public class CountrysideProxy extends Proxy implements FarmHolder {
      * @param farmProxy the farm proxy to add
      */
     public void addFarmProxy(FarmProxy farmProxy) {
-        this.farmProxies.put(farmProxy.getJid(), farmProxy);
+        this.farmProxies.put(farmProxy.getFullJid(), farmProxy);
     }
 
     /**
@@ -68,7 +74,7 @@ public class CountrysideProxy extends Proxy implements FarmHolder {
      * @param registryProxy the registry proxy to add
      */
     public void addRegistryProxy(RegistryProxy registryProxy) {
-        this.registryProxies.put(registryProxy.getJid(), registryProxy);
+        this.registryProxies.put(registryProxy.getFullJid(), registryProxy);
     }
 
     /**

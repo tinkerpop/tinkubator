@@ -7,7 +7,6 @@
 
 package org.linkedprocess.registry;
 
-import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.LopPacketListener;
 
 /**
@@ -16,14 +15,12 @@ import org.linkedprocess.LopPacketListener;
  */
 public abstract class RegistryPacketListener extends LopPacketListener {
 
-    public static final LinkedProcess.ClientType LOP_CLIENT_TYPE = LinkedProcess.ClientType.REGISTRY;
-
-    public RegistryPacketListener(LopRegistry lopRegistry) {
-        super(lopRegistry);
+    public RegistryPacketListener(Registry registry) {
+        super(registry);
     }
 
-    public LopRegistry getXmppRegistry() {
-        return (LopRegistry) this.lopClient;
+    public Registry getXmppRegistry() {
+        return (Registry) this.lopClient;
     }
 
 }

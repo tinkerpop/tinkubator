@@ -5,17 +5,16 @@
  * http://linkedprocess.org and LICENSE.txt for more information.
  */
 
-package org.linkedprocess.vm;
+package org.linkedprocess.farm;
 
 import org.jdom.Element;
 import org.linkedprocess.LinkedProcess;
 
 /**
- * User: marko
- * Date: Jun 25, 2009
- * Time: 1:21:31 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
-public class AbortJob extends VirtualMachineIq {
+public class AbortJob extends FarmIq {
 
     protected String jobId;
 
@@ -29,9 +28,9 @@ public class AbortJob extends VirtualMachineIq {
 
     public String getChildElementXML() {
 
-        Element abandonJobElement = new Element(LinkedProcess.ABORT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE);
-        if (this.vmPassword != null) {
-            abandonJobElement.setAttribute(LinkedProcess.VM_PASSWORD_ATTRIBUTE, this.vmPassword);
+        Element abandonJobElement = new Element(LinkedProcess.ABORT_JOB_TAG, LinkedProcess.LOP_FARM_NAMESPACE);
+        if (this.vmId != null) {
+            abandonJobElement.setAttribute(LinkedProcess.VM_ID_ATTRIBUTE, this.vmId);
         }
         if (this.jobId != null) {
             abandonJobElement.setAttribute(LinkedProcess.JOB_ID_ATTRIBUTE, this.jobId);

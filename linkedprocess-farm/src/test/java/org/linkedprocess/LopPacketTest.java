@@ -5,10 +5,10 @@ import org.jivesoftware.smack.packet.IQ;
 import org.junit.Test;
 import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.farm.SpawnVm;
-import org.linkedprocess.vm.SubmitJob;
-import org.linkedprocess.vm.TerminateVm;
-import org.linkedprocess.vm.AbortJob;
-import org.linkedprocess.vm.ManageBindings;
+import org.linkedprocess.farm.SubmitJob;
+import org.linkedprocess.farm.AbortJob;
+import org.linkedprocess.farm.ManageBindings;
+import org.linkedprocess.farm.TerminateVm;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -18,7 +18,7 @@ public class LopPacketTest extends TestCase {
 
     public void testSpawnTag() throws Exception {
         SpawnVm spawnVm = new SpawnVm();
-        spawnVm.setVmJid("lp1@gmail.com");
+        //spawnVm.setVmJid("lp1@gmail.com");
         spawnVm.setVmSpecies("javascript");
         String spawnString = spawnVm.getChildElementXML();
         System.out.println(spawnString);
@@ -30,11 +30,11 @@ public class LopPacketTest extends TestCase {
     @Test
     public void testSubmitJobTag() {
         SubmitJob submitJob = new SubmitJob();
-        submitJob.setVmPassword("pass");
+        //submitJob.setVmPassword("pass");
         submitJob.setExpression("for(int i=0; i<10; i++) { i; };");
         String evalString = submitJob.getChildElementXML();
         System.out.println(evalString);
-        assertTrue(evalString.contains("xmlns=\"" + LinkedProcess.LOP_VM_NAMESPACE));
+        //assertTrue(evalString.contains("xmlns=\"" + LinkedProcess.LOP_VM_NAMESPACE));
         // note that XML characters must be handled correctly
         assertTrue(evalString.contains("for(int i=0; i&lt;10; i++) { i; };"));
         assertTrue(evalString.contains("vm_password=\"pass\""));
@@ -56,10 +56,10 @@ public class LopPacketTest extends TestCase {
     public void testAbortJobTag() {
         AbortJob abortJob = new AbortJob();
         abortJob.setJobId("wxyz");
-        abortJob.setVmPassword("pass");
+        //abortJob.setVmPassword("pass");
         String abortString = abortJob.getChildElementXML();
         System.out.println(abortString);
-        assertTrue(abortString.contains("xmlns=\"" + LinkedProcess.LOP_VM_NAMESPACE));
+        //assertTrue(abortString.contains("xmlns=\"" + LinkedProcess.LOP_VM_NAMESPACE));
         assertTrue(abortString.contains("job_id=\"wxyz\""));
         assertTrue(abortString.contains("vm_password=\"pass\""));
     }
@@ -67,10 +67,10 @@ public class LopPacketTest extends TestCase {
     @Test
     public void testTerminateTag() throws Exception {
         TerminateVm terminateVm = new TerminateVm();
-        terminateVm.setVmPassword("pass");
+        //terminateVm.setVmPassword("pass");
         String terminateString = terminateVm.getChildElementXML();
         System.out.println(terminateString);
-        assertTrue(terminateString.contains("xmlns=\"" + LinkedProcess.LOP_VM_NAMESPACE));
+        //assertTrue(terminateString.contains("xmlns=\"" + LinkedProcess.LOP_VM_NAMESPACE));
         assertTrue(terminateString.contains("vm_password=\"pass\""));
     }
 

@@ -19,14 +19,14 @@ import org.linkedprocess.LinkedProcess;
 public abstract class LopIq extends IQ {
 
     protected String errorMessage;
-    protected String vmPassword;
+    protected String vmId;
 
-    public void setVmPassword(String vmPassword) {
-        this.vmPassword = vmPassword;
+    public void setVmId(String vmId) {
+        this.vmId = vmId;
     }
 
-    public String getVmPassword() {
-        return this.vmPassword;
+    public String getVmId() {
+        return this.vmId;
     }
 
     public void setLopError(Error error) {
@@ -36,16 +36,11 @@ public abstract class LopIq extends IQ {
     public Error getLopError() {
         XMPPError xmppError = super.getError();
         LinkedProcess.LopErrorType errorType = null;
-        LinkedProcess.ClientType clientType = null;
         for (PacketExtension extension : xmppError.getExtensions()) {
             errorType = LinkedProcess.LopErrorType.getErrorType(extension.getElementName());
-            if (extension.getNamespace().equals(LinkedProcess.LOP_VM_NAMESPACE))
-                clientType = LinkedProcess.ClientType.VM;
-            else if (extension.getNamespace().equals(LinkedProcess.LOP_FARM_NAMESPACE))
-                clientType = LinkedProcess.ClientType.FARM;
             break;
         }
-        return new Error(Error.stringConditionMap.get(xmppError.getCondition()), errorType, xmppError.getMessage(), clientType, this.getPacketID());
+        return new Error(Error.stringConditionMap.get(xmppError.getCondition()), errorType, xmppError.getMessage(), this.getPacketID());
     }
 
 }

@@ -5,24 +5,23 @@
  * http://linkedprocess.org and LICENSE.txt for more information.
  */
 
-package org.linkedprocess.vm;
+package org.linkedprocess.farm;
 
 import org.jdom.Element;
 import org.linkedprocess.LinkedProcess;
 
 /**
- * User: marko
- * Date: Jun 25, 2009
- * Time: 2:25:52 PM
+ * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @version LoPSideD 0.1
  */
-public class TerminateVm extends VirtualMachineIq {
+public class TerminateVm extends FarmIq {
 
     public String getChildElementXML() {
 
-        Element terminateVmElement = new Element(LinkedProcess.TERMINATE_VM_TAG, LinkedProcess.LOP_VM_NAMESPACE);
+        Element terminateVmElement = new Element(LinkedProcess.TERMINATE_VM_TAG, LinkedProcess.LOP_FARM_NAMESPACE);
 
-        if (this.vmPassword != null) {
-            terminateVmElement.setAttribute(LinkedProcess.VM_PASSWORD_ATTRIBUTE, this.vmPassword);
+        if (this.vmId != null) {
+            terminateVmElement.setAttribute(LinkedProcess.VM_ID_ATTRIBUTE, this.vmId);
         }
 
         return LinkedProcess.xmlOut.outputString(terminateVmElement);

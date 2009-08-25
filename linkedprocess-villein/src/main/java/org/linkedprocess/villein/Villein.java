@@ -21,12 +21,11 @@ import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.LopClient;
-import org.linkedprocess.farm.SpawnVmProvider;
+import org.linkedprocess.farm.*;
 import org.linkedprocess.villein.proxies.Cloud;
 import org.linkedprocess.villein.proxies.CountrysideProxy;
 import org.linkedprocess.villein.proxies.FarmProxy;
 import org.linkedprocess.villein.proxies.VmProxy;
-import org.linkedprocess.vm.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -41,9 +40,9 @@ import java.util.logging.Logger;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class LopVillein extends LopClient {
+public class Villein extends LopClient {
 
-    public static Logger LOGGER = LinkedProcess.getLogger(LopVillein.class);
+    public static Logger LOGGER = LinkedProcess.getLogger(Villein.class);
     public static final String RESOURCE_PREFIX = "LoPVillein";
     public static final String STATUS_MESSAGE = "LoPSideD Villein";
     protected LinkedProcess.VilleinStatus status;
@@ -61,16 +60,16 @@ public class LopVillein extends LopClient {
      * @param password the password to use to log into the XMPP server with
      * @throws XMPPException is thrown when some communication error occurs with the XMPP server
      */
-    public LopVillein(final String server, final int port, final String username, final String password) throws XMPPException {
+    public Villein(final String server, final int port, final String username, final String password) throws XMPPException {
         LOGGER.info("Starting " + STATUS_MESSAGE);
 
         ProviderManager pm = ProviderManager.getInstance();
         pm.addIQProvider(LinkedProcess.SPAWN_VM_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new SpawnVmProvider());
-        pm.addIQProvider(LinkedProcess.TERMINATE_VM_TAG, LinkedProcess.LOP_VM_NAMESPACE, new TerminateVmProvider());
-        pm.addIQProvider(LinkedProcess.SUBMIT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE, new SubmitJobProvider());
-        pm.addIQProvider(LinkedProcess.PING_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE, new PingJobProvider());
-        pm.addIQProvider(LinkedProcess.ABORT_JOB_TAG, LinkedProcess.LOP_VM_NAMESPACE, new AbortJobProvider());
-        pm.addIQProvider(LinkedProcess.MANAGE_BINDINGS_TAG, LinkedProcess.LOP_VM_NAMESPACE, new ManageBindingsProvider());
+        pm.addIQProvider(LinkedProcess.SUBMIT_JOB_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new SubmitJobProvider());
+        pm.addIQProvider(LinkedProcess.PING_JOB_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new PingJobProvider());
+        pm.addIQProvider(LinkedProcess.ABORT_JOB_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new AbortJobProvider());
+        pm.addIQProvider(LinkedProcess.MANAGE_BINDINGS_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new ManageBindingsProvider());
+        pm.addIQProvider(LinkedProcess.TERMINATE_VM_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new TerminateVmProvider());
         this.logon(server, port, username, password, RESOURCE_PREFIX);
         this.dispatcher = new Dispatcher(this);
         this.initiateFeatures();
@@ -90,7 +89,7 @@ public class LopVillein extends LopClient {
     public final void sendPresence(final LinkedProcess.VilleinStatus status) {
         Presence presence;
         if (status == LinkedProcess.VilleinStatus.ACTIVE) {
-            presence = new Presence(Presence.Type.available, LopVillein.STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
+            presence = new Presence(Presence.Type.available, Villein.STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
 
         } else if (status == LinkedProcess.VilleinStatus.INACTIVE) {
             presence = new Presence(Presence.Type.unavailable);
@@ -114,7 +113,7 @@ public class LopVillein extends LopClient {
      *
      * @return an LoP cloud data structure
      */
-    public Cloud getLopCloud() {
+    public Cloud getCloud() {
         return this.cloud;
     }
 
@@ -122,7 +121,7 @@ public class LopVillein extends LopClient {
      * An XMPP roster maintains a collection of subscriptions to bare JIDs (i.e. countrysides).
      * This collection of countrysides may contain farms and other LoP-based resources.
      */
-    public void createLopCloudFromRoster() {
+    public void createCloudFromRoster() {
         for (RosterEntry entry : this.getRoster().getEntries()) {
             CountrysideProxy countrysideProxy = this.cloud.getCountrysideProxy(entry.getUser());
             if (countrysideProxy == null && (entry.getType() == RosterPacket.ItemType.to || entry.getType() == RosterPacket.ItemType.both)) {
@@ -143,7 +142,7 @@ public class LopVillein extends LopClient {
         if (countrysideProxy != null) {
             for (FarmProxy farmProxy : countrysideProxy.getFarmProxies()) {
                 for (VmProxy vmProxy : farmProxy.getVmProxies()) {
-                    if (vmProxy.getVmPassword() != null) {
+                    if (vmProxy.getVmId() != null) {
                         vmProxy.terminateVm(null, null);
                     }
                 }
@@ -157,7 +156,7 @@ public class LopVillein extends LopClient {
      */
     protected void initiateFeatures() {
         super.initiateFeatures();
-        ServiceDiscoveryManager.setIdentityName(LopVillein.RESOURCE_PREFIX);
+        ServiceDiscoveryManager.setIdentityName(Villein.RESOURCE_PREFIX);
         ServiceDiscoveryManager.setIdentityType(LinkedProcess.DISCO_BOT);
     }
 

@@ -20,7 +20,7 @@ if [ $# -ge 1 ] ; then
 fi
 
 # Launch the application
-$JAVA $JAVA_OPTIONS -cp $JAR org.linkedprocess.registry.LopRegistry
+$JAVA $JAVA_OPTIONS -cp $JAR org.linkedprocess.registry.Registry
 
 # Return the program's exit code
 exit $?

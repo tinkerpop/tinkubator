@@ -11,7 +11,7 @@ import org.jdom.Document;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.linkedprocess.villein.Dispatcher;
-import org.linkedprocess.villein.LopVillein;
+import org.linkedprocess.villein.Villein;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -25,19 +25,22 @@ import java.util.Set;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class RegistryProxy extends Proxy {
+public class RegistryProxy extends XmppProxy {
 
     private Set<DiscoverItems.Item> discoItems;
 
     public RegistryProxy(final String fullJid, final Dispatcher dispatcher) {
-        super(fullJid, dispatcher);
+        this.fullJid = fullJid;
+        this.dispatcher = dispatcher;
         this.refreshDiscoItems();
 
 
     }
 
     public RegistryProxy(final String fullJid, final Dispatcher dispatcher, final Document discoInfoDocument) {
-        super(fullJid, dispatcher, discoInfoDocument);
+        this.fullJid = fullJid;
+        this.dispatcher = dispatcher;
+        this.discoInfoDocument = discoInfoDocument;
         this.refreshDiscoItems();
 
     }
@@ -47,13 +50,13 @@ public class RegistryProxy extends Proxy {
 
             this.discoItems = new HashSet<DiscoverItems.Item>();
             ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();
-            DiscoverItems discoItems = discoManager.discoverItems(this.getJid());
+            DiscoverItems discoItems = discoManager.discoverItems(this.fullJid);
             Iterator<DiscoverItems.Item> itty = discoItems.getItems();
             while (itty.hasNext()) {
                 this.discoItems.add(itty.next());
             }
         } catch (Exception e) {
-            LopVillein.LOGGER.warning("Problem loading disco#items: " + e.getMessage());
+            Villein.LOGGER.warning("Problem loading disco#items: " + e.getMessage());
         }
     }
 

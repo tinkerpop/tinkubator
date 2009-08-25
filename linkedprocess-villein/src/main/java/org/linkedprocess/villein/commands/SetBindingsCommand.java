@@ -10,11 +10,11 @@ package org.linkedprocess.villein.commands;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.Error;
+import org.linkedprocess.farm.ManageBindings;
 import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.LopVillein;
+import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.proxies.VmProxy;
-import org.linkedprocess.vm.ManageBindings;
 
 /**
  * The proxy by which a manage_bindings of type set is sent to a virtual machine.
@@ -28,26 +28,26 @@ public class SetBindingsCommand extends Command {
     private final HandlerSet<VmBindings> successHandlers;
     private final HandlerSet<Error> errorHandlers;
 
-    public SetBindingsCommand(LopVillein xmppVillein) {
+    public SetBindingsCommand(Villein xmppVillein) {
         super(xmppVillein);
         this.successHandlers = new HandlerSet<VmBindings>();
         this.errorHandlers = new HandlerSet<Error>();
     }
 
-    public void send(final VmProxy vmStruct, VmBindings vmBindings, final Handler<VmBindings> sucessHandler, final Handler<Error> errorHandler) {
+    public void send(final VmProxy vmProxy, VmBindings vmBindings, final Handler<VmBindings> sucessHandler, final Handler<Error> errorHandler) {
 
         String id = Packet.nextID();
         ManageBindings manageBindings = new ManageBindings();
-        manageBindings.setTo(vmStruct.getJid());
-        manageBindings.setFrom(xmppVillein.getFullJid());
+        manageBindings.setTo(vmProxy.getFarmJid());
+        manageBindings.setFrom(villein.getFullJid());
         manageBindings.setType(IQ.Type.SET);
-        manageBindings.setVmPassword(vmStruct.getVmPassword());
+        manageBindings.setVmId(vmProxy.getVmId());
         manageBindings.setBindings(vmBindings);
         manageBindings.setPacketID(id);
 
         Handler<VmBindings> autoResultHandler = new Handler<VmBindings>() {
             public void handle(VmBindings vmBindings) {
-                vmStruct.addVmBindings(vmBindings);
+                vmProxy.addVmBindings(vmBindings);
                 sucessHandler.handle(vmBindings);
             }
         };
@@ -55,7 +55,7 @@ public class SetBindingsCommand extends Command {
         this.successHandlers.addHandler(id, autoResultHandler);
         this.errorHandlers.addHandler(id, errorHandler);
 
-        xmppVillein.getConnection().sendPacket(manageBindings);
+        villein.getConnection().sendPacket(manageBindings);
     }
 
     public void receiveSuccess(final ManageBindings manageBindings) {

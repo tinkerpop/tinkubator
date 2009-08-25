@@ -1,9 +1,9 @@
 package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.villein.LopVillein;
+import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.proxies.FarmProxy;
-import org.linkedprocess.villein.proxies.Proxy;
+import org.linkedprocess.villein.proxies.XmppProxy;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -95,7 +95,7 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
         ListSelectionModel listModel = (ListSelectionModel) event.getSource();
         if (this.configurationTable.getSelectedRow() > -1) {
             String fieldVar = this.configurationTable.getValueAt(listModel.getMinSelectionIndex(), 0).toString();
-            Proxy.Field field = farmProxy.getField(fieldVar);
+            XmppProxy.Field field = farmProxy.getField(fieldVar);
             if (null != field) {
                 DefaultTableModel tableModel = (DefaultTableModel) this.valuesTable.getModel();
                 this.clearAllRows(this.valuesTable);
@@ -114,7 +114,7 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
                 this.refreshFarmFeatures();
                 this.refreshFarmConfiguration();
             } catch (Exception e) {
-                LopVillein.LOGGER.warning(e.getMessage());
+                Villein.LOGGER.warning(e.getMessage());
             }
         }
 
@@ -138,8 +138,8 @@ public class ViewFarmConfigurationPanel extends JPanel implements ListSelectionL
     private void refreshFarmConfiguration() {
         DefaultTableModel tableModel = (DefaultTableModel) this.configurationTable.getModel();
         this.clearAllRows(this.configurationTable);
-        java.util.List<Proxy.Field> fields = this.farmProxy.getFields();
-        for (Proxy.Field field : fields) {
+        java.util.List<XmppProxy.Field> fields = this.farmProxy.getFields();
+        for (XmppProxy.Field field : fields) {
             tableModel.addRow(new Object[]{field.getVariable(), field.getLabel(), field.getType()});
         }
     }

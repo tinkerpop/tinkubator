@@ -11,10 +11,10 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.os.VmBindings;
 import org.linkedprocess.Error;
+import org.linkedprocess.farm.ManageBindings;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.LopVillein;
+import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.proxies.VmProxy;
-import org.linkedprocess.vm.ManageBindings;
 
 import java.util.Set;
 
@@ -31,20 +31,20 @@ public class GetBindingsCommand extends Command {
     private final HandlerSet<VmBindings> successHandlers;
     private final HandlerSet<Error> errorHandlers;
 
-    public GetBindingsCommand(LopVillein xmppVillein) {
+    public GetBindingsCommand(Villein xmppVillein) {
         super(xmppVillein);
         this.successHandlers = new HandlerSet<VmBindings>();
         this.errorHandlers = new HandlerSet<org.linkedprocess.Error>();
     }
 
-    public void send(VmProxy vmStruct, Set<String> bindingNames, final Handler<VmBindings> successHandler, final Handler<Error> errorHandler) {
+    public void send(VmProxy vmProxy, Set<String> bindingNames, final Handler<VmBindings> successHandler, final Handler<Error> errorHandler) {
 
         String id = Packet.nextID();
         ManageBindings manageBindings = new ManageBindings();
-        manageBindings.setTo(vmStruct.getJid());
-        manageBindings.setFrom(xmppVillein.getFullJid());
+        manageBindings.setTo(vmProxy.getFarmJid());
+        manageBindings.setFrom(villein.getFullJid());
         manageBindings.setType(IQ.Type.GET);
-        manageBindings.setVmPassword(vmStruct.getVmPassword());
+        manageBindings.setVmId(vmProxy.getVmId());
         manageBindings.setPacketID(id);
         VmBindings vmBindings = new VmBindings();
         for (String bindingName : bindingNames) {
@@ -55,7 +55,7 @@ public class GetBindingsCommand extends Command {
         this.successHandlers.addHandler(id, successHandler);
         this.errorHandlers.addHandler(id, errorHandler);
 
-        xmppVillein.getConnection().sendPacket(manageBindings);
+        villein.getConnection().sendPacket(manageBindings);
     }
 
     public void receiveSuccess(final ManageBindings manageBindings) {

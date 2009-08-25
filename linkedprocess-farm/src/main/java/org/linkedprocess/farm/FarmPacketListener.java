@@ -10,14 +10,12 @@ import org.linkedprocess.LopPacketListener;
  */
 public abstract class FarmPacketListener extends LopPacketListener {
 
-    public static final LinkedProcess.ClientType LOP_CLIENT_TYPE = LinkedProcess.ClientType.FARM;
-
-    public FarmPacketListener(LopFarm lopFarm) {
-        super(lopFarm);
+    public FarmPacketListener(Farm farm) {
+        super(farm);
     }
 
-    public LopFarm getLopFarm() {
-        return (LopFarm) this.lopClient;
+    public Farm getFarm() {
+        return (Farm) this.lopClient;
     }
 
 }

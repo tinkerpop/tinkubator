@@ -14,16 +14,16 @@ package org.linkedprocess.os;
  */
 public class Job {
     private final String jobId;
-    private final String vmJid;
+    private final String vmId;
     private final String villeinJid;
     private final String expression;
     private long timeSpent;
 
-    public Job(final String vmJid,
+    public Job(final String vmId,
                final String villeinJid,
                final String jobId,
                final String expression) {
-        this.vmJid = vmJid;
+        this.vmId = vmId;
         this.villeinJid = villeinJid;
         this.jobId = jobId;
         this.expression = expression;
@@ -39,8 +39,8 @@ public class Job {
         return jobId;
     }
 
-    public String getVmJid() {
-        return vmJid;
+    public String getVmId() {
+        return vmId;
     }
 
     public String getExpression() {
@@ -58,7 +58,7 @@ public class Job {
     public String toString() {
         return "Job("
                 + "jobId:'" + jobId + "'"
-                + ", vmJid:'" + vmJid + "'"
+                + ", vmJid:'" + vmId + "'"
                 + ", villeinJid:'" + villeinJid + "'"
                 + ", expression:'" + expression + "')";
 
