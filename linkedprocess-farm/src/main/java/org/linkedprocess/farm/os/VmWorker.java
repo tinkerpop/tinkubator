@@ -126,18 +126,18 @@ public class VmWorker {
     /**
      * Cancels a specific job.
      *
-     * @param jobID the ID of the job to be aborted
+     * @param jobId the ID of the job to be aborted
      * @throws org.linkedprocess.farm.os.errors.JobNotFoundException
      *          if no such job exsts
      */
-    public synchronized void abortJob(final String jobID) throws JobNotFoundException {
-        LOGGER.info("aborting job " + jobID);
+    public synchronized void abortJob(final String jobId) throws JobNotFoundException {
+        LOGGER.info("aborting job " + jobId);
         //System.out.println("0 ########## state = " + workerThread.getState() + "(alive: " + workerThread.isAlive()
         //        + ", interrupted: " + workerThread.isInterrupted() + ")");
 
         switch (status) {
             case ACTIVE_SUSPENDED:
-                if (latestJob.getJobId().equals(jobID)) {
+                if (latestJob.getJobId().equals(jobId)) {
                     // Cause the worker thread to cease execution of the current
                     // job and wait.
                     status = Status.IDLE_WAITING;
@@ -166,7 +166,7 @@ public class VmWorker {
         // Look for the job in the queue and remove it if present.
         // FIXME: inefficient
         for (Job j : jobQueue) {
-            if (j.getJobId().equals(jobID)) {
+            if (j.getJobId().equals(jobId)) {
                 JobResult abortedJob = new JobResult(j);
                 resultHandler.handleResult(abortedJob);
                 jobQueue.remove(j);
@@ -174,7 +174,7 @@ public class VmWorker {
             }
         }
 
-        throw new JobNotFoundException(jobID);
+        throw new JobNotFoundException(jobId);
     }
 
     /**
@@ -248,13 +248,13 @@ public class VmWorker {
         return timeLastActive;
     }
 
-    public synchronized boolean jobExists(final String jobID) {
+    public synchronized boolean jobExists(final String jobId) {
         switch (status) {
             case ACTIVE_SUSPENDED:
-                return jobID.equals(latestJob.getJobId())
-                        || jobQueueContains(jobID);
+                return jobId.equals(latestJob.getJobId())
+                        || jobQueueContains(jobId);
             case IDLE_WAITING:
-                return jobQueueContains(jobID);
+                return jobQueueContains(jobId);
             default:
                 throw new IllegalStateException("can't check job status with status: " + status);
         }
@@ -456,9 +456,9 @@ public class VmWorker {
 
     ////////////////////////////////////////////////////////////////////////////
 
-    private boolean jobQueueContains(final String jobID) {
+    private boolean jobQueueContains(final String jobId) {
         for (Job j : jobQueue) {
-            if (j.getJobId().equals(jobID)) {
+            if (j.getJobId().equals(jobId)) {
                 return true;
             }
         }
@@ -470,9 +470,9 @@ public class VmWorker {
         timeLastActive = System.currentTimeMillis();
     }
 
-    private void evaluate(final Job request) {
+    private void evaluate(final Job job) {
         try {
-            String expression = request.getExpression();
+            String expression = job.getExpression();
             LOGGER.fine(expression);
             Object returnObject = scriptEngine.eval(expression);
 
@@ -482,22 +482,22 @@ public class VmWorker {
             String returnvalue = (null == returnObject)
                     ? "" : returnObject.toString();
 
-            yieldResult(request, returnvalue);
+            yieldResult(job, returnvalue);
         } catch (ScriptException e) {
             SecurityException se = findSecurityException(e);
             if (null != se) {
-                yieldError(request, se);
+                yieldError(job, se);
             } else {
-                yieldError(request, e);
+                yieldError(job, e);
             }
         } catch (MissingResourceException e) {
             // These are associated with previous SecurityExceptions.
             // TODO: it would be better to avoid them than handle them...
-            yieldError(request, e);
+            yieldError(job, e);
         } catch (RuntimeException e) {
             SecurityException se = findSecurityException(e);
             if (null != se) {
-                yieldError(request, se);
+                yieldError(job, se);
             } else {
                 // If the exception is something else (e.g. ThreadDeath), let it through unmolested.
                 throw e;

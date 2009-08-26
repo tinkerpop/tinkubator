@@ -28,7 +28,7 @@ public class StatusEventHandler implements VmScheduler.LopStatusEventHandler {
                 if (status == LinkedProcess.VmStatus.NOT_FOUND) {
                     vm.terminateSelf();
                 } else {
-                    // tODO:?
+                    // TODO:?
                 }
 
             } catch (VmNotFoundException e) {

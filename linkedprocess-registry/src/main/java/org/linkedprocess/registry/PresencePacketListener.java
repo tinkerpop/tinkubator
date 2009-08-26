@@ -32,12 +32,12 @@ public class PresencePacketListener extends RegistryPacketListener {
         if (presence.isAvailable()) {
             DiscoverInfo discoInfo = this.getDiscoInfo(packet.getFrom());
             if (isFarm(discoInfo)) {
-                System.out.println("Registering farm: " + packet.getFrom());
-                this.getXmppRegistry().addActiveFarm(packet.getFrom());
+                Registry.LOGGER.info("Registering farm: " + packet.getFrom());
+                this.getRegistry().addActiveFarm(packet.getFrom());
             }
         } else {
-            System.out.println("Unregistering resource: " + packet.getFrom());
-            this.getXmppRegistry().removeActiveFarm(packet.getFrom());
+            Registry.LOGGER.info("Unregistering resource: " + packet.getFrom());
+            this.getRegistry().removeActiveFarm(packet.getFrom());
         }
     }
 }

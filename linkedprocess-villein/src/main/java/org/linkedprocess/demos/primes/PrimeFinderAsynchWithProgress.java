@@ -33,7 +33,7 @@ import org.linkedprocess.villein.patterns.ResourceAllocationPattern;
 import org.linkedprocess.villein.patterns.ScatterGatherPattern;
 import org.linkedprocess.villein.patterns.TimeoutException;
 import org.linkedprocess.villein.proxies.FarmProxy;
-import org.linkedprocess.villein.proxies.JobStruct;
+import org.linkedprocess.villein.proxies.JobProxy;
 import org.linkedprocess.villein.proxies.ResultHolder;
 import org.linkedprocess.villein.proxies.VmProxy;
 
@@ -53,7 +53,7 @@ import org.linkedprocess.villein.proxies.VmProxy;
  */
 public class PrimeFinderAsynchWithProgress {
 
-	public static Map<VmProxy, JobStruct> vmJobMap;
+	public static Map<VmProxy, JobProxy> vmJobMap;
 	public static Set<FarmProxy> farmProxies;
 	public static Set<ResultHolder<VmProxy>> vmProxies;
 	public static Villein villein;
@@ -80,9 +80,9 @@ public class PrimeFinderAsynchWithProgress {
 		scatterVmBindings();
 		// ////////////// DISTRIBUTE PRIME FINDER FUNCTION CALLS
 
-		scatterWorkerJob(startInteger, endInteger, startTime, new Handler<Map<VmProxy, JobStruct>>() {
+		scatterWorkerJob(startInteger, endInteger, startTime, new Handler<Map<VmProxy, JobProxy>>() {
 
-			public void handle(Map<VmProxy, JobStruct> t) {
+			public void handle(Map<VmProxy, JobProxy> t) {
 				// TODO Auto-generated method stub
 				// ////////////// TERMINATE ALL SPAWNED VIRTUAL MACHINES
 
@@ -96,9 +96,9 @@ public class PrimeFinderAsynchWithProgress {
 				System.out
 						.println("Gathering find primes function results...");
 				ArrayList<Integer> primes = new ArrayList<Integer>();
-				for (JobStruct jobStruct : vmJobMap.values()) {
-					if (jobStruct.wasSuccessful()) {
-						for (String primeString : jobStruct.getResult()
+				for (JobProxy jobProxy : vmJobMap.values()) {
+					if (jobProxy.wasSuccessful()) {
+						for (String primeString : jobProxy.getResult()
 								.replace("[", "").replace("]", "")
 								.split(",")) {
 							if (!primeString.trim().equals(""))
@@ -107,7 +107,7 @@ public class PrimeFinderAsynchWithProgress {
 						}
 					} else {
 						System.out.println("Job "
-								+ jobStruct.getJobId()
+								+ jobProxy.getJobId()
 								+ " was unsuccessful.");
 					}
 				}
@@ -152,7 +152,7 @@ public class PrimeFinderAsynchWithProgress {
 	}
 
 	public static void scatterWorkerJob(int startInteger, int endInteger,
-			final long startTime, Handler<Map<VmProxy, JobStruct>> handler) {
+			final long startTime, Handler<Map<VmProxy, JobProxy>> handler) {
 		int intervalInteger = Math.round((endInteger - startInteger)
 				/ vmJobMap.keySet().size());
 		int currentStartInteger = startInteger;
@@ -160,10 +160,10 @@ public class PrimeFinderAsynchWithProgress {
 			int currentEndInteger = currentStartInteger + intervalInteger;
 			if (currentEndInteger > endInteger)
 				currentEndInteger = endInteger;
-			JobStruct jobStruct = new JobStruct();
-			jobStruct.setExpression("findPrimes(" + currentStartInteger + ", "
+			JobProxy jobProxy = new JobProxy();
+			jobProxy.setExpression("findPrimes(" + currentStartInteger + ", "
 					+ currentEndInteger + ")");
-			vmJobMap.put(vmProxy, jobStruct);
+			vmJobMap.put(vmProxy, jobProxy);
 			currentStartInteger = currentEndInteger + 1;
 		}
 
@@ -190,14 +190,14 @@ public class PrimeFinderAsynchWithProgress {
 
 	public static void scatterPrimeCalcFunction() throws IOException,
 			TimeoutException {
-		vmJobMap = new HashMap<VmProxy, JobStruct>();
+		vmJobMap = new HashMap<VmProxy, JobProxy>();
 		for (ResultHolder<VmProxy> vmProxyResult : vmProxies) {
-			JobStruct jobStruct = new JobStruct();
-			jobStruct
+			JobProxy jobProxy = new JobProxy();
+			jobProxy
 					.setExpression(LinkedProcess
 							.convertStreamToString(PrimeFinderAsynchWithProgress.class
 									.getResourceAsStream("findPrimesWithProgress.groovy")));
-			vmJobMap.put(vmProxyResult.getResult(), jobStruct);
+			vmJobMap.put(vmProxyResult.getResult(), jobProxy);
 		}
 
 		System.out

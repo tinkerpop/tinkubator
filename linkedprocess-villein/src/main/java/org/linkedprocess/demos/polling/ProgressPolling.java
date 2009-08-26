@@ -67,12 +67,12 @@ public class ProgressPolling {
 
         //////////////// DISTRIBUTE PROGRESS METER INCREMENTING CODE
 
-        JobStruct jobStruct = new JobStruct();
-        jobStruct.setExpression("var meter = 0.0;\n" +
+        JobProxy jobProxy = new JobProxy();
+        jobProxy.setExpression("var meter = 0.0;\n" +
                 "while(true) {\n" +
                 "\tmeter = meter + 0.00000005;\n" +
                 "}");
-        vmProxyResult.getResult().submitJob(jobStruct, null, null);
+        vmProxyResult.getResult().submitJob(jobProxy, null, null);
 
         BindingsChecker bc = new BindingsChecker() {
             public boolean areEquivalent(VmBindings actualBindings, VmBindings desiredBindings) {

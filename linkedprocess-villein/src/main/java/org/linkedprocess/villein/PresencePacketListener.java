@@ -34,10 +34,10 @@ class PresencePacketListener extends VilleinPacketListener {
         Villein.LOGGER.info("Presence received from " + presence.getFrom());
         Villein.LOGGER.info(presence.toXML());
 
-        XmppProxy proxy = this.getVillein().getCloud().getProxy(presence.getFrom());
+        XmppProxy proxy = this.getVillein().getCloud().getXmppProxy(presence.getFrom());
         if (proxy != null) {
             if (!PresencePacketListener.isAvailable(presence)) {
-                this.getVillein().getCloud().removeProxy(presence.getFrom());
+                this.getVillein().getCloud().removeXmppProxy(presence.getFrom());
             }
         } else {
             if (PresencePacketListener.isAvailable(presence)) {

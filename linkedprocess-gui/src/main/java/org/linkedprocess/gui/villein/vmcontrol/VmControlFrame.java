@@ -8,7 +8,7 @@ import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.gui.villein.VilleinGui;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.proxies.JobStruct;
+import org.linkedprocess.villein.proxies.JobProxy;
 import org.linkedprocess.villein.proxies.VmProxy;
 
 import javax.swing.*;
@@ -142,10 +142,10 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         this.manageBindingsPanel.handleIncomingManageBindings(vmBindings);
     }
 
-    public void handleIncomingSubmitJob(JobStruct jobStruct) {
-        String jobId = jobStruct.getJobId();
+    public void handleIncomingSubmitJob(JobProxy jobProxy) {
+        String jobId = jobProxy.getJobId();
         if (null == this.jobStatus.get(jobId)) {
-            if (null != jobStruct.getLopError())
+            if (null != jobProxy.getLopError())
                 this.jobStatus.put(jobId, JobStatus.ERROR);
             else
                 this.jobStatus.put(jobId, JobStatus.COMPLETED);
@@ -154,7 +154,7 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
         for (int i = 0; i < this.jobList.getModel().getSize(); i++) {
             JobPane jobPane = (JobPane) this.jobList.getModel().getElementAt(i);
             if (jobPane.getJobId().equals(jobId)) {
-                jobPane.handleIncomingSubmitJob(jobStruct);
+                jobPane.handleIncomingSubmitJob(jobProxy);
             }
         }
         jobList.repaint();

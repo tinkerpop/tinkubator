@@ -21,10 +21,8 @@ import java.util.*;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class FarmProxy extends XmppProxy implements Comparable {
+public class FarmProxy extends XmppProxy {
 
-
-    
     /**
      * The virtual machine proxies maintained by this farm proxy.
      */
@@ -33,9 +31,6 @@ public class FarmProxy extends XmppProxy implements Comparable {
      * The password of the farm.
      */
     protected String farmPassword;
-
-
-
 
     /**
      * Create a new farm proxy with a provided fully-qualified jid.
@@ -205,11 +200,4 @@ public class FarmProxy extends XmppProxy implements Comparable {
         this.dispatcher.getSpawnVmCommand().send(this, vmSpecies, successHandler, errorHandler);
     }
 
-    public int compareTo(Object farmProxy) {
-        if (farmProxy instanceof FarmProxy) {
-            return this.fullJid.compareTo(((FarmProxy) farmProxy).getFullJid());
-        } else {
-            throw new ClassCastException();
-        }
-    }
 }

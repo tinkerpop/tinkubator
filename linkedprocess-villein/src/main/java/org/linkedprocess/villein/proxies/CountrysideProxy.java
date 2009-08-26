@@ -18,7 +18,7 @@ import java.util.Map;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class CountrysideProxy implements FarmHolder {
+public class CountrysideProxy {
 
     protected String bareJid;
 
@@ -42,21 +42,21 @@ public class CountrysideProxy implements FarmHolder {
     /**
      * Get the farm proxy contained in this countryside by its jid.
      *
-     * @param farmJid the jid of the farm proxy to get
+     * @param fullJid the jid of the farm proxy to get
      * @return the retrieved farm proxy
      */
-    public FarmProxy getFarmProxy(String farmJid) {
-        return this.farmProxies.get(farmJid);
+    public FarmProxy getFarmProxy(String fullJid) {
+        return this.farmProxies.get(fullJid);
     }
 
     /**
      * Get the registsry proxy contained in this countryside by its jid.
      *
-     * @param registryJid the jid of the registry proxy to get
+     * @param fullJid the jid of the registry proxy to get
      * @return the retrieved registry proxy
      */
-    public RegistryProxy getRegistryProxy(String registryJid) {
-        return this.registryProxies.get(registryJid);
+    public RegistryProxy getRegistryProxy(String fullJid) {
+        return this.registryProxies.get(fullJid);
     }
 
     /**
@@ -80,19 +80,19 @@ public class CountrysideProxy implements FarmHolder {
     /**
      * Remove a farm proxy from this countryside proxy.
      *
-     * @param farmJid the jid of the farm to remove
+     * @param fullJid the jid of the farm to remove
      */
-    public void removeFarmProxy(String farmJid) {
-        this.farmProxies.remove(farmJid);
+    public void removeFarmProxy(String fullJid) {
+        this.farmProxies.remove(fullJid);
     }
 
     /**
      * Remove a registry proxy from this countryside proxy.
      *
-     * @param registryJid the jid of the registry to remove
+     * @param fullJid the jid of the registry to remove
      */
-    public void removeRegistryProxy(String registryJid) {
-        this.registryProxies.remove(registryJid);
+    public void removeRegistryProxy(String fullJid) {
+        this.registryProxies.remove(fullJid);
     }
 
     /**

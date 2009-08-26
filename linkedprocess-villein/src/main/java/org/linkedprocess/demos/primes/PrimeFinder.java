@@ -12,7 +12,7 @@ import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.patterns.ResourceAllocationPattern;
 import org.linkedprocess.villein.patterns.ScatterGatherPattern;
 import org.linkedprocess.villein.proxies.FarmProxy;
-import org.linkedprocess.villein.proxies.JobStruct;
+import org.linkedprocess.villein.proxies.JobProxy;
 import org.linkedprocess.villein.proxies.ResultHolder;
 import org.linkedprocess.villein.proxies.VmProxy;
 
@@ -52,11 +52,11 @@ public class PrimeFinder {
 
         //////////////// DISTRIBUTE PRIME FINDER FUNCTION DEFINITION
 
-        Map<VmProxy, JobStruct> vmJobMap = new HashMap<VmProxy, JobStruct>();
+        Map<VmProxy, JobProxy> vmJobMap = new HashMap<VmProxy, JobProxy>();
         for (ResultHolder<VmProxy> vmProxyResult : vmProxies) {
-            JobStruct jobStruct = new JobStruct();
-            jobStruct.setExpression(LinkedProcess.convertStreamToString(PrimeFinder.class.getResourceAsStream("findPrimes.groovy")));
-            vmJobMap.put(vmProxyResult.getResult(), jobStruct);
+            JobProxy jobProxy = new JobProxy();
+            jobProxy.setExpression(LinkedProcess.convertStreamToString(PrimeFinder.class.getResourceAsStream("findPrimes.groovy")));
+            vmJobMap.put(vmProxyResult.getResult(), jobProxy);
         }
 
         System.out.println("Scattering find primes function definition jobs...");
@@ -71,9 +71,9 @@ public class PrimeFinder {
             int currentEndInteger = currentStartInteger + intervalInteger;
             if (currentEndInteger > endInteger)
                 currentEndInteger = endInteger;
-            JobStruct jobStruct = new JobStruct();
-            jobStruct.setExpression("findPrimes(" + currentStartInteger + ", " + currentEndInteger + ")");
-            vmJobMap.put(vmProxy, jobStruct);
+            JobProxy jobProxy = new JobProxy();
+            jobProxy.setExpression("findPrimes(" + currentStartInteger + ", " + currentEndInteger + ")");
+            vmJobMap.put(vmProxy, jobProxy);
             currentStartInteger = currentEndInteger + 1;
         }
         System.out.println("Scattering find primes function call jobs...");
@@ -94,14 +94,14 @@ public class PrimeFinder {
 
         System.out.println("Gathering find primes function results...");
         ArrayList<Integer> primes = new ArrayList<Integer>();
-        for (JobStruct jobStruct : vmJobMap.values()) {
-            if (jobStruct.wasSuccessful()) {
-                for (String primeString : jobStruct.getResult().replace("[", "").replace("]", "").split(",")) {
+        for (JobProxy jobProxy : vmJobMap.values()) {
+            if (jobProxy.wasSuccessful()) {
+                for (String primeString : jobProxy.getResult().replace("[", "").replace("]", "").split(",")) {
                     if (!primeString.trim().equals(""))
                         primes.add(Integer.valueOf(primeString.trim()));
                 }
             } else {
-                System.out.println("Job " + jobStruct.getJobId() + " was unsuccessful.");
+                System.out.println("Job " + jobProxy.getJobId() + " was unsuccessful.");
             }
         }
         Collections.sort(primes);

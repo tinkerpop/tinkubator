@@ -89,7 +89,7 @@ public class JobResult {
         return exception;
     }
 
-    public IQ generateReturnEvalulate() {
+    public SubmitJob generateReturnSubmitJob() {
 
         SubmitJob returnSubmitJob = new SubmitJob();
         //TODO: returnSubmitJob.setFrom(job.getVmId());

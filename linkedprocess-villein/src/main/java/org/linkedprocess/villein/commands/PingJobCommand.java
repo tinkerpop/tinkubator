@@ -14,7 +14,7 @@ import org.linkedprocess.villein.Handler;
 import org.linkedprocess.Error;
 import org.linkedprocess.*;
 import org.linkedprocess.villein.Villein;
-import org.linkedprocess.villein.proxies.JobStruct;
+import org.linkedprocess.villein.proxies.JobProxy;
 import org.linkedprocess.villein.proxies.VmProxy;
 
 /**
@@ -35,13 +35,13 @@ public class PingJobCommand extends Command {
         this.errorHandlers = new HandlerSet<Error>();
     }
 
-    public void send(VmProxy vmProxy, JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> successHandler, final Handler<org.linkedprocess.Error> errorHandler) {
+    public void send(VmProxy vmProxy, JobProxy jobProxy, final Handler<LinkedProcess.JobStatus> successHandler, final Handler<org.linkedprocess.Error> errorHandler) {
 
         String id = Packet.nextID();
         PingJob pingJob = new PingJob();
         pingJob.setTo(vmProxy.getFarmJid());
         pingJob.setFrom(this.villein.getFullJid());
-        pingJob.setJobId(jobStruct.getJobId());
+        pingJob.setJobId(jobProxy.getJobId());
         pingJob.setVmId(vmProxy.getVmId());
         pingJob.setType(IQ.Type.GET);
         pingJob.setPacketID(id);

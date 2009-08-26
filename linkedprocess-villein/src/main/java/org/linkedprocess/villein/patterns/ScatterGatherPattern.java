@@ -12,7 +12,7 @@ import org.linkedprocess.*;
 import org.linkedprocess.farm.os.VmBindings;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.proxies.FarmProxy;
-import org.linkedprocess.villein.proxies.JobStruct;
+import org.linkedprocess.villein.proxies.JobProxy;
 import org.linkedprocess.villein.proxies.ResultHolder;
 import org.linkedprocess.villein.proxies.VmProxy;
 
@@ -52,12 +52,12 @@ public class ScatterGatherPattern {
     /**
      * Determines if all the JobStructs in the Collection are complete.
      *
-     * @param jobStructs the JobStructs to check
+     * @param jobProxies the JobStructs to check
      * @return false if at least one of the JobStructs is not complete
      */
-    private static boolean areComplete(Collection<JobStruct> jobStructs) {
-        for (JobStruct jobStruct : jobStructs) {
-            if (!jobStruct.isComplete())
+    private static boolean areComplete(Collection<JobProxy> jobProxies) {
+        for (JobProxy jobProxy : jobProxies) {
+            if (!jobProxy.isComplete())
                 return false;
         }
         return true;
@@ -163,12 +163,12 @@ public class ScatterGatherPattern {
      * @return a mapping from a VmProxy to the JobStruct that it evaluated with its result or error
      * @throws TimeoutException is thrown when the scatter takes longer than the provided timeout in milliseconds
      */
-    public static Map<VmProxy, JobStruct> scatterSubmitJob(final Map<VmProxy, JobStruct> vmJobMap, long timeout) throws TimeoutException {
+    public static Map<VmProxy, JobProxy> scatterSubmitJob(final Map<VmProxy, JobProxy> vmJobMap, long timeout) throws TimeoutException {
         final Object monitor = new Object();
 
         for (final VmProxy vmProxy : vmJobMap.keySet()) {
-            Handler<JobStruct> submitJobHandler = new Handler<JobStruct>() {
-                public void handle(JobStruct jobStruct) {
+            Handler<JobProxy> submitJobHandler = new Handler<JobProxy>() {
+                public void handle(JobProxy jobStruct) {
                     vmJobMap.put(vmProxy, jobStruct);
                     if (ScatterGatherPattern.areComplete(vmJobMap.values())) {
                         synchronized (monitor) {
@@ -193,10 +193,10 @@ public class ScatterGatherPattern {
      * @param vmJobMap      a mapping from a VmProxy to the JobStruct that it should evaluate
      * @param resultHandler the handler of the results (can be null)
      */
-    public static void scatterSubmitJob(final Map<VmProxy, JobStruct> vmJobMap, final Handler<Map<VmProxy, JobStruct>> resultHandler) {
+    public static void scatterSubmitJob(final Map<VmProxy, JobProxy> vmJobMap, final Handler<Map<VmProxy, JobProxy>> resultHandler) {
         for (final VmProxy vmProxy : vmJobMap.keySet()) {
-            Handler<JobStruct> submitJobHandler = new Handler<JobStruct>() {
-                public void handle(JobStruct jobStruct) {
+            Handler<JobProxy> submitJobHandler = new Handler<JobProxy>() {
+                public void handle(JobProxy jobStruct) {
                     vmJobMap.put(vmProxy, jobStruct);
                     if (ScatterGatherPattern.areComplete(vmJobMap.values())) {
                         resultHandler.handle(vmJobMap);
@@ -215,7 +215,7 @@ public class ScatterGatherPattern {
      * @return a set of job id results
      * @throws TimeoutException is thrown when the scatter takes longer than the provided timeout in milliseconds
      */
-    public static Set<ResultHolder<String>> scatterAbortJob(final Map<VmProxy, JobStruct> vmJobMap, long timeout) throws TimeoutException {
+    public static Set<ResultHolder<String>> scatterAbortJob(final Map<VmProxy, JobProxy> vmJobMap, long timeout) throws TimeoutException {
         final Object monitor = new Object();
 
         final Set<ResultHolder<String>> resultHolders = new HashSet<ResultHolder<String>>();
@@ -258,7 +258,7 @@ public class ScatterGatherPattern {
      * @param vmJobMap      a mapping from a VmProxy to the JobStruct that should be aborted (requires jobId be set)
      * @param resultHandler the handler of the job id results (can be null)
      */
-    public static void scatterAbortJob(final Map<VmProxy, JobStruct> vmJobMap, final Handler<Set<ResultHolder<String>>> resultHandler) {
+    public static void scatterAbortJob(final Map<VmProxy, JobProxy> vmJobMap, final Handler<Set<ResultHolder<String>>> resultHandler) {
         final Set<ResultHolder<String>> resultHolders = new HashSet<ResultHolder<String>>();
 
         for (final VmProxy vmProxy : vmJobMap.keySet()) {
@@ -291,7 +291,7 @@ public class ScatterGatherPattern {
      * @return a set of job status results
      * @throws TimeoutException is thrown when the scatter takes longer than the provided timeout in milliseconds
      */
-    public static Set<ResultHolder<LinkedProcess.JobStatus>> scatterPingJob(final Map<VmProxy, JobStruct> vmJobMap, long timeout) throws TimeoutException {
+    public static Set<ResultHolder<LinkedProcess.JobStatus>> scatterPingJob(final Map<VmProxy, JobProxy> vmJobMap, long timeout) throws TimeoutException {
         final Object monitor = new Object();
         final Set<ResultHolder<LinkedProcess.JobStatus>> resultHolders = new HashSet<ResultHolder<LinkedProcess.JobStatus>>();
 
@@ -333,7 +333,7 @@ public class ScatterGatherPattern {
      * @param vmJobMap      a mapping from a VmProxy to the JobStruct that should be pinged (requires jobId be set)
      * @param resultHandler the handler of the job status results (can be null)
      */
-    public static void scatterPingJob(final Map<VmProxy, JobStruct> vmJobMap, final Handler<Set<ResultHolder<LinkedProcess.JobStatus>>> resultHandler) {
+    public static void scatterPingJob(final Map<VmProxy, JobProxy> vmJobMap, final Handler<Set<ResultHolder<LinkedProcess.JobStatus>>> resultHandler) {
         final Set<ResultHolder<LinkedProcess.JobStatus>> resultHolders = new HashSet<ResultHolder<LinkedProcess.JobStatus>>();
 
         for (final VmProxy vmProxy : vmJobMap.keySet()) {

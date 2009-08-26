@@ -37,27 +37,27 @@ public class PresenceSubscriptionListener extends RegistryPacketListener {
             Presence subscribed = new Presence(Presence.Type.subscribed);
             Presence subscribe = new Presence(Presence.Type.subscribe);
             subscribed.setTo(presence.getFrom());
-            subscribed.setFrom(this.getXmppRegistry().getFullJid());
+            subscribed.setFrom(this.getRegistry().getFullJid());
             subscribe.setTo(presence.getFrom());
-            subscribe.setFrom(this.getXmppRegistry().getFullJid());
+            subscribe.setFrom(this.getRegistry().getFullJid());
 
-            this.getXmppRegistry().getConnection().sendPacket(subscribed);
-            this.getXmppRegistry().getConnection().sendPacket(subscribe);
+            this.getRegistry().getConnection().sendPacket(subscribed);
+            this.getRegistry().getConnection().sendPacket(subscribe);
 
             return;
 
         } else
-        if (type == Presence.Type.unsubscribe && !presence.getFrom().equals(this.getXmppRegistry().getBareJid()) && !presence.getFrom().equals(this.getXmppRegistry().getFullJid())) {
+        if (type == Presence.Type.unsubscribe && !presence.getFrom().equals(this.getRegistry().getBareJid()) && !presence.getFrom().equals(this.getRegistry().getFullJid())) {
             Registry.LOGGER.info("Unsubscribing from " + presence.getFrom());
             Presence unsubscribed = new Presence(Presence.Type.unsubscribed);
             Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
             unsubscribed.setTo(presence.getFrom());
-            unsubscribed.setFrom(this.getXmppRegistry().getFullJid());
+            unsubscribed.setFrom(this.getRegistry().getFullJid());
             unsubscribe.setTo(presence.getFrom());
-            unsubscribe.setFrom(this.getXmppRegistry().getFullJid());
+            unsubscribe.setFrom(this.getRegistry().getFullJid());
 
-            this.getXmppRegistry().getConnection().sendPacket(unsubscribed);
-            this.getXmppRegistry().getConnection().sendPacket(unsubscribe);
+            this.getRegistry().getConnection().sendPacket(unsubscribed);
+            this.getRegistry().getConnection().sendPacket(unsubscribe);
 
 
             return;

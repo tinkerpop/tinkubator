@@ -19,7 +19,7 @@ public abstract class RegistryPacketListener extends LopPacketListener {
         super(registry);
     }
 
-    public Registry getXmppRegistry() {
+    public Registry getRegistry() {
         return (Registry) this.lopClient;
     }
 

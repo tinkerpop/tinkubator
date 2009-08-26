@@ -22,7 +22,7 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.LopClient;
 import org.linkedprocess.farm.*;
-import org.linkedprocess.villein.proxies.Cloud;
+import org.linkedprocess.villein.proxies.CloudProxy;
 import org.linkedprocess.villein.proxies.CountrysideProxy;
 import org.linkedprocess.villein.proxies.FarmProxy;
 import org.linkedprocess.villein.proxies.VmProxy;
@@ -49,7 +49,7 @@ public class Villein extends LopClient {
     protected Dispatcher dispatcher;
 
     protected Set<PresenceHandler> presenceHandlers = new HashSet<PresenceHandler>();
-    protected Cloud cloud = new Cloud();
+    protected CloudProxy cloudProxy = new CloudProxy();
 
     /**
      * Creates a new LoP villein.
@@ -113,8 +113,8 @@ public class Villein extends LopClient {
      *
      * @return an LoP cloud data structure
      */
-    public Cloud getCloud() {
-        return this.cloud;
+    public CloudProxy getCloud() {
+        return this.cloudProxy;
     }
 
     /**
@@ -123,10 +123,10 @@ public class Villein extends LopClient {
      */
     public void createCloudFromRoster() {
         for (RosterEntry entry : this.getRoster().getEntries()) {
-            CountrysideProxy countrysideProxy = this.cloud.getCountrysideProxy(entry.getUser());
+            CountrysideProxy countrysideProxy = this.cloudProxy.getCountrysideProxy(entry.getUser());
             if (countrysideProxy == null && (entry.getType() == RosterPacket.ItemType.to || entry.getType() == RosterPacket.ItemType.both)) {
                 countrysideProxy = new CountrysideProxy(entry.getUser());
-                this.cloud.addCountrysideProxy(countrysideProxy);
+                this.cloudProxy.addCountrysideProxy(countrysideProxy);
             }
         }
     }
@@ -138,7 +138,7 @@ public class Villein extends LopClient {
      */
     public void requestUnsubscription(String jid) {
         super.requestUnsubscription(jid);
-        CountrysideProxy countrysideProxy = this.cloud.getCountrysideProxy(jid);
+        CountrysideProxy countrysideProxy = this.cloudProxy.getCountrysideProxy(jid);
         if (countrysideProxy != null) {
             for (FarmProxy farmProxy : countrysideProxy.getFarmProxies()) {
                 for (VmProxy vmProxy : farmProxy.getVmProxies()) {
@@ -148,7 +148,7 @@ public class Villein extends LopClient {
                 }
             }
         }
-        this.cloud.removeCountrysideProxy(jid);
+        this.cloudProxy.removeCountrysideProxy(jid);
     }
 
     /**

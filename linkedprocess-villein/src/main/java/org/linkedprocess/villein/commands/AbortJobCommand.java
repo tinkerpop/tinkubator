@@ -13,7 +13,7 @@ import org.linkedprocess.Error;
 import org.linkedprocess.farm.AbortJob;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.Villein;
-import org.linkedprocess.villein.proxies.JobStruct;
+import org.linkedprocess.villein.proxies.JobProxy;
 import org.linkedprocess.villein.proxies.VmProxy;
 
 /**
@@ -35,12 +35,12 @@ public class AbortJobCommand extends Command {
         this.errorHandlers = new HandlerSet<org.linkedprocess.Error>();
     }
 
-    public void send(final VmProxy vmProxy, final JobStruct jobStruct, final Handler<String> successHandler, final Handler<Error> errorHandler) {
+    public void send(final VmProxy vmProxy, final JobProxy jobProxy, final Handler<String> successHandler, final Handler<Error> errorHandler) {
         String id = Packet.nextID();
         AbortJob abortJob = new AbortJob();
         abortJob.setTo(vmProxy.getFarmJid());
         abortJob.setFrom(this.villein.getFullJid());
-        abortJob.setJobId(jobStruct.getJobId());
+        abortJob.setJobId(jobProxy.getJobId());
         abortJob.setVmId(vmProxy.getVmId());
         abortJob.setType(IQ.Type.GET);
         abortJob.setPacketID(id);
@@ -51,8 +51,8 @@ public class AbortJobCommand extends Command {
 
     public void receiveSuccess(final AbortJob abortJob) {
         try {
-            JobStruct jobStruct = new JobStruct();
-            jobStruct.setJobId(abortJob.getJobId());
+            JobProxy jobProxy = new JobProxy();
+            jobProxy.setJobId(abortJob.getJobId());
             this.successHandlers.handle(abortJob.getPacketID(), abortJob.getJobId());
         } finally {
             this.successHandlers.removeHandler(abortJob.getPacketID());

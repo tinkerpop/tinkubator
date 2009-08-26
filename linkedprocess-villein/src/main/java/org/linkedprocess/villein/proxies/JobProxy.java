@@ -12,15 +12,15 @@ import org.linkedprocess.Error;
 import org.linkedprocess.*;
 
 /**
- * A JobStruct is a data structure representing a job. A job is submitted to and returned by a virtual machine.
+ * A JobProxy is a data structure representing a job. A job is submitted to and returned by a virtual machine.
  * A submitted job does not have a result or error. However, a submitted job should have an expression.
  * The expression is a code fragement that is to be executed by the virtual machine and must be in the language of the virtual machine species.
- * When a JobStruct is returned by a submit_job call, the result or error may be set along with the complete flag.
+ * When a JobProxy is returned by a submit_job call, the result or error may be set along with the complete flag.
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class JobStruct implements Comparable {
+public class JobProxy implements Comparable {
     protected String jobId;
     protected String result;
     protected String expression;
@@ -145,8 +145,8 @@ public class JobStruct implements Comparable {
     }
 
     public int compareTo(Object job) {
-        if (job instanceof JobStruct) {
-            return this.jobId.compareTo(((JobStruct) job).getJobId());
+        if (job instanceof JobProxy) {
+            return this.jobId.compareTo(((JobProxy) job).getJobId());
         } else {
             throw new ClassCastException();
         }
@@ -154,10 +154,9 @@ public class JobStruct implements Comparable {
 
     public String toString() {
         if (null == error)
-            return "job id[" + jobId + "], complete[" + complete + "], result[" + result + "]";
+            return "Job(id:'" + jobId + "', complete:'" + complete + "', result:'" + result + "')";
         else
-            return "job id[" + jobId + "], complete[" + complete + "], error[" + error.getErrorType().toString() + "]";
+            return "Job(id:'" + jobId + "', complete:'" + complete + "', error:'" + error.getErrorType().toString() + "')";
     }
-
 
 }

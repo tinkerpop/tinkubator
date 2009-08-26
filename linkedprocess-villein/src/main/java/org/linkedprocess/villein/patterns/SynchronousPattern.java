@@ -12,7 +12,7 @@ import org.linkedprocess.*;
 import org.linkedprocess.farm.os.VmBindings;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.proxies.FarmProxy;
-import org.linkedprocess.villein.proxies.JobStruct;
+import org.linkedprocess.villein.proxies.JobProxy;
 import org.linkedprocess.villein.proxies.ResultHolder;
 import org.linkedprocess.villein.proxies.VmProxy;
 
@@ -94,17 +94,17 @@ public class SynchronousPattern {
      * Submit a job to a virtual machine for evaluation/execution.
      *
      * @param vmProxy   the virtual machine on which to execute the command
-     * @param jobStruct the job to be excecuted
+     * @param jobProxy the job to be excecuted
      * @param timeout   the number of milliseconds to spend on this command before a TimeoutException is thrown (use -1 to wait indefinately)
      * @return the result of the command
      * @throws TimeoutException is thrown when the command takes longer than the provided timeout in milliseconds
      */
-    public static ResultHolder<JobStruct> submitJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws TimeoutException {
+    public static ResultHolder<JobProxy> submitJob(final VmProxy vmProxy, final JobProxy jobProxy, final long timeout) throws TimeoutException {
         final Object monitor = new Object();
-        final ResultHolder<JobStruct> resultHolder = new ResultHolder<JobStruct>();
+        final ResultHolder<JobProxy> resultHolder = new ResultHolder<JobProxy>();
 
-        Handler<JobStruct> submitJobHandler = new Handler<JobStruct>() {
-            public void handle(JobStruct jobStruct) {
+        Handler<JobProxy> submitJobHandler = new Handler<JobProxy>() {
+            public void handle(JobProxy jobStruct) {
                 resultHolder.setResult(jobStruct);
                 synchronized (monitor) {
                     monitor.notify();
@@ -112,7 +112,7 @@ public class SynchronousPattern {
             }
         };
 
-        vmProxy.submitJob(jobStruct, submitJobHandler, submitJobHandler);
+        vmProxy.submitJob(jobProxy, submitJobHandler, submitJobHandler);
         SynchronousPattern.monitorSleep(monitor, timeout);
         if (resultHolder.isEmpty())
             throw new TimeoutException("submit_job timedout after " + timeout + "ms.");
@@ -122,12 +122,12 @@ public class SynchronousPattern {
 
     /**
      * @param vmProxy   the virtual machine on which to execute the command
-     * @param jobStruct the job to ping on the virtual machine
+     * @param jobProxy the job to ping on the virtual machine
      * @param timeout   the number of milliseconds to spend on this command before a TimeoutException is thrown (use -1 to wait indefinately)
      * @return the result of the command
      * @throws TimeoutException is thrown when the command takes longer than the provided timeout in milliseconds
      */
-    public static ResultHolder<LinkedProcess.JobStatus> pingJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws TimeoutException {
+    public static ResultHolder<LinkedProcess.JobStatus> pingJob(final VmProxy vmProxy, final JobProxy jobProxy, final long timeout) throws TimeoutException {
         final Object monitor = new Object();
         final ResultHolder<LinkedProcess.JobStatus> resultHolder = new ResultHolder<LinkedProcess.JobStatus>();
 
@@ -148,7 +148,7 @@ public class SynchronousPattern {
             }
         };
 
-        vmProxy.pingJob(jobStruct, resultHandler, errorHandler);
+        vmProxy.pingJob(jobProxy, resultHandler, errorHandler);
         SynchronousPattern.monitorSleep(monitor, timeout);
         if (resultHolder.isEmpty())
             throw new TimeoutException("ping_job timedout after " + timeout + "ms.");
@@ -158,12 +158,12 @@ public class SynchronousPattern {
 
     /**
      * @param vmProxy   the virtual machine on which to execute the command
-     * @param jobStruct the job to abort on the virtual machine
+     * @param jobProxy the job to abort on the virtual machine
      * @param timeout   the number of milliseconds to spend on this command before a TimeoutException is thrown (use -1 to wait indefinately)
      * @return the result of the command
      * @throws TimeoutException is thrown when the command takes longer than the provided timeout in milliseconds
      */
-    public static ResultHolder<String> abortJob(final VmProxy vmProxy, final JobStruct jobStruct, final long timeout) throws TimeoutException {
+    public static ResultHolder<String> abortJob(final VmProxy vmProxy, final JobProxy jobProxy, final long timeout) throws TimeoutException {
         final Object monitor = new Object();
         final ResultHolder<String> resultHolder = new ResultHolder<String>();
 
@@ -184,7 +184,7 @@ public class SynchronousPattern {
             }
         };
 
-        vmProxy.abortJob(jobStruct, resultHandler, errorHandler);
+        vmProxy.abortJob(jobProxy, resultHandler, errorHandler);
 
         SynchronousPattern.monitorSleep(monitor, timeout);
         if (resultHolder.isEmpty())

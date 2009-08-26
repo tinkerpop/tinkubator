@@ -3,7 +3,7 @@ package org.linkedprocess.gui.villein.vmcontrol;
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.linkedprocess.gui.GenericErrorHandler;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.villein.proxies.JobStruct;
+import org.linkedprocess.villein.proxies.JobProxy;
 
 import javax.swing.*;
 import java.awt.*;
@@ -82,38 +82,38 @@ public class JobPane extends JPanel implements ActionListener {
         this.resultTextArea.setText(BLANK_STRING);
     }
 
-    public JobStruct createSubmitJobStruct() {
-        JobStruct jobStruct = new JobStruct();
-        jobStruct.setExpression(this.expressionTextArea.getText());
-        jobStruct.setJobId(this.jobId);
-        return jobStruct;
+    public JobProxy createSubmitJobStruct() {
+        JobProxy jobProxy = new JobProxy();
+        jobProxy.setExpression(this.expressionTextArea.getText());
+        jobProxy.setJobId(this.jobId);
+        return jobProxy;
     }
 
-    public JobStruct createAbortJobStruct() {
-        JobStruct jobStruct = new JobStruct();
-        jobStruct.setJobId(this.jobId);
-        return jobStruct;
+    public JobProxy createAbortJobStruct() {
+        JobProxy jobProxy = new JobProxy();
+        jobProxy.setJobId(this.jobId);
+        return jobProxy;
     }
 
-    public void handleIncomingSubmitJob(JobStruct jobStruct) {
-        if (jobStruct.getLopError() == null) {
-            this.resultTextArea.setText(jobStruct.getResult());
+    public void handleIncomingSubmitJob(JobProxy jobProxy) {
+        if (jobProxy.getLopError() == null) {
+            this.resultTextArea.setText(jobProxy.getResult());
             this.submitJobButton.setEnabled(false);
         } else {
             StringBuffer errorMessage = new StringBuffer();
-            if (jobStruct.getLopError().getType() != null) {
-                errorMessage.append(jobStruct.getLopError().getType().toString().toLowerCase() + "\n");
+            if (jobProxy.getLopError().getType() != null) {
+                errorMessage.append(jobProxy.getLopError().getType().toString().toLowerCase() + "\n");
             }
-            if (jobStruct.getLopError().getCondition() != null) {
-                errorMessage.append(jobStruct.getLopError().getCondition() + "\n");
+            if (jobProxy.getLopError().getCondition() != null) {
+                errorMessage.append(jobProxy.getLopError().getCondition() + "\n");
             }
-            if (jobStruct.getLopError().getExtensions() != null) {
-                for (PacketExtension extension : jobStruct.getLopError().getExtensions()) {
+            if (jobProxy.getLopError().getExtensions() != null) {
+                for (PacketExtension extension : jobProxy.getLopError().getExtensions()) {
                     errorMessage.append(extension.getElementName() + "\n");
                 }
             }
-            if (jobStruct.getLopError().getMessage() != null) {
-                errorMessage.append(jobStruct.getLopError().getMessage());
+            if (jobProxy.getLopError().getMessage() != null) {
+                errorMessage.append(jobProxy.getLopError().getMessage());
             }
             this.resultTextArea.setText(errorMessage.toString().trim());
             this.submitJobButton.setEnabled(false);
@@ -126,8 +126,8 @@ public class JobPane extends JPanel implements ActionListener {
 
     public void actionPerformed(ActionEvent event) {
         if (event.getActionCommand().equals(SUBMIT_JOB)) {
-            Handler<JobStruct> submitJobHandler = new Handler<JobStruct>() {
-                public void handle(JobStruct jobStruct) {
+            Handler<JobProxy> submitJobHandler = new Handler<JobProxy>() {
+                public void handle(JobProxy jobStruct) {
                     vmControlFrame.handleIncomingSubmitJob(jobStruct);
                 }
             };

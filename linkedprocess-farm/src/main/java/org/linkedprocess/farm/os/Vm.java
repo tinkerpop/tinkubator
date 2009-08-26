@@ -18,8 +18,6 @@ import java.util.logging.Logger;
 public class Vm {
 
     public static Logger LOGGER = LinkedProcess.getLogger(Vm.class);
-    public static String RESOURCE_PREFIX = "LoPVM";
-    public static String STATUS_MESSAGE = "LoPSideD Virtual Machine";
 
     protected final Farm farm;
     protected final String vmSpecies;

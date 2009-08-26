@@ -10,7 +10,7 @@ package org.linkedprocess.villein.commands;
 import org.jivesoftware.smack.packet.IQ;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.Villein;
-import org.linkedprocess.villein.proxies.JobStruct;
+import org.linkedprocess.villein.proxies.JobProxy;
 import org.linkedprocess.villein.proxies.VmProxy;
 import org.linkedprocess.farm.SubmitJob;
 
@@ -24,41 +24,41 @@ import org.linkedprocess.farm.SubmitJob;
  */
 public class SubmitJobCommand extends Command {
 
-    private final HandlerSet<JobStruct> successHandlers;
-    private final HandlerSet<JobStruct> errorHandlers;
+    private final HandlerSet<JobProxy> successHandlers;
+    private final HandlerSet<JobProxy> errorHandlers;
 
     public SubmitJobCommand(Villein xmppVillein) {
         super(xmppVillein);
-        this.successHandlers = new HandlerSet<JobStruct>();
-        this.errorHandlers = new HandlerSet<JobStruct>();
+        this.successHandlers = new HandlerSet<JobProxy>();
+        this.errorHandlers = new HandlerSet<JobProxy>();
     }
 
-    public void send(final VmProxy vmProxy, final JobStruct jobStruct, final Handler<JobStruct> successHandler, final Handler<JobStruct> errorHandler) {
+    public void send(final VmProxy vmProxy, final JobProxy jobProxy, final Handler<JobProxy> successHandler, final Handler<JobProxy> errorHandler) {
 
-        if (null == jobStruct.getJobId())
-            jobStruct.setJobId(JobStruct.generateRandomId());
+        if (null == jobProxy.getJobId())
+            jobProxy.setJobId(JobProxy.generateRandomId());
 
         SubmitJob submitJob = new SubmitJob();
         submitJob.setTo(vmProxy.getFarmJid());
         submitJob.setFrom(villein.getFullJid());
-        submitJob.setExpression(jobStruct.getExpression());
+        submitJob.setExpression(jobProxy.getExpression());
         submitJob.setVmId(vmProxy.getVmId());
         submitJob.setType(IQ.Type.GET);
-        submitJob.setPacketID(jobStruct.getJobId());
+        submitJob.setPacketID(jobProxy.getJobId());
 
-        this.successHandlers.addHandler(jobStruct.getJobId(), successHandler);
-        this.errorHandlers.addHandler(jobStruct.getJobId(), errorHandler);
+        this.successHandlers.addHandler(jobProxy.getJobId(), successHandler);
+        this.errorHandlers.addHandler(jobProxy.getJobId(), errorHandler);
 
         villein.getConnection().sendPacket(submitJob);
     }
 
     public void receiveSuccess(final SubmitJob submitJob) {
         try {
-            JobStruct jobStruct = new JobStruct();
-            jobStruct.setJobId(submitJob.getPacketID());
-            jobStruct.setResult(submitJob.getExpression());
-            jobStruct.setComplete(true);
-            successHandlers.handle(submitJob.getPacketID(), jobStruct);
+            JobProxy jobProxy = new JobProxy();
+            jobProxy.setJobId(submitJob.getPacketID());
+            jobProxy.setResult(submitJob.getExpression());
+            jobProxy.setComplete(true);
+            successHandlers.handle(submitJob.getPacketID(), jobProxy);
         } finally {
             successHandlers.removeHandler(submitJob.getPacketID());
             errorHandlers.removeHandler(submitJob.getPacketID());
@@ -67,11 +67,11 @@ public class SubmitJobCommand extends Command {
 
     public void receiveError(final SubmitJob submitJob) {
         try {
-            JobStruct jobStruct = new JobStruct();
-            jobStruct.setJobId(submitJob.getPacketID());
-            jobStruct.setLopError(submitJob.getLopError());
-            jobStruct.setComplete(true);
-            errorHandlers.handle(submitJob.getPacketID(), jobStruct);
+            JobProxy jobProxy = new JobProxy();
+            jobProxy.setJobId(submitJob.getPacketID());
+            jobProxy.setLopError(submitJob.getLopError());
+            jobProxy.setComplete(true);
+            errorHandlers.handle(submitJob.getPacketID(), jobProxy);
         } finally {
             successHandlers.removeHandler(submitJob.getPacketID());
             errorHandlers.removeHandler(submitJob.getPacketID());

@@ -24,10 +24,10 @@ public class DiscoItemsPacketListener extends RegistryPacketListener {
     public void processPacket(Packet packet) {
         DiscoverItems discoItems = (DiscoverItems) packet;
         if (discoItems.getType() == IQ.Type.GET) {
-            DiscoverItems returnDiscoItems = this.getXmppRegistry().createDiscoItems(discoItems.getFrom());
+            DiscoverItems returnDiscoItems = this.getRegistry().createDiscoItems(discoItems.getFrom());
             returnDiscoItems.setPacketID(discoItems.getPacketID());
-            this.getXmppRegistry().getConnection().sendPacket(returnDiscoItems);
-            System.out.println(returnDiscoItems.toXML());
+            this.getRegistry().getConnection().sendPacket(returnDiscoItems);
+            Registry.LOGGER.info(returnDiscoItems.toXML());
         }
 
     }

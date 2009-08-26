@@ -9,9 +9,8 @@ package org.linkedprocess.villein.patterns;
 
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.villein.proxies.CountrysideProxy;
-import org.linkedprocess.villein.proxies.FarmHolder;
 import org.linkedprocess.villein.proxies.FarmProxy;
-import org.linkedprocess.villein.proxies.Cloud;
+import org.linkedprocess.villein.proxies.CloudProxy;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -35,14 +34,14 @@ public class ResourceAllocationPattern {
         }
     }
 
-    public static Set<FarmProxy> allocateFarms(final FarmHolder farmHolder, final int numberOfFarms, final long timeout) throws TimeoutException {
+    public static Set<FarmProxy> allocateFarms(final CloudProxy cloudProxy, final int numberOfFarms, final long timeout) throws TimeoutException {
         Set<FarmProxy> farmProxies = new HashSet<FarmProxy>();
         long startTime = System.currentTimeMillis();
         while (true) {
             checkTimeout(startTime, timeout);
-            if (farmHolder.getFarmProxies().size() >= numberOfFarms) {
+            if (cloudProxy.getFarmProxies().size() >= numberOfFarms) {
                 int i = 0;
-                for (FarmProxy farmProxy : farmHolder.getFarmProxies()) {
+                for (FarmProxy farmProxy : cloudProxy.getFarmProxies()) {
                     farmProxies.add(farmProxy);
                     i++;
                     if (i == numberOfFarms)
@@ -58,12 +57,12 @@ public class ResourceAllocationPattern {
         }
     }
 
-    public static CountrysideProxy allocateCountryside(final Cloud cloud, final String countrysideJid, final long timeout) throws TimeoutException {
+    public static CountrysideProxy allocateCountryside(final CloudProxy cloudProxy, final String countrysideJid, final long timeout) throws TimeoutException {
         CountrysideProxy countrysideProxy = null;
         long startTime = System.currentTimeMillis();
         while (true) {
             checkTimeout(startTime, timeout);
-            countrysideProxy = cloud.getCountrysideProxy(countrysideJid);
+            countrysideProxy = cloudProxy.getCountrysideProxy(countrysideJid);
             if (null != countrysideProxy)
                 return countrysideProxy;
             try {

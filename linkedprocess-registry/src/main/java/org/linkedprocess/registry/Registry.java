@@ -32,7 +32,7 @@ public class Registry extends LopClient {
 
     public static Logger LOGGER = LinkedProcess.getLogger(Registry.class);
     public static final String RESOURCE_PREFIX = "LoPRegistry";
-    public static final String STATUS_MESSAGE = "LoP Registry v0.1";
+    public static final String STATUS_MESSAGE = "LoPSideD Registry";
     protected LinkedProcess.RegistryStatus status;
     protected Set<String> activeFarms = new HashSet<String>();
 
@@ -77,12 +77,12 @@ public class Registry extends LopClient {
         this.getDiscoManager().addFeature(LinkedProcess.LOP_REGISTRY_NAMESPACE);
     }
 
-    public void addActiveFarm(String jid) {
-        this.activeFarms.add(jid);
+    public void addActiveFarm(String fullJid) {
+        this.activeFarms.add(fullJid);
     }
 
-    public void removeActiveFarm(String jid) {
-        this.activeFarms.remove(jid);
+    public void removeActiveFarm(String fullJid) {
+        this.activeFarms.remove(fullJid);
     }
 
     public DiscoverItems createDiscoItems(String toJid) {

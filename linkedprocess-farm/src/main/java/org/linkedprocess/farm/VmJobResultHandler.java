@@ -7,11 +7,8 @@
 
 package org.linkedprocess.farm;
 
-import org.jivesoftware.smack.packet.IQ;
 import org.linkedprocess.farm.os.JobResult;
 import org.linkedprocess.farm.os.VmScheduler;
-import org.linkedprocess.farm.os.errors.VmNotFoundException;
-import org.linkedprocess.farm.os.Vm;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -19,25 +16,19 @@ import org.linkedprocess.farm.os.Vm;
  */
 public class VmJobResultHandler implements VmScheduler.VmResultHandler {
 
-    Farm farm;
+    protected Farm farm;
 
     public VmJobResultHandler(Farm farm) {
         this.farm = farm;
     }
 
     public void handleResult(JobResult result) {
-        try {
-            Vm vm = farm.getVm(result.getJob().getVmId());
-            IQ returnSubmitJob = result.generateReturnEvalulate();
-            returnSubmitJob.setFrom(farm.getFullJid());
-            farm.getConnection().sendPacket(returnSubmitJob);
 
-            Farm.LOGGER.info("Sent " + VmJobResultHandler.class.getName());
-            Farm.LOGGER.info(returnSubmitJob.toXML());
+        SubmitJob returnSubmitJob = result.generateReturnSubmitJob();
+        returnSubmitJob.setFrom(farm.getFullJid());
+        farm.getConnection().sendPacket(returnSubmitJob);
 
-        } catch (VmNotFoundException e) {
-            Farm.LOGGER.severe("Could not find virtual machine. Thus, can not send error message");
-        }
-
+        Farm.LOGGER.info("Sent " + VmJobResultHandler.class.getName());
+        Farm.LOGGER.info(returnSubmitJob.toXML());
     }
 }

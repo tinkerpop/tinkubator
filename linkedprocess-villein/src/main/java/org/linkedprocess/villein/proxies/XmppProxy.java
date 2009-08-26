@@ -29,7 +29,7 @@ import java.util.Set;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public abstract class XmppProxy {
+public abstract class XmppProxy implements Comparable {
 
    protected Document discoInfoDocument;
    protected Dispatcher dispatcher;
@@ -119,6 +119,14 @@ public abstract class XmppProxy {
             }
         }
         return proxyFields;
+    }
+
+    public int compareTo(Object xmppProxy) {
+        if (xmppProxy instanceof XmppProxy) {
+            return this.fullJid.compareTo(((XmppProxy) xmppProxy).getFullJid());
+        } else {
+            throw new ClassCastException();
+        }
     }
 
     public String toString() {

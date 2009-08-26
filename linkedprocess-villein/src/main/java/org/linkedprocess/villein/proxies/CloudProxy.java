@@ -12,24 +12,17 @@ import org.linkedprocess.LinkedProcess;
 import java.util.*;
 
 /**
- * An LoP cloud is the primary interface to all LoP resources.
- * All resources in an LoP cloud (e.g. countrysides, registries, farms, virtual machines, and jobs) are mediated through proxies.
- * As a developer, you should primarily focus on the evolving data proxy data structure whereby, an LoP cloud contains
+ * A CloudProxy is the primary interface to all LoP resources.
+ * All resources in a CloudProxy (e.g. countrysides, registries, farms, virtual machines, and jobs) are mediated through proxies.
+ * As a developer, you should primarily focus on the evolving data proxy data structure whereby, a CloudProxy contains
  * contrysides, countrysides contain farms and registries, farms contains virtual machines, and virtual machines contain jobs. These
  * proxies hide many of the low-level details of the LoP XMPP protocol specification. Moreover, higher-level interfaces
- * to the underlying resources of an LoP cloud can be accessed through the various supported patterns.
+ * to the underlying resources of a CloudProxy can be accessed through the various supported patterns.
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class Cloud implements FarmHolder {
-
-    /**
-     * The types of proxies that exist.
-     */
-    public enum ProxyType {
-        COUNTRYSIDE, FARM, REGISTRY, VM
-    }
+public class CloudProxy {
 
     /**
      * The countryside proxies that are maintained by this cloud.
@@ -113,8 +106,13 @@ public class Cloud implements FarmHolder {
         return vmProxies;
     }
 
-
-    public XmppProxy getProxy(String fullJid) {
+    /**
+     * Find an XMPP proxy (e.g. Farm or Registry) the a cloud by its full jid.
+     *
+     * @param fullJid the jid of the proxy to retrieve
+     * @return the xmpp proxy with the provided full jid
+     */
+    public XmppProxy getXmppProxy(String fullJid) {
         for (CountrysideProxy countrysideProxy : this.countrysideProxies.values()) {
 
             for (RegistryProxy registryProxy : countrysideProxy.getRegistryProxies()) {
@@ -129,6 +127,12 @@ public class Cloud implements FarmHolder {
         return null;
     }
 
+    /**
+     * Find a farm proxy in the cloud by its full jid.
+     *
+     * @param fullJid the jid of the farm to retrieve
+     * @return the farm with the provided jid
+     */
     public FarmProxy getFarmProxy(String fullJid) {
         for (CountrysideProxy countrysideProxy : this.countrysideProxies.values()) {
             for (FarmProxy farmProxy : countrysideProxy.getFarmProxies()) {
@@ -139,6 +143,12 @@ public class Cloud implements FarmHolder {
         return null;
     }
 
+    /**
+     * Find a registry proxy in the cloud by its full jid.
+     *
+     * @param fullJid the jid of the registry to retrieve
+     * @return the registry with the provided jid
+     */
     public RegistryProxy getRegistryProxy(String fullJid) {
         for (CountrysideProxy countrysideProxy : this.countrysideProxies.values()) {
             for (RegistryProxy registryProxy : countrysideProxy.getRegistryProxies()) {
@@ -149,16 +159,22 @@ public class Cloud implements FarmHolder {
         return null;
     }
 
+    /**
+     * Find a virtual machine proxy in the cloud by its identifier. Note that in theory
+     * all virtual machines should have unique IDs, but this is not guarenteed.
+     *
+     * @param vmId the identifier of the virtual machine to retrieve
+     * @return the virtual machine with the provided identifier
+     */
     public VmProxy getVmProxy(String vmId) {
-        for(FarmProxy farmProxies : this.getFarmProxies()) {
-            for(VmProxy vmProxy : farmProxies.getVmProxies()) {
-                if(vmProxy.getVmId().equals(vmId))
+        for (FarmProxy farmProxies : this.getFarmProxies()) {
+            for (VmProxy vmProxy : farmProxies.getVmProxies()) {
+                if (vmProxy.getVmId().equals(vmId))
                     return vmProxy;
             }
         }
         return null;
     }
-
 
     /**
      * This is a helper method that gets the parent proxy of the provided jid (fully-qualified or bare).
@@ -186,11 +202,11 @@ public class Cloud implements FarmHolder {
     }
 
     /**
-     * This is a helper method that removes a proxy from its parent.
+     * This is a helper method that removes an XMPP proxy from its parent.
      *
      * @param fullJid the jid of the proxy to remove from its parent
      */
-    public void removeProxy(String fullJid) {
+    public void removeXmppProxy(String fullJid) {
         CountrysideProxy countrysideProxy = this.getCountrysideProxy(LinkedProcess.generateBareJid(fullJid));
         if (countrysideProxy != null) {
             countrysideProxy.removeFarmProxy(fullJid);

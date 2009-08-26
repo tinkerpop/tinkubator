@@ -31,7 +31,7 @@ class VmSequencer {
     private static long threadID = 0;
 
     private static synchronized String nextThreadName() {
-        return "LOP VM sequencer thread #" + ++threadID;
+        return "LoP VM sequencer thread #" + ++threadID;
     }
 
     /**

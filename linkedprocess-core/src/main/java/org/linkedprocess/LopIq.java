@@ -38,7 +38,8 @@ public abstract class LopIq extends IQ {
         LinkedProcess.LopErrorType errorType = null;
         for (PacketExtension extension : xmppError.getExtensions()) {
             errorType = LinkedProcess.LopErrorType.getErrorType(extension.getElementName());
-            break;
+            if(errorType != null)
+                break;
         }
         return new Error(Error.stringConditionMap.get(xmppError.getCondition()), errorType, xmppError.getMessage(), this.getPacketID());
     }

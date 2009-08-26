@@ -57,34 +57,34 @@ public class VmProxy implements Comparable {
     /**
      * Submit a job to the virtual machine for execution.
      *
-     * @param jobStruct      the job to submit (requires at least an expression)
+     * @param jobProxy      the job to submit (requires at least an expression)
      * @param successHandler the handler called when a sucessful result has occurred
      * @param errorHandler   the handler called when an error result has occurred
      */
-    public void submitJob(final JobStruct jobStruct, final Handler<JobStruct> successHandler, final Handler<JobStruct> errorHandler) {
-        dispatcher.getSubmitJobCommand().send(this, jobStruct, successHandler, errorHandler);
+    public void submitJob(final JobProxy jobProxy, final Handler<JobProxy> successHandler, final Handler<JobProxy> errorHandler) {
+        dispatcher.getSubmitJobCommand().send(this, jobProxy, successHandler, errorHandler);
     }
 
     /**
      * Ping a job that is being executed by the virtual machine to determine its status.
      *
-     * @param jobStruct      the job to ping (requires at least the job id)
+     * @param jobProxy      the job to ping (requires at least the job id)
      * @param successHandler the handler called when a sucessful result has occurred
      * @param errorHandler   the handler called when an error result has occurred
      */
-    public void pingJob(final JobStruct jobStruct, final Handler<LinkedProcess.JobStatus> successHandler, final Handler<Error> errorHandler) {
-        dispatcher.getPingJobCommand().send(this, jobStruct, successHandler, errorHandler);
+    public void pingJob(final JobProxy jobProxy, final Handler<LinkedProcess.JobStatus> successHandler, final Handler<Error> errorHandler) {
+        dispatcher.getPingJobCommand().send(this, jobProxy, successHandler, errorHandler);
     }
 
     /**
      * Abort a job that is being executed by the virtual machine.
      *
-     * @param jobStruct      the job to abort (requires at least the job id)
+     * @param jobProxy      the job to abort (requires at least the job id)
      * @param successHandler the handler called when a sucessful result has occurred
      * @param errorHandler   the handler called when an error result has occurred
      */
-    public void abortJob(final JobStruct jobStruct, final Handler<String> successHandler, final Handler<org.linkedprocess.Error> errorHandler) {
-        dispatcher.getAbortJobCommand().send(this, jobStruct, successHandler, errorHandler);
+    public void abortJob(final JobProxy jobProxy, final Handler<String> successHandler, final Handler<org.linkedprocess.Error> errorHandler) {
+        dispatcher.getAbortJobCommand().send(this, jobProxy, successHandler, errorHandler);
     }
 
     /**

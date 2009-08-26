@@ -19,16 +19,12 @@ public class Job {
     private final String expression;
     private long timeSpent;
 
-    public Job(final String vmId,
-               final String villeinJid,
-               final String jobId,
-               final String expression) {
+    public Job(final String vmId, final String villeinJid, final String jobId, final String expression) {
         this.vmId = vmId;
         this.villeinJid = villeinJid;
         this.jobId = jobId;
         this.expression = expression;
-
-        timeSpent = 0;
+        timeSpent = 0l;
     }
 
     public String getVilleinJid() {
@@ -57,9 +53,9 @@ public class Job {
 
     public String toString() {
         return "Job("
-                + "jobId:'" + jobId + "'"
-                + ", vmJid:'" + vmId + "'"
-                + ", villeinJid:'" + villeinJid + "'"
+                + "id:'" + jobId + "'"
+                + ", vm_id:'" + vmId + "'"
+                + ", villein_jid:'" + villeinJid + "'"
                 + ", expression:'" + expression + "')";
 
     }
