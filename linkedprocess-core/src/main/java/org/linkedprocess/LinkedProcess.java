@@ -37,21 +37,6 @@ public class LinkedProcess {
             PYTHON = "jython",
             RUBY = "jruby";
 
-    public static String generateRandomPassword() {
-        // e.g. from gtalk 6D56433B
-        Random random = new Random();
-        StringBuilder b = new StringBuilder();
-        for (int i = 0; i < 8; i++) {
-            int x = random.nextInt(36);
-            if (x < 10)
-                b.append(x);
-            else
-                b.append(((char) (x + 55)));
-
-        }
-        return b.toString();
-    }
-
     public static String convertStreamToString(InputStream inputStream) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder stringBuilder = new StringBuilder();
@@ -136,18 +121,6 @@ public class LinkedProcess {
         }
         return name;
     }
-
- /*   public static String generateResource(String fullJid) {
-        return fullJid.substring(fullJid.indexOf("/") + 1);
-    }
-
-    public static String generateBareJid(String fullJid) {
-        return fullJid.substring(0, fullJid.indexOf("/"));
-    }
-
-    public static boolean isBareJid(String jid) {
-        return !jid.contains("/");
-    }*/
 
     public static String createPrettyXML(String xml) throws JDOMException, IOException {
         SAXBuilder builder = new SAXBuilder();

@@ -1,5 +1,7 @@
 package org.linkedprocess;
 
+import java.util.Random;
+
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
@@ -18,7 +20,7 @@ public class Jid implements Comparable {
     }
 
     public Jid getBareJid() {
-        if(this.jid.contains(FORWARD_SLASH))
+        if (this.jid.contains(FORWARD_SLASH))
             return new Jid(this.jid.substring(0, this.jid.indexOf(FORWARD_SLASH)));
         else
             return new Jid(this.jid);
@@ -37,11 +39,22 @@ public class Jid implements Comparable {
     }
 
     public static String generateRandomResourceId() {
-        return LinkedProcess.generateRandomPassword();
+        // e.g. from gtalk 6D56433B
+        Random random = new Random();
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < 8; i++) {
+            int x = random.nextInt(36);
+            if (x < 10)
+                b.append(x);
+            else
+                b.append(((char) (x + 55)));
+
+        }
+        return b.toString();
     }
 
     public int compareTo(Object jid) {
-        if(jid instanceof Jid) {
+        if (jid instanceof Jid) {
             return jid.toString().compareTo(this.jid);
         } else {
             throw new ClassCastException();
@@ -49,8 +62,8 @@ public class Jid implements Comparable {
     }
 
     public boolean equals(Object jid) {
-        if(jid instanceof Jid) {
-            return jid.toString().equals(this.jid);   
+        if (jid instanceof Jid) {
+            return jid.toString().equals(this.jid);
         } else {
             return false;
         }
