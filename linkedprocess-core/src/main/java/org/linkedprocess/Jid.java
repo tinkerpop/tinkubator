@@ -8,7 +8,7 @@ import java.util.Random;
  */
 public class Jid implements Comparable {
 
-    public String jid;
+    private String jid;
     private static final String FORWARD_SLASH = "/";
 
     public Jid(String jid) {
