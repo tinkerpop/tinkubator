@@ -9,7 +9,6 @@ package org.linkedprocess.villein;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.LopPacketListener;
 import org.linkedprocess.farm.*;
 
@@ -27,7 +26,7 @@ class VilleinPacketListener extends LopPacketListener {
     }
 
     public Villein getVillein() {
-        return (Villein) this.lopClient;
+        return (Villein) this.xmppClient;
     }
 
     public void processPacket(Packet packet) {

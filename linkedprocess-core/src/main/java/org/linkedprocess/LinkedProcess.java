@@ -82,54 +82,12 @@ public class LinkedProcess {
         }
     }
 
-    public enum FarmStatus {
-        ACTIVE("active"), ACTIVE_FULL("full"), INACTIVE("inactive");
+    public enum Status {
+        ACTIVE("active"), BUSY("busy"), INACTIVE("inactive");
 
         private final String name;
 
-        private FarmStatus(final String name) {
-            this.name = name;
-        }
-
-        public String toString() {
-            return name;
-        }
-    }
-
-    public enum VmStatus {
-        ACTIVE("active"), ACTIVE_FULL("full"), NOT_FOUND("not_found"), INACTIVE("inactive");
-
-        private final String name;
-
-        private VmStatus(final String name) {
-            this.name = name;
-        }
-
-        public String toString() {
-            return name;
-        }
-    }
-
-    public enum VilleinStatus {
-        ACTIVE("active"), INACTIVE("inactive");
-
-        private final String name;
-
-        private VilleinStatus(final String name) {
-            this.name = name;
-        }
-
-        public String toString() {
-            return name;
-        }
-    }
-
-    public enum RegistryStatus {
-        ACTIVE("active"), INACTIVE("inactive");
-
-        private final String name;
-
-        private RegistryStatus(final String name) {
+        private Status(final String name) {
             this.name = name;
         }
 

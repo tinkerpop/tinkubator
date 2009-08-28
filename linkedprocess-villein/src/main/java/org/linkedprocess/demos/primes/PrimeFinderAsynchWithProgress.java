@@ -23,6 +23,7 @@ import java.util.concurrent.Future;
 
 import org.jivesoftware.smack.XMPPException;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.LopXmppException;
 
 import org.linkedprocess.farm.os.TypedValue;
 import org.linkedprocess.farm.os.VmBindings;
@@ -124,8 +125,7 @@ public class PrimeFinderAsynchWithProgress {
 		poll(meterMax, pollingInterval);
 	}
 
-	public static void init(String username, String password, String server,
-			int port) throws XMPPException {
+	public static void init(String username, String password, String server, int port) throws LopXmppException {
 		villein = new Villein(server, port, username, password);
 		villein.createCloudFromRoster();
 	}

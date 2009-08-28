@@ -73,7 +73,7 @@ public class Vm {
         return this.spawningVilleinJid;
     }
 
-    public LinkedProcess.VmStatus getVmStatus() {
+    public LinkedProcess.Status getVmStatus() {
         return this.farm.getVmScheduler().getVirtualMachineStatus(this.vmId);
     }
 

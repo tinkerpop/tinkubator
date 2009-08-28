@@ -49,7 +49,7 @@ public class VmScheduler {
     private final VmResultHandler resultHandler;
     private LopStatusEventHandler eventHandler;
     private final int numberOfSequencers;
-    private LinkedProcess.FarmStatus status;
+    private LinkedProcess.Status farmStatus;
     private long lastCleanupTime = System.currentTimeMillis();
 
     private long jobsReceived = 0;
@@ -87,7 +87,7 @@ public class VmScheduler {
             new VmSequencer(source, timeSlice);
         }
 
-        setSchedulerStatus(LinkedProcess.FarmStatus.ACTIVE);
+        setSchedulerStatus(LinkedProcess.Status.ACTIVE);
     }
 
     public synchronized void setStatusEventHandler(LopStatusEventHandler statusHandler) {
@@ -108,7 +108,7 @@ public class VmScheduler {
      */
     public synchronized void submitJob(final String machineJID,
                                        final Job job) throws VmIsFullException, VmNotFoundException, JobAlreadyExistsException {
-        if (LinkedProcess.FarmStatus.INACTIVE == status) {
+        if (LinkedProcess.Status.INACTIVE == farmStatus) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
@@ -139,7 +139,7 @@ public class VmScheduler {
      */
     public synchronized void abortJob(final String machineJID,
                                       final String jobID) throws VmNotFoundException, JobNotFoundException {
-        if (LinkedProcess.FarmStatus.INACTIVE == status) {
+        if (LinkedProcess.Status.INACTIVE == farmStatus) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
@@ -166,13 +166,13 @@ public class VmScheduler {
      */
     public synchronized void spawnVirtualMachine(final String vmId,
                                                  final String language) throws VmAlreadyExistsException, UnsupportedScriptEngineException, VmSchedulerIsFullException {
-        if (LinkedProcess.FarmStatus.INACTIVE == status) {
+        if (LinkedProcess.Status.INACTIVE == farmStatus) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
         LOGGER.info("attempting to add machine of type " + language + " with JID '" + vmId + "'");
 
-        if (LinkedProcess.FarmStatus.ACTIVE_FULL == status) {
+        if (LinkedProcess.Status.BUSY == farmStatus) {
             throw new VmSchedulerIsFullException();
         }
 
@@ -206,10 +206,10 @@ public class VmScheduler {
 
         workersByJID.put(vmId, w);
         if (MAX_VM == workersByJID.size()) {
-            setSchedulerStatus(LinkedProcess.FarmStatus.ACTIVE_FULL);
+            setSchedulerStatus(LinkedProcess.Status.BUSY);
         }
 
-        setVirtualMachineStatus(vmId, LinkedProcess.VmStatus.ACTIVE);
+        setVirtualMachineStatus(vmId, LinkedProcess.Status.ACTIVE);
 
         cleanup();
     }
@@ -222,7 +222,7 @@ public class VmScheduler {
      *          if a VM worker with the JID does not exist
      */
     public synchronized void terminateVm(final String vmId) throws VmNotFoundException {
-        if (LinkedProcess.FarmStatus.INACTIVE == status) {
+        if (LinkedProcess.Status.INACTIVE == farmStatus) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
@@ -233,11 +233,11 @@ public class VmScheduler {
         workerQueue.remove(w);
 
         w.terminate();
-        setVirtualMachineStatus(vmId, LinkedProcess.VmStatus.NOT_FOUND);
+        setVirtualMachineStatus(vmId, LinkedProcess.Status.INACTIVE);
         
 
-        if (MAX_VM > workersByJID.size() && this.status != LinkedProcess.FarmStatus.ACTIVE) {
-            setSchedulerStatus(LinkedProcess.FarmStatus.ACTIVE);
+        if (MAX_VM > workersByJID.size() && this.farmStatus != LinkedProcess.Status.ACTIVE) {
+            setSchedulerStatus(LinkedProcess.Status.ACTIVE);
         }
 
         cleanup();
@@ -249,7 +249,7 @@ public class VmScheduler {
      * @throws org.linkedprocess.farm.os.errors.VmNotFoundException if no VM worker with the given JID exists
      */
     public synchronized VmBindings getAllBindings(final String machineJID) throws VmNotFoundException {
-        if (LinkedProcess.FarmStatus.INACTIVE == status) {
+        if (LinkedProcess.Status.INACTIVE == farmStatus) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
@@ -266,7 +266,7 @@ public class VmScheduler {
      */
     public synchronized VmBindings getBindings(final String machineJID,
                                                final Set<String> bindingNames) throws VmNotFoundException {
-        if (LinkedProcess.FarmStatus.INACTIVE == status) {
+        if (LinkedProcess.Status.INACTIVE == farmStatus) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
@@ -278,19 +278,19 @@ public class VmScheduler {
     /**
      * @return the status of this scheduler
      */
-    public synchronized LinkedProcess.FarmStatus getSchedulerStatus() {
-        return status;
+    public synchronized LinkedProcess.Status getSchedulerStatus() {
+        return farmStatus;
     }
 
     /**
      * @param machineJID the JID of the virtual machine of interest
      * @return the status of the given virtual machine
      */
-    public synchronized LinkedProcess.VmStatus getVirtualMachineStatus(final String machineJID) {
+    public synchronized LinkedProcess.Status getVirtualMachineStatus(final String machineJID) {
         VmWorker w = workersByJID.get(machineJID);
         return (null == w)
-                ? LinkedProcess.VmStatus.NOT_FOUND
-                : LinkedProcess.VmStatus.ACTIVE;
+                ? LinkedProcess.Status.INACTIVE
+                : LinkedProcess.Status.ACTIVE;
     }
 
     /**
@@ -335,12 +335,12 @@ public class VmScheduler {
         for (String vmId : workersByJID.keySet()) {
             VmWorker w = workersByJID.get(vmId);
             w.terminate();
-            setVirtualMachineStatus(vmId, LinkedProcess.VmStatus.NOT_FOUND);
+            setVirtualMachineStatus(vmId, LinkedProcess.Status.INACTIVE);
 
         }
         workersByJID.clear();
 
-        setSchedulerStatus(LinkedProcess.FarmStatus.INACTIVE);
+        setSchedulerStatus(LinkedProcess.Status.INACTIVE);
     }
 
     /**
@@ -371,7 +371,7 @@ public class VmScheduler {
      */
     public synchronized void setBindings(final String machineJID,
                                          final VmBindings bindings) throws VmNotFoundException {
-        if (LinkedProcess.FarmStatus.INACTIVE == status) {
+        if (LinkedProcess.Status.INACTIVE == farmStatus) {
             throw new IllegalStateException("scheduler has been terminated");
         }
 
@@ -481,14 +481,14 @@ public class VmScheduler {
         return w;
     }
 
-    private void setSchedulerStatus(final LinkedProcess.FarmStatus newStatus) {
-        status = newStatus;
-        eventHandler.schedulerStatusChanged(status);
+    private void setSchedulerStatus(final LinkedProcess.Status newFarmStatus) {
+        this.farmStatus = newFarmStatus;
+        eventHandler.schedulerStatusChanged(farmStatus);
     }
 
     private void setVirtualMachineStatus(final String vmId,
-                                         final LinkedProcess.VmStatus newStatus) {
-        eventHandler.virtualMachineStatusChanged(vmId, newStatus);
+                                         final LinkedProcess.Status newVmStatus) {
+        eventHandler.virtualMachineStatusChanged(vmId, newVmStatus);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -504,8 +504,8 @@ public class VmScheduler {
     }
 
     public interface LopStatusEventHandler {
-        void schedulerStatusChanged(LinkedProcess.FarmStatus newStatus);
-        void virtualMachineStatusChanged(String vmId, LinkedProcess.VmStatus newStatus);
+        void schedulerStatusChanged(LinkedProcess.Status newFarmStatus);
+        void virtualMachineStatusChanged(String vmId, LinkedProcess.Status newVmStatus);
     }  
 
     private class ResultCounter implements VmResultHandler {

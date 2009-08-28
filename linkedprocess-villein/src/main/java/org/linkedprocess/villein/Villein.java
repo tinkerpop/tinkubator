@@ -20,7 +20,8 @@ import org.jivesoftware.smack.packet.RosterPacket;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.LopClient;
+import org.linkedprocess.XmppClient;
+import org.linkedprocess.LopXmppException;
 import org.linkedprocess.farm.*;
 import org.linkedprocess.villein.proxies.CloudProxy;
 import org.linkedprocess.villein.proxies.CountrysideProxy;
@@ -40,12 +41,12 @@ import java.util.logging.Logger;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class Villein extends LopClient {
+public class Villein extends XmppClient {
 
     public static Logger LOGGER = LinkedProcess.getLogger(Villein.class);
     public static final String RESOURCE_PREFIX = "LoPVillein";
     public static final String STATUS_MESSAGE = "LoPSideD Villein";
-    protected LinkedProcess.VilleinStatus status;
+    protected LinkedProcess.Status status;
     protected Dispatcher dispatcher;
 
     protected Set<PresenceHandler> presenceHandlers = new HashSet<PresenceHandler>();
@@ -60,7 +61,7 @@ public class Villein extends LopClient {
      * @param password the password to use to log into the XMPP server with
      * @throws XMPPException is thrown when some communication error occurs with the XMPP server
      */
-    public Villein(final String server, final int port, final String username, final String password) throws XMPPException {
+    public Villein(final String server, final int port, final String username, final String password) throws LopXmppException {
         LOGGER.info("Starting " + STATUS_MESSAGE);
 
         ProviderManager pm = ProviderManager.getInstance();
@@ -82,16 +83,16 @@ public class Villein extends LopClient {
 
         this.connection.addPacketListener(new PresencePacketListener(this), presenceFilter);
         this.connection.addPacketListener(new VilleinPacketListener(this), lopFilter);
-        this.status = LinkedProcess.VilleinStatus.ACTIVE;
+        this.status = LinkedProcess.Status.ACTIVE;
         this.sendPresence(this.status);
     }
 
-    public final void sendPresence(final LinkedProcess.VilleinStatus status) {
+    public final void sendPresence(final LinkedProcess.Status status) {
         Presence presence;
-        if (status == LinkedProcess.VilleinStatus.ACTIVE) {
+        if (status == LinkedProcess.Status.ACTIVE) {
             presence = new Presence(Presence.Type.available, Villein.STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
 
-        } else if (status == LinkedProcess.VilleinStatus.INACTIVE) {
+        } else if (status == LinkedProcess.Status.INACTIVE) {
             presence = new Presence(Presence.Type.unavailable);
         } else {
             throw new IllegalStateException("unhandled state: " + status);
@@ -100,11 +101,11 @@ public class Villein extends LopClient {
         this.connection.sendPacket(presence);
     }
 
-    public void setStatus(LinkedProcess.VilleinStatus status) {
+    public void setStatus(LinkedProcess.Status status) {
         this.status = status;
     }
 
-    public LinkedProcess.VilleinStatus getStatus() {
+    public LinkedProcess.Status getStatus() {
         return this.status;
     }
 

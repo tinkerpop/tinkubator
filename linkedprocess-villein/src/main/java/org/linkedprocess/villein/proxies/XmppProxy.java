@@ -31,9 +31,10 @@ import java.util.Set;
  */
 public abstract class XmppProxy implements Comparable {
 
-   protected Document discoInfoDocument;
-   protected Dispatcher dispatcher;
-   protected String fullJid;
+    protected Document discoInfoDocument;
+    protected Dispatcher dispatcher;
+    protected String fullJid;
+    protected LinkedProcess.Status status;
 
     public String getFullJid() {
         return this.fullJid;
@@ -43,6 +44,14 @@ public abstract class XmppProxy implements Comparable {
         this.fullJid = fullJid;
     }
 
+    public void setStatus(LinkedProcess.Status status) {
+        this.status = status;
+    }
+
+    public LinkedProcess.Status getStatus() {
+        return this.status;
+    }
+    
     public void refreshDiscoInfo() {
         if (this.dispatcher != null) {
             ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();

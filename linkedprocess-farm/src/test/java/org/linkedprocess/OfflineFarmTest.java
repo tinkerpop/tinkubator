@@ -18,7 +18,7 @@ import org.linkedprocess.farm.os.errors.VmNotFoundException;
 import org.linkedprocess.farm.os.Vm;
 import org.linkedprocess.testing.offline.MockXmppConnection;
 import org.linkedprocess.testing.offline.OfflineTest;
-import org.linkedprocess.LopClient;
+import org.linkedprocess.XmppClient;
 import org.linkedprocess.farm.SpawnVm;
 import org.linkedprocess.farm.Farm;
 import static org.powermock.api.easymock.PowerMock.*;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Farm.class, LopClient.class,
+@PrepareForTest({Farm.class, XmppClient.class,
         ServiceDiscoveryManager.class})
 public class OfflineFarmTest extends OfflineTest {
 

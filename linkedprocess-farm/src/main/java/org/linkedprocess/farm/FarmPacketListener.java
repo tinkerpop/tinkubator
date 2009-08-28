@@ -1,6 +1,5 @@
 package org.linkedprocess.farm;
 
-import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.LopPacketListener;
 
 /**
@@ -14,7 +13,7 @@ public abstract class FarmPacketListener extends LopPacketListener {
     }
 
     public Farm getFarm() {
-        return (Farm) this.lopClient;
+        return (Farm) this.xmppClient;
     }
 
 }

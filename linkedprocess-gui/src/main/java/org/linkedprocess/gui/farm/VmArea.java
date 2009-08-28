@@ -94,7 +94,6 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
             DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(vm);
             this.treeMap.put(vm.getVmId(), vmNode);
             vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", vm.getSpawningVilleinJid())));
-            vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", ""+VmArea.isAvailable(vm.getVmStatus()))));
             vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", vm.getVmSpecies())));
             model.insertNodeInto(vmNode, farmNode, farmNode.getChildCount());
             this.tree.scrollPathToVisible(new TreePath(vmNode.getPath()));
@@ -104,16 +103,15 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
         model.reload();
     }
 
-    public void updateTree(String vmId, LinkedProcess.VmStatus status) {
+    public void updateTree(String vmId, LinkedProcess.Status status) {
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
         DefaultMutableTreeNode farmNode = this.treeMap.get(this.farmGui.getFarm().getFullJid());
         DefaultMutableTreeNode node = this.treeMap.get(vmId);
-        if (node == null && status != LinkedProcess.VmStatus.NOT_FOUND) {
+        if (node == null && status != LinkedProcess.Status.INACTIVE) {
             try {
                 Vm vm = this.farmGui.getFarm().getVm(vmId);
                 DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(vm);
                 vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", vm.getSpawningVilleinJid())));
-                vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", ""+VmArea.isAvailable(vm.getVmStatus()))));
                 vmNode.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", vm.getVmSpecies())));
                 model.insertNodeInto(vmNode, farmNode, farmNode.getChildCount());
                 this.tree.scrollPathToVisible(new TreePath(vmNode.getPath()));
@@ -122,23 +120,19 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if (node != null && (status == LinkedProcess.VmStatus.ACTIVE || status == LinkedProcess.VmStatus.ACTIVE_FULL)) {
+        } else if (node != null && (status == LinkedProcess.Status.ACTIVE || status == LinkedProcess.Status.BUSY)) {
             node.removeAllChildren();
             Vm vm = (Vm) node.getUserObject();
             node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("villein_jid", vm.getSpawningVilleinJid())));
-            node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_status", ""+VmArea.isAvailable(vm.getVmStatus()))));
             node.add(new DefaultMutableTreeNode(new TreeRenderer.TreeNodeProperty("vm_species", vm.getVmSpecies())));
             model.reload(node);
-        } else if (node != null && status == LinkedProcess.VmStatus.NOT_FOUND) {
+        } else if (node != null && status == LinkedProcess.Status.INACTIVE) {
             node.removeAllChildren();
             model.removeNodeFromParent(node);
             this.treeMap.remove(vmId);
         }
     }
 
-    private static boolean isAvailable(LinkedProcess.VmStatus vmStatus) {
-        return(vmStatus == LinkedProcess.VmStatus.ACTIVE);
-    }
 
     public void actionPerformed(ActionEvent event) {
         if (event.getActionCommand().equals(SHUTDOWN)) {

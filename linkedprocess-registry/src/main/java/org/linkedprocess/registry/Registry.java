@@ -17,7 +17,8 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.LopClient;
+import org.linkedprocess.XmppClient;
+import org.linkedprocess.LopXmppException;
 
 import java.util.HashSet;
 import java.util.Properties;
@@ -28,15 +29,14 @@ import java.util.logging.Logger;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class Registry extends LopClient {
+public class Registry extends XmppClient {
 
     public static Logger LOGGER = LinkedProcess.getLogger(Registry.class);
     public static final String RESOURCE_PREFIX = "LoPRegistry";
     public static final String STATUS_MESSAGE = "LoPSideD Registry";
-    protected LinkedProcess.RegistryStatus status;
     protected Set<String> activeFarms = new HashSet<String>();
 
-    public Registry(final String server, final int port, final String username, final String password) throws XMPPException {
+    public Registry(final String server, final int port, final String username, final String password) throws LopXmppException {
         LOGGER.info("Starting " + STATUS_MESSAGE);
 
 
@@ -53,20 +53,11 @@ public class Registry extends LopClient {
         this.connection.addPacketListener(new PresencePacketListener(this), presenceFilter);
         this.connection.addPacketListener(new DiscoItemsPacketListener(this), discoInfoFilter);
 
-        this.status = LinkedProcess.RegistryStatus.ACTIVE;
-        this.connection.sendPacket(this.createPresence(this.status));
-
+        this.sendPresence(this.getStatus(), STATUS_MESSAGE);
     }
 
-    public final Presence createPresence(final LinkedProcess.RegistryStatus status) {
-        switch (status) {
-            case ACTIVE:
-                return new Presence(Presence.Type.available, Registry.STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
-            case INACTIVE:
-                return new Presence(Presence.Type.unavailable);
-            default:
-                throw new IllegalStateException("unhandled state: " + status);
-        }
+    public LinkedProcess.Status getStatus() {
+        return LinkedProcess.Status.ACTIVE;
     }
 
     protected void initiateFeatures() {

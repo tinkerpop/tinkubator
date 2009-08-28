@@ -21,9 +21,9 @@ import java.util.logging.Logger;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public abstract class LopClient {
+public abstract class XmppClient {
 
-    public static Logger LOGGER = LinkedProcess.getLogger(LopClient.class);
+    public static Logger LOGGER = LinkedProcess.getLogger(XmppClient.class);
     protected Connection connection;
     protected Roster roster;
     protected boolean shutdownRequested = false;
@@ -34,7 +34,7 @@ public abstract class LopClient {
     private String server;
     private int port;
 
-    protected void logon(final String server, final int port, final String username, final String password, String resource) throws XMPPException {
+    protected void logon(final String server, final int port, final String username, final String password, String resource) throws LopXmppException {
 
         this.server = server;
         this.port = port;
@@ -52,12 +52,15 @@ public abstract class LopClient {
         connConfig.setSendPresence(false);
         //connConfig.setSASLAuthenticationEnabled(false);
 
-        this.connection = new XmppConnectionWrapper(connConfig);
-        this.connection.connect();
-
-        LOGGER.info("Connected to " + connection.getHost());
-        connection.login(username, password, resource + LinkedProcess.FORWARD_SLASH + LinkedProcess.generateRandomResourceId());
-        LOGGER.info("Logged in as " + connection.getUser());
+        try {
+            this.connection = new XmppConnectionWrapper(connConfig);
+            this.connection.connect();
+            LOGGER.info("Connected to " + connection.getHost());
+            connection.login(username, password, resource + LinkedProcess.FORWARD_SLASH + LinkedProcess.generateRandomResourceId());
+            LOGGER.info("Logged in as " + connection.getUser());
+        } catch(XMPPException e) {
+            throw new LopXmppException(e.getMessage());
+        }
 
         Thread shutdownHook = new Thread(new Runnable() {
             public void run() {
@@ -94,6 +97,25 @@ public abstract class LopClient {
         LOGGER.info("Secure: " + connection.isSecureConnection());
         LOGGER.info("Compression: " + connection.isUsingCompression());
         LOGGER.info("Transport Layer Security: " + connection.isUsingTLS());
+    }
+
+    public LinkedProcess.Status getStatus() {
+        return null;
+    }
+
+    public void sendPresence(final LinkedProcess.Status status, String statusMessage) {
+        Presence presence;
+        if (status == LinkedProcess.Status.ACTIVE) {
+            presence = new Presence(Presence.Type.available, statusMessage, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
+        } else if (status == LinkedProcess.Status.BUSY) {
+            presence = new Presence(Presence.Type.available, statusMessage, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.dnd);
+        } else if (status == LinkedProcess.Status.INACTIVE) {
+            presence = new Presence(Presence.Type.unavailable);
+        } else {
+            throw new IllegalStateException("unhandled state: " + status);
+        }
+        presence.setFrom(this.getFullJid());
+        this.connection.sendPacket(presence);
     }
 
     public String getFullJid() {

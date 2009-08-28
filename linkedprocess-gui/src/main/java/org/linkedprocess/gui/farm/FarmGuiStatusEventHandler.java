@@ -17,11 +17,11 @@ public class FarmGuiStatusEventHandler extends StatusEventHandler {
         this.farmGui = farmGui;
     }
 
-    public void schedulerStatusChanged(LinkedProcess.FarmStatus status) {
+    public void schedulerStatusChanged(LinkedProcess.Status status) {
         super.schedulerStatusChanged(status);
     }
 
-    public void virtualMachineStatusChanged(String vmId, LinkedProcess.VmStatus status) {
+    public void virtualMachineStatusChanged(String vmId, LinkedProcess.Status status) {
         super.virtualMachineStatusChanged(vmId, status);
         farmGui.updateVirtualMachineTree(vmId, status);
     }

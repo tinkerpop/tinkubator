@@ -12,7 +12,8 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.LinkedProcessFarm;
-import org.linkedprocess.LopClient;
+import org.linkedprocess.XmppClient;
+import org.linkedprocess.LopXmppException;
 import org.linkedprocess.farm.os.VmScheduler;
 import org.linkedprocess.farm.os.Vm;
 import org.linkedprocess.farm.os.errors.UnsupportedScriptEngineException;
@@ -31,7 +32,7 @@ import java.util.logging.Logger;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class Farm extends LopClient {
+public class Farm extends XmppClient {
 
     public static Logger LOGGER = LinkedProcess.getLogger(Farm.class);
     public static final String RESOURCE_PREFIX = "LoPFarm";
@@ -43,7 +44,7 @@ public class Farm extends LopClient {
     protected final VmScheduler vmScheduler;
     protected DataForm serviceExtension;
 
-    public Farm(final String server, final int port, final String username, final String password, final String farmPassword) throws XMPPException {
+    public Farm(final String server, final int port, final String username, final String password, final String farmPassword) throws LopXmppException {
         LOGGER.info("Starting " + STATUS_MESSAGE);
         if (null == farmPassword) {
             this.farmPassword = LinkedProcess.getConfiguration().getProperty(LinkedProcess.FARM_PASSWORD_PROPERTY);
@@ -87,27 +88,17 @@ public class Farm extends LopClient {
         this.connection.addPacketListener(new PresenceSubscriptionPacketListener(this), subscribeFilter);
     }
 
-    private void logon(String server, int port, String username, String password) throws XMPPException {
+    private void logon(String server, int port, String username, String password) throws LopXmppException {
         super.logon(server, port, username, password, RESOURCE_PREFIX);
     }
 
-    public void sendPresence(final LinkedProcess.FarmStatus status) {
-        Presence presence;
-        if (status == LinkedProcess.FarmStatus.ACTIVE) {
-            presence = new Presence(Presence.Type.available, STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
-        } else if (status == LinkedProcess.FarmStatus.ACTIVE_FULL) {
-            presence = new Presence(Presence.Type.available, Farm.STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.dnd);
-        } else if (status == LinkedProcess.FarmStatus.INACTIVE) {
-            presence = new Presence(Presence.Type.unavailable);
-        } else {
-            throw new IllegalStateException("unhandled state: " + status);
-        }
-        presence.setFrom(this.getFullJid());
-        this.connection.sendPacket(presence);
-    }
 
     public VmScheduler getVmScheduler() {
         return this.vmScheduler;
+    }
+
+    public LinkedProcess.Status getStatus() {
+        return this.vmScheduler.getSchedulerStatus();
     }
 
     public Vm spawnVm(String spawningVilleinJid, String vmSpecies) throws VmAlreadyExistsException, VmSchedulerIsFullException, UnsupportedScriptEngineException {

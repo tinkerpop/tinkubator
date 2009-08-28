@@ -8,6 +8,7 @@
 package org.linkedprocess.villein;
 
 import org.linkedprocess.villein.proxies.XmppProxy;
+import org.linkedprocess.LinkedProcess;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -15,5 +16,5 @@ import org.linkedprocess.villein.proxies.XmppProxy;
  */
 public interface PresenceHandler {
 
-    public void handlePresenceUpdate(XmppProxy proxy, boolean available);
+    public void handlePresenceUpdate(XmppProxy proxy, LinkedProcess.Status status);
 }

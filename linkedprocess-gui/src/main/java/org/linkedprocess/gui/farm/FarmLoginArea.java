@@ -4,6 +4,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.LoginArea;
 import org.linkedprocess.farm.Farm;
+import org.linkedprocess.LopXmppException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -109,7 +110,7 @@ public class FarmLoginArea extends LoginArea {
             } else if (event.getActionCommand().equals(QUIT)) {
                 System.exit(0);
             }
-        } catch (XMPPException e) {
+        } catch (LopXmppException e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "could not login", JOptionPane.ERROR_MESSAGE);
         }
     }

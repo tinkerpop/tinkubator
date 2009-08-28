@@ -49,7 +49,7 @@ public class FarmGui extends JFrame implements ActionListener {
         this.vmArea.createTree();
     }
 
-    public void updateVirtualMachineTree(String vmJid, LinkedProcess.VmStatus status) {
+    public void updateVirtualMachineTree(String vmJid, LinkedProcess.Status status) {
         this.vmArea.updateTree(vmJid, status);
     }
 
