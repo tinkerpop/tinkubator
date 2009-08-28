@@ -96,7 +96,7 @@ public class Farm extends LopClient {
         if (status == LinkedProcess.FarmStatus.ACTIVE) {
             presence = new Presence(Presence.Type.available, STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
         } else if (status == LinkedProcess.FarmStatus.ACTIVE_FULL) {
-            presence = new Presence(Presence.Type.available, Vm.STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.dnd);
+            presence = new Presence(Presence.Type.available, Farm.STATUS_MESSAGE, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.dnd);
         } else if (status == LinkedProcess.FarmStatus.INACTIVE) {
             presence = new Presence(Presence.Type.unavailable);
         } else {
