@@ -21,7 +21,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.jivesoftware.smack.XMPPException;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.LopXmppException;
 
@@ -215,9 +214,9 @@ public class PrimeFinderAsynchWithProgress {
 	public static void allocateFarms(int farmCount) throws TimeoutException {
 		System.out.println("Waiting for " + farmCount + " available farms...");
 		farmProxies = ResourceAllocationPattern.allocateFarms(
-				villein.getCloud(), farmCount, 200000);
+				villein.getCloudProxy(), farmCount, 200000);
 		for (FarmProxy farmProxy : farmProxies) {
-			System.out.println("farm allocated: " + farmProxy.getFullJid());
+			System.out.println("farm allocated: " + farmProxy.getJid());
 		}
 	}
 

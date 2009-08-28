@@ -8,6 +8,7 @@
 package org.linkedprocess.villein.patterns;
 
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.Jid;
 import org.linkedprocess.villein.proxies.CountrysideProxy;
 import org.linkedprocess.villein.proxies.FarmProxy;
 import org.linkedprocess.villein.proxies.CloudProxy;
@@ -57,7 +58,7 @@ public class ResourceAllocationPattern {
         }
     }
 
-    public static CountrysideProxy allocateCountryside(final CloudProxy cloudProxy, final String countrysideJid, final long timeout) throws TimeoutException {
+    public static CountrysideProxy allocateCountryside(final CloudProxy cloudProxy, final Jid countrysideJid, final long timeout) throws TimeoutException {
         CountrysideProxy countrysideProxy = null;
         long startTime = System.currentTimeMillis();
         while (true) {

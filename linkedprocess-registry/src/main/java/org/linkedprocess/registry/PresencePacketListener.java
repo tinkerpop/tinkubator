@@ -11,6 +11,7 @@ package org.linkedprocess.registry;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
+import org.linkedprocess.Jid;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -33,11 +34,11 @@ public class PresencePacketListener extends RegistryPacketListener {
             DiscoverInfo discoInfo = this.getDiscoInfo(packet.getFrom());
             if (isFarm(discoInfo)) {
                 Registry.LOGGER.info("Registering farm: " + packet.getFrom());
-                this.getRegistry().addActiveFarm(packet.getFrom());
+                this.getRegistry().addActiveFarm(new Jid(packet.getFrom()));
             }
         } else {
             Registry.LOGGER.info("Unregistering resource: " + packet.getFrom());
-            this.getRegistry().removeActiveFarm(packet.getFrom());
+            this.getRegistry().removeActiveFarm(new Jid(packet.getFrom()));
         }
     }
 }

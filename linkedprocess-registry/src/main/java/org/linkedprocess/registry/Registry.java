@@ -8,7 +8,6 @@
 package org.linkedprocess.registry;
 
 import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
@@ -19,6 +18,7 @@ import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.XmppClient;
 import org.linkedprocess.LopXmppException;
+import org.linkedprocess.Jid;
 
 import java.util.HashSet;
 import java.util.Properties;
@@ -34,7 +34,7 @@ public class Registry extends XmppClient {
     public static Logger LOGGER = LinkedProcess.getLogger(Registry.class);
     public static final String RESOURCE_PREFIX = "LoPRegistry";
     public static final String STATUS_MESSAGE = "LoPSideD Registry";
-    protected Set<String> activeFarms = new HashSet<String>();
+    protected Set<Jid> activeFarms = new HashSet<Jid>();
 
     public Registry(final String server, final int port, final String username, final String password) throws LopXmppException {
         LOGGER.info("Starting " + STATUS_MESSAGE);
@@ -68,22 +68,22 @@ public class Registry extends XmppClient {
         this.getDiscoManager().addFeature(LinkedProcess.LOP_REGISTRY_NAMESPACE);
     }
 
-    public void addActiveFarm(String fullJid) {
-        this.activeFarms.add(fullJid);
+    public void addActiveFarm(Jid jid) {
+        this.activeFarms.add(jid);
     }
 
-    public void removeActiveFarm(String fullJid) {
-        this.activeFarms.remove(fullJid);
+    public void removeActiveFarm(Jid jid) {
+        this.activeFarms.remove(jid);
     }
 
-    public DiscoverItems createDiscoItems(String toJid) {
+    public DiscoverItems createDiscoItems(Jid jid) {
         DiscoverItems items = new DiscoverItems();
         items.setType(IQ.Type.RESULT);
-        items.setFrom(this.getFullJid());
-        items.setTo(toJid);
+        items.setFrom(this.getJid().toString());
+        items.setTo(jid.toString());
         Set<String> farmCountrysides = new HashSet<String>();
-        for (String farmJid : this.activeFarms) {
-            farmCountrysides.add(LinkedProcess.generateBareJid(farmJid));
+        for (Jid farmJid : this.activeFarms) {
+            farmCountrysides.add(farmJid.getBareJid().toString());
         }
         for (String countrysideJid : farmCountrysides) {
             items.addItem(new DiscoverItems.Item(countrysideJid));

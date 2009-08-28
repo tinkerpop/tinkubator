@@ -30,8 +30,8 @@ public class VmProxy implements Comparable {
     /**
      * The password of this virtual machine.
      */
-    protected String vmPassword;
     protected FarmProxy farmProxy;
+    protected String vmPassword;
     protected String vmId;
     protected Dispatcher dispatcher;
     /**
@@ -119,6 +119,9 @@ public class VmProxy implements Comparable {
         dispatcher.getTerminateVmCommand().send(this, successHandler, errorHandler);
     }
 
+    public FarmProxy getFarmProxy() {
+        return this.farmProxy;
+    }
 
     public void setVmId(final String vmId) {
         this.vmId = vmId;
@@ -145,10 +148,6 @@ public class VmProxy implements Comparable {
      */
     public String getVmSpecies() {
         return this.vmSpecies;
-    }
-
-    public String getFarmJid() {
-        return this.farmProxy.getFullJid();
     }
 
     /**
@@ -194,9 +193,14 @@ public class VmProxy implements Comparable {
         return this.vmBindings;
     }
 
-    public int compareTo(Object vmStruct) {
-        if (vmStruct instanceof VmProxy) {
-            return this.vmId.compareTo(((VmProxy) vmStruct).getVmId());
+    /**
+     * Compare this VmProxy with another VmProxy. Equalitity is based on uniqueness of vmId.
+     * @param vmProxy the VmProxy to compare to this VmProxy
+     * @return the comparison based on String.compareTo() of their vmIds
+     */
+    public int compareTo(Object vmProxy) {
+        if (vmProxy instanceof VmProxy) {
+            return this.vmId.compareTo(((VmProxy) vmProxy).getVmId());
         } else {
             throw new ClassCastException();
         }

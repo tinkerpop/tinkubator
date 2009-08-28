@@ -1,6 +1,7 @@
 package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.Jid;
 import org.linkedprocess.gui.*;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
 import org.linkedprocess.villein.Handler;
@@ -111,12 +112,12 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
         } else if (event.getActionCommand().equals(PROBE)) {
             if (this.popupTreeObject instanceof XmppProxy) {
                 XmppProxy proxy = (XmppProxy) this.popupTreeObject;
-                this.villeinGui.getXmppVillein().probeJid(proxy.getFullJid());
+                this.villeinGui.getXmppVillein().probeJid(proxy.getJid());
             }
         } else if (event.getActionCommand().equals(DISCOVER_INFORMATION)) {
             if (this.popupTreeObject instanceof FarmProxy) {
                 FarmProxy farmProxy = (FarmProxy) this.popupTreeObject;
-                JFrame farmFrame = new JFrame(farmProxy.getFullJid());
+                JFrame farmFrame = new JFrame(farmProxy.getJid().toString());
                 farmFrame.getContentPane().add(new ViewFarmConfigurationPanel(farmProxy, villeinGui));
                 farmFrame.pack();
                 farmFrame.setSize(600, 600);
@@ -126,7 +127,7 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
         } else if (event.getActionCommand().equals(DISCOVER_COUNTRYSIDES)) {
             if (this.popupTreeObject instanceof RegistryProxy) {
                 RegistryProxy registryProxy = (RegistryProxy) this.popupTreeObject;
-                JFrame farmFrame = new JFrame(registryProxy.getFullJid());
+                JFrame farmFrame = new JFrame(registryProxy.getJid().toString());
                 farmFrame.getContentPane().add(new ViewRegistryCountrysidesPanel(registryProxy, villeinGui));
                 farmFrame.pack();
                 farmFrame.setVisible(true);
@@ -162,7 +163,7 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
     public void createTree() {
         treeRoot.removeAllChildren();
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-        for (CountrysideProxy countrysideProxy : this.villeinGui.getXmppVillein().getCloud().getCountrysideProxies()) {
+        for (CountrysideProxy countrysideProxy : this.villeinGui.getXmppVillein().getCloudProxy().getCountrysideProxies()) {
             DefaultMutableTreeNode countrysideNode = new DefaultMutableTreeNode(countrysideProxy);
             for (RegistryProxy registryProxy : countrysideProxy.getRegistryProxies()) {
                 DefaultMutableTreeNode registryNode = new DefaultMutableTreeNode(registryProxy);
@@ -193,12 +194,12 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
 
     private DefaultMutableTreeNode getNode(DefaultMutableTreeNode root, String identifier) {
         if (root.getUserObject() instanceof CountrysideProxy) {
-            if (((CountrysideProxy) root.getUserObject()).getBareJid().equals(identifier))
+            if (((CountrysideProxy) root.getUserObject()).getJid().toString().equals(identifier))
                 return root;
         }
         if (root.getUserObject() instanceof XmppProxy) {
             XmppProxy temp = (XmppProxy) root.getUserObject();
-            if (temp.getFullJid().equals(identifier)) {
+            if (temp.getJid().toString().equals(identifier)) {
                 return root;
             }
         }
@@ -244,7 +245,7 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
         } else {
             if (!remove) {
 
-                CountrysideProxy countrysideProxy = this.villeinGui.getXmppVillein().getCloud().getCountrysideProxy(uniqueIdentifier);
+                CountrysideProxy countrysideProxy = this.villeinGui.getXmppVillein().getCloudProxy().getCountrysideProxy(new Jid(uniqueIdentifier));
                 if (countrysideProxy != null) {
                     DefaultMutableTreeNode countrysideNode = new DefaultMutableTreeNode(countrysideProxy);
                     model.insertNodeInto(countrysideNode, this.treeRoot, this.treeRoot.getChildCount());
@@ -253,9 +254,9 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
                     return;
                 }
 
-                RegistryProxy registryProxy = this.villeinGui.getXmppVillein().getCloud().getRegistryProxy(uniqueIdentifier);
+                RegistryProxy registryProxy = this.villeinGui.getXmppVillein().getCloudProxy().getRegistryProxy(new Jid(uniqueIdentifier));
                 if (registryProxy != null) {
-                    DefaultMutableTreeNode parentNode = this.getNode(this.treeRoot, LinkedProcess.generateBareJid(registryProxy.getFullJid()));
+                    DefaultMutableTreeNode parentNode = this.getNode(this.treeRoot, registryProxy.getJid().getBareJid().toString());
                     DefaultMutableTreeNode registryNode = new DefaultMutableTreeNode(registryProxy);
                     model.insertNodeInto(registryNode, parentNode, parentNode.getChildCount());
                     this.tree.scrollPathToVisible(new TreePath(registryNode.getPath()));
@@ -264,9 +265,9 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
 
                 }
 
-                FarmProxy farmProxy = this.villeinGui.getXmppVillein().getCloud().getFarmProxy(uniqueIdentifier);
+                FarmProxy farmProxy = this.villeinGui.getXmppVillein().getCloudProxy().getFarmProxy(new Jid(uniqueIdentifier));
                 if (farmProxy != null) {
-                    DefaultMutableTreeNode parentNode = this.getNode(this.treeRoot, LinkedProcess.generateBareJid(farmProxy.getFullJid()));
+                    DefaultMutableTreeNode parentNode = this.getNode(this.treeRoot, farmProxy.getJid().getBareJid().toString());
                     DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(farmProxy);
                     model.insertNodeInto(farmNode, parentNode, parentNode.getChildCount());
                     this.tree.scrollPathToVisible(new TreePath(farmNode.getPath()));
@@ -274,9 +275,9 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
                     return;
 
                 }
-                VmProxy vmProxy = this.villeinGui.getXmppVillein().getCloud().getVmProxy(uniqueIdentifier);
+                VmProxy vmProxy = this.villeinGui.getXmppVillein().getCloudProxy().getVmProxy(uniqueIdentifier);
                 if (vmProxy != null) {
-                    DefaultMutableTreeNode parentNode = this.getNode(this.treeRoot, vmProxy.getFarmJid());
+                    DefaultMutableTreeNode parentNode = this.getNode(this.treeRoot, vmProxy.getFarmProxy().getJid().toString());
                     DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(vmProxy);
                     DefaultMutableTreeNode temp;
                     if (vmProxy.getVmSpecies() != null) {
@@ -416,7 +417,7 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
 
     }
 
-    public void handlePresenceUpdate(XmppProxy proxy, LinkedProcess.Status status) {
-        updateTree(proxy.getFullJid(), status == LinkedProcess.Status.INACTIVE);
+    public void handlePresenceUpdate(Jid jid, LinkedProcess.Status status) {
+        updateTree(jid.toString(), status == LinkedProcess.Status.INACTIVE);
     }
 }

@@ -39,8 +39,8 @@ public class SubmitJobCommand extends Command {
             jobProxy.setJobId(JobProxy.generateRandomId());
 
         SubmitJob submitJob = new SubmitJob();
-        submitJob.setTo(vmProxy.getFarmJid());
-        submitJob.setFrom(villein.getFullJid());
+        submitJob.setTo(vmProxy.getFarmProxy().getJid().toString());
+        submitJob.setFrom(villein.getJid().toString());
         submitJob.setExpression(jobProxy.getExpression());
         submitJob.setVmId(vmProxy.getVmId());
         submitJob.setType(IQ.Type.GET);

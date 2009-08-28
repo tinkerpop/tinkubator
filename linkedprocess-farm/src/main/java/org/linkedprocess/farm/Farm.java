@@ -1,7 +1,6 @@
 package org.linkedprocess.farm;
 
 import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.*;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
@@ -139,7 +138,7 @@ public class Farm extends XmppClient {
     }
 
     public void shutdown() {
-        LOGGER.info("shutting down farm " + this.getFullJid());
+        LOGGER.info("shutting down farm " + this.getJid());
 
         this.vmScheduler.shutdown();
         try {

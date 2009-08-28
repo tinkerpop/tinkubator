@@ -8,6 +8,7 @@
 package org.linkedprocess.villein.proxies;
 
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.Jid;
 
 import java.util.*;
 
@@ -27,7 +28,7 @@ public class CloudProxy {
     /**
      * The countryside proxies that are maintained by this cloud.
      */
-    Map<String, CountrysideProxy> countrysideProxies = new HashMap<String, CountrysideProxy>();
+    Map<Jid, CountrysideProxy> countrysideProxies = new HashMap<Jid, CountrysideProxy>();
 
     /**
      * Add a countryside proxy to this cloud.
@@ -35,17 +36,17 @@ public class CloudProxy {
      * @param countrysideProxy the countryside proxy to add
      */
     public void addCountrysideProxy(CountrysideProxy countrysideProxy) {
-        this.countrysideProxies.put(countrysideProxy.getBareJid(), countrysideProxy);
+        this.countrysideProxies.put(countrysideProxy.getJid(), countrysideProxy);
     }
 
     /**
      * Get a countryside proxy from this cloud.
      *
-     * @param bareJid the bare jid of the countryside proxy
+     * @param jid the bare jid of the countryside proxy
      * @return the countryside proxy identified by the provided bare jid
      */
-    public CountrysideProxy getCountrysideProxy(String bareJid) {
-        return this.countrysideProxies.get(bareJid);
+    public CountrysideProxy getCountrysideProxy(Jid jid) {
+        return this.countrysideProxies.get(jid);
     }
 
 
@@ -61,10 +62,10 @@ public class CloudProxy {
     /**
      * Remove a countryside from the cloud by its bare jid.
      *
-     * @param bareJid the bare jid of the countryside to remove
+     * @param jid the bare jid of the countryside to remove
      */
-    public void removeCountrysideProxy(String bareJid) {
-        this.countrysideProxies.remove(bareJid);
+    public void removeCountrysideProxy(Jid jid) {
+        this.countrysideProxies.remove(jid);
     }
 
     /**
@@ -109,18 +110,18 @@ public class CloudProxy {
     /**
      * Find an XMPP proxy (e.g. Farm or Registry) the a cloud by its full jid.
      *
-     * @param fullJid the jid of the proxy to retrieve
+     * @param jid the jid of the proxy to retrieve
      * @return the xmpp proxy with the provided full jid
      */
-    public XmppProxy getXmppProxy(String fullJid) {
+    public XmppProxy getXmppProxy(Jid jid) {
         for (CountrysideProxy countrysideProxy : this.countrysideProxies.values()) {
 
             for (RegistryProxy registryProxy : countrysideProxy.getRegistryProxies()) {
-                if (registryProxy.getFullJid().equals(fullJid))
+                if (registryProxy.getJid().equals(jid))
                     return registryProxy;
             }
             for (FarmProxy farmProxy : countrysideProxy.getFarmProxies()) {
-                if (farmProxy.getFullJid().equals(fullJid))
+                if (farmProxy.getJid().equals(jid))
                     return farmProxy;
             }
         }
@@ -130,13 +131,13 @@ public class CloudProxy {
     /**
      * Find a farm proxy in the cloud by its full jid.
      *
-     * @param fullJid the jid of the farm to retrieve
+     * @param jid the jid of the farm to retrieve
      * @return the farm with the provided jid
      */
-    public FarmProxy getFarmProxy(String fullJid) {
+    public FarmProxy getFarmProxy(Jid jid) {
         for (CountrysideProxy countrysideProxy : this.countrysideProxies.values()) {
             for (FarmProxy farmProxy : countrysideProxy.getFarmProxies()) {
-                if (farmProxy.getFullJid().equals(fullJid))
+                if (farmProxy.getJid().equals(jid))
                     return farmProxy;
             }
         }
@@ -146,13 +147,13 @@ public class CloudProxy {
     /**
      * Find a registry proxy in the cloud by its full jid.
      *
-     * @param fullJid the jid of the registry to retrieve
+     * @param jid the jid of the registry to retrieve
      * @return the registry with the provided jid
      */
-    public RegistryProxy getRegistryProxy(String fullJid) {
+    public RegistryProxy getRegistryProxy(Jid jid) {
         for (CountrysideProxy countrysideProxy : this.countrysideProxies.values()) {
             for (RegistryProxy registryProxy : countrysideProxy.getRegistryProxies()) {
-                if (registryProxy.getFullJid().equals(fullJid))
+                if (registryProxy.getJid().equals(jid))
                     return registryProxy;
             }
         }
@@ -182,18 +183,18 @@ public class CloudProxy {
      * A farm and registry proxy have a countryside parent proxy.
      * A virtual machine proxy has a farm parent proxy.
      *
-     * @param fullJid the jid of the proxy whose parent proxy is needed
+     * @param jid the jid of the proxy whose parent proxy is needed
      * @return the parent proxy of the provided proxy jid
      */
-    public CountrysideProxy getParentCountrysideProxy(String fullJid) {
+    public CountrysideProxy getParentCountrysideProxy(Jid jid) {
         for (CountrysideProxy countrysideProxy : this.countrysideProxies.values()) {
 
             for (RegistryProxy registryProxy : countrysideProxy.getRegistryProxies()) {
-                if (registryProxy.getFullJid().equals(fullJid))
+                if (registryProxy.getJid().equals(jid))
                     return countrysideProxy;
             }
             for (FarmProxy farmProxy : countrysideProxy.getFarmProxies()) {
-                if (farmProxy.getFullJid().equals(fullJid))
+                if (farmProxy.getJid().equals(jid))
                     return countrysideProxy;
 
             }
@@ -204,13 +205,13 @@ public class CloudProxy {
     /**
      * This is a helper method that removes an XMPP proxy from its parent.
      *
-     * @param fullJid the jid of the proxy to remove from its parent
+     * @param jid the jid of the proxy to remove from its parent
      */
-    public void removeXmppProxy(String fullJid) {
-        CountrysideProxy countrysideProxy = this.getCountrysideProxy(LinkedProcess.generateBareJid(fullJid));
+    public void removeXmppProxy(Jid jid) {
+        CountrysideProxy countrysideProxy = this.getCountrysideProxy(jid.getBareJid());
         if (countrysideProxy != null) {
-            countrysideProxy.removeFarmProxy(fullJid);
-            countrysideProxy.removeRegistryProxy(fullJid);
+            countrysideProxy.removeFarmProxy(jid);
+            countrysideProxy.removeRegistryProxy(jid);
         }
 
     }
@@ -223,11 +224,11 @@ public class CloudProxy {
      * @throws ParentProxyNotFoundException when the parent countryside proxy of the farm proxy is not found in the cloud
      */
     public void addFarmProxy(FarmProxy farmProxy) throws ParentProxyNotFoundException {
-        CountrysideProxy countrysideProxy = this.getCountrysideProxy(LinkedProcess.generateBareJid(farmProxy.getFullJid()));
+        CountrysideProxy countrysideProxy = this.getCountrysideProxy(farmProxy.getJid().getBareJid());
         if (countrysideProxy != null)
             countrysideProxy.addFarmProxy(farmProxy);
         else
-            throw new ParentProxyNotFoundException("countryside proxy null for " + farmProxy.getFullJid());
+            throw new ParentProxyNotFoundException("parent countryside proxy null for " + farmProxy.getJid());
     }
 
     /**
@@ -238,11 +239,11 @@ public class CloudProxy {
      * @throws ParentProxyNotFoundException when the parent countryside proxy of the registry proxy is not found in the cloud
      */
     public void addRegistryProxy(RegistryProxy registryProxy) throws ParentProxyNotFoundException {
-        CountrysideProxy countrysideProxy = this.getCountrysideProxy(LinkedProcess.generateBareJid(registryProxy.getFullJid()));
+        CountrysideProxy countrysideProxy = this.getCountrysideProxy(registryProxy.getJid().getBareJid());
         if (countrysideProxy != null)
             countrysideProxy.addRegistryProxy(registryProxy);
         else
-            throw new ParentProxyNotFoundException("countryside proxy null for " + registryProxy.getFullJid());
+            throw new ParentProxyNotFoundException("parent countryside proxy null for " + registryProxy.getJid());
     }
 
     /**
@@ -252,12 +253,12 @@ public class CloudProxy {
      * @param vmProxy the virtual machine proxy to add to the located farm proxy
      * @throws ParentProxyNotFoundException when the parent farm proxy of the virtual machine proxy is not found in the cloud
      */
-    public void addVmProxy(String farmJid, VmProxy vmProxy) throws ParentProxyNotFoundException {
+    public void addVmProxy(Jid farmJid, VmProxy vmProxy) throws ParentProxyNotFoundException {
         FarmProxy farmProxy = this.getFarmProxy(farmJid);
         if (farmProxy != null)
             farmProxy.addVmProxy(vmProxy);
         else
-            throw new ParentProxyNotFoundException("farm proxy null for " + vmProxy.getVmId());
+            throw new ParentProxyNotFoundException("parent farm proxy null for " + vmProxy.getVmId());
     }
 
 

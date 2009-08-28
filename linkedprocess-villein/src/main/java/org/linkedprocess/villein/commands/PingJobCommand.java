@@ -39,8 +39,8 @@ public class PingJobCommand extends Command {
 
         String id = Packet.nextID();
         PingJob pingJob = new PingJob();
-        pingJob.setTo(vmProxy.getFarmJid());
-        pingJob.setFrom(this.villein.getFullJid());
+        pingJob.setTo(vmProxy.getFarmProxy().getJid().toString());
+        pingJob.setFrom(this.villein.getJid().toString());
         pingJob.setJobId(jobProxy.getJobId());
         pingJob.setVmId(vmProxy.getVmId());
         pingJob.setType(IQ.Type.GET);

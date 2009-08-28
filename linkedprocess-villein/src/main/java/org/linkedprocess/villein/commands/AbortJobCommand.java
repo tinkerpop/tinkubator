@@ -38,8 +38,8 @@ public class AbortJobCommand extends Command {
     public void send(final VmProxy vmProxy, final JobProxy jobProxy, final Handler<String> successHandler, final Handler<Error> errorHandler) {
         String id = Packet.nextID();
         AbortJob abortJob = new AbortJob();
-        abortJob.setTo(vmProxy.getFarmJid());
-        abortJob.setFrom(this.villein.getFullJid());
+        abortJob.setTo(vmProxy.getFarmProxy().getJid().toString());
+        abortJob.setFrom(this.villein.getJid().toString());
         abortJob.setJobId(jobProxy.getJobId());
         abortJob.setVmId(vmProxy.getVmId());
         abortJob.setType(IQ.Type.GET);

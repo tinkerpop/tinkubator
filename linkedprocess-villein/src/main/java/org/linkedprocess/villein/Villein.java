@@ -22,6 +22,7 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.XmppClient;
 import org.linkedprocess.LopXmppException;
+import org.linkedprocess.Jid;
 import org.linkedprocess.farm.*;
 import org.linkedprocess.villein.proxies.CloudProxy;
 import org.linkedprocess.villein.proxies.CountrysideProxy;
@@ -59,7 +60,7 @@ public class Villein extends XmppClient {
      * @param port     the port that the XMPP server is listening on
      * @param username the username to log into the XMPP server with
      * @param password the password to use to log into the XMPP server with
-     * @throws XMPPException is thrown when some communication error occurs with the XMPP server
+     * @throws LopXmppException is thrown when some communication error occurs with the XMPP server
      */
     public Villein(final String server, final int port, final String username, final String password) throws LopXmppException {
         LOGGER.info("Starting " + STATUS_MESSAGE);
@@ -97,7 +98,7 @@ public class Villein extends XmppClient {
         } else {
             throw new IllegalStateException("unhandled state: " + status);
         }
-        presence.setFrom(this.getFullJid());
+        presence.setFrom(this.getJid().toString());
         this.connection.sendPacket(presence);
     }
 
@@ -114,7 +115,7 @@ public class Villein extends XmppClient {
      *
      * @return an LoP cloud data structure
      */
-    public CloudProxy getCloud() {
+    public CloudProxy getCloudProxy() {
         return this.cloudProxy;
     }
 
@@ -124,9 +125,9 @@ public class Villein extends XmppClient {
      */
     public void createCloudFromRoster() {
         for (RosterEntry entry : this.getRoster().getEntries()) {
-            CountrysideProxy countrysideProxy = this.cloudProxy.getCountrysideProxy(entry.getUser());
+            CountrysideProxy countrysideProxy = this.cloudProxy.getCountrysideProxy(new Jid(entry.getUser()));
             if (countrysideProxy == null && (entry.getType() == RosterPacket.ItemType.to || entry.getType() == RosterPacket.ItemType.both)) {
-                countrysideProxy = new CountrysideProxy(entry.getUser());
+                countrysideProxy = new CountrysideProxy(new Jid(entry.getUser()));
                 this.cloudProxy.addCountrysideProxy(countrysideProxy);
             }
         }
@@ -137,7 +138,7 @@ public class Villein extends XmppClient {
      *
      * @param jid the jid to unsubscribe from (subscriptions are only to and from countrysides)
      */
-    public void requestUnsubscription(String jid) {
+    public void requestUnsubscription(Jid jid) {
         super.requestUnsubscription(jid);
         CountrysideProxy countrysideProxy = this.cloudProxy.getCountrysideProxy(jid);
         if (countrysideProxy != null) {

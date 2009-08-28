@@ -11,6 +11,7 @@ import org.jdom.Document;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
+import org.linkedprocess.Jid;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.villein.proxies.*;
 
@@ -34,56 +35,73 @@ class PresencePacketListener extends VilleinPacketListener {
         Villein.LOGGER.info("Presence received from " + presence.getFrom());
         Villein.LOGGER.info(presence.toXML());
 
-        XmppProxy xmppProxy = this.getVillein().getCloud().getXmppProxy(presence.getFrom());
+        CloudProxy cloudProxy = this.getVillein().getCloudProxy();
+        XmppProxy xmppProxy = this.getVillein().getCloudProxy().getXmppProxy(new Jid(presence.getFrom()));
         LinkedProcess.Status status = PresencePacketListener.getStatus(presence);
         if (xmppProxy != null) {
+
             if (status == LinkedProcess.Status.INACTIVE) {
-                this.getVillein().getCloud().removeXmppProxy(presence.getFrom());
+                cloudProxy.removeXmppProxy(new Jid(presence.getFrom()));
             } else {
                 xmppProxy.setStatus(status);
             }
-        } else {
-            if (LinkedProcess.isBareJid(presence.getFrom())) {
-                CountrysideProxy countrysideProxy = new CountrysideProxy(presence.getFrom());
-                this.getVillein().getCloud().addCountrysideProxy(countrysideProxy);
-            } else {
-                // Determine which type of XMPP proxy the presence packet is from
-                DiscoverInfo discoInfo = this.getDiscoInfo(presence.getFrom());
-                Document discoInfoDocument = null;
-                try {
-                    discoInfoDocument = LinkedProcess.createXMLDocument(discoInfo.toXML());
-                } catch (Exception e) {
-                    Villein.LOGGER.warning("disco#info document is not valid XML: " + e.getMessage());
-                }
 
-                if (isFarm(discoInfo)) {
-                    FarmProxy farmProxy = new FarmProxy(presence.getFrom(), this.getVillein().getDispatcher(), discoInfoDocument);
-                    farmProxy.setStatus(status);
-                    try {
-                        this.getVillein().getCloud().addFarmProxy(farmProxy);
-                        xmppProxy = farmProxy;
-                    } catch (ParentProxyNotFoundException e) {
-                        Villein.LOGGER.warning("Parent proxy was not found: " + e.getMessage());
-                    }
-                } else if (isRegistry(discoInfo)) {
-                    RegistryProxy registryProxy = new RegistryProxy(presence.getFrom(), this.getVillein().getDispatcher(), discoInfoDocument);
-                    registryProxy.setStatus(status);
-                    try {
-                        this.getVillein().getCloud().addRegistryProxy(registryProxy);
-                        xmppProxy = registryProxy;
-                    } catch (ParentProxyNotFoundException e) {
-                        Villein.LOGGER.warning("Parent proxy was not found: " + e.getMessage());
-                    }
-                } else {
-                    Villein.LOGGER.info("The following resource is not an LoP resource: " + presence.getFrom());
+            if(isUnsubscribed(presence)) {
+                cloudProxy.removeCountrysideProxy(new Jid(presence.getFrom()).getBareJid());
+            }
+
+        } else {
+            CountrysideProxy countrysideProxy = cloudProxy.getCountrysideProxy(new Jid(presence.getFrom()).getBareJid());
+            if (null == countrysideProxy) {
+                cloudProxy.addCountrysideProxy(new CountrysideProxy(new Jid(presence.getFrom()).getBareJid()));
+                for (PresenceHandler presenceHandler : this.getVillein().getPresenceHandlers()) {
+                    presenceHandler.handlePresenceUpdate(new Jid(presence.getFrom()).getBareJid(), LinkedProcess.Status.ACTIVE);
                 }
+            }
+
+            // Determine which type of XMPP proxy the presence packet is from
+            DiscoverInfo discoInfo = this.getDiscoInfo(presence.getFrom());
+            Document discoInfoDocument = null;
+            try {
+                discoInfoDocument = LinkedProcess.createXMLDocument(discoInfo.toXML());
+            } catch (Exception e) {
+                Villein.LOGGER.warning("disco#info document is not valid XML: " + e.getMessage());
+            }
+
+            if (isFarm(discoInfo)) {
+                FarmProxy farmProxy = new FarmProxy(new Jid(presence.getFrom()), this.getVillein().getDispatcher(), discoInfoDocument);
+                farmProxy.setStatus(status);
+                try {
+                    countrysideProxy.addFarmProxy(farmProxy);
+                    xmppProxy = farmProxy;
+                } catch (ParentProxyNotFoundException e) {
+                    Villein.LOGGER.warning(e.getMessage());
+                }
+            } else if (isRegistry(discoInfo)) {
+                RegistryProxy registryProxy = new RegistryProxy(new Jid(presence.getFrom()), this.getVillein().getDispatcher(), discoInfoDocument);
+                registryProxy.setStatus(status);
+                try {
+                    countrysideProxy.addRegistryProxy(registryProxy);
+                    xmppProxy = registryProxy;
+                } catch (ParentProxyNotFoundException e) {
+                    Villein.LOGGER.warning(e.getMessage());
+                }
+            } else {
+                Villein.LOGGER.info("The following resource is not an LoP resource: " + presence.getFrom());
             }
         }
 
         if (xmppProxy != null) {
             // Handlers
             for (PresenceHandler presenceHandler : this.getVillein().getPresenceHandlers()) {
-                presenceHandler.handlePresenceUpdate(xmppProxy, status);
+                presenceHandler.handlePresenceUpdate(xmppProxy.getJid(), status);
+            }
+        }
+
+        if(isUnsubscribed(presence)) {
+            // Handlers
+            for (PresenceHandler presenceHandler : this.getVillein().getPresenceHandlers()) {
+                presenceHandler.handlePresenceUpdate(new Jid(presence.getFrom()).getBareJid(), LinkedProcess.Status.INACTIVE);
             }
         }
     }
@@ -96,6 +114,10 @@ class PresencePacketListener extends VilleinPacketListener {
         } else {
             return LinkedProcess.Status.ACTIVE;
         }
+    }
+
+    private static boolean isUnsubscribed(Presence presence) {
+        return presence.getType() == Presence.Type.unsubscribe || presence.getType() == Presence.Type.unsubscribed;
     }
 
 }

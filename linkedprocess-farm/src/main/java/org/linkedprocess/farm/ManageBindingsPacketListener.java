@@ -36,7 +36,7 @@ public class ManageBindingsPacketListener extends FarmPacketListener {
 
         ManageBindings returnManageBindings = new ManageBindings();
         returnManageBindings.setTo(manageBindings.getFrom());
-        returnManageBindings.setFrom(this.getFarm().getFullJid());
+        returnManageBindings.setFrom(this.getFarm().getJid().toString());
         returnManageBindings.setPacketID(manageBindings.getPacketID());
         returnManageBindings.setVmId(manageBindings.getVmId());
 

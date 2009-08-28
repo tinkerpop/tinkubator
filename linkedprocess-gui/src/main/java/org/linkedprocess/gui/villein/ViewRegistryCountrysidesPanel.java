@@ -4,6 +4,7 @@ import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.proxies.CountrysideProxy;
 import org.linkedprocess.villein.proxies.RegistryProxy;
+import org.linkedprocess.Jid;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +17,7 @@ import java.awt.event.ActionListener;
  */
 public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListener {
 
-    protected JList farmlandList;
+    protected JList countrysideList;
     protected static final String REFRESH = "refresh";
     protected static final String SUBSCRIBE = "subscribe";
     protected RegistryProxy registryProxy;
@@ -29,9 +30,9 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
         this.registryProxy = registryProxy;
         this.villeinGui = villeinGui;
 
-        this.farmlandList = new JList(new DefaultListModel());
-        this.farmlandList.setCellRenderer(new CountrysideListRenderer());
-        this.farmlandList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        this.countrysideList = new JList(new DefaultListModel());
+        this.countrysideList.setCellRenderer(new CountrysideListRenderer());
+        this.countrysideList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton subscribeButton = new JButton(SUBSCRIBE);
@@ -44,7 +45,7 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
 
         this.refreshCountrysideFarms();
 
-        JScrollPane scrollPane1 = new JScrollPane(this.farmlandList);
+        JScrollPane scrollPane1 = new JScrollPane(this.countrysideList);
 
         this.add(scrollPane1, BorderLayout.CENTER);
         this.add(buttonPanel, BorderLayout.SOUTH);
@@ -61,8 +62,8 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
                 Villein.LOGGER.severe(e.getMessage());
             }
         } else if (event.getActionCommand().equals(SUBSCRIBE)) {
-            for (Object farmlandJid : this.farmlandList.getSelectedValues()) {
-                villeinGui.getXmppVillein().requestSubscription(farmlandJid.toString());
+            for (Object countrysideJid : this.countrysideList.getSelectedValues()) {
+                villeinGui.getXmppVillein().requestSubscription(new Jid(countrysideJid.toString()));
             }
         }
 
@@ -70,17 +71,17 @@ public class ViewRegistryCountrysidesPanel extends JPanel implements ActionListe
 
     /*private void generateDiscoItemsDocument() throws XMPPException, JDOMException, IOException {
         ServiceDiscoveryManager discoManager = this.villeinGui.getVillein().getDiscoManager();
-        this.discoItemsDocument = LinkedProcess.createXMLDocument(discoManager.discoverItems(this.registryProxy.getFullJid()).toXML());
+        this.discoItemsDocument = LinkedProcess.createXMLDocument(discoManager.discoverItems(this.registryProxy.getJid()).toXML());
         //PacketCollector collector = this.villeinGui.getVillein().getConnection().createPacketCollector(new PacketTypeFilter(DiscoverItems.class));
         //this.discoItemsDocument = LinkedProcess.createXMLDocument(collector.nextResult().toXML());
         //collector.cancel();
     }*/
 
     private void refreshCountrysideFarms() {
-        DefaultListModel listModel = (DefaultListModel) this.farmlandList.getModel();
+        DefaultListModel listModel = (DefaultListModel) this.countrysideList.getModel();
         listModel.removeAllElements();
         for (CountrysideProxy countrysideProxy : registryProxy.getActiveCountrysides()) {
-            listModel.addElement(countrysideProxy.getBareJid());
+            listModel.addElement(countrysideProxy.getJid());
         }
     }
 

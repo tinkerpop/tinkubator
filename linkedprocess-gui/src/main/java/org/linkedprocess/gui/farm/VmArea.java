@@ -1,6 +1,7 @@
 package org.linkedprocess.gui.farm;
 
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.Jid;
 import org.linkedprocess.farm.os.Vm;
 import org.linkedprocess.gui.PacketSnifferPanel;
 import org.linkedprocess.gui.RosterPanel;
@@ -39,7 +40,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
     public VmArea(FarmGui farmGui) {
         super(new BorderLayout());
         this.farmGui = farmGui;
-        CountrysideProxy countrysideProxy = new CountrysideProxy(LinkedProcess.generateBareJid(farmGui.getFarm().getFullJid()));
+        CountrysideProxy countrysideProxy = new CountrysideProxy(farmGui.getFarm().getJid().getBareJid());
         this.treeRoot = new DefaultMutableTreeNode(countrysideProxy);
         this.tree = new JTree(this.treeRoot);
         this.tree.setCellRenderer(new TreeRenderer());
@@ -89,7 +90,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
         treeRoot.removeAllChildren();
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
         DefaultMutableTreeNode farmNode = new DefaultMutableTreeNode(this.farmGui.getFarm());
-        this.treeMap.put(this.farmGui.getFarm().getFullJid(), farmNode);
+        this.treeMap.put(this.farmGui.getFarm().getJid().toString(), farmNode);
         for (Vm vm : this.farmGui.getFarm().getVms()) {
             DefaultMutableTreeNode vmNode = new DefaultMutableTreeNode(vm);
             this.treeMap.put(vm.getVmId(), vmNode);
@@ -105,7 +106,7 @@ public class VmArea extends JPanel implements ActionListener, MouseListener {
 
     public void updateTree(String vmId, LinkedProcess.Status status) {
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-        DefaultMutableTreeNode farmNode = this.treeMap.get(this.farmGui.getFarm().getFullJid());
+        DefaultMutableTreeNode farmNode = this.treeMap.get(this.farmGui.getFarm().getJid().toString());
         DefaultMutableTreeNode node = this.treeMap.get(vmId);
         if (node == null && status != LinkedProcess.Status.INACTIVE) {
             try {

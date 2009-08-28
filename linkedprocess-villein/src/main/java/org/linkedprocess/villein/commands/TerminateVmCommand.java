@@ -10,6 +10,7 @@ package org.linkedprocess.villein.commands;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.Error;
+import org.linkedprocess.Jid;
 import org.linkedprocess.farm.TerminateVm;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.Villein;
@@ -38,8 +39,8 @@ public class TerminateVmCommand extends Command {
     public void send(final VmProxy vmProxy, final Handler<Object> successHandler, final Handler<Error> errorHandler) {
         String id = Packet.nextID();
         TerminateVm terminateVm = new TerminateVm();
-        terminateVm.setTo(vmProxy.getFarmJid());
-        terminateVm.setFrom(this.villein.getFullJid());
+        terminateVm.setTo(vmProxy.getFarmProxy().getJid().toString());
+        terminateVm.setFrom(this.villein.getJid().toString());
         terminateVm.setVmId(vmProxy.getVmId());
         terminateVm.setType(IQ.Type.GET);
         terminateVm.setPacketID(id);
@@ -51,7 +52,7 @@ public class TerminateVmCommand extends Command {
     }
 
     public void receiveSuccess(final TerminateVm terminateVm) {
-        FarmProxy farmProxy = this.villein.getCloud().getFarmProxy(terminateVm.getFrom());
+        FarmProxy farmProxy = this.villein.getCloudProxy().getFarmProxy(new Jid(terminateVm.getFrom()));
         if(null != farmProxy) {
             farmProxy.removeVmProxy(terminateVm.getVmId());
         }

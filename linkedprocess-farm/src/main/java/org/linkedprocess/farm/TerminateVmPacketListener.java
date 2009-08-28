@@ -35,7 +35,7 @@ public class TerminateVmPacketListener extends FarmPacketListener {
 
         TerminateVm returnTerminateVm = new TerminateVm();
         returnTerminateVm.setTo(terminateVm.getFrom());
-        returnTerminateVm.setFrom(this.getFarm().getFullJid());
+        returnTerminateVm.setFrom(this.getFarm().getJid().toString());
         returnTerminateVm.setPacketID(terminateVm.getPacketID());
         returnTerminateVm.setVmId(terminateVm.getVmId());
 

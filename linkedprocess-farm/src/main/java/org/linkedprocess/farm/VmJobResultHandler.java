@@ -25,7 +25,7 @@ public class VmJobResultHandler implements VmScheduler.VmResultHandler {
     public void handleResult(JobResult result) {
 
         SubmitJob returnSubmitJob = result.generateReturnSubmitJob();
-        returnSubmitJob.setFrom(farm.getFullJid());
+        returnSubmitJob.setFrom(farm.getJid().toString());
         farm.getConnection().sendPacket(returnSubmitJob);
 
         Farm.LOGGER.info("Sent " + VmJobResultHandler.class.getName());

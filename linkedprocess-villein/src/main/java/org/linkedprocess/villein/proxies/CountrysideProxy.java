@@ -7,6 +7,8 @@
 
 package org.linkedprocess.villein.proxies;
 
+import org.linkedprocess.Jid;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,43 +22,43 @@ import java.util.Map;
  */
 public class CountrysideProxy {
 
-    protected String bareJid;
+    protected Jid jid;
 
     /**
      * The set of farm proxies contained in this countryside proxy.
      */
-    protected Map<String, FarmProxy> farmProxies = new HashMap<String, FarmProxy>();
+    protected Map<Jid, FarmProxy> farmProxies = new HashMap<Jid, FarmProxy>();
     /**
      * The set of registry proxies contained in this countryside proxy.
      */
-    protected Map<String, RegistryProxy> registryProxies = new HashMap<String, RegistryProxy>();
+    protected Map<Jid, RegistryProxy> registryProxies = new HashMap<Jid, RegistryProxy>();
 
-    public CountrysideProxy(final String bareJid) {
-        this.bareJid = bareJid;
+    public CountrysideProxy(final Jid jid) {
+        this.jid = jid;
     }
 
-    public String getBareJid() {
-        return this.bareJid;
+    public Jid getJid() {
+        return this.jid;
     }
 
     /**
      * Get the farm proxy contained in this countryside by its jid.
      *
-     * @param fullJid the jid of the farm proxy to get
+     * @param jid the jid of the farm proxy to get
      * @return the retrieved farm proxy
      */
-    public FarmProxy getFarmProxy(String fullJid) {
-        return this.farmProxies.get(fullJid);
+    public FarmProxy getFarmProxy(Jid jid) {
+        return this.farmProxies.get(jid);
     }
 
     /**
      * Get the registsry proxy contained in this countryside by its jid.
      *
-     * @param fullJid the jid of the registry proxy to get
+     * @param jid the jid of the registry proxy to get
      * @return the retrieved registry proxy
      */
-    public RegistryProxy getRegistryProxy(String fullJid) {
-        return this.registryProxies.get(fullJid);
+    public RegistryProxy getRegistryProxy(Jid jid) {
+        return this.registryProxies.get(jid);
     }
 
     /**
@@ -65,7 +67,7 @@ public class CountrysideProxy {
      * @param farmProxy the farm proxy to add
      */
     public void addFarmProxy(FarmProxy farmProxy) {
-        this.farmProxies.put(farmProxy.getFullJid(), farmProxy);
+        this.farmProxies.put(farmProxy.getJid(), farmProxy);
     }
 
     /**
@@ -74,25 +76,25 @@ public class CountrysideProxy {
      * @param registryProxy the registry proxy to add
      */
     public void addRegistryProxy(RegistryProxy registryProxy) {
-        this.registryProxies.put(registryProxy.getFullJid(), registryProxy);
+        this.registryProxies.put(registryProxy.getJid(), registryProxy);
     }
 
     /**
      * Remove a farm proxy from this countryside proxy.
      *
-     * @param fullJid the jid of the farm to remove
+     * @param jid the jid of the farm to remove
      */
-    public void removeFarmProxy(String fullJid) {
-        this.farmProxies.remove(fullJid);
+    public void removeFarmProxy(Jid jid) {
+        this.farmProxies.remove(jid);
     }
 
     /**
      * Remove a registry proxy from this countryside proxy.
      *
-     * @param fullJid the jid of the registry to remove
+     * @param jid the jid of the registry to remove
      */
-    public void removeRegistryProxy(String fullJid) {
-        this.registryProxies.remove(fullJid);
+    public void removeRegistryProxy(Jid jid) {
+        this.registryProxies.remove(jid);
     }
 
     /**

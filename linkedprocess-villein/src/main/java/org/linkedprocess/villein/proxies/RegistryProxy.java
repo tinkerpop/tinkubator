@@ -12,6 +12,7 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.linkedprocess.villein.Dispatcher;
 import org.linkedprocess.villein.Villein;
+import org.linkedprocess.Jid;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -29,8 +30,8 @@ public class RegistryProxy extends XmppProxy {
 
     private Set<DiscoverItems.Item> discoItems;
 
-    public RegistryProxy(final String fullJid, final Dispatcher dispatcher) {
-        this.fullJid = fullJid;
+    public RegistryProxy(final Jid jid, final Dispatcher dispatcher) {
+        this.jid = jid;
         this.dispatcher = dispatcher;
         this.refreshDiscoInfo();
         this.refreshDiscoItems();
@@ -38,8 +39,8 @@ public class RegistryProxy extends XmppProxy {
 
     }
 
-    public RegistryProxy(final String fullJid, final Dispatcher dispatcher, final Document discoInfoDocument) {
-        this.fullJid = fullJid;
+    public RegistryProxy(final Jid jid, final Dispatcher dispatcher, final Document discoInfoDocument) {
+        this.jid = jid;
         this.dispatcher = dispatcher;
         this.discoInfoDocument = discoInfoDocument;
         this.refreshDiscoItems();
@@ -51,7 +52,7 @@ public class RegistryProxy extends XmppProxy {
 
             this.discoItems = new HashSet<DiscoverItems.Item>();
             ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();
-            DiscoverItems discoItems = discoManager.discoverItems(this.fullJid);
+            DiscoverItems discoItems = discoManager.discoverItems(this.jid.toString());
             Iterator<DiscoverItems.Item> itty = discoItems.getItems();
             while (itty.hasNext()) {
                 this.discoItems.add(itty.next());
@@ -64,7 +65,7 @@ public class RegistryProxy extends XmppProxy {
     public Set<CountrysideProxy> getActiveCountrysides() {
         Set<CountrysideProxy> countrysideProxies = new HashSet<CountrysideProxy>();
         for (DiscoverItems.Item item : discoItems) {
-            CountrysideProxy countrysideProxy = new CountrysideProxy(item.getEntityID());
+            CountrysideProxy countrysideProxy = new CountrysideProxy(new Jid(item.getEntityID()));
             countrysideProxies.add(countrysideProxy);
         }
         return countrysideProxies;

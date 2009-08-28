@@ -56,9 +56,9 @@ public abstract class XmppClient {
             this.connection = new XmppConnectionWrapper(connConfig);
             this.connection.connect();
             LOGGER.info("Connected to " + connection.getHost());
-            connection.login(username, password, resource + LinkedProcess.FORWARD_SLASH + LinkedProcess.generateRandomResourceId());
+            connection.login(username, password, resource + LinkedProcess.FORWARD_SLASH + Jid.generateRandomResourceId());
             LOGGER.info("Logged in as " + connection.getUser());
-        } catch(XMPPException e) {
+        } catch (XMPPException e) {
             throw new LopXmppException(e.getMessage());
         }
 
@@ -66,7 +66,7 @@ public abstract class XmppClient {
             public void run() {
                 try {
                     while (!shutdownRequested) {
-                        Thread.sleep(10);
+                        Thread.sleep(250);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -114,20 +114,12 @@ public abstract class XmppClient {
         } else {
             throw new IllegalStateException("unhandled state: " + status);
         }
-        presence.setFrom(this.getFullJid());
+        presence.setFrom(this.getJid().toString());
         this.connection.sendPacket(presence);
     }
 
-    public String getFullJid() {
-        return this.connection.getUser();
-    }
-
-    public String getBareJid() {
-        return LinkedProcess.generateBareJid(this.getFullJid());
-    }
-
-    public String getResource() {
-        return getFullJid().replace(this.getBareJid() + "/", "");
+    public Jid getJid() {
+        return new Jid(this.connection.getUser());
     }
 
     public Connection getConnection() {
@@ -138,7 +130,6 @@ public abstract class XmppClient {
         LOGGER.info("Requesting shutdown");
         shutdownRequested = true;
         Presence presence = new Presence(Presence.Type.unavailable);
-        presence.setFrom(this.getFullJid());
         logout(presence);
     }
 
@@ -200,26 +191,26 @@ public abstract class XmppClient {
         this.getDiscoManager().addFeature(LinkedProcess.DISCO_INFO_NAMESPACE);
     }
 
-    public void requestSubscription(String jid) {
+    public void requestSubscription(Jid jid) {
         try {
-            this.roster.createEntry(jid, null, null);
+            this.roster.createEntry(jid.toString(), null, null);
         } catch (XMPPException e) {
             LOGGER.warning(e.getMessage());
         }
     }
 
-    public void requestUnsubscription(String jid) {
+    public void requestUnsubscription(Jid jid) {
         try {
-            this.roster.removeEntry(this.roster.getEntry(jid));
+            this.roster.removeEntry(this.roster.getEntry(jid.getBareJid().toString()));
         } catch (XMPPException e) {
             LOGGER.warning(e.getMessage());
         }
     }
 
-    public void probeJid(String jid) {
+    public void probeJid(Jid jid) {
         ProbePresence probe = new ProbePresence();
-        probe.setFrom(this.getFullJid());
-        probe.setTo(jid);
+        probe.setFrom(this.getJid().toString());
+        probe.setTo(jid.toString());
         this.connection.sendPacket(probe);
     }
 

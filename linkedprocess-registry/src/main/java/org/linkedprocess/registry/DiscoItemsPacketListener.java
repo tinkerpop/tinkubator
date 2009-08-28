@@ -10,6 +10,7 @@ package org.linkedprocess.registry;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smackx.packet.DiscoverItems;
+import org.linkedprocess.Jid;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -24,7 +25,7 @@ public class DiscoItemsPacketListener extends RegistryPacketListener {
     public void processPacket(Packet packet) {
         DiscoverItems discoItems = (DiscoverItems) packet;
         if (discoItems.getType() == IQ.Type.GET) {
-            DiscoverItems returnDiscoItems = this.getRegistry().createDiscoItems(discoItems.getFrom());
+            DiscoverItems returnDiscoItems = this.getRegistry().createDiscoItems(new Jid(discoItems.getFrom()));
             returnDiscoItems.setPacketID(discoItems.getPacketID());
             this.getRegistry().getConnection().sendPacket(returnDiscoItems);
             Registry.LOGGER.info(returnDiscoItems.toXML());

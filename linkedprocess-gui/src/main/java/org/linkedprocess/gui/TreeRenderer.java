@@ -27,7 +27,7 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
         Object x = ((DefaultMutableTreeNode) value).getUserObject();
         if (x instanceof Farm) {
             Farm farm = (Farm) x;
-            this.setText(LinkedProcess.generateResource(farm.getFullJid()) + TreeRenderer.getStatusString(farm.getStatus()));
+            this.setText(farm.getJid().getResource() + TreeRenderer.getStatusString(farm.getStatus()));
             if (null == farm.getFarmPassword())
                 this.setIcon(ImageHolder.farmIcon);
             else
@@ -35,21 +35,22 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
             this.setToolTipText("farm");
         } else if (x instanceof Vm) {
             Vm vm = (Vm) x;
-            this.setText(LinkedProcess.generateResource(vm.getVmId()) + TreeRenderer.getStatusString(vm.getVmStatus()));
+            this.setText(vm.getVmId() + TreeRenderer.getStatusString(vm.getVmStatus()));
             this.setIcon(ImageHolder.vmIcon);
             this.setToolTipText("virtual machine");
         } else if (x instanceof Villein) {
-            this.setText(LinkedProcess.generateResource(((Villein) x).getFullJid()));
+            Villein villein = (Villein) x;
+            this.setText(villein.getJid().getResource());
             this.setIcon(ImageHolder.villeinIcon);
             this.setToolTipText("villein");
         } else if (x instanceof RegistryProxy) {
             RegistryProxy registryProxy = (RegistryProxy) x;
-            this.setText(LinkedProcess.generateResource(registryProxy.getFullJid()) + TreeRenderer.getStatusString(registryProxy.getStatus()));
+            this.setText(registryProxy.getJid().getResource() + TreeRenderer.getStatusString(registryProxy.getStatus()));
             this.setIcon(ImageHolder.registryIcon);
             this.setToolTipText("registry");
         } else if (x instanceof FarmProxy) {
             FarmProxy farmProxy = (FarmProxy) x;
-            this.setText(LinkedProcess.generateResource(farmProxy.getFullJid()) + TreeRenderer.getStatusString(farmProxy.getStatus()));
+            this.setText(farmProxy.getJid().getResource() + TreeRenderer.getStatusString(farmProxy.getStatus()));
             if (farmProxy.requiresFarmPassword())
                 this.setIcon(ImageHolder.farmPasswordIcon);
             else
@@ -57,12 +58,12 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
             this.setToolTipText("farm");
         } else if (x instanceof VmProxy) {
             VmProxy vmProxy = (VmProxy) x;
-            this.setText(LinkedProcess.generateResource(vmProxy.getVmId()));
+            this.setText(vmProxy.getVmId());
             this.setIcon(ImageHolder.vmIcon);
             this.setToolTipText("virtual machine");
         } else if (x instanceof CountrysideProxy) {
             CountrysideProxy countrysideProxy = (CountrysideProxy) x;
-            this.setText(countrysideProxy.getBareJid());
+            this.setText(countrysideProxy.getJid().toString());
             this.setIcon(ImageHolder.countrysideIcon);
             this.setToolTipText("countryside");
         } else if (x instanceof TreeNodeProperty) {

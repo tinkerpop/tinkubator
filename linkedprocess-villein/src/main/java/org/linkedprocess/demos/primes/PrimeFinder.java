@@ -40,9 +40,9 @@ public class PrimeFinder {
         //////////////// ALLOCATE FARMS
 
         System.out.println("Waiting for " + farmCount + " available farms...");
-        Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(villein.getCloud(), farmCount, 20000);
+        Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(villein.getCloudProxy(), farmCount, 20000);
         for (FarmProxy farmProxy : farmProxies) {
-            System.out.println("farm allocated: " + farmProxy.getFullJid());
+            System.out.println("farm allocated: " + farmProxy.getJid());
         }
 
         //////////////// SPAWN VIRTUAL MACHINES ON ALLOCATED FARMS

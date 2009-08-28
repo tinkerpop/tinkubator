@@ -10,6 +10,7 @@ package org.linkedprocess.villein.commands;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.Error;
+import org.linkedprocess.Jid;
 import org.linkedprocess.farm.SpawnVm;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.Villein;
@@ -38,8 +39,8 @@ public class SpawnVmCommand extends Command {
     public void send(final FarmProxy farmProxy, final String vmSpecies, final Handler<VmProxy> successHandler, final Handler<Error> errorHandler) {
         String id = Packet.nextID();
         SpawnVm spawnVm = new SpawnVm();
-        spawnVm.setTo(farmProxy.getFullJid());
-        spawnVm.setFrom(this.villein.getFullJid());
+        spawnVm.setTo(farmProxy.getJid().toString());
+        spawnVm.setFrom(this.villein.getJid().toString());
         spawnVm.setVmSpecies(vmSpecies);
         if (null != farmProxy.getFarmPassword()) {
             spawnVm.setFarmPassword(farmProxy.getFarmPassword());
@@ -54,12 +55,12 @@ public class SpawnVmCommand extends Command {
     }
 
     public void receiveSuccess(final SpawnVm spawnVm) {
-        VmProxy vmProxy = new VmProxy(this.villein.getCloud().getFarmProxy(spawnVm.getFrom()), spawnVm.getVmId(), villein.getDispatcher());
+        VmProxy vmProxy = new VmProxy(this.villein.getCloudProxy().getFarmProxy(new Jid(spawnVm.getFrom())), spawnVm.getVmId(), villein.getDispatcher());
         vmProxy.setVmId(spawnVm.getVmId());
         vmProxy.setVmSpecies(spawnVm.getVmSpecies());
         //vmStruct.setAvailable(true);
         try {
-            this.villein.getCloud().addVmProxy(spawnVm.getFrom(), vmProxy);
+            this.villein.getCloudProxy().addVmProxy(new Jid(spawnVm.getFrom()), vmProxy);
             successHandler.handle(spawnVm.getPacketID(), vmProxy);
         } catch (ParentProxyNotFoundException e) {
             Villein.LOGGER.warning(e.getMessage());

@@ -41,8 +41,8 @@ public class GetBindingsCommand extends Command {
 
         String id = Packet.nextID();
         ManageBindings manageBindings = new ManageBindings();
-        manageBindings.setTo(vmProxy.getFarmJid());
-        manageBindings.setFrom(villein.getFullJid());
+        manageBindings.setTo(vmProxy.getFarmProxy().getJid().toString());
+        manageBindings.setFrom(villein.getJid().toString());
         manageBindings.setType(IQ.Type.GET);
         manageBindings.setVmId(vmProxy.getVmId());
         manageBindings.setPacketID(id);

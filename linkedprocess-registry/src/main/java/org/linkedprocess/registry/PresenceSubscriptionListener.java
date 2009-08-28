@@ -37,9 +37,9 @@ public class PresenceSubscriptionListener extends RegistryPacketListener {
             Presence subscribed = new Presence(Presence.Type.subscribed);
             Presence subscribe = new Presence(Presence.Type.subscribe);
             subscribed.setTo(presence.getFrom());
-            subscribed.setFrom(this.getRegistry().getFullJid());
+            subscribed.setFrom(this.getRegistry().getJid().toString());
             subscribe.setTo(presence.getFrom());
-            subscribe.setFrom(this.getRegistry().getFullJid());
+            subscribe.setFrom(this.getRegistry().getJid().toString());
 
             this.getRegistry().getConnection().sendPacket(subscribed);
             this.getRegistry().getConnection().sendPacket(subscribe);
@@ -47,14 +47,14 @@ public class PresenceSubscriptionListener extends RegistryPacketListener {
             return;
 
         } else
-        if (type == Presence.Type.unsubscribe && !presence.getFrom().equals(this.getRegistry().getBareJid()) && !presence.getFrom().equals(this.getRegistry().getFullJid())) {
+        if (type == Presence.Type.unsubscribe && !presence.getFrom().equals(this.getRegistry().getJid().getBareJid().toString()) && !presence.getFrom().equals(this.getRegistry().getJid().toString())) {
             Registry.LOGGER.info("Unsubscribing from " + presence.getFrom());
             Presence unsubscribed = new Presence(Presence.Type.unsubscribed);
             Presence unsubscribe = new Presence(Presence.Type.unsubscribe);
             unsubscribed.setTo(presence.getFrom());
-            unsubscribed.setFrom(this.getRegistry().getFullJid());
+            unsubscribed.setFrom(this.getRegistry().getJid().toString());
             unsubscribe.setTo(presence.getFrom());
-            unsubscribe.setFrom(this.getRegistry().getFullJid());
+            unsubscribe.setFrom(this.getRegistry().getJid().toString());
 
             this.getRegistry().getConnection().sendPacket(unsubscribed);
             this.getRegistry().getConnection().sendPacket(unsubscribe);

@@ -37,7 +37,7 @@ public class AbortJobPacketListener extends FarmPacketListener {
         AbortJob returnAbortJob = new AbortJob();
 
         returnAbortJob.setTo(abortJob.getFrom());
-        returnAbortJob.setFrom(this.getFarm().getFullJid());
+        returnAbortJob.setFrom(this.getFarm().getJid().toString());
         returnAbortJob.setPacketID(abortJob.getPacketID());
         returnAbortJob.setVmId(abortJob.getVmId());
 

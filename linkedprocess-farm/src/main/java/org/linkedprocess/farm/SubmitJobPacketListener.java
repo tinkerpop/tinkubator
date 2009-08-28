@@ -43,7 +43,7 @@ public class SubmitJobPacketListener extends FarmPacketListener {
 
         SubmitJob returnSubmitJob = new SubmitJob();
         returnSubmitJob.setPacketID(submitJob.getPacketID());
-        returnSubmitJob.setFrom(this.getFarm().getFullJid());
+        returnSubmitJob.setFrom(this.getFarm().getJid().toString());
         returnSubmitJob.setTo(submitJob.getFrom());
         returnSubmitJob.setVmId(vmId);
 

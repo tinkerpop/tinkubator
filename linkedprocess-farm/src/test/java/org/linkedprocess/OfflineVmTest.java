@@ -207,7 +207,7 @@ public class OfflineVmTest extends OfflineTest {
         // shut down
         connection.clearPackets();
         //farm.terminateVm(farm.getVms().iterator()
-         //       .next().getFullJid());
+         //       .next().getJid());
         assertEquals("No packets should be sent on shutdown", 0, sentPackets
                 .size());
         assertEquals(0, farm.getVms().size());

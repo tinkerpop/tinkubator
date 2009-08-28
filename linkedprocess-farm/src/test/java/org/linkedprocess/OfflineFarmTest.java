@@ -67,7 +67,7 @@ public class OfflineFarmTest extends OfflineTest {
     private Vm createMockVM(String id) {
         Vm mockVM = createMock(Vm.class);
 
-        //expect(mockVM.getFullJid()).andReturn(id).anyTimes();
+        //expect(mockVM.getJid()).andReturn(id).anyTimes();
         //mockVM.shutdown();
         expectLastCall().anyTimes();
         try {

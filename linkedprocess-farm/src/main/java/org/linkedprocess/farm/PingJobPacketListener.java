@@ -35,7 +35,7 @@ public class PingJobPacketListener extends FarmPacketListener {
 
         PingJob returnPingJob = new PingJob();
         returnPingJob.setTo(pingJob.getFrom());
-        returnPingJob.setFrom(this.getFarm().getFullJid());
+        returnPingJob.setFrom(this.getFarm().getJid().toString());
         returnPingJob.setPacketID(pingJob.getPacketID());
         returnPingJob.setVmId(pingJob.getVmId());
 

@@ -9,6 +9,7 @@ package org.linkedprocess.proxies;
 
 import junit.framework.TestCase;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.Jid;
 import org.linkedprocess.villein.proxies.CloudProxy;
 import org.linkedprocess.villein.proxies.CountrysideProxy;
 import org.linkedprocess.villein.proxies.FarmProxy;
@@ -22,7 +23,7 @@ public class CloudTest extends TestCase {
 
     public void testCountrysideManipulations() {
         CloudProxy cloudProxy = new CloudProxy();
-        FarmProxy noParentFarmProxy = new FarmProxy("lonely@test/1234", null);
+        FarmProxy noParentFarmProxy = new FarmProxy(new Jid("lonely@test/1234"), null);
         try {
             cloudProxy.addFarmProxy(noParentFarmProxy);
             assertTrue(false);
@@ -30,10 +31,10 @@ public class CloudTest extends TestCase {
             assertTrue(true);
         }
 
-        CountrysideProxy countrysideProxy = new CountrysideProxy("test@test");
+        CountrysideProxy countrysideProxy = new CountrysideProxy(new Jid("test@test"));
         cloudProxy.addCountrysideProxy(countrysideProxy);
         for (int i = 0; i < 10; i++) {
-            FarmProxy farmProxy = new FarmProxy("test@test/" + LinkedProcess.generateRandomResourceId(), null);
+            FarmProxy farmProxy = new FarmProxy(new Jid("test@test/" + Jid.generateRandomResourceId()), null);
             cloudProxy.addFarmProxy(farmProxy);
             //assertEquals(countrysideProxy, cloud.getParentProxy(farmProxy.getJid()));
         }

@@ -16,14 +16,14 @@ import java.util.Set;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class LopClientTest extends TestCase {
+public class XmppClientTest extends TestCase {
 
     public void testRandomIDGenerator() {
         // 1,000,000 random IDs are generated without conflict.
         Set<String> uniques = new HashSet<String>();
         for (int i = 0; i < 100000; i++) {
             //System.out.println(XmppClient.generateRandomResourceId());
-            uniques.add(LinkedProcess.generateRandomResourceId());
+            uniques.add(Jid.generateRandomResourceId());
         }
         assertEquals(uniques.size(), 100000);
     }

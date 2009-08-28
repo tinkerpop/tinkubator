@@ -36,7 +36,7 @@ public class SpawnVmPacketListener extends FarmPacketListener {
 
         SpawnVm returnSpawnVm = new SpawnVm();
         returnSpawnVm.setTo(spawnVm.getFrom());
-        returnSpawnVm.setFrom(this.getFarm().getFullJid());
+        returnSpawnVm.setFrom(this.getFarm().getJid().toString());
         returnSpawnVm.setPacketID(spawnVm.getPacketID());
 
         String vmSpecies = spawnVm.getVmSpecies();

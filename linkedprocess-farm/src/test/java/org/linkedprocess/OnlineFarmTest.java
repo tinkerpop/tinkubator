@@ -56,7 +56,7 @@ public class OnlineFarmTest extends TestCase {
         xmppApp = new XmppTestClient(server1, port, username2, password2);
         Thread.sleep(1000);
 
-          xmppApp.subscribe(xmppFarm.getFullJid());
+          xmppApp.subscribe(xmppFarm.getJid());
           Thread.sleep(10000);
           assertTrue(xmppFarm.getRoster().contains(username2));
           assertTrue(xmppApp.getRoster().contains(username1));
@@ -70,7 +70,7 @@ public class OnlineFarmTest extends TestCase {
     @Test
     public void testSpawning() throws Exception {
 //        SpawnVm spawnVm = new SpawnVm();
-//        spawnVm.setTo(xmppFarm.getFullJid());
+//        spawnVm.setTo(xmppFarm.getJid());
 //        spawnVm.setPacketID("abcd");
     }
 

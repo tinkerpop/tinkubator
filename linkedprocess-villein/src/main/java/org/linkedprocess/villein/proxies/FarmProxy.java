@@ -35,11 +35,11 @@ public class FarmProxy extends XmppProxy {
     /**
      * Create a new farm proxy with a provided fully-qualified jid.
      *
-     * @param fullJid    the fully-qualified farm jid
+     * @param jid    the fully-qualified farm jid
      * @param dispatcher
      */
-    public FarmProxy(final String fullJid, final Dispatcher dispatcher) {
-        this.fullJid = fullJid;
+    public FarmProxy(final Jid jid, final Dispatcher dispatcher) {
+        this.jid = jid;
         this.dispatcher = dispatcher;
         this.refreshDiscoInfo();
     }
@@ -47,12 +47,12 @@ public class FarmProxy extends XmppProxy {
     /**
      * Create a new farm proxy with a provided fully-qualified jid.
      *
-     * @param fullJid           the fully-qualified farm jid
+     * @param jid           the fully-qualified farm jid
      * @param dispatcher
      * @param discoInfoDocument
      */
-    public FarmProxy(final String fullJid, final Dispatcher dispatcher, final Document discoInfoDocument) {
-        this.fullJid = fullJid;
+    public FarmProxy(final Jid jid, final Dispatcher dispatcher, final Document discoInfoDocument) {
+        this.jid = jid;
         this.dispatcher = dispatcher;
         this.discoInfoDocument = discoInfoDocument;
     }
@@ -94,10 +94,10 @@ public class FarmProxy extends XmppProxy {
     /**
      * Given a fully-qualified virtual machine jid, remove the corresponding virtual machine proxy from this farm proxy's collection.
      *
-     * @param vmJid a fully-qualified virtual machine jid
+     * @param vmId a fully-qualified virtual machine jid
      */
-    public void removeVmProxy(String vmJid) {
-        this.vmProxies.remove(vmJid);
+    public void removeVmProxy(String vmId) {
+        this.vmProxies.remove(vmId);
     }
 
     /**

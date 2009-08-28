@@ -13,6 +13,7 @@ import org.jdom.Namespace;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.Jid;
 import org.linkedprocess.villein.Dispatcher;
 import org.linkedprocess.villein.Villein;
 
@@ -33,15 +34,11 @@ public abstract class XmppProxy implements Comparable {
 
     protected Document discoInfoDocument;
     protected Dispatcher dispatcher;
-    protected String fullJid;
+    protected Jid jid;
     protected LinkedProcess.Status status;
 
-    public String getFullJid() {
-        return this.fullJid;
-    }
-
-    public void setFullJid(String fullJid) {
-        this.fullJid = fullJid;
+    public Jid getJid() {
+        return this.jid;
     }
 
     public void setStatus(LinkedProcess.Status status) {
@@ -56,7 +53,7 @@ public abstract class XmppProxy implements Comparable {
         if (this.dispatcher != null) {
             ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();
             try {
-                DiscoverInfo discoInfo = discoManager.discoverInfo(this.fullJid);
+                DiscoverInfo discoInfo = discoManager.discoverInfo(this.jid.toString());
                 this.discoInfoDocument = LinkedProcess.createXMLDocument(discoInfo.toXML());
             } catch (Exception e) {
                 Villein.LOGGER.warning("Problem loading disco#info: " + e.getMessage());
@@ -132,14 +129,14 @@ public abstract class XmppProxy implements Comparable {
 
     public int compareTo(Object xmppProxy) {
         if (xmppProxy instanceof XmppProxy) {
-            return this.fullJid.compareTo(((XmppProxy) xmppProxy).getFullJid());
+            return this.jid.compareTo(((XmppProxy) xmppProxy).getJid());
         } else {
             throw new ClassCastException();
         }
     }
 
     public String toString() {
-        return this.getClass().getName() + "[" + this.fullJid + "]";
+        return this.getClass().getName() + "[" + this.jid + "]";
     }
 
 

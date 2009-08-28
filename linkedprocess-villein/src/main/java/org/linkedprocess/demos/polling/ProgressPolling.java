@@ -48,16 +48,16 @@ public class ProgressPolling {
 
         System.out.println("Waiting for 1 available farm...");
 
-        //CountrysideProxy testProxy = ResourceAllocationPattern.allocateCountryside(villein.getCloud(), "test_countryside@lanl.linkedprocess.org", -1);
+        //CountrysideProxy testProxy = ResourceAllocationPattern.allocateCountryside(villein.getCloudProxy(), "test_countryside@lanl.linkedprocess.org", -1);
         //Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(testProxy, 1, 20000);
-        Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(villein.getCloud(), 1, 20000);
+        Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(villein.getCloudProxy(), 1, 20000);
         farmProxies = ResourceAllocationPattern.filterFarmProxiesByPasswordRequired(farmProxies, false);
         if (farmProxies.size() == 0) {
             System.out.println("Could not allocate a password free farm.");
             System.exit(1);
         }
         for (FarmProxy farmProxy : farmProxies) {
-            System.out.println("farm allocated: " + farmProxy.getFullJid());
+            System.out.println("farm allocated: " + farmProxy.getJid());
         }
 
         //////////////// SPAWN VIRTUAL MACHINES ON ALLOCATED FARMS
