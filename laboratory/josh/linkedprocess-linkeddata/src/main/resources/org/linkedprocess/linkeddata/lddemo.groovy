@@ -21,18 +21,12 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-public class WeightedValue implements Comparable<WeightedValue> {
-    public WeightedValue(final Resource value,
-                         final long weight) {
-        this.value = value;
-        this.weight = weight;
-    }
-
+class WeightedValue implements Comparable {
     public Resource value;
     public long weight;
 
-    public int compareTo(WeightedValue other) {
-        return -((Long) weight).compareTo(other.weight);
+    public int compareTo(Object other) {
+        return - ((Long) weight).compareTo(((WeightedValue) other).weight);
     }
 }
 
@@ -109,7 +103,10 @@ public class GroovyLinkedDataDemo {
         Map<Resource, Long> results = foafWalk(sail, 100, 2);
         List<WeightedValue> sorted = new LinkedList<WeightedValue>();
         for (Resource r : results.keySet()) {
-            sorted.add(new WeightedValue(r, results.get(r)));
+            WeightedValue wv = new WeightedValue();
+            wv.value = r;
+            wv.weight = results.get(r);
+            sorted.add(wv);
         }
         Collections.sort(sorted);
         for (WeightedValue v : sorted) {
@@ -133,4 +130,4 @@ public class GroovyLinkedDataDemo {
     }
 }
 
-GroovyLinkedDataDemo.main();
+new GroovyLinkedDataDemo().main();
