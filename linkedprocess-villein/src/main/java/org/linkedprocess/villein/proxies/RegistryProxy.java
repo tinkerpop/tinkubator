@@ -8,14 +8,16 @@
 package org.linkedprocess.villein.proxies;
 
 import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.Namespace;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.linkedprocess.Jid;
+import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.villein.Dispatcher;
 import org.linkedprocess.villein.Villein;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -28,15 +30,13 @@ import java.util.Set;
  */
 public class RegistryProxy extends XmppProxy {
 
-    private Set<DiscoverItems.Item> discoItems;
+    private Document discoItemsDocument;
 
     public RegistryProxy(final Jid jid, final Dispatcher dispatcher) {
         this.jid = jid;
         this.dispatcher = dispatcher;
         this.refreshDiscoInfo();
         this.refreshDiscoItems();
-
-
     }
 
     public RegistryProxy(final Jid jid, final Dispatcher dispatcher, final Document discoInfoDocument) {
@@ -44,19 +44,20 @@ public class RegistryProxy extends XmppProxy {
         this.dispatcher = dispatcher;
         this.discoInfoDocument = discoInfoDocument;
         this.refreshDiscoItems();
+    }
 
+    public RegistryProxy(final Jid jid, final Dispatcher dispatcher, final Document discoInfoDocument, final Document discoItemsDocument) {
+        this.jid = jid;
+        this.dispatcher = dispatcher;
+        this.discoInfoDocument = discoInfoDocument;
+        this.discoItemsDocument = discoItemsDocument;
     }
 
     public void refreshDiscoItems() {
+        ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();
         try {
-
-            this.discoItems = new HashSet<DiscoverItems.Item>();
-            ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();
             DiscoverItems discoItems = discoManager.discoverItems(this.jid.toString());
-            Iterator<DiscoverItems.Item> itty = discoItems.getItems();
-            while (itty.hasNext()) {
-                this.discoItems.add(itty.next());
-            }
+            this.discoItemsDocument = LinkedProcess.createXMLDocument(discoItems.toXML());
         } catch (Exception e) {
             Villein.LOGGER.warning("Problem loading disco#items: " + e.getMessage());
         }
@@ -64,11 +65,20 @@ public class RegistryProxy extends XmppProxy {
 
     public Set<CountrysideProxy> getActiveCountrysides() {
         Set<CountrysideProxy> countrysideProxies = new HashSet<CountrysideProxy>();
-        for (DiscoverItems.Item item : discoItems) {
-            CountrysideProxy countrysideProxy = new CountrysideProxy(new Jid(item.getEntityID()));
-            countrysideProxies.add(countrysideProxy);
+        if (null != this.discoItemsDocument) {
+            Element queryElement = this.discoItemsDocument.getRootElement().getChild(LinkedProcess.QUERY_TAG, Namespace.getNamespace(LinkedProcess.DISCO_ITEMS_NAMESPACE));
+            if (null != queryElement) {
+                for (Object itemElement : queryElement.getChildren(LinkedProcess.ITEM_TAG, Namespace.getNamespace(LinkedProcess.DISCO_ITEMS_NAMESPACE))) {
+                    if (itemElement instanceof Element) {
+                        String jidString = ((Element) itemElement).getAttributeValue(LinkedProcess.JID_ATTRIBUTE);
+                        if (null != jidString) {
+                            CountrysideProxy countrysideProxy = new CountrysideProxy(new Jid(jidString));
+                            countrysideProxies.add(countrysideProxy);
+                        }
+                    }
+                }
+            }
         }
         return countrysideProxies;
     }
-
 }

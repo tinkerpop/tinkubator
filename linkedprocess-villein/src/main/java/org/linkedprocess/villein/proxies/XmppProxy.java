@@ -62,17 +62,11 @@ public abstract class XmppProxy implements Comparable {
     }
 
     public Set<String> getFeatures() {
-        Set<String> features = new HashSet<String>();
-        if (null != this.discoInfoDocument) {
-            Element queryElement = this.discoInfoDocument.getRootElement().getChild(LinkedProcess.QUERY_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
-            if (null != queryElement) {
-                for (Object featureElement : queryElement.getChildren(LinkedProcess.FEATURE_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE))) {
-                    if (featureElement instanceof Element)
-                        features.add(((Element) featureElement).getAttributeValue(LinkedProcess.VAR_ATTRIBUTE));
-                }
-            }
-        }
-        return features;
+        return XmppProxy.getFeatures(this.discoInfoDocument);
+    }
+
+    public boolean hasFeature(String feature) {
+        return this.getFeatures().contains(feature);
     }
 
     public Field getField(String variable) {
@@ -126,6 +120,30 @@ public abstract class XmppProxy implements Comparable {
         }
         return proxyFields;
     }
+
+
+    protected static Set<String> getFeatures(Document discoInfoDocument) {
+        Set<String> features = new HashSet<String>();
+        if (null != discoInfoDocument) {
+            Element queryElement = discoInfoDocument.getRootElement().getChild(LinkedProcess.QUERY_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE));
+            if (null != queryElement) {
+                for (Object featureElement : queryElement.getChildren(LinkedProcess.FEATURE_TAG, Namespace.getNamespace(LinkedProcess.DISCO_INFO_NAMESPACE))) {
+                    if (featureElement instanceof Element)
+                        features.add(((Element) featureElement).getAttributeValue(LinkedProcess.VAR_ATTRIBUTE));
+                }
+            }
+        }
+        return features;
+    }
+
+    public static boolean isRegistry(Document discoInfoDocument) {
+        return XmppProxy.getFeatures(discoInfoDocument).contains(LinkedProcess.LOP_REGISTRY_NAMESPACE);
+    }
+
+    public static boolean isFarm(Document discoInfoDocument) {
+        return XmppProxy.getFeatures(discoInfoDocument).contains(LinkedProcess.LOP_FARM_NAMESPACE);
+    }
+
 
     public int compareTo(Object xmppProxy) {
         if (xmppProxy instanceof XmppProxy) {

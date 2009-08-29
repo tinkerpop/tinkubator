@@ -11,6 +11,7 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
+import org.jdom.Document;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -23,22 +24,13 @@ public abstract class LopPacketListener implements PacketListener {
         this.xmppClient = xmppClient;
     }
 
-    protected DiscoverInfo getDiscoInfo(String jid) {
+    protected Document getDiscoInfo(Jid jid) {
         ServiceDiscoveryManager discoManager = this.xmppClient.getDiscoManager();
         try {
-            return discoManager.discoverInfo(jid);
-        } catch (XMPPException e) {
-            XmppClient.LOGGER.warning("XmppException with DiscoveryManager on " + jid + ": " + e.getMessage());
+            return LinkedProcess.createXMLDocument(discoManager.discoverInfo(jid.toString()).toXML());
+        } catch (Exception e) {
+            XmppClient.LOGGER.warning(e.getMessage());
             return null;
         }
-    }
-
-    protected boolean isFarm(DiscoverInfo discoInfo) {
-        return discoInfo != null && discoInfo.containsFeature(LinkedProcess.LOP_FARM_NAMESPACE);
-
-    }
-
-    protected boolean isRegistry(DiscoverInfo discoInfo) {
-        return discoInfo != null && discoInfo.containsFeature(LinkedProcess.LOP_REGISTRY_NAMESPACE);
     }
 }

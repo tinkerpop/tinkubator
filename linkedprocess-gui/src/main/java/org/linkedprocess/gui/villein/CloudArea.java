@@ -110,9 +110,9 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
                 }
             }
         } else if (event.getActionCommand().equals(PROBE)) {
-            if (this.popupTreeObject instanceof XmppProxy) {
-                XmppProxy proxy = (XmppProxy) this.popupTreeObject;
-                this.villeinGui.getXmppVillein().probeJid(proxy.getJid());
+            if (this.popupTreeObject instanceof CountrysideProxy) {
+                CountrysideProxy countrysideProxy = (CountrysideProxy) this.popupTreeObject;
+                this.villeinGui.getXmppVillein().probeJid(countrysideProxy.getJid());
             }
         } else if (event.getActionCommand().equals(DISCOVER_INFORMATION)) {
             if (this.popupTreeObject instanceof FarmProxy) {
@@ -239,7 +239,7 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
                     this.tree.scrollPathToVisible(new TreePath(node.getPath()));
                     model.reload(node);
                 } else {
-                    Villein.LOGGER.severe("Unknown node/proxy object: " + node.getUserObject());
+                    Villein.LOGGER.warning("Unknown node/proxy object: " + node.getUserObject());
                 }
             }
         } else {

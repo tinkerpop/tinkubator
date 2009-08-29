@@ -10,7 +10,6 @@ package org.linkedprocess.villein;
 import org.jdom.Document;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.Jid;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.villein.proxies.*;
@@ -36,72 +35,79 @@ class PresencePacketListener extends VilleinPacketListener {
         Villein.LOGGER.info(presence.toXML());
 
         CloudProxy cloudProxy = this.getVillein().getCloudProxy();
-        XmppProxy xmppProxy = this.getVillein().getCloudProxy().getXmppProxy(new Jid(presence.getFrom()));
+        Jid presenceJid = new Jid(presence.getFrom());
+        Jid countrysideJid = presenceJid.getBareJid();
+        XmppProxy xmppProxy = this.getVillein().getCloudProxy().getXmppProxy(presenceJid);
         LinkedProcess.Status status = PresencePacketListener.getStatus(presence);
-        if (xmppProxy != null) {
 
+
+        if (isUnsubscribed(presence)) {
+            /////////
+            // If the presence is an unsubscribe, then remove the countryside from the cloud and alert the presence handlers.
+            /////////
+            cloudProxy.removeCountrysideProxy(countrysideJid);
+            // Handlers
+            for (PresenceHandler presenceHandler : this.getVillein().getPresenceHandlers()) {
+                presenceHandler.handlePresenceUpdate(countrysideJid, LinkedProcess.Status.INACTIVE);
+            }
+        } else if (xmppProxy != null) {
+            /////////
+            // If its not an unsubscribe and the presence is coming from a known XMPP proxy (e.g. Farm or registry), then
+            // remove it from the cloud if its inactive or just update its status. Then alert all presence handlers.
+            /////////
             if (status == LinkedProcess.Status.INACTIVE) {
-                cloudProxy.removeXmppProxy(new Jid(presence.getFrom()));
+                cloudProxy.removeXmppProxy(presenceJid);
             } else {
                 xmppProxy.setStatus(status);
             }
-
-            if (isUnsubscribed(presence)) {
-                cloudProxy.removeCountrysideProxy(new Jid(presence.getFrom()).getBareJid());
+            // Handlers
+            for (PresenceHandler presenceHandler : this.getVillein().getPresenceHandlers()) {
+                presenceHandler.handlePresenceUpdate(presenceJid, status);
             }
-
         } else {
-            CountrysideProxy countrysideProxy = cloudProxy.getCountrysideProxy(new Jid(presence.getFrom()).getBareJid());
+            /////////
+            // Finally, it is an unknown XMPP proxy from a potentially unknown countryside.
+            // Create the countryside and proxy and alert the presence handlers.
+            /////////
+            CountrysideProxy countrysideProxy = cloudProxy.getCountrysideProxy(countrysideJid);
             if (null == countrysideProxy) {
-                cloudProxy.addCountrysideProxy(new CountrysideProxy(new Jid(presence.getFrom()).getBareJid()));
+                cloudProxy.addCountrysideProxy(new CountrysideProxy(countrysideJid));
                 for (PresenceHandler presenceHandler : this.getVillein().getPresenceHandlers()) {
-                    presenceHandler.handlePresenceUpdate(new Jid(presence.getFrom()).getBareJid(), LinkedProcess.Status.ACTIVE);
+                    presenceHandler.handlePresenceUpdate(countrysideJid, LinkedProcess.Status.ACTIVE);
                 }
             }
-
-            // Determine which type of XMPP proxy the presence packet is from
-            DiscoverInfo discoInfo = this.getDiscoInfo(presence.getFrom());
-            Document discoInfoDocument = null;
-            try {
-                discoInfoDocument = LinkedProcess.createXMLDocument(discoInfo.toXML());
-            } catch (Exception e) {
-                Villein.LOGGER.warning("disco#info document is not valid XML: " + e.getMessage());
-            }
-
-            if (isFarm(discoInfo)) {
-                FarmProxy farmProxy = new FarmProxy(new Jid(presence.getFrom()), this.getVillein().getDispatcher(), discoInfoDocument);
-                farmProxy.setStatus(status);
-                try {
-                    countrysideProxy.addFarmProxy(farmProxy);
-                    xmppProxy = farmProxy;
-                } catch (ParentProxyNotFoundException e) {
-                    Villein.LOGGER.warning(e.getMessage());
+            if (!presenceJid.isBareJid()) {
+                // If its not a countryside jid (bare jid) then determine which type of XMPP proxy the presence packet is from
+                Document discoInfoDocument = this.getDiscoInfo(presenceJid);
+                if (discoInfoDocument != null) {
+                    if (XmppProxy.isFarm(discoInfoDocument)) {
+                        FarmProxy farmProxy = new FarmProxy(presenceJid, this.getVillein().getDispatcher(), discoInfoDocument);
+                        farmProxy.setStatus(status);
+                        try {
+                            countrysideProxy.addFarmProxy(farmProxy);
+                            // Handlers
+                            for (PresenceHandler presenceHandler : this.getVillein().getPresenceHandlers()) {
+                                presenceHandler.handlePresenceUpdate(presenceJid, status);
+                            }
+                        } catch (ParentProxyNotFoundException e) {
+                            Villein.LOGGER.warning(e.getMessage());
+                        }
+                    } else if (XmppProxy.isRegistry(discoInfoDocument)) {
+                        RegistryProxy registryProxy = new RegistryProxy(presenceJid, this.getVillein().getDispatcher(), discoInfoDocument, null);
+                        registryProxy.setStatus(status);
+                        try {
+                            countrysideProxy.addRegistryProxy(registryProxy);
+                            // Handlers
+                            for (PresenceHandler presenceHandler : this.getVillein().getPresenceHandlers()) {
+                                presenceHandler.handlePresenceUpdate(presenceJid, status);
+                            }
+                        } catch (ParentProxyNotFoundException e) {
+                            Villein.LOGGER.warning(e.getMessage());
+                        }
+                    } else {
+                        Villein.LOGGER.info("The following resource is not an LoP entity: " + presenceJid);
+                    }
                 }
-            } else if (isRegistry(discoInfo)) {
-                RegistryProxy registryProxy = new RegistryProxy(new Jid(presence.getFrom()), this.getVillein().getDispatcher(), discoInfoDocument);
-                registryProxy.setStatus(status);
-                try {
-                    countrysideProxy.addRegistryProxy(registryProxy);
-                    xmppProxy = registryProxy;
-                } catch (ParentProxyNotFoundException e) {
-                    Villein.LOGGER.warning(e.getMessage());
-                }
-            } else {
-                Villein.LOGGER.info("The following resource is not an LoP resource: " + presence.getFrom());
-            }
-        }
-
-        if (xmppProxy != null) {
-            // Handlers
-            for (PresenceHandler presenceHandler : this.getVillein().getPresenceHandlers()) {
-                presenceHandler.handlePresenceUpdate(xmppProxy.getJid(), status);
-            }
-        }
-
-        if (isUnsubscribed(presence)) {
-            // Handlers
-            for (PresenceHandler presenceHandler : this.getVillein().getPresenceHandlers()) {
-                presenceHandler.handlePresenceUpdate(new Jid(presence.getFrom()).getBareJid(), LinkedProcess.Status.INACTIVE);
             }
         }
     }
@@ -109,7 +115,7 @@ class PresencePacketListener extends VilleinPacketListener {
     private static LinkedProcess.Status getStatus(Presence presence) {
         if (presence.getType() == Presence.Type.unavailable || presence.getType() == Presence.Type.unsubscribe || presence.getType() == Presence.Type.unsubscribed) {
             return LinkedProcess.Status.INACTIVE;
-        } else if (presence.getMode() == Presence.Mode.dnd) {
+        } else if (presence.isAway()) { // dnd, extended away, away
             return LinkedProcess.Status.BUSY;
         } else {
             return LinkedProcess.Status.ACTIVE;
