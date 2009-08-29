@@ -1,7 +1,7 @@
 package org.linkedprocess.linkeddata;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.LinkedProcessFarm;
+import org.linkedprocess.farm.LinkedProcessFarm;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
