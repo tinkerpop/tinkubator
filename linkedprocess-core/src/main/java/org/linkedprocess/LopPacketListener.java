@@ -11,7 +11,6 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
-import org.linkedprocess.LinkedProcess;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -35,16 +34,11 @@ public abstract class LopPacketListener implements PacketListener {
     }
 
     protected boolean isFarm(DiscoverInfo discoInfo) {
-        if (discoInfo != null)
-            return discoInfo.containsFeature(LinkedProcess.LOP_FARM_NAMESPACE);
-        else
-            return false;
+        return discoInfo != null && discoInfo.containsFeature(LinkedProcess.LOP_FARM_NAMESPACE);
+
     }
 
     protected boolean isRegistry(DiscoverInfo discoInfo) {
-        if (discoInfo != null)
-            return discoInfo.containsFeature(LinkedProcess.LOP_REGISTRY_NAMESPACE);
-        else
-            return false;
+        return discoInfo != null && discoInfo.containsFeature(LinkedProcess.LOP_REGISTRY_NAMESPACE);
     }
 }

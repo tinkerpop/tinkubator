@@ -1,8 +1,8 @@
 package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.Connection;
-import org.linkedprocess.villein.Villein;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
+import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.proxies.VmProxy;
 
 import javax.swing.*;

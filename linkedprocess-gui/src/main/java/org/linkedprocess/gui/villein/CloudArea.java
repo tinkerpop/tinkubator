@@ -1,7 +1,7 @@
 package org.linkedprocess.gui.villein;
 
-import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.Jid;
+import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.gui.*;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
 import org.linkedprocess.villein.Handler;

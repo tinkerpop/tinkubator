@@ -5,7 +5,7 @@ package org.linkedprocess;
  * @version LoPSideD 0.1
  */
 public class LopXmppException extends Exception {
-    public LopXmppException(final String message) { 
+    public LopXmppException(final String message) {
         super(message);
     }
 }

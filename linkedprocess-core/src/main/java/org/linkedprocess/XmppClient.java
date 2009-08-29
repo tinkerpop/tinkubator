@@ -34,7 +34,7 @@ public abstract class XmppClient {
     private String server;
     private int port;
 
-    protected void logon(final String server, final int port, final String username, final String password, String resource) throws LopXmppException {
+    protected void logon(final String server, final int port, final String username, final String password, final String resource) throws LopXmppException {
 
         this.server = server;
         this.port = port;
@@ -81,7 +81,12 @@ public abstract class XmppClient {
         this.roster = this.connection.getRoster();
     }
 
-    protected void logout(Presence logoutPresence) {
+    /**
+     * Logout of the XMPP server.
+     *
+     * @param logoutPresence the presence to send when logging off
+     */
+    protected void logout(final Presence logoutPresence) {
         LOGGER.info("Disconnecting from " + connection.getHost());
         if (logoutPresence == null)
             connection.disconnect();
@@ -89,6 +94,9 @@ public abstract class XmppClient {
             connection.disconnect(logoutPresence);
     }
 
+    /**
+     * Print a collection of connection information about the XMPP client.
+     */
     public void printClientStatistics() {
         // print a collection of statistics about the connection
         LOGGER.info("Anonymous: " + connection.isAnonymous());
@@ -99,11 +107,16 @@ public abstract class XmppClient {
         LOGGER.info("Transport Layer Security: " + connection.isUsingTLS());
     }
 
+    /**
+     * Get the current status of this XMPP client. This method returns null and should be overridden by an extended class.
+     *
+     * @return the status of the XMPP client
+     */
     public LinkedProcess.Status getStatus() {
         return null;
     }
 
-    public void sendPresence(final LinkedProcess.Status status, String statusMessage) {
+    public void sendPresence(final LinkedProcess.Status status, final String statusMessage) {
         Presence presence;
         if (status == LinkedProcess.Status.ACTIVE) {
             presence = new Presence(Presence.Type.available, statusMessage, LinkedProcess.HIGHEST_PRIORITY, Presence.Mode.available);
@@ -118,10 +131,20 @@ public abstract class XmppClient {
         this.connection.sendPacket(presence);
     }
 
+    /**
+     * Get the jid of this XMPP client.
+     *
+     * @return the jid of this XMPP client
+     */
     public Jid getJid() {
         return new Jid(this.connection.getUser());
     }
 
+    /**
+     * Get the XMPP connection associated with this XMPP client.
+     *
+     * @return the XMPP connection of this XMPP client
+     */
     public Connection getConnection() {
         return this.connection;
     }
@@ -133,18 +156,38 @@ public abstract class XmppClient {
         logout(presence);
     }
 
+    /**
+     * Get the username used to log into the XMPP server by this XMPP client.
+     *
+     * @return the XMPP client username
+     */
     public String getUsername() {
         return this.username;
     }
 
+    /**
+     * Get the password used to log into the XMPP server by this XMPP client.
+     *
+     * @return the XMPP client password
+     */
     public String getPassword() {
         return this.password;
     }
 
+    /**
+     * Get the port used to log into the XMPP server by this XMPP client.
+     *
+     * @return the XMPP server's port
+     */
     public int getPort() {
         return this.port;
     }
 
+    /**
+     * Get the String representation of the jid of the XMPP server (e.g. countryside@linkedprocess.org)
+     *
+     * @return the jid of the XMPP server
+     */
     public String getServer() {
         return this.server;
     }
@@ -153,29 +196,50 @@ public abstract class XmppClient {
         return this.roster;
     }
 
+    /**
+     * Get the total running time of this XMPP client in milliseconds.
+     *
+     * @return the total running time of this XMPP client in milliseconds
+     */
     public long getRunningTime() {
         return System.currentTimeMillis() - this.startTime;
     }
 
+    /**
+     * Get the total running time of this XMPP client in seconds.
+     *
+     * @return the total running time of this XMPP client in seconds
+     */
     public float getRunningTimeInSeconds() {
         return this.getRunningTime() / 1000.0f;
     }
 
+    /**
+     * Get the total running time of this XMPP client in minutes.
+     *
+     * @return the total running time of this XMPP client in minutes
+     */
     public float getRunningTimeInMinutes() {
         return this.getRunningTime() / 6000.0f;
     }
 
+    /**
+     * Get the current time in milliseconds when this XMPP client was started.
+     *
+     * @return the current time in milliseconds when this XMPP client was started
+     */
     public long getStartTime() {
         return this.startTime;
     }
 
+    /**
+     * Get the current time when this XMPP client was started in the format yyyy-MM-dd'T'HH:mm:ss.
+     *
+     * @return the current time when this XMPP client was started in xsd:dateTime format
+     */
     public String getStartTimeAsXsdDateTime() {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        return formatter.format(this.getStartTimeAsDate());
-    }
-
-    public java.util.Date getStartTimeAsDate() {
-        return new java.util.Date(this.startTime);
+        return formatter.format(new java.util.Date(this.startTime));
     }
 
     public ServiceDiscoveryManager getDiscoManager() {
@@ -191,7 +255,7 @@ public abstract class XmppClient {
         this.getDiscoManager().addFeature(LinkedProcess.DISCO_INFO_NAMESPACE);
     }
 
-    public void requestSubscription(Jid jid) {
+    public void requestSubscription(final Jid jid) {
         try {
             this.roster.createEntry(jid.toString(), null, null);
         } catch (XMPPException e) {
@@ -199,7 +263,7 @@ public abstract class XmppClient {
         }
     }
 
-    public void requestUnsubscription(Jid jid) {
+    public void requestUnsubscription(final Jid jid) {
         try {
             this.roster.removeEntry(this.roster.getEntry(jid.getBareJid().toString()));
         } catch (XMPPException e) {
@@ -207,7 +271,12 @@ public abstract class XmppClient {
         }
     }
 
-    public void probeJid(Jid jid) {
+    /**
+     * Probe a partcular jid with a <presence type="probe"> packet.
+     *
+     * @param jid the jid to probe
+     */
+    public void probeJid(final Jid jid) {
         ProbePresence probe = new ProbePresence();
         probe.setFrom(this.getJid().toString());
         probe.setTo(jid.toString());

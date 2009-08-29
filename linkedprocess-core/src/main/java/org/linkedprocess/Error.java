@@ -10,7 +10,6 @@ package org.linkedprocess;
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jivesoftware.smack.packet.XMPPError;
-import org.linkedprocess.LinkedProcess;
 
 import java.util.HashMap;
 import java.util.Map;

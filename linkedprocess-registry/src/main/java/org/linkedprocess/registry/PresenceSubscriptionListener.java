@@ -46,8 +46,7 @@ public class PresenceSubscriptionListener extends RegistryPacketListener {
 
             return;
 
-        } else
-        if (type == Presence.Type.unsubscribe && !presence.getFrom().equals(this.getRegistry().getJid().getBareJid().toString()) && !presence.getFrom().equals(this.getRegistry().getJid().toString())) {
+        } else if (type == Presence.Type.unsubscribe && !presence.getFrom().equals(this.getRegistry().getJid().getBareJid().toString()) && !presence.getFrom().equals(this.getRegistry().getJid().toString())) {
             Registry.LOGGER.info("Unsubscribing from " + presence.getFrom());
             Presence unsubscribed = new Presence(Presence.Type.unsubscribed);
             Presence unsubscribe = new Presence(Presence.Type.unsubscribe);

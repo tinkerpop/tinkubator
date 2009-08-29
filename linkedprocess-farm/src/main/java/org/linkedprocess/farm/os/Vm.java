@@ -2,10 +2,9 @@ package org.linkedprocess.farm.os;
 
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.Farm;
-import org.linkedprocess.farm.os.Job;
-import org.linkedprocess.farm.os.VmBindings;
+import org.linkedprocess.farm.os.errors.JobAlreadyExistsException;
+import org.linkedprocess.farm.os.errors.JobNotFoundException;
 import org.linkedprocess.farm.os.errors.VmIsFullException;
-import org.linkedprocess.farm.os.errors.*;
 import org.linkedprocess.farm.os.errors.VmNotFoundException;
 
 import java.util.Set;

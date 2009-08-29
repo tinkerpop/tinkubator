@@ -10,10 +10,11 @@ package org.linkedprocess.farm;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.farm.SubmitJob;
 import org.xmlpull.v1.XmlPullParser;
 
 /**
+ * A submit_job parser that creates a SubmitJob object.
+ *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */

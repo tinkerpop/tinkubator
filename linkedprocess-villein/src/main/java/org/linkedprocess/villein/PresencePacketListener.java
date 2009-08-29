@@ -46,7 +46,7 @@ class PresencePacketListener extends VilleinPacketListener {
                 xmppProxy.setStatus(status);
             }
 
-            if(isUnsubscribed(presence)) {
+            if (isUnsubscribed(presence)) {
                 cloudProxy.removeCountrysideProxy(new Jid(presence.getFrom()).getBareJid());
             }
 
@@ -98,7 +98,7 @@ class PresencePacketListener extends VilleinPacketListener {
             }
         }
 
-        if(isUnsubscribed(presence)) {
+        if (isUnsubscribed(presence)) {
             // Handlers
             for (PresenceHandler presenceHandler : this.getVillein().getPresenceHandlers()) {
                 presenceHandler.handlePresenceUpdate(new Jid(presence.getFrom()).getBareJid(), LinkedProcess.Status.INACTIVE);

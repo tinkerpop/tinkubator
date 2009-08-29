@@ -11,7 +11,6 @@ import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
-import org.linkedprocess.Connection;
 
 public class XmppConnectionWrapper implements Connection {
 

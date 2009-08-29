@@ -10,15 +10,14 @@ import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.farm.LinkedProcessFarm;
-import org.linkedprocess.XmppClient;
 import org.linkedprocess.LopXmppException;
-import org.linkedprocess.farm.os.VmScheduler;
+import org.linkedprocess.XmppClient;
 import org.linkedprocess.farm.os.Vm;
+import org.linkedprocess.farm.os.VmScheduler;
 import org.linkedprocess.farm.os.errors.UnsupportedScriptEngineException;
-import org.linkedprocess.farm.os.errors.VmSchedulerIsFullException;
+import org.linkedprocess.farm.os.errors.VmAlreadyExistsException;
 import org.linkedprocess.farm.os.errors.VmNotFoundException;
-import org.linkedprocess.farm.os.errors.*;
+import org.linkedprocess.farm.os.errors.VmSchedulerIsFullException;
 import org.linkedprocess.farm.security.ServiceDiscoveryConfiguration;
 import org.linkedprocess.farm.security.SystemInfo;
 import org.linkedprocess.farm.security.VmSecurityManager;
@@ -62,7 +61,7 @@ public class Farm extends XmppClient {
         pm.addIQProvider(LinkedProcess.ABORT_JOB_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new AbortJobProvider());
         pm.addIQProvider(LinkedProcess.MANAGE_BINDINGS_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new ManageBindingsProvider());
         pm.addIQProvider(LinkedProcess.TERMINATE_VM_TAG, LinkedProcess.LOP_FARM_NAMESPACE, new TerminateVmProvider());
-       
+
         this.logon(server, port, username, password);
         this.initiateFeatures();
 

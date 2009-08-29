@@ -12,8 +12,8 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
-import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.Jid;
+import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.villein.Dispatcher;
 import org.linkedprocess.villein.Villein;
 
@@ -48,7 +48,7 @@ public abstract class XmppProxy implements Comparable {
     public LinkedProcess.Status getStatus() {
         return this.status;
     }
-    
+
     public void refreshDiscoInfo() {
         if (this.dispatcher != null) {
             ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();

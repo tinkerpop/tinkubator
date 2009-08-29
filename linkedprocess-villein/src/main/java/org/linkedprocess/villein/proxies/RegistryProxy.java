@@ -10,9 +10,9 @@ package org.linkedprocess.villein.proxies;
 import org.jdom.Document;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverItems;
+import org.linkedprocess.Jid;
 import org.linkedprocess.villein.Dispatcher;
 import org.linkedprocess.villein.Villein;
-import org.linkedprocess.Jid;
 
 import java.util.HashSet;
 import java.util.Iterator;

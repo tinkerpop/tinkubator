@@ -9,9 +9,6 @@ package org.linkedprocess.farm.os;
 
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.LinkedProcessFarm;
-import org.linkedprocess.farm.os.Job;
-import org.linkedprocess.farm.os.VmBindings;
-import org.linkedprocess.farm.os.JobResult;
 import org.linkedprocess.farm.os.errors.*;
 
 import javax.script.ScriptEngine;
@@ -155,8 +152,8 @@ public class VmScheduler {
     /**
      * Creates a new virtual machine.
      *
-     * @param vmId the intended JID of the virtual machine
-     * @param language   the type of virtual machine to create
+     * @param vmId     the intended JID of the virtual machine
+     * @param language the type of virtual machine to create
      * @throws org.linkedprocess.farm.os.errors.UnsupportedScriptEngineException
      *          if the given script engine is not supported
      * @throws org.linkedprocess.farm.os.errors.VmAlreadyExistsException
@@ -234,7 +231,7 @@ public class VmScheduler {
 
         w.terminate();
         setVirtualMachineStatus(vmId, LinkedProcess.Status.INACTIVE);
-        
+
 
         if (MAX_VM > workersByJID.size() && this.farmStatus != LinkedProcess.Status.ACTIVE) {
             setSchedulerStatus(LinkedProcess.Status.ACTIVE);
@@ -246,7 +243,8 @@ public class VmScheduler {
     /**
      * @param machineJID the JID of the virtual machine to query
      * @return the set of all variable bindings in the given virtual machine
-     * @throws org.linkedprocess.farm.os.errors.VmNotFoundException if no VM worker with the given JID exists
+     * @throws org.linkedprocess.farm.os.errors.VmNotFoundException
+     *          if no VM worker with the given JID exists
      */
     public synchronized VmBindings getAllBindings(final String machineJID) throws VmNotFoundException {
         if (LinkedProcess.Status.INACTIVE == farmStatus) {
@@ -262,7 +260,8 @@ public class VmScheduler {
      * @param machineJID   the JID of the virtual machine to query
      * @param bindingNames the names to bind
      * @return the bindings of the given variable names in the given virtual machine
-     * @throws org.linkedprocess.farm.os.errors.VmNotFoundException if no VM worker with the given JID exists
+     * @throws org.linkedprocess.farm.os.errors.VmNotFoundException
+     *          if no VM worker with the given JID exists
      */
     public synchronized VmBindings getBindings(final String machineJID,
                                                final Set<String> bindingNames) throws VmNotFoundException {
@@ -367,7 +366,8 @@ public class VmScheduler {
      *
      * @param machineJID the JID of the virtual machine to update
      * @param bindings   the key, value bindings to update
-     * @throws org.linkedprocess.farm.os.errors.VmNotFoundException if no VM worker with the given JID exists
+     * @throws org.linkedprocess.farm.os.errors.VmNotFoundException
+     *          if no VM worker with the given JID exists
      */
     public synchronized void setBindings(final String machineJID,
                                          final VmBindings bindings) throws VmNotFoundException {
@@ -505,8 +505,9 @@ public class VmScheduler {
 
     public interface LopStatusEventHandler {
         void schedulerStatusChanged(LinkedProcess.Status newFarmStatus);
+
         void virtualMachineStatusChanged(String vmId, LinkedProcess.Status newVmStatus);
-    }  
+    }
 
     private class ResultCounter implements VmResultHandler {
         private final VmResultHandler innerHandler;

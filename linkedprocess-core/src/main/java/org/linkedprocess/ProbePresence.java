@@ -10,6 +10,8 @@ package org.linkedprocess;
 import org.jivesoftware.smack.packet.Presence;
 
 /**
+ * The Smack API does not support a <presence type="probe"/>. This class is provided to fill in this hole in their API.
+ *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
@@ -20,7 +22,6 @@ public class ProbePresence extends Presence {
 
     public ProbePresence() {
         super(Presence.Type.available);
-
     }
 
     public String toXML() {

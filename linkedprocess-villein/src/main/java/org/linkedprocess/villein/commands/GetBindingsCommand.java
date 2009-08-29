@@ -9,9 +9,9 @@ package org.linkedprocess.villein.commands;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.farm.os.VmBindings;
 import org.linkedprocess.Error;
 import org.linkedprocess.farm.ManageBindings;
+import org.linkedprocess.farm.os.VmBindings;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.proxies.VmProxy;

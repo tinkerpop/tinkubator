@@ -7,7 +7,6 @@
 
 package org.linkedprocess.villein.proxies;
 
-import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.Jid;
 
 import java.util.*;

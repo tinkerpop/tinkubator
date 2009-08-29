@@ -8,7 +8,6 @@
 package org.linkedprocess.farm.security;
 
 import junit.framework.TestCase;
-import org.linkedprocess.farm.security.PathPermissions;
 
 /**
  * Author: josh

@@ -8,7 +8,6 @@ import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.os.Vm;
 import org.linkedprocess.farm.os.errors.JobNotFoundException;
 import org.linkedprocess.farm.os.errors.VmNotFoundException;
-import org.linkedprocess.farm.AbortJob;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -57,7 +56,7 @@ public class AbortJobPacketListener extends FarmPacketListener {
             if (errorMessage.length() == 0)
                 errorMessage = null;
             returnAbortJob.setType(IQ.Type.ERROR);
-            returnAbortJob.setLopError(new Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, errorMessage,  abortJob.getPacketID()));
+            returnAbortJob.setLopError(new Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, errorMessage, abortJob.getPacketID()));
         } else {
             try {
                 Vm vm = this.getFarm().getVm(vmId);
@@ -65,10 +64,10 @@ public class AbortJobPacketListener extends FarmPacketListener {
                 returnAbortJob.setType(IQ.Type.RESULT);
             } catch (VmNotFoundException e) {
                 returnAbortJob.setType(IQ.Type.ERROR);
-                returnAbortJob.setLopError(new org.linkedprocess.Error(XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.VM_NOT_FOUND, e.getMessage(),  abortJob.getPacketID()));
+                returnAbortJob.setLopError(new org.linkedprocess.Error(XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.VM_NOT_FOUND, e.getMessage(), abortJob.getPacketID()));
             } catch (JobNotFoundException e) {
                 returnAbortJob.setType(IQ.Type.ERROR);
-                returnAbortJob.setLopError(new Error(XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.JOB_NOT_FOUND, e.getMessage(),  abortJob.getPacketID()));
+                returnAbortJob.setLopError(new Error(XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.JOB_NOT_FOUND, e.getMessage(), abortJob.getPacketID()));
             }
         }
 

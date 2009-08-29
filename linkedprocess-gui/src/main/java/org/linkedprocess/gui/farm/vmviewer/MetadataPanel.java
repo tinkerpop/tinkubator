@@ -1,7 +1,7 @@
 package org.linkedprocess.gui.farm.vmviewer;
 
-import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.farm.os.Vm;
+import org.linkedprocess.gui.ImageHolder;
 
 import javax.swing.*;
 import java.awt.*;

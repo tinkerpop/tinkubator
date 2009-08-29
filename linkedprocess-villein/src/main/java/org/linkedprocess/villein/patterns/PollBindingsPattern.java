@@ -7,8 +7,8 @@
 
 package org.linkedprocess.villein.patterns;
 
-import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.Error;
+import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.os.VmBindings;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.proxies.ResultHolder;

@@ -2,13 +2,10 @@ package org.linkedprocess.farm.os;
 
 import junit.framework.TestCase;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.farm.os.JobResult;
-import org.linkedprocess.farm.os.Job;
 import org.linkedprocess.farm.os.errors.JobAlreadyExistsException;
 import org.linkedprocess.farm.os.errors.JobNotFoundException;
 import org.linkedprocess.farm.os.errors.VmAlreadyExistsException;
 import org.linkedprocess.farm.os.errors.VmNotFoundException;
-import org.linkedprocess.farm.os.VmScheduler;
 
 import java.util.*;
 

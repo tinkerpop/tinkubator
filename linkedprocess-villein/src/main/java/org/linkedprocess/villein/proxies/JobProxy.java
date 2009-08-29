@@ -9,7 +9,7 @@ package org.linkedprocess.villein.proxies;
 
 import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.Error;
-import org.linkedprocess.*;
+import org.linkedprocess.LinkedProcess;
 
 /**
  * A JobProxy is a data structure representing a job. A job is submitted to and returned by a virtual machine.

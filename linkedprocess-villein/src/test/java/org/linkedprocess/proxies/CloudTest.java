@@ -8,7 +8,6 @@
 package org.linkedprocess.proxies;
 
 import junit.framework.TestCase;
-import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.Jid;
 import org.linkedprocess.villein.proxies.CloudProxy;
 import org.linkedprocess.villein.proxies.CountrysideProxy;
@@ -27,7 +26,7 @@ public class CloudTest extends TestCase {
         try {
             cloudProxy.addFarmProxy(noParentFarmProxy);
             assertTrue(false);
-        } catch(ParentProxyNotFoundException e) {
+        } catch (ParentProxyNotFoundException e) {
             assertTrue(true);
         }
 

@@ -14,14 +14,8 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.linkedprocess.farm.security.VmSecurityManager;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
+import java.io.*;
 import java.util.Properties;
-import java.util.Random;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -31,12 +25,25 @@ import java.util.logging.Logger;
  * Time: 2:44:21 PM
  */
 public class LinkedProcess {
+    /**
+     * The currently supported virtual machine species of LoPSideD.
+     */
     public static final String
             GROOVY = "groovy",
             JAVASCRIPT = "JavaScript",
             PYTHON = "jython",
             RUBY = "jruby";
 
+    /**
+     * This is a helper method that will turn an InputStream into a String.
+     * The benefit of this is when loading submit_job expressions from a file.
+     * If an expression is large and saved in a file, then to render it to a string for a submit_job is necessary.
+     * This method accomplishes that.
+     *
+     * @param inputStream the InputStream to render into a String
+     * @return the String representation of the InputStream's data
+     * @throws IOException thrown when there is an IO error with the InputStream
+     */
     public static String convertStreamToString(InputStream inputStream) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder stringBuilder = new StringBuilder();
@@ -48,8 +55,11 @@ public class LinkedProcess {
         return stringBuilder.toString();
     }
 
-    // TODO: how about a "queued" status for jobs?
+    /**
+     * The status of a job.
+     */
     public enum JobStatus {
+        // TODO: how about a "queued" status for jobs?
         IN_PROGRESS("in_progress");
 
         private final String name;
@@ -63,6 +73,9 @@ public class LinkedProcess {
         }
     }
 
+    /**
+     * The status of a Linked Process entity. Any entity can be active or inactive. Farms can also be busy.
+     */
     public enum Status {
         ACTIVE("active"), BUSY("busy"), INACTIVE("inactive");
 
@@ -77,6 +90,9 @@ public class LinkedProcess {
         }
     }
 
+    /**
+     * The set of all errors that are possible in Linked Process.
+     */
     public enum LopErrorType {
         EVALUATION_ERROR("evaluation_error"),
         FARM_IS_BUSY("farm_is_busy"), // VMSchedulerIsFullException
@@ -114,14 +130,14 @@ public class LinkedProcess {
         }
     }
 
-    public static String getBareClassName(Class aClass) {
-        String name = aClass.getName();
-        if (name.contains(".")) {
-            name = name.substring(name.lastIndexOf(".") + 1);
-        }
-        return name;
-    }
-
+    /**
+     * A helper method that creates a pretty indented representation of an XML blurb.
+     *
+     * @param xml a String representation of some legal XML
+     * @return a pretty formatted version of the provided XML
+     * @throws JDOMException thrown if the provided XML is not legal XML
+     * @throws IOException   thrown if the internal StringReader fails
+     */
     public static String createPrettyXML(String xml) throws JDOMException, IOException {
         SAXBuilder builder = new SAXBuilder();
         Document doc = builder.build(new StringReader(xml));
@@ -130,6 +146,14 @@ public class LinkedProcess {
 
     }
 
+    /**
+     * A helper method that creates a JDOM document from a String representation of an XML blurb.
+     *
+     * @param xml a String representation of some legal XML
+     * @return a JDOM document of the provided XML
+     * @throws JDOMException thrown if the provided XML is not legal XML
+     * @throws IOException   thrown if the internal StringReader fails
+     */
     public static Document createXMLDocument(String xml) throws JDOMException, IOException {
         SAXBuilder builder = new SAXBuilder();
         return builder.build(new StringReader(xml));
@@ -177,7 +201,7 @@ public class LinkedProcess {
     public static final String TERMINATE_VM_TAG = "terminate_vm";
     // attribute names
     public static final String JOB_ID_ATTRIBUTE = "job_id";
-    public static final String VALUE_ATTRIBUTE = "value";
+    public static final String STATUS_ATTRIBUTE = "status";
     public static final String DATATYPE_ATTRIBUTE = "datatype";
     public static final String BINDING_TAG = "binding";
     public static final String NAME_ATTRIBUTE = "name";

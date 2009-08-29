@@ -10,9 +10,6 @@ package org.linkedprocess.farm.security;
 import junit.framework.TestCase;
 import org.jdom.output.XMLOutputter;
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.farm.security.PathPermissions;
-import org.linkedprocess.farm.security.ServiceDiscoveryConfiguration;
-import org.linkedprocess.farm.security.VmSecurityManager;
 
 import java.util.Properties;
 

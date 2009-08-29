@@ -8,7 +8,8 @@
 package org.linkedprocess.villein.proxies;
 
 import org.jdom.Document;
-import org.linkedprocess.*;
+import org.linkedprocess.Jid;
+import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.villein.Dispatcher;
 import org.linkedprocess.villein.Handler;
 
@@ -35,7 +36,7 @@ public class FarmProxy extends XmppProxy {
     /**
      * Create a new farm proxy with a provided fully-qualified jid.
      *
-     * @param jid    the fully-qualified farm jid
+     * @param jid        the fully-qualified farm jid
      * @param dispatcher
      */
     public FarmProxy(final Jid jid, final Dispatcher dispatcher) {
@@ -47,7 +48,7 @@ public class FarmProxy extends XmppProxy {
     /**
      * Create a new farm proxy with a provided fully-qualified jid.
      *
-     * @param jid           the fully-qualified farm jid
+     * @param jid               the fully-qualified farm jid
      * @param dispatcher
      * @param discoInfoDocument
      */
@@ -56,7 +57,6 @@ public class FarmProxy extends XmppProxy {
         this.dispatcher = dispatcher;
         this.discoInfoDocument = discoInfoDocument;
     }
-
 
 
     /**

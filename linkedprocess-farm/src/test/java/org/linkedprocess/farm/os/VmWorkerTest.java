@@ -3,10 +3,6 @@ package org.linkedprocess.farm.os;
 import junit.framework.TestCase;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.LinkedProcessFarm;
-import org.linkedprocess.farm.os.JobResult;
-import org.linkedprocess.farm.os.Job;
-import org.linkedprocess.farm.os.VmScheduler;
-import org.linkedprocess.farm.os.VmWorker;
 
 import javax.script.ScriptEngine;
 
@@ -17,7 +13,7 @@ import javax.script.ScriptEngine;
  */
 public class VmWorkerTest extends TestCase {
     public static void main(final String[] args) throws Exception {
-        new VmWorkerTest().findContextSwitchingTime();    
+        new VmWorkerTest().findContextSwitchingTime();
     }
 
     public void testNothing() {

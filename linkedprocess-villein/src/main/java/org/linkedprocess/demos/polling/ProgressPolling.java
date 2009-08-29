@@ -7,16 +7,19 @@
 
 package org.linkedprocess.demos.polling;
 
+import org.linkedprocess.Error;
 import org.linkedprocess.farm.os.TypedValue;
 import org.linkedprocess.farm.os.VmBindings;
-import org.linkedprocess.Error;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.patterns.BindingsChecker;
 import org.linkedprocess.villein.patterns.PollBindingsPattern;
 import org.linkedprocess.villein.patterns.ResourceAllocationPattern;
 import org.linkedprocess.villein.patterns.SynchronousPattern;
-import org.linkedprocess.villein.proxies.*;
+import org.linkedprocess.villein.proxies.FarmProxy;
+import org.linkedprocess.villein.proxies.JobProxy;
+import org.linkedprocess.villein.proxies.ResultHolder;
+import org.linkedprocess.villein.proxies.VmProxy;
 
 import java.util.Properties;
 import java.util.Set;

@@ -12,32 +12,29 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.linkedprocess.testing.offline.MockXmppConnection;
-import org.linkedprocess.registry.DiscoItemsPacketListener;
-import org.linkedprocess.registry.PresencePacketListener;
-import org.linkedprocess.registry.PresenceSubscriptionListener;
 
 public class MockRegistryXmppConnection extends MockXmppConnection {
 
-	public PacketListener subscription, presence, discoItems;
+    public PacketListener subscription, presence, discoItems;
 
-	public MockRegistryXmppConnection(ConnectionConfiguration connConfig,
-			String id, XMPPConnection connection) {
-		super(connConfig, id, connection);
-	}
+    public MockRegistryXmppConnection(ConnectionConfiguration connConfig,
+                                      String id, XMPPConnection connection) {
+        super(connConfig, id, connection);
+    }
 
-	@Override
-	public void addPacketListener(PacketListener listener, PacketFilter filter) {
-		super.addPacketListener(listener, filter);
-		if (listener instanceof PresenceSubscriptionListener) {
-			subscription = listener;
-		}
-		if (listener instanceof PresencePacketListener) {
-			presence = listener;
-		}
-		if (listener instanceof DiscoItemsPacketListener) {
-			discoItems = listener;
-		}
+    @Override
+    public void addPacketListener(PacketListener listener, PacketFilter filter) {
+        super.addPacketListener(listener, filter);
+        if (listener instanceof PresenceSubscriptionListener) {
+            subscription = listener;
+        }
+        if (listener instanceof PresencePacketListener) {
+            presence = listener;
+        }
+        if (listener instanceof DiscoItemsPacketListener) {
+            discoItems = listener;
+        }
 
-	}
+    }
 
 }

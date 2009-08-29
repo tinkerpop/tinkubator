@@ -8,11 +8,11 @@
 package org.linkedprocess.villein.commands;
 
 import org.jivesoftware.smack.packet.IQ;
+import org.linkedprocess.farm.SubmitJob;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.proxies.JobProxy;
 import org.linkedprocess.villein.proxies.VmProxy;
-import org.linkedprocess.farm.SubmitJob;
 
 /**
  * The proxy by which an submit_job is sent to a virtual machine.

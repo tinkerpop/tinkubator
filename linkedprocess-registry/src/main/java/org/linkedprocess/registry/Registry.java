@@ -15,10 +15,10 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverItems;
-import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.XmppClient;
-import org.linkedprocess.LopXmppException;
 import org.linkedprocess.Jid;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.LopXmppException;
+import org.linkedprocess.XmppClient;
 
 import java.util.HashSet;
 import java.util.Properties;

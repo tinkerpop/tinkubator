@@ -1,8 +1,8 @@
 package org.linkedprocess.gui.farm.vmviewer;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.farm.os.Vm;
 import org.linkedprocess.farm.os.TypedValue;
+import org.linkedprocess.farm.os.Vm;
 import org.linkedprocess.farm.os.VmBindings;
 
 import javax.swing.*;
@@ -29,7 +29,7 @@ public class ViewBindingsPanel extends JPanel implements ActionListener, ListSel
     public ViewBindingsPanel(Vm vm) {
         super(new BorderLayout());
         this.vm = vm;
-        DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{LinkedProcess.NAME_ATTRIBUTE, LinkedProcess.VALUE_ATTRIBUTE, LinkedProcess.DATATYPE_ATTRIBUTE, "null"});
+        DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{LinkedProcess.NAME_ATTRIBUTE, LinkedProcess.STATUS_ATTRIBUTE, LinkedProcess.DATATYPE_ATTRIBUTE, "null"});
 
         this.bindingsTable = new JTable(tableModel) {
             public boolean isCellEditable(int rowIndex, int columnIndex) {

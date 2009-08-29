@@ -9,10 +9,10 @@ import org.jivesoftware.smack.packet.Presence;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import org.linkedprocess.farm.os.VmBindings;
-import org.linkedprocess.farm.os.Vm;
-import org.linkedprocess.testing.offline.OfflineTest;
 import org.linkedprocess.farm.*;
+import org.linkedprocess.farm.os.Vm;
+import org.linkedprocess.farm.os.VmBindings;
+import org.linkedprocess.testing.offline.OfflineTest;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 
@@ -207,7 +207,7 @@ public class OfflineVmTest extends OfflineTest {
         // shut down
         connection.clearPackets();
         //farm.terminateVm(farm.getVms().iterator()
-         //       .next().getJid());
+        //       .next().getJid());
         assertEquals("No packets should be sent on shutdown", 0, sentPackets
                 .size());
         assertEquals(0, farm.getVms().size());

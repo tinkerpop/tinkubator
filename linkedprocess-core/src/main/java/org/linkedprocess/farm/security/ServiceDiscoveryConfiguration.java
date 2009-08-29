@@ -32,9 +32,9 @@ public class ServiceDiscoveryConfiguration {
             deletePermissions,
             execPermissions,
             linkPermissions;
-            /*httpGetPermissions = null,
-            httpPutPermissions = null,
-            httpPostPermissions = null*/
+    /*httpGetPermissions = null,
+  httpPutPermissions = null,
+  httpPostPermissions = null*/
 
     private final Set<PermissionType> permittedTypes;
 

@@ -8,7 +8,6 @@ import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.os.Vm;
 import org.linkedprocess.farm.os.errors.JobNotFoundException;
 import org.linkedprocess.farm.os.errors.VmNotFoundException;
-import org.linkedprocess.farm.PingJob;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -57,18 +56,18 @@ public class PingJobPacketListener extends FarmPacketListener {
                 errorMessage = null;
 
             returnPingJob.setType(IQ.Type.ERROR);
-            returnPingJob.setLopError(new org.linkedprocess.Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, errorMessage,  pingJob.getPacketID()));
+            returnPingJob.setLopError(new org.linkedprocess.Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, errorMessage, pingJob.getPacketID()));
         } else {
             try {
                 Vm vm = this.getFarm().getVm(vmId);
-                returnPingJob.setValue(vm.getJobStatus(jobId));
+                returnPingJob.setStatus(vm.getJobStatus(jobId));
                 returnPingJob.setType(IQ.Type.RESULT);
             } catch (VmNotFoundException e) {
                 returnPingJob.setType(IQ.Type.ERROR);
-                returnPingJob.setLopError(new Error(XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.VM_NOT_FOUND, e.getMessage(),  pingJob.getPacketID()));
+                returnPingJob.setLopError(new Error(XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.VM_NOT_FOUND, e.getMessage(), pingJob.getPacketID()));
             } catch (JobNotFoundException e) {
                 returnPingJob.setType(IQ.Type.ERROR);
-                returnPingJob.setLopError(new Error(XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.JOB_NOT_FOUND, e.getMessage(),  pingJob.getPacketID()));
+                returnPingJob.setLopError(new Error(XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.JOB_NOT_FOUND, e.getMessage(), pingJob.getPacketID()));
             }
         }
 

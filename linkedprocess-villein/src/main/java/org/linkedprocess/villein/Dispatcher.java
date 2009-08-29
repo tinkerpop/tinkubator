@@ -9,7 +9,6 @@ package org.linkedprocess.villein;
 
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.linkedprocess.villein.commands.*;
-import org.linkedprocess.villein.Villein;
 
 /**
  * User: josh

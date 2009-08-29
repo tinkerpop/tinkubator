@@ -8,7 +8,7 @@
 package org.linkedprocess.villein.proxies;
 
 import org.linkedprocess.Error;
-import org.linkedprocess.*;
+import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.os.VmBindings;
 import org.linkedprocess.farm.os.errors.InvalidValueException;
 import org.linkedprocess.villein.Dispatcher;
@@ -57,7 +57,7 @@ public class VmProxy implements Comparable {
     /**
      * Submit a job to the virtual machine for execution.
      *
-     * @param jobProxy      the job to submit (requires at least an expression)
+     * @param jobProxy       the job to submit (requires at least an expression)
      * @param successHandler the handler called when a sucessful result has occurred
      * @param errorHandler   the handler called when an error result has occurred
      */
@@ -68,7 +68,7 @@ public class VmProxy implements Comparable {
     /**
      * Ping a job that is being executed by the virtual machine to determine its status.
      *
-     * @param jobProxy      the job to ping (requires at least the job id)
+     * @param jobProxy       the job to ping (requires at least the job id)
      * @param successHandler the handler called when a sucessful result has occurred
      * @param errorHandler   the handler called when an error result has occurred
      */
@@ -79,7 +79,7 @@ public class VmProxy implements Comparable {
     /**
      * Abort a job that is being executed by the virtual machine.
      *
-     * @param jobProxy      the job to abort (requires at least the job id)
+     * @param jobProxy       the job to abort (requires at least the job id)
      * @param successHandler the handler called when a sucessful result has occurred
      * @param errorHandler   the handler called when an error result has occurred
      */
@@ -195,6 +195,7 @@ public class VmProxy implements Comparable {
 
     /**
      * Compare this VmProxy with another VmProxy. Equalitity is based on uniqueness of vmId.
+     *
      * @param vmProxy the VmProxy to compare to this VmProxy
      * @return the comparison based on String.compareTo() of their vmIds
      */

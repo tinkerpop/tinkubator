@@ -1,10 +1,10 @@
 package org.linkedprocess.gui.villein;
 
+import org.linkedprocess.Jid;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.proxies.CountrysideProxy;
 import org.linkedprocess.villein.proxies.RegistryProxy;
-import org.linkedprocess.Jid;
 
 import javax.swing.*;
 import java.awt.*;

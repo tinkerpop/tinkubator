@@ -7,9 +7,8 @@
 
 package org.linkedprocess.villein;
 
-import org.linkedprocess.villein.proxies.XmppProxy;
-import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.Jid;
+import org.linkedprocess.LinkedProcess;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)

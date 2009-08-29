@@ -11,26 +11,43 @@ import org.jdom.Element;
 import org.linkedprocess.LinkedProcess;
 
 /**
+ * A submit_job packet is modeled by this class.
+ *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
 public class SubmitJob extends FarmIq {
 
-    String expression;
+    protected String expression;
 
+    /**
+     * Set the text body expression of the packet
+     *
+     * @param expression the text body expression of the packet
+     */
     public void setExpression(String expression) {
         this.expression = expression;
     }
 
+    /**
+     * Get the text body expression of the packet
+     *
+     * @return the text body expression of the packet
+     */
     public String getExpression() {
         return this.expression;
     }
 
+    /**
+     * Get the submit_job component of this IQ packet.
+     *
+     * @return the submit_job component of this IQ packet
+     */
     public String getChildElementXML() {
 
         Element submitJobElement = new Element(LinkedProcess.SUBMIT_JOB_TAG, LinkedProcess.LOP_FARM_NAMESPACE);
 
-        if(this.getVmId() != null) {
+        if (this.getVmId() != null) {
             submitJobElement.setAttribute(LinkedProcess.VM_ID_ATTRIBUTE, this.getVmId());
         }
 

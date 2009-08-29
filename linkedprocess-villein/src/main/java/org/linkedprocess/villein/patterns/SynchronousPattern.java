@@ -8,7 +8,7 @@
 package org.linkedprocess.villein.patterns;
 
 import org.linkedprocess.Error;
-import org.linkedprocess.*;
+import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.os.VmBindings;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.proxies.FarmProxy;
@@ -93,9 +93,9 @@ public class SynchronousPattern {
     /**
      * Submit a job to a virtual machine for evaluation/execution.
      *
-     * @param vmProxy   the virtual machine on which to execute the command
+     * @param vmProxy  the virtual machine on which to execute the command
      * @param jobProxy the job to be excecuted
-     * @param timeout   the number of milliseconds to spend on this command before a TimeoutException is thrown (use -1 to wait indefinately)
+     * @param timeout  the number of milliseconds to spend on this command before a TimeoutException is thrown (use -1 to wait indefinately)
      * @return the result of the command
      * @throws TimeoutException is thrown when the command takes longer than the provided timeout in milliseconds
      */
@@ -121,9 +121,9 @@ public class SynchronousPattern {
     }
 
     /**
-     * @param vmProxy   the virtual machine on which to execute the command
+     * @param vmProxy  the virtual machine on which to execute the command
      * @param jobProxy the job to ping on the virtual machine
-     * @param timeout   the number of milliseconds to spend on this command before a TimeoutException is thrown (use -1 to wait indefinately)
+     * @param timeout  the number of milliseconds to spend on this command before a TimeoutException is thrown (use -1 to wait indefinately)
      * @return the result of the command
      * @throws TimeoutException is thrown when the command takes longer than the provided timeout in milliseconds
      */
@@ -157,9 +157,9 @@ public class SynchronousPattern {
     }
 
     /**
-     * @param vmProxy   the virtual machine on which to execute the command
+     * @param vmProxy  the virtual machine on which to execute the command
      * @param jobProxy the job to abort on the virtual machine
-     * @param timeout   the number of milliseconds to spend on this command before a TimeoutException is thrown (use -1 to wait indefinately)
+     * @param timeout  the number of milliseconds to spend on this command before a TimeoutException is thrown (use -1 to wait indefinately)
      * @return the result of the command
      * @throws TimeoutException is thrown when the command takes longer than the provided timeout in milliseconds
      */

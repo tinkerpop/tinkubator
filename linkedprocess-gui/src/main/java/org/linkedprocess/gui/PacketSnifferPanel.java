@@ -97,7 +97,7 @@ public class PacketSnifferPanel extends JPanel implements ListSelectionListener,
 
 
         if (max > 0) {
-            tableModel.addRow(new Object[]{status, LinkedProcess.getBareClassName(packet.getClass()), packet.getFrom(), packet.getTo()});
+            tableModel.addRow(new Object[]{status, PacketSnifferPanel.getBareClassName(packet.getClass()), packet.getFrom(), packet.getTo()});
             this.packetList.add(packet);
         }
 
@@ -177,6 +177,14 @@ public class PacketSnifferPanel extends JPanel implements ListSelectionListener,
             }
             return false;
         }
+    }
+
+    private static String getBareClassName(Class aClass) {
+        String name = aClass.getName();
+        if (name.contains(".")) {
+            name = name.substring(name.lastIndexOf(".") + 1);
+        }
+        return name;
     }
 
 }

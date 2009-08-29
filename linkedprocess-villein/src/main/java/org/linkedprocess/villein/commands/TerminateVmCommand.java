@@ -14,8 +14,8 @@ import org.linkedprocess.Jid;
 import org.linkedprocess.farm.TerminateVm;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.Villein;
-import org.linkedprocess.villein.proxies.VmProxy;
 import org.linkedprocess.villein.proxies.FarmProxy;
+import org.linkedprocess.villein.proxies.VmProxy;
 
 /**
  * The proxy by which a terminate_job is sent to a virtual machine.
@@ -53,7 +53,7 @@ public class TerminateVmCommand extends Command {
 
     public void receiveSuccess(final TerminateVm terminateVm) {
         FarmProxy farmProxy = this.villein.getCloudProxy().getFarmProxy(new Jid(terminateVm.getFrom()));
-        if(null != farmProxy) {
+        if (null != farmProxy) {
             farmProxy.removeVmProxy(terminateVm.getVmId());
         }
 

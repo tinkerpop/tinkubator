@@ -7,11 +7,11 @@
 
 package org.linkedprocess.villein.patterns;
 
-import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.Jid;
+import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.villein.proxies.CloudProxy;
 import org.linkedprocess.villein.proxies.CountrysideProxy;
 import org.linkedprocess.villein.proxies.FarmProxy;
-import org.linkedprocess.villein.proxies.CloudProxy;
 
 import java.util.Collection;
 import java.util.HashSet;

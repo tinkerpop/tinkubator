@@ -1,8 +1,8 @@
 package org.linkedprocess.gui.farm.vmviewer;
 
-import org.linkedprocess.gui.PacketSnifferPanel;
-import org.linkedprocess.farm.os.Vm;
 import org.linkedprocess.farm.Farm;
+import org.linkedprocess.farm.os.Vm;
+import org.linkedprocess.gui.PacketSnifferPanel;
 
 import javax.swing.*;
 

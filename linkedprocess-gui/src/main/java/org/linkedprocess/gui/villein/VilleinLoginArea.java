@@ -1,10 +1,9 @@
 package org.linkedprocess.gui.villein;
 
-import org.jivesoftware.smack.XMPPException;
+import org.linkedprocess.LopXmppException;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.LoginArea;
 import org.linkedprocess.villein.Villein;
-import org.linkedprocess.LopXmppException;
 
 import javax.swing.*;
 import java.awt.*;

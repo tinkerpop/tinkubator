@@ -9,10 +9,10 @@ package org.linkedprocess.villein.commands;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
+import org.linkedprocess.Error;
+import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.PingJob;
 import org.linkedprocess.villein.Handler;
-import org.linkedprocess.Error;
-import org.linkedprocess.*;
 import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.proxies.JobProxy;
 import org.linkedprocess.villein.proxies.VmProxy;
@@ -54,7 +54,7 @@ public class PingJobCommand extends Command {
 
     public void receiveSuccess(final PingJob pingJob) {
         try {
-            successHandlers.handle(pingJob.getPacketID(), LinkedProcess.JobStatus.valueOf(pingJob.getValue()));
+            successHandlers.handle(pingJob.getPacketID(), LinkedProcess.JobStatus.valueOf(pingJob.getStatus()));
         } finally {
             successHandlers.removeHandler(pingJob.getPacketID());
             errorHandlers.removeHandler(pingJob.getPacketID());

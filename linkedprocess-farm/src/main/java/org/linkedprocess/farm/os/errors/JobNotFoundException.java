@@ -1,7 +1,5 @@
 package org.linkedprocess.farm.os.errors;
 
-import org.linkedprocess.farm.os.errors.SchedulerException;
-
 /**
  * Author: josh
  * Date: Jun 30, 2009

@@ -1,10 +1,9 @@
 package org.linkedprocess.gui.farm;
 
-import org.jivesoftware.smack.XMPPException;
+import org.linkedprocess.LopXmppException;
+import org.linkedprocess.farm.Farm;
 import org.linkedprocess.gui.ImageHolder;
 import org.linkedprocess.gui.LoginArea;
-import org.linkedprocess.farm.Farm;
-import org.linkedprocess.LopXmppException;
 
 import javax.swing.*;
 import java.awt.*;

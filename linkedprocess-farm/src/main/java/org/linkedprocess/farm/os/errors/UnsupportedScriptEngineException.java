@@ -1,7 +1,6 @@
 package org.linkedprocess.farm.os.errors;
 
 import org.linkedprocess.farm.LinkedProcessFarm;
-import org.linkedprocess.farm.os.errors.SchedulerException;
 
 import javax.script.ScriptEngineFactory;
 

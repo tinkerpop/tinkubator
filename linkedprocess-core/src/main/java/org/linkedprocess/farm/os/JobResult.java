@@ -9,9 +9,9 @@ package org.linkedprocess.farm.os;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.XMPPError;
+import org.linkedprocess.Error;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.SubmitJob;
-import org.linkedprocess.Error;
 
 import java.util.logging.Logger;
 

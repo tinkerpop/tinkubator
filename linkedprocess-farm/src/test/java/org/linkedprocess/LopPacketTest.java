@@ -3,12 +3,8 @@ package org.linkedprocess;
 import junit.framework.TestCase;
 import org.jivesoftware.smack.packet.IQ;
 import org.junit.Test;
+import org.linkedprocess.farm.*;
 import org.linkedprocess.farm.os.VmBindings;
-import org.linkedprocess.farm.SpawnVm;
-import org.linkedprocess.farm.SubmitJob;
-import org.linkedprocess.farm.AbortJob;
-import org.linkedprocess.farm.ManageBindings;
-import org.linkedprocess.farm.TerminateVm;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)

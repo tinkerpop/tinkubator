@@ -1,10 +1,13 @@
 package org.linkedprocess.gui;
 
 import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.farm.os.Vm;
 import org.linkedprocess.farm.Farm;
+import org.linkedprocess.farm.os.Vm;
 import org.linkedprocess.villein.Villein;
-import org.linkedprocess.villein.proxies.*;
+import org.linkedprocess.villein.proxies.CountrysideProxy;
+import org.linkedprocess.villein.proxies.FarmProxy;
+import org.linkedprocess.villein.proxies.RegistryProxy;
+import org.linkedprocess.villein.proxies.VmProxy;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -87,7 +90,7 @@ public class TreeRenderer extends DefaultTreeCellRenderer {
         }
         return this;
     }
-    
+
     private static String getStatusString(LinkedProcess.Status status) {
         return " [" + status + "]";
     }

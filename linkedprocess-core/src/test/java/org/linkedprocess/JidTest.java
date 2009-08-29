@@ -17,12 +17,7 @@ import java.util.HashSet;
  */
 public class JidTest extends TestCase {
 
-    public void testIsBareJid() {
-        Jid jid = new Jid("linked.process.1@xmpp.linkedprocess.org");
-        assertTrue(jid.isBareJid());
-    }
-
-    public void testGenerateBareJid() {
+    public void testBareJid() {
         Jid jid1 = new Jid("linked.process.1@xmpp.linkedprocess.org/LoPFarm/123456");
         Jid jid2 = new Jid("linked.process.1@xmpp.linkedprocess.org");
         assertFalse(jid1.isBareJid());
@@ -44,5 +39,9 @@ public class JidTest extends TestCase {
     public void testGenerateResource() {
         Jid jid1 = new Jid("lop1@xmpp.linkedprocess.org/test/");
         assertEquals(jid1.getResource(), "test/");
+        jid1 = new Jid("lop1@xmpp.linkedprocess.org");
+        assertNull(jid1.getResource());
+        jid1 = new Jid("lop1@xmpp.linkedprocess.org/1234/ABCD");
+        assertEquals("1234/ABCD", jid1.getResource());
     }
 }

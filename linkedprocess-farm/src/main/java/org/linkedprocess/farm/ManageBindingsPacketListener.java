@@ -7,7 +7,6 @@ import org.linkedprocess.Error;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.os.Vm;
 import org.linkedprocess.farm.os.errors.VmNotFoundException;
-import org.linkedprocess.farm.ManageBindings;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -48,10 +47,10 @@ public class ManageBindingsPacketListener extends FarmPacketListener {
             returnManageBindings.setLopError(new org.linkedprocess.Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "manage_bindings XML packet is missing the vm_id attribute", manageBindings.getPacketID()));
         } else if (null != manageBindings.getBadDatatypeMessage()) {
             returnManageBindings.setType(IQ.Type.ERROR);
-            returnManageBindings.setLopError(new Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.UNKNOWN_DATATYPE, manageBindings.getBadDatatypeMessage(),  manageBindings.getPacketID()));
+            returnManageBindings.setLopError(new Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.UNKNOWN_DATATYPE, manageBindings.getBadDatatypeMessage(), manageBindings.getPacketID()));
         } else if (null != manageBindings.getInvalidValueMessage()) {
             returnManageBindings.setType(IQ.Type.ERROR);
-            returnManageBindings.setLopError(new Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.INVALID_VALUE, manageBindings.getInvalidValueMessage(),  manageBindings.getPacketID()));
+            returnManageBindings.setLopError(new Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.INVALID_VALUE, manageBindings.getInvalidValueMessage(), manageBindings.getPacketID()));
         } else {
             try {
                 Vm vm = this.getFarm().getVm(vmId);
@@ -63,7 +62,7 @@ public class ManageBindingsPacketListener extends FarmPacketListener {
                 }
             } catch (VmNotFoundException e) {
                 returnManageBindings.setType(IQ.Type.ERROR);
-                returnManageBindings.setLopError(new Error(XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.VM_NOT_FOUND, e.getMessage(),  manageBindings.getPacketID()));
+                returnManageBindings.setLopError(new Error(XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.VM_NOT_FOUND, e.getMessage(), manageBindings.getPacketID()));
             }
         }
 
