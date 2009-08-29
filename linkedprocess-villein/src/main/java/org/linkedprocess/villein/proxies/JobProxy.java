@@ -20,7 +20,7 @@ import org.linkedprocess.LinkedProcess;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class JobProxy implements Comparable {
+public class JobProxy {
     protected String jobId;
     protected String result;
     protected String expression;
@@ -33,7 +33,7 @@ public class JobProxy implements Comparable {
      * @return the identifier of the job
      */
     public String getJobId() {
-        return jobId;
+        return this.jobId;
     }
 
     /**
@@ -51,7 +51,7 @@ public class JobProxy implements Comparable {
      * @return the result of the expression
      */
     public String getResult() {
-        return result;
+        return this.result;
     }
 
     /**
@@ -69,7 +69,7 @@ public class JobProxy implements Comparable {
      * @return the error of an evaluation if an error has occurred
      */
     public Error getLopError() {
-        return error;
+        return this.error;
     }
 
     /**
@@ -105,7 +105,7 @@ public class JobProxy implements Comparable {
      * @return is the job complete
      */
     public boolean isComplete() {
-        return complete;
+        return this.complete;
     }
 
     /**
@@ -144,16 +144,16 @@ public class JobProxy implements Comparable {
         return Packet.nextID();
     }
 
-    public int compareTo(Object job) {
-        if (job instanceof JobProxy) {
-            return this.jobId.compareTo(((JobProxy) job).getJobId());
-        } else {
-            throw new ClassCastException();
-        }
+    public boolean equals(Object job) {
+        return job instanceof JobProxy && ((JobProxy) job).getJobId().equals(this.jobId);
+    }
+
+    public int hashCode() {
+        return this.jobId.hashCode();
     }
 
     public String toString() {
-        if (null == error)
+        if (null == this.error)
             return "Job(id:'" + jobId + "', complete:'" + complete + "', result:'" + result + "')";
         else
             return "Job(id:'" + jobId + "', complete:'" + complete + "', error:'" + error.getErrorType().toString() + "')";

@@ -8,7 +8,7 @@ import java.util.Random;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class Jid implements Comparable {
+public class Jid {
 
     private String jid;
     private static final String FORWARD_SLASH = "/";
@@ -85,20 +85,6 @@ public class Jid implements Comparable {
 
         }
         return b.toString();
-    }
-
-    /**
-     * Returns  the compare method of the String representation of the two jids being compared.
-     *
-     * @param jid a jid to compare to this jid
-     * @return the comparison of the two jids
-     */
-    public int compareTo(Object jid) {
-        if (jid instanceof Jid) {
-            return jid.toString().compareTo(this.jid);
-        } else {
-            throw new ClassCastException();
-        }
     }
 
     /**

@@ -8,6 +8,7 @@
 package org.linkedprocess.villein.proxies;
 
 import org.linkedprocess.Jid;
+import org.linkedprocess.LinkedProcess;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class CountrysideProxy {
 
     protected Jid jid;
+    protected LinkedProcess.Status status;
 
     /**
      * The set of farm proxies contained in this countryside proxy.
@@ -39,6 +41,24 @@ public class CountrysideProxy {
 
     public Jid getJid() {
         return this.jid;
+    }
+
+    /**
+     * Set the status of the countryside. Countrysides are active or inactive entities.
+     *
+     * @param status the status of the countryside
+     */
+    public void setStatus(LinkedProcess.Status status) {
+        this.status = status;
+    }
+
+    /**
+     * Get the status of the countryside. Countrysides are active or inactive entities.
+     *
+     * @return the status of the countryside
+     */
+    public LinkedProcess.Status getStatus() {
+        return this.status;
     }
 
     /**
@@ -113,6 +133,14 @@ public class CountrysideProxy {
      */
     public Collection<RegistryProxy> getRegistryProxies() {
         return this.registryProxies.values();
+    }
+
+    public boolean equals(Object countrysideProxy) {
+        return countrysideProxy instanceof CountrysideProxy && ((CountrysideProxy)countrysideProxy).getJid().equals(this.jid);
+    }
+
+    public int hashCode() {
+        return this.jid.hashCode();
     }
 
 

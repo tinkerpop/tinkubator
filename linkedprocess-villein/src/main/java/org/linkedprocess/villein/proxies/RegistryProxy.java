@@ -54,12 +54,14 @@ public class RegistryProxy extends XmppProxy {
     }
 
     public void refreshDiscoItems() {
-        ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();
-        try {
-            DiscoverItems discoItems = discoManager.discoverItems(this.jid.toString());
-            this.discoItemsDocument = LinkedProcess.createXMLDocument(discoItems.toXML());
-        } catch (Exception e) {
-            Villein.LOGGER.warning("Problem loading disco#items: " + e.getMessage());
+        if (this.dispatcher != null) {
+            ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();
+            try {
+                DiscoverItems discoItems = discoManager.discoverItems(this.jid.toString());
+                this.discoItemsDocument = LinkedProcess.createXMLDocument(discoItems.toXML());
+            } catch (Exception e) {
+                Villein.LOGGER.warning("Problem loading disco#items: " + e.getMessage());
+            }
         }
     }
 

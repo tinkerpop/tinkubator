@@ -49,7 +49,7 @@ class PresencePacketListener extends VilleinPacketListener {
             cloudProxy.removeCountrysideProxy(countrysideJid);
             // Handlers
             for (PresenceHandler presenceHandler : this.getVillein().getPresenceHandlers()) {
-                presenceHandler.handlePresenceUpdate(countrysideJid, LinkedProcess.Status.INACTIVE);
+                presenceHandler.handlePresenceUpdate(countrysideJid, status);
             }
         } else if (xmppProxy != null) {
             /////////
@@ -71,10 +71,11 @@ class PresencePacketListener extends VilleinPacketListener {
             // Create the countryside and proxy and alert the presence handlers.
             /////////
             CountrysideProxy countrysideProxy = cloudProxy.getCountrysideProxy(countrysideJid);
+            countrysideProxy.setStatus(status);
             if (null == countrysideProxy) {
                 cloudProxy.addCountrysideProxy(new CountrysideProxy(countrysideJid));
                 for (PresenceHandler presenceHandler : this.getVillein().getPresenceHandlers()) {
-                    presenceHandler.handlePresenceUpdate(countrysideJid, LinkedProcess.Status.ACTIVE);
+                    presenceHandler.handlePresenceUpdate(countrysideJid, status);
                 }
             }
             if (!presenceJid.isBareJid()) {

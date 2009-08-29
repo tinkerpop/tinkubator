@@ -25,7 +25,7 @@ import java.util.Set;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class VmProxy implements Comparable {
+public class VmProxy {
 
     /**
      * The password of this virtual machine.
@@ -119,15 +119,29 @@ public class VmProxy implements Comparable {
         dispatcher.getTerminateVmCommand().send(this, successHandler, errorHandler);
     }
 
+    /**
+     * Get the farm proxy that is the parent of this virtual machine proxy.
+     *
+     * @return the farm proxy parent of this virtual machine
+     */
     public FarmProxy getFarmProxy() {
         return this.farmProxy;
     }
 
+    /**
+     * Set the virtual machine identifier (vm_id) of this virtual machine.
+     *
+     * @param vmId the virtual machine identifier of this virtual machine
+     */
     public void setVmId(final String vmId) {
         this.vmId = vmId;
     }
 
-
+    /**
+     * Get the virtual machine identifier (vm_id) of this virtual machine.
+     *
+     * @return the virtual machine identifier of this virtual machine
+     */
     public String getVmId() {
         return this.vmId;
     }
@@ -193,18 +207,13 @@ public class VmProxy implements Comparable {
         return this.vmBindings;
     }
 
-    /**
-     * Compare this VmProxy with another VmProxy. Equalitity is based on uniqueness of vmId.
-     *
-     * @param vmProxy the VmProxy to compare to this VmProxy
-     * @return the comparison based on String.compareTo() of their vmIds
-     */
-    public int compareTo(Object vmProxy) {
-        if (vmProxy instanceof VmProxy) {
-            return this.vmId.compareTo(((VmProxy) vmProxy).getVmId());
-        } else {
-            throw new ClassCastException();
-        }
+
+    public boolean equals(Object vmProxy) {
+        return vmProxy instanceof VmProxy && ((VmProxy) vmProxy).getVmId().equals(this.vmId);
+    }
+
+    public int hashCode() {
+        return this.vmId.hashCode();
     }
 }
 

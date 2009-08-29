@@ -18,7 +18,7 @@ import java.util.Map;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class Error extends XMPPError implements Comparable {
+public class Error extends XMPPError {
 
     protected LinkedProcess.LopErrorType errorType;
     protected String packetId;
@@ -146,11 +146,12 @@ public class Error extends XMPPError implements Comparable {
             return this.getCondition() + "[" + this.getCode() + "]: " + this.getMessage();
     }
 
-    public int compareTo(Object object) {
-        if (object instanceof Error)
-            return packetId.compareTo(((Error) object).getPacketId());
-        else
-            throw new ClassCastException();
+    public boolean equals(Object error) {
+        return error instanceof Error && ((Error)error).getPacketId().equals(packetId);
+    }
+
+    public int hashCode() {
+        return this.packetId.hashCode();
     }
 
 }

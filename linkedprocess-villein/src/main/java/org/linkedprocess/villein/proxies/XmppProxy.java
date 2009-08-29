@@ -30,25 +30,56 @@ import java.util.Set;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public abstract class XmppProxy implements Comparable {
+public abstract class XmppProxy {
 
     protected Document discoInfoDocument;
     protected Dispatcher dispatcher;
     protected Jid jid;
     protected LinkedProcess.Status status;
 
+    /**
+     * Get the jid of the XMPP proxy entity.
+     *
+     * @return the jid of the XMPP proxy entity
+     */
     public Jid getJid() {
         return this.jid;
     }
 
+    /**
+     * Set the jid of the XMPP proxy entity.
+     *
+     * @param jid the jid of the XMPP proxy entity
+     */
+    public void setJid(Jid jid) {
+        this.jid = jid;
+    }
+
+    /**
+     * Set the status of the XMPP proxy entity.
+     * For farms this is active, busy, or inactive.
+     * For regitries this is active or inactive.
+     *
+     * @param status the status of the XMPP proxy entity
+     */
     public void setStatus(LinkedProcess.Status status) {
         this.status = status;
     }
 
+    /**
+     * Get the status of the XMPP proxy entity.
+     * For farms this is active, busy, or inactive.
+     * For regitries this is active or inactive.
+     *
+     * @return the status of the XMPP proxy entity
+     */
     public LinkedProcess.Status getStatus() {
         return this.status;
     }
 
+    /**
+     * Retrieve the disco#info XML document of this XMPP proxy entity.
+     */
     public void refreshDiscoInfo() {
         if (this.dispatcher != null) {
             ServiceDiscoveryManager discoManager = this.dispatcher.getServiceDiscoveryManager();
@@ -61,6 +92,13 @@ public abstract class XmppProxy implements Comparable {
         }
     }
 
+    /**
+     * Get the features supported by this XMPP proxy entity as specified in the var of the features of its disco#info document.
+     * For farms, there must exist the feature http://linkedprocess.org/06/2006/Farm#.
+     * For registries, there must exist the feature http://linkedprocess.org/06/2006/Registry#.
+     *
+     * @return the set of features supported by this XMPP entity
+     */
     public Set<String> getFeatures() {
         Set<String> features = new HashSet<String>();
         if (null != this.discoInfoDocument) {
@@ -75,10 +113,22 @@ public abstract class XmppProxy implements Comparable {
         return features;
     }
 
+    /**
+     * Determines if the disco#info document of this XMPP proxy has a provided feature.
+     *
+     * @param feature the feature to check for in the disco#info of this XMPP proxy entity
+     * @return whether the feature is supported by this XMPP proxy
+     */
     public boolean hasFeature(String feature) {
         return this.getFeatures().contains(feature);
     }
 
+    /**
+     * Get a field from the disco#info extended data forms of this XMPP proxy.
+     *
+     * @param variable the variable name of the field to retrieve
+     * @return the associated field of this variable
+     */
     public Field getField(String variable) {
         List<Field> fields = this.getFields();
         for (Field field : fields) {
@@ -88,6 +138,12 @@ public abstract class XmppProxy implements Comparable {
         return null;
     }
 
+    /**
+     * Get the set of all fields associated with the disco#info of this XMPP proxy.
+     * These fields are specified in the disco#info extended data forms.
+     *
+     * @return the set of all fields associated with the disco#info of this XMPP proxy
+     */
     public List<Field> getFields() {
         List<Field> proxyFields = new ArrayList<Field>();
         if (null != this.discoInfoDocument) {
@@ -131,13 +187,17 @@ public abstract class XmppProxy implements Comparable {
         return proxyFields;
     }
 
+    public boolean equals(Object xmppProxy) {
+        return xmppProxy instanceof XmppProxy && ((XmppProxy)xmppProxy).getJid().equals(this.jid);
+    }
 
-    public int compareTo(Object xmppProxy) {
-        if (xmppProxy instanceof XmppProxy) {
-            return this.jid.compareTo(((XmppProxy) xmppProxy).getJid());
-        } else {
-            throw new ClassCastException();
-        }
+    /**
+     * A hash code for this XMPP proxy based on the hashCode of its jid.
+     *
+     * @return the hashcode of this XMPP proxy
+     */
+    public int hashCode() {
+        return this.jid.hashCode();
     }
 
     public String toString() {
