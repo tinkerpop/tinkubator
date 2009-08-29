@@ -41,7 +41,7 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
         super(new BorderLayout());
         this.vmControlFrame = vmControlFrame;
         //this.setOpaque(false);
-        DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{LinkedProcess.NAME_ATTRIBUTE, LinkedProcess.STATUS_ATTRIBUTE, LinkedProcess.DATATYPE_ATTRIBUTE, "null"});
+        DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{LinkedProcess.NAME_ATTRIBUTE, LinkedProcess.VALUE_ATTRIBUTE, LinkedProcess.DATATYPE_ATTRIBUTE, "null"});
         tableModel.addTableModelListener(this);
         this.bindingsTable = new JTable(tableModel);
         this.bindingsTable.getSelectionModel().addListSelectionListener(this);
@@ -123,7 +123,7 @@ public class ManageBindingsPanel extends JPanel implements ActionListener, Table
     public void actionPerformed(ActionEvent event) {
         DefaultTableModel tableModel = (DefaultTableModel) this.bindingsTable.getModel();
         if (event.getActionCommand().equals(ADD)) {
-            tableModel.addRow(new Object[]{LinkedProcess.NAME_ATTRIBUTE + this.count, LinkedProcess.STATUS_ATTRIBUTE + this.count, "xsd:string", false});
+            tableModel.addRow(new Object[]{LinkedProcess.NAME_ATTRIBUTE + this.count, LinkedProcess.VALUE_ATTRIBUTE + this.count, "xsd:string", false});
             count++;
         } else if (event.getActionCommand().equals(REMOVE)) {
             if (this.bindingsTable.getSelectedRow() > -1) {
