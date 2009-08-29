@@ -34,7 +34,7 @@ public class ManageBindingsProvider implements IQProvider {
 
         while (parser.next() == XmlPullParser.START_TAG && parser.getName().equals(LinkedProcess.BINDING_TAG)) {
             String name = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.NAME_ATTRIBUTE);
-            String value = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.STATUS_ATTRIBUTE);
+            String value = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.VALUE_ATTRIBUTE);
             String datatype = parser.getAttributeValue(LinkedProcess.BLANK_NAMESPACE, LinkedProcess.DATATYPE_ATTRIBUTE);
 
             try {

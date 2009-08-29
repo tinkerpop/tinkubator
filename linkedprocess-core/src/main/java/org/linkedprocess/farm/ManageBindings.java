@@ -112,7 +112,7 @@ public class ManageBindings extends FarmIq {
                 b.setAttribute(LinkedProcess.NAME_ATTRIBUTE, key);
                 TypedValue value = this.bindings.getTyped(key);
                 if (null != value) {
-                    b.setAttribute(LinkedProcess.STATUS_ATTRIBUTE, value.getValue());
+                    b.setAttribute(LinkedProcess.VALUE_ATTRIBUTE, value.getValue());
                     b.setAttribute(LinkedProcess.DATATYPE_ATTRIBUTE, value.getDatatype().getURI());
                 }
                 manageBindingsElement.addContent(b);
