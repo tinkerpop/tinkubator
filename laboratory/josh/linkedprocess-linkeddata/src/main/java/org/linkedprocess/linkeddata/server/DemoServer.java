@@ -33,6 +33,14 @@ public class DemoServer {
     private static final String PREFIX = "http://lanl.linkedprocess.org:8182/ns/";
     //private static final String PREFIX = "http://localhost:8182/ns/";
 
+    // Hash URIs must be transformed for the server to behave appropriately when
+    // serving descriptions of URIs with fragment identifiers indicated with the
+    // hash character.  HTTP middleware may otherwise strip off the fragment, so
+    // that a request for a URI such as http://example.org/ns#foo will actually
+    // be served with a description of http://example.org/ns which does not
+    // contain a description of the full URI.
+    private static final String HASH_SUBSTITUTE = "_hash_";
+
     private static final Logger LOGGER = LinkedProcess.getLogger(DemoServer.class);
 
     public static void main(final String[] args) throws Exception {
@@ -67,7 +75,7 @@ public class DemoServer {
     }
 
     private static Sail createRewriterSail(final Sail baseSail) {
-        RewritingSchema s = new RewritingSchema();
+        RewritingSchema schema = new RewritingSchema();
         final ValueFactory valueFactory = baseSail.getValueFactory();
 
         URIRewriter fromStoreRewriter = new URIRewriter() {
@@ -75,6 +83,7 @@ public class DemoServer {
                 String s = original.toString();
                 if (s.startsWith("http://")) {
                     s = s.replaceFirst("http://", PREFIX);
+                    s = s.replaceAll("#", HASH_SUBSTITUTE);
                     return valueFactory.createURI(s);
                 } else {
                     return original;
@@ -89,6 +98,7 @@ public class DemoServer {
                 String s = original.toString();
                 if (s.startsWith(PREFIX)) {
                     s = s.replaceFirst(PREFIX, "http://");
+                    s = s.replaceAll(HASH_SUBSTITUTE, "#");
                     return valueFactory.createURI(s);
                 } else {
                     return original;
@@ -96,12 +106,12 @@ public class DemoServer {
             }
         };
 
-        s.setRewriter(RewritingSchema.PartOfSpeech.SUBJECT, RewritingSchema.Action.FROM_STORE, fromStoreRewriter);
-        s.setRewriter(RewritingSchema.PartOfSpeech.OBJECT, RewritingSchema.Action.FROM_STORE, fromStoreRewriter);
-        s.setRewriter(RewritingSchema.PartOfSpeech.SUBJECT, RewritingSchema.Action.TO_STORE, toStoreRewriter);
-        s.setRewriter(RewritingSchema.PartOfSpeech.OBJECT, RewritingSchema.Action.TO_STORE, toStoreRewriter);
+        schema.setRewriter(RewritingSchema.PartOfSpeech.SUBJECT, RewritingSchema.Action.FROM_STORE, fromStoreRewriter);
+        schema.setRewriter(RewritingSchema.PartOfSpeech.OBJECT, RewritingSchema.Action.FROM_STORE, fromStoreRewriter);
+        schema.setRewriter(RewritingSchema.PartOfSpeech.SUBJECT, RewritingSchema.Action.TO_STORE, toStoreRewriter);
+        schema.setRewriter(RewritingSchema.PartOfSpeech.OBJECT, RewritingSchema.Action.TO_STORE, toStoreRewriter);
 
-        return new RewriterSail(baseSail, s);
+        return new RewriterSail(baseSail, schema);
     }
 
     /*
