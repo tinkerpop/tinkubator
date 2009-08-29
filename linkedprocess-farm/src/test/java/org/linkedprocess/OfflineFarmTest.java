@@ -1,6 +1,16 @@
 package org.linkedprocess;
 
-import static org.easymock.EasyMock.isA;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPConnection;
@@ -11,21 +21,14 @@ import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DataForm;
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.linkedprocess.farm.Farm;
 import org.linkedprocess.farm.SpawnVm;
 import org.linkedprocess.farm.os.Vm;
-import org.linkedprocess.farm.os.errors.VmNotFoundException;
-import org.linkedprocess.testing.offline.MockXmppConnection;
 import org.linkedprocess.testing.offline.OfflineTest;
-import static org.powermock.api.easymock.PowerMock.*;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Farm.class, XmppClient.class,
@@ -46,43 +49,11 @@ public class OfflineFarmTest extends OfflineTest {
         OfflineTest.prepareMocksAndConnection(farmConn, connection);
 
         sentPackets = connection.sentPackets;
-        // first VM
-        expectNew(Vm.class, isA(String.class),
-                isA(Integer.class), isA(String.class), isA(String.class),
-                isA(Farm.class), isA(String.class), isA(String.class),
-                isA(String.class))
-                .andReturn(createMockVM(username + "LoPVM/1")).times(0, 1);
-        expectNew(Vm.class, isA(String.class),
-                isA(Integer.class), isA(String.class), isA(String.class),
-                isA(Farm.class), isA(String.class), isA(String.class),
-                isA(String.class))
-                .andReturn(createMockVM(username + "LoPVM/2")).times(0, 1);
         replayAll();
         // start the farm
         connection.clearPackets();
         farm = new Farm(server, port, username, password, null);
     }
-
-    private Vm createMockVM(String id) {
-        Vm mockVM = createMock(Vm.class);
-
-        //expect(mockVM.getJid()).andReturn(id).anyTimes();
-        //mockVM.shutdown();
-        expectLastCall().anyTimes();
-        try {
-            mockVM.terminateSelf();
-        } catch (VmNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        expectLastCall().anyTimes();
-        MockXmppConnection vmConnection = new MockXmppConnection(
-                new ConnectionConfiguration(server, port), "vm1", null);
-        //expect(mockVM.getConnection()).andReturn(vmConnection).anyTimes();
-        //expect(mockVM.getVmPassword()).andReturn(password).anyTimes();
-        return mockVM;
-    }
-
     private SpawnVm createSpawnPacket() {
         SpawnVm spawn = new SpawnVm();
         spawn.setVmSpecies(JAVASCRIPT);
@@ -129,11 +100,11 @@ public class OfflineFarmTest extends OfflineTest {
         SpawnVm result = (SpawnVm) connection.getLastPacket();
         assertEquals(result.getPacketID(), IQ_PACKET_ID);
         assertEquals(IQ.Type.RESULT, result.getType());
-        //assertNotNull(result.getVmPassword());
-        //assertNotNull(result.getVmJid());
+        assertNotNull(result.getVmId());
         assertEquals(1, farm.getVms().size());
-        // try to shutdown the VM just created to make shure it exists
-        //farm.terminateVm(result.getVmJid());
+        // try to shutdown the VM just created to make shure it exits
+        Vm vm = farm.getVms().iterator().next();
+		farm.terminateVm(vm.getVmId());
         assertEquals(0, farm.getVms().size());
 
     }
@@ -294,7 +265,7 @@ public class OfflineFarmTest extends OfflineTest {
 
         // now we should have 2 PacketListeners to the Farms XMPP connection
         ArrayList<PacketListener> packetListeners = connection.packetListeners;
-        assertEquals(2, packetListeners.size());
+        assertEquals(7, packetListeners.size());
         assertNotNull(connection.spawn);
         assertNotNull(connection.subscribe);
 

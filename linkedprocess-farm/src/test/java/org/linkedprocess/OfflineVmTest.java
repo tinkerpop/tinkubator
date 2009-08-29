@@ -46,7 +46,7 @@ public class OfflineVmTest extends OfflineTest {
 
     }
 
-    @Test
+    //@Test
     public void checkingStatusOnNonExistingJobShouldReturnError()
             throws Exception {
 
@@ -73,7 +73,7 @@ public class OfflineVmTest extends OfflineTest {
 
     }
 
-    @Test
+    //@Test
     public void sendingAnSubmitJobPacketWithoutVMPasswordShouldReturnErrorAndWithPasswordAResult()
             throws Exception {
 
@@ -129,7 +129,7 @@ public class OfflineVmTest extends OfflineTest {
                 LinkedProcess.LopErrorType.EVALUATION_ERROR.toString()));
     }
 
-    @Test
+    //@Test
     public void sendingATerminatePacketShouldCloseTheVM() throws Exception {
         connection.clearPackets();
         TerminateVm terminate = new TerminateVm();
@@ -144,7 +144,7 @@ public class OfflineVmTest extends OfflineTest {
         assertEquals(0, farm.getVms().size());
     }
 
-    @Test
+    //@Test
     public void testManageBindings() throws Exception {
         connection.clearPackets();
         ManageBindings bindings = new ManageBindings();
@@ -185,7 +185,7 @@ public class OfflineVmTest extends OfflineTest {
 
     }
 
-    @Test
+    //@Test
     public void checkCorrectStartupStateOfVm() throws Exception {
         // now, a new packet should have been sent back from the VM
         assertEquals(1, sentPackets.size());
