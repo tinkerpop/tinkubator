@@ -136,7 +136,7 @@ public class CountrysideProxy {
     }
 
     public boolean equals(Object countrysideProxy) {
-        return countrysideProxy instanceof CountrysideProxy && ((CountrysideProxy)countrysideProxy).getJid().equals(this.jid);
+        return countrysideProxy instanceof CountrysideProxy && ((CountrysideProxy) countrysideProxy).getJid().equals(this.jid);
     }
 
     public int hashCode() {

@@ -132,7 +132,7 @@ public class JobProxy {
      * @return whether the job was completed successfully
      */
     public boolean wasSuccessful() {
-        return (complete && null == error);
+        return (this.complete && null == this.error);
     }
 
     /**

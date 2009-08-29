@@ -39,7 +39,7 @@ public class CloudProxyTest extends TestCase {
 
     public void testCountrysideHashCode() {
         CloudProxy cloudProxy = new CloudProxy();
-        for(int i=0; i<1000; i++) {
+        for (int i = 0; i < 1000; i++) {
             CountrysideProxy countrysideProxy = new CountrysideProxy(new Jid("test@test"));
             cloudProxy.addCountrysideProxy(countrysideProxy);
         }
@@ -49,7 +49,7 @@ public class CloudProxyTest extends TestCase {
     public void testFarmHashCode() {
         CloudProxy cloudProxy = new CloudProxy();
         cloudProxy.addCountrysideProxy(new CountrysideProxy(new Jid("test@test")));
-        for(int i=0; i<1000; i++) {
+        for (int i = 0; i < 1000; i++) {
             FarmProxy farmProxy = new FarmProxy(new Jid("test@test/1234"), null, null);
             cloudProxy.addFarmProxy(farmProxy);
         }
@@ -59,7 +59,7 @@ public class CloudProxyTest extends TestCase {
     public void testRegistryHashCode() {
         CloudProxy cloudProxy = new CloudProxy();
         cloudProxy.addCountrysideProxy(new CountrysideProxy(new Jid("test@test")));
-        for(int i=0; i<1000; i++) {
+        for (int i = 0; i < 1000; i++) {
             RegistryProxy registryProxy = new RegistryProxy(new Jid("test@test/1234"), null, null, null);
             cloudProxy.addRegistryProxy(registryProxy);
         }

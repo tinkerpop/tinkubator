@@ -188,7 +188,7 @@ public abstract class XmppProxy {
     }
 
     public boolean equals(Object xmppProxy) {
-        return xmppProxy instanceof XmppProxy && ((XmppProxy)xmppProxy).getJid().equals(this.jid);
+        return xmppProxy instanceof XmppProxy && ((XmppProxy) xmppProxy).getJid().equals(this.jid);
     }
 
     /**

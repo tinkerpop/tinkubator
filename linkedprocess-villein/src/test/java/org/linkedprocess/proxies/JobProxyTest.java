@@ -1,11 +1,10 @@
 package org.linkedprocess.proxies;
 
+import junit.framework.TestCase;
 import org.linkedprocess.villein.proxies.JobProxy;
 
-import java.util.Set;
 import java.util.HashSet;
-
-import junit.framework.TestCase;
+import java.util.Set;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -26,7 +25,7 @@ public class JobProxyTest extends TestCase {
 
     public void testHashCode() {
         Set<JobProxy> jobProxies = new HashSet<JobProxy>();
-        for(int i=0; i<1000; i++) {
+        for (int i = 0; i < 1000; i++) {
             JobProxy jobProxy = new JobProxy();
             jobProxy.setJobId("ABCD");
             jobProxies.add(jobProxy);
