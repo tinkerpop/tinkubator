@@ -12,6 +12,8 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
 import org.linkedprocess.Jid;
+import org.linkedprocess.LopPacketListener;
+import org.jdom.Document;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -26,13 +28,13 @@ public class PresencePacketListener extends RegistryPacketListener {
 
     public void processPacket(Packet packet) {
         Presence presence = (Presence) packet;
-
+        Jid presenceJid = new Jid(packet.getFrom());
         Registry.LOGGER.info("Arrived " + PresencePacketListener.class.getName());
         Registry.LOGGER.info(presence.toXML());
 
         if (presence.isAvailable()) {
-            DiscoverInfo discoInfo = this.getDiscoInfo(packet.getFrom());
-            if (isFarm(discoInfo)) {
+            Document discoInfoDocument = this.getDiscoInfoDocument(presenceJid);
+            if (LopPacketListener.isFarm(discoInfoDocument)) {
                 Registry.LOGGER.info("Registering farm: " + packet.getFrom());
                 this.getRegistry().addActiveFarm(new Jid(packet.getFrom()));
             }

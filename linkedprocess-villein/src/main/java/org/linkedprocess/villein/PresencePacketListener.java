@@ -12,6 +12,7 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.linkedprocess.Jid;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.LopPacketListener;
 import org.linkedprocess.villein.proxies.*;
 
 /**
@@ -78,9 +79,9 @@ class PresencePacketListener extends VilleinPacketListener {
             }
             if (!presenceJid.isBareJid()) {
                 // If its not a countryside jid (bare jid) then determine which type of XMPP proxy the presence packet is from
-                Document discoInfoDocument = this.getDiscoInfo(presenceJid);
+                Document discoInfoDocument = this.getDiscoInfoDocument(presenceJid);
                 if (discoInfoDocument != null) {
-                    if (XmppProxy.isFarm(discoInfoDocument)) {
+                    if (LopPacketListener.isFarm(discoInfoDocument)) {
                         FarmProxy farmProxy = new FarmProxy(presenceJid, this.getVillein().getDispatcher(), discoInfoDocument);
                         farmProxy.setStatus(status);
                         try {
@@ -92,7 +93,7 @@ class PresencePacketListener extends VilleinPacketListener {
                         } catch (ParentProxyNotFoundException e) {
                             Villein.LOGGER.warning(e.getMessage());
                         }
-                    } else if (XmppProxy.isRegistry(discoInfoDocument)) {
+                    } else if (LopPacketListener.isRegistry(discoInfoDocument)) {
                         RegistryProxy registryProxy = new RegistryProxy(presenceJid, this.getVillein().getDispatcher(), discoInfoDocument, null);
                         registryProxy.setStatus(status);
                         try {
