@@ -73,7 +73,7 @@ public class GroovyLinkedDataDemo {
 
                 Set<Resource> candidates = getKnown(sail, cur);
                 if (0 == candidates.size()) {
-                    System.err.println("this shouldn't happen");
+                    System.err.println("Linked Data demo: this shouldn't happen");
                     break;
                 } else {
                     cur = (Resource) candidates.toArray()[random.nextInt(candidates.size())];

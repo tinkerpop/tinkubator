@@ -68,8 +68,8 @@ public class VmSecurityManager extends SecurityManager {
         }
     }
 
-    private void permissionDenied() {
-        LOGGER.info("denying permission");
+    private void permissionDenied(final String msg) {
+        LOGGER.info("denying permission (" + msg + ")");
         SecurityException e = new SecurityException("operation is not allowed in VM worker threads");
         alertListeners(e, null, null);
         throw e;
@@ -272,8 +272,11 @@ public class VmSecurityManager extends SecurityManager {
     public void checkRead(final FileDescriptor fileDescriptor) {
         if (isVMWorkerThread()) {
             checkPermissionType(PermissionType.read);
+
             // Deny anyway...
-            permissionDenied();
+            // FIXME: allowing read access with FileDescriptors represents a major security vulnerability.
+            //        We are allowing it here only for the sake of a demo, and need a better solution.
+            //permissionDenied("read permission to file by descriptor: " + fileDescriptor);
         }
     }
 
@@ -293,7 +296,7 @@ public class VmSecurityManager extends SecurityManager {
         if (isVMWorkerThread()) {
             checkPermissionType(PermissionType.read);
             // Deny anyway...
-            permissionDenied();
+            permissionDenied("read permission to file: " + s + " in context: " + o);
         }
     }
 
@@ -302,7 +305,9 @@ public class VmSecurityManager extends SecurityManager {
         if (isVMWorkerThread()) {
             checkPermissionType(PermissionType.write);
             // Deny anyway...
-            permissionDenied();
+            // FIXME: allowing read access with FileDescriptors represents a major security vulnerability.
+            //        We are allowing it here only for the sake of a demo, and need a better solution.
+            //permissionDenied("write permission to file descriptor: " + fileDescriptor);
         }
     }
 
