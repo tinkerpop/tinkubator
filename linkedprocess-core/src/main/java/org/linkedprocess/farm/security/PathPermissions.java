@@ -85,8 +85,15 @@ public class PathPermissions {
         }
 
         public void addChild(final String suffix,
-                             final T target) {
+                             final T childTarget) {
+            // Check for superseded children first, so that new rules override old ones.
             removeSupersededChildren(suffix);
+
+            // Only add the child if it changes the target for the given suffix.
+            T existingTarget = findTarget(suffix);
+            if (null != existingTarget && existingTarget.equals(childTarget)) {
+                return;
+            }
 
             for (Node<T> child : children) {
                 // If the new child modifies (but does not supersede) an existing child...
@@ -94,7 +101,7 @@ public class PathPermissions {
                     // New suffix will be non-empty.
                     String newSuffix = suffix.substring(child.prefix.length());
 
-                    child.addChild(newSuffix, target);
+                    child.addChild(newSuffix, childTarget);
 
                     // Child will not modify more than one existing child.
                     return;
@@ -102,7 +109,7 @@ public class PathPermissions {
             }
 
             // If no children are modified, simply add a new child.
-            children.add(new Node<T>(suffix, target));
+            children.add(new Node<T>(suffix, childTarget));
         }
 
         private void removeSupersededChildren(final String prefix) {

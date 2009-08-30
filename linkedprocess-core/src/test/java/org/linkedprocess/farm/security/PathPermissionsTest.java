@@ -9,6 +9,9 @@ package org.linkedprocess.farm.security;
 
 import junit.framework.TestCase;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Author: josh
  * Date: Jul 9, 2009
@@ -63,5 +66,28 @@ public class PathPermissionsTest extends TestCase {
 
         p.addPermitRule("aa");
         assertTrue(p.isPermitted("aacd"));
+    }
+
+    public void testGetRules() {
+        PathPermissions p;
+
+        p = new PathPermissions();
+        p.addPermitRule("/foo/bar");
+        p.addPermitRule("/");
+        assertEquals(1, p.getPositiveRules().size());
+        assertEquals("/", p.getPositiveRules().get(0));
+
+        p = new PathPermissions();
+        p.addPermitRule("/");
+        p.addPermitRule("/quux/bar");
+        assertTrue(p.isPermitted("/blah"));
+        Set<String> rules = new HashSet<String>();
+        rules.addAll(p.getPositiveRules());
+        assertEquals(p.getPositiveRules().size(), rules.size());
+        //for (String s : rules) {
+        //    System.out.println("-- " + s);
+        //}
+        assertEquals(1, rules.size());
+        assertTrue(rules.contains("/"));
     }
 }
