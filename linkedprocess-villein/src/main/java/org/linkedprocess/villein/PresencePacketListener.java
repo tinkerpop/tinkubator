@@ -24,7 +24,6 @@ import org.linkedprocess.villein.proxies.*;
  */
 class PresencePacketListener extends VilleinPacketListener {
 
-
     public PresencePacketListener(Villein villein) {
         super(villein);
     }
