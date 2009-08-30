@@ -55,7 +55,7 @@ public class PrimeFinder {
         Map<VmProxy, JobProxy> vmJobMap = new HashMap<VmProxy, JobProxy>();
         for (ResultHolder<VmProxy> vmProxyResult : vmProxies) {
             JobProxy jobProxy = new JobProxy();
-            jobProxy.setExpression(LinkedProcess.convertStreamToString(PrimeFinder.class.getResourceAsStream("findPrimes.groovy")));
+            jobProxy.setExpression(LinkedProcess.convertStreamToString(PrimeFinder.class.getResourceAsStream("FindPrimes.groovy")));
             vmJobMap.put(vmProxyResult.getResult(), jobProxy);
         }
 
