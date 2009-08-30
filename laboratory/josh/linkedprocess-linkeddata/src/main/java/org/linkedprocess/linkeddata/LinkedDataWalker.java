@@ -1,3 +1,5 @@
+package org.linkedprocess.linkeddata;
+
 import info.aduna.iteration.CloseableIteration;
 import net.fortytwo.linkeddata.sail.LinkedDataSail;
 import net.fortytwo.ripple.Ripple;
@@ -21,16 +23,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-class WeightedValue implements Comparable {
-    public Resource value;
-    public long weight;
-
-    public int compareTo(Object other) {
-        return - ((Long) weight).compareTo(((WeightedValue) other).weight);
-    }
-}
-
-public class GroovyLinkedDataDemo {
+public class LinkedDataWalker {
     public static final URI FOAF_KNOWS = new URIImpl("http://xmlns.com/foaf/0.1/knows");
     public static final URI TIMBL = new URIImpl("http://www.w3.org/People/Berners-Lee/card#i");
 
@@ -80,7 +73,7 @@ public class GroovyLinkedDataDemo {
 
                 Set<Resource> candidates = getKnown(sail, cur);
                 if (0 == candidates.size()) {
-                    System.err.println("this shouldn't happen");
+                    System.err.println("Linked Data demo: this shouldn't happen");
                     break;
                 } else {
                     cur = (Resource) candidates.toArray()[random.nextInt(candidates.size())];
@@ -126,8 +119,18 @@ public class GroovyLinkedDataDemo {
     }
 
     public static void main(final String[] args) throws Exception {
-        new GroovyLinkedDataDemo().simpleDemo();
+        new LinkedDataWalker().simpleDemo();
     }
+
+    private class WeightedValue implements Comparable {
+        public Resource value;
+        public long weight;
+
+        public int compareTo(Object other) {
+            return - ((Long) weight).compareTo(((WeightedValue) other).weight);
+        }
+    }
+
 }
 
-new GroovyLinkedDataDemo().main();
+

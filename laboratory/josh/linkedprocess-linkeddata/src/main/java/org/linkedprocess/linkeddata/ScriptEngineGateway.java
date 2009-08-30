@@ -16,16 +16,16 @@ import java.io.InputStream;
  * Time: 4:32:36 PM
  * To change this template use File | Settings | File Templates.
  */
-public class LinkedData {
+public class ScriptEngineGateway {
     public static void main(final String[] args) throws Exception {
-        new LinkedData().doit();
+        new ScriptEngineGateway().doit();
     }
 
     private void doit() throws IOException, ScriptException {
         ScriptEngine engine = LinkedProcessFarm.getScriptEngineManager()
                 .getEngineByName(LinkedProcess.GROOVY);
 
-        String program = toString(LinkedData.class.getResourceAsStream("lddemo.groovy"));
+        String program = toString(ScriptEngineGateway.class.getResourceAsStream("lddemo.groovy"));
         Object result = engine.eval(program);
 
         System.out.println("result = " + result);
