@@ -81,12 +81,12 @@ public class PollBindingsPattern implements Runnable {
             }
 
             if (resultBindings != null) {
-                if (!resultBindings.successfulResult()) {
+                if (!resultBindings.isSuccessful()) {
                     this.errorHandler.handle(resultBindings.getLopError());
                     break;
                 } else {
-                    if (this.bindingsChecker.areEquivalent(resultBindings.getResult(), this.desiredBindings)) {
-                        successHandler.handle(resultBindings.getResult());
+                    if (this.bindingsChecker.areEquivalent(resultBindings.getSuccess(), this.desiredBindings)) {
+                        successHandler.handle(resultBindings.getSuccess());
                         break;
                     } else {
                         monitorSleep(monitor, this.pollingInterval);

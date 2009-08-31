@@ -16,41 +16,41 @@ import org.linkedprocess.Error;
  * @version LoPSideD 0.1
  */
 public class ResultHolder<T> {
-    private T result;
+    private T success;
     private Error error;
 
     public ResultHolder() {
     }
 
-    public ResultHolder(T result) {
-        this.result = result;
+    public ResultHolder(T success) {
+        this.success = success;
     }
 
     public ResultHolder(org.linkedprocess.Error error) {
         this.error = error;
     }
 
-    public T getResult() {
-        return this.result;
+    public T getSuccess() {
+        return this.success;
     }
 
     public Error getLopError() {
         return this.error;
     }
 
-    public void setResult(T result) {
-        this.result = result;
+    public void setSuccess(T success) {
+        this.success = success;
     }
 
     public void setLopError(Error error) {
         this.error = error;
     }
 
-    public boolean successfulResult() {
+    public boolean isSuccessful() {
         return this.error == null;
     }
 
     public boolean isEmpty() {
-        return (this.error == null && this.result == null);
+        return (this.error == null && this.success == null);
     }
 }

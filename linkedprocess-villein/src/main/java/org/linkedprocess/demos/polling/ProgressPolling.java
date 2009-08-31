@@ -66,7 +66,7 @@ public class ProgressPolling {
         //////////////// SPAWN VIRTUAL MACHINES ON ALLOCATED FARMS
 
         ResultHolder<VmProxy> vmProxyResult = SynchronousPattern.spawnVm(farmProxies.iterator().next(), "javascript", -1);
-        System.out.println("virtual machine spawned: " + vmProxyResult.getResult().getVmId());
+        System.out.println("virtual machine spawned: " + vmProxyResult.getSuccess().getVmId());
 
         //////////////// DISTRIBUTE PROGRESS METER INCREMENTING CODE
 
@@ -75,7 +75,7 @@ public class ProgressPolling {
                 "while(true) {\n" +
                 "\tmeter = meter + 0.00000005;\n" +
                 "}");
-        vmProxyResult.getResult().submitJob(jobProxy, null, null);
+        vmProxyResult.getSuccess().submitJob(jobProxy, null, null);
 
         BindingsChecker bc = new BindingsChecker() {
             public boolean areEquivalent(VmBindings actualBindings, VmBindings desiredBindings) {
@@ -112,12 +112,12 @@ public class ProgressPolling {
         PollBindingsPattern pb = new PollBindingsPattern();
         VmBindings desiredBindings = new VmBindings();
         desiredBindings.putTyped("meter", new TypedValue(VmBindings.XMLSchemaDatatype.DOUBLE, "" + meterMax));
-        pb.startPattern(vmProxyResult.getResult(), desiredBindings, bc, resultHandler, errorHandler, pollingInterval);
+        pb.startPattern(vmProxyResult.getSuccess(), desiredBindings, bc, resultHandler, errorHandler, pollingInterval);
         synchronized (monitor) {
             monitor.wait();
         }
-        System.out.println("Terminating: " + vmProxyResult.getResult());
-        vmProxyResult.getResult().terminateVm(null, null);
+        System.out.println("Terminating: " + vmProxyResult.getSuccess());
+        vmProxyResult.getSuccess().terminateVm(null, null);
         villein.shutdown();
     }
 

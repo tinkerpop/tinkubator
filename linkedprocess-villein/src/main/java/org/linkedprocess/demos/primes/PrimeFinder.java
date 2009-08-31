@@ -56,7 +56,7 @@ public class PrimeFinder {
         for (ResultHolder<VmProxy> vmProxyResult : vmProxies) {
             JobProxy jobProxy = new JobProxy();
             jobProxy.setExpression(LinkedProcess.convertStreamToString(PrimeFinder.class.getResourceAsStream("FindPrimes.groovy")));
-            vmJobMap.put(vmProxyResult.getResult(), jobProxy);
+            vmJobMap.put(vmProxyResult.getSuccess(), jobProxy);
         }
 
         System.out.println("Scattering find primes function definition jobs...");

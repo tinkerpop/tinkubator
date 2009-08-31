@@ -66,7 +66,7 @@ public class SynchronousPattern {
 
         Handler<VmProxy> resultHandler = new Handler<VmProxy>() {
             public void handle(VmProxy vmProxy) {
-                resultHolder.setResult(vmProxy);
+                resultHolder.setSuccess(vmProxy);
                 farmProxy.addVmProxy(vmProxy);
                 synchronized (monitor) {
                     monitor.notify();
@@ -105,7 +105,7 @@ public class SynchronousPattern {
 
         Handler<JobProxy> submitJobHandler = new Handler<JobProxy>() {
             public void handle(JobProxy jobStruct) {
-                resultHolder.setResult(jobStruct);
+                resultHolder.setSuccess(jobStruct);
                 synchronized (monitor) {
                     monitor.notify();
                 }
@@ -133,7 +133,7 @@ public class SynchronousPattern {
 
         Handler<LinkedProcess.JobStatus> resultHandler = new Handler<LinkedProcess.JobStatus>() {
             public void handle(LinkedProcess.JobStatus jobStatus) {
-                resultHolder.setResult(jobStatus);
+                resultHolder.setSuccess(jobStatus);
                 synchronized (monitor) {
                     monitor.notify();
                 }
@@ -169,7 +169,7 @@ public class SynchronousPattern {
 
         Handler<String> resultHandler = new Handler<String>() {
             public void handle(String jobId) {
-                resultHolder.setResult(jobId);
+                resultHolder.setSuccess(jobId);
                 synchronized (monitor) {
                     monitor.notify();
                 }
@@ -206,7 +206,7 @@ public class SynchronousPattern {
 
         Handler<VmBindings> resultHandler = new Handler<VmBindings>() {
             public void handle(VmBindings vmBindings) {
-                resultHolder.setResult(vmBindings);
+                resultHolder.setSuccess(vmBindings);
                 synchronized (monitor) {
                     monitor.notify();
                 }
@@ -243,7 +243,7 @@ public class SynchronousPattern {
 
         Handler<VmBindings> resultHandler = new Handler<VmBindings>() {
             public void handle(VmBindings vmBindings) {
-                resultHolder.setResult(vmBindings);
+                resultHolder.setSuccess(vmBindings);
                 synchronized (monitor) {
                     monitor.notify();
                 }
@@ -279,7 +279,7 @@ public class SynchronousPattern {
 
         Handler<Object> resultHandler = new Handler<Object>() {
             public void handle(Object object) {
-                resultHolder.setResult(object);
+                resultHolder.setSuccess(object);
                 synchronized (monitor) {
                     monitor.notify();
                 }

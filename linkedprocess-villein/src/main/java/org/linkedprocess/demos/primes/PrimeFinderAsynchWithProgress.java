@@ -126,7 +126,7 @@ public class PrimeFinderAsynchWithProgress {
         Collection<Callable<Object>> tasks = new ArrayList<Callable<Object>>();
         for (ResultHolder<VmProxy> vmProxyResult : vmProxies) {
             tasks.add(Executors.callable(new VmPollProgressTask(vmProxyResult
-                    .getResult(), meterMax, pollingInterval)));
+                    .getSuccess(), meterMax, pollingInterval)));
         }
         startPolling(tasks);
     }
@@ -170,7 +170,7 @@ public class PrimeFinderAsynchWithProgress {
                 VmBindings.XMLSchemaDatatype.DOUBLE, "" + 0));
         Map<VmProxy, VmBindings> bindingsMap = new HashMap<VmProxy, VmBindings>();
         for (ResultHolder<VmProxy> proxy : vmProxies) {
-            bindingsMap.put(proxy.getResult(), bindings);
+            bindingsMap.put(proxy.getSuccess(), bindings);
         }
         try {
             ScatterGatherPattern.scatterSetBindings(bindingsMap, 20000);
@@ -188,7 +188,7 @@ public class PrimeFinderAsynchWithProgress {
                     .setExpression(LinkedProcess
                             .convertStreamToString(PrimeFinderAsynchWithProgress.class
                             .getResourceAsStream("findPrimesWithProgress.groovy")));
-            vmJobMap.put(vmProxyResult.getResult(), jobProxy);
+            vmJobMap.put(vmProxyResult.getSuccess(), jobProxy);
         }
 
         System.out

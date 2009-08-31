@@ -11,6 +11,9 @@ import org.jivesoftware.smack.packet.Packet;
 import org.linkedprocess.Error;
 import org.linkedprocess.LinkedProcess;
 
+import java.io.InputStream;
+import java.io.IOException;
+
 /**
  * A JobProxy is a data structure representing a job. A job is submitted to and returned by a virtual machine.
  * A submitted job does not have a result or error. However, a submitted job should have an expression.
@@ -97,6 +100,16 @@ public class JobProxy {
      */
     public void setExpression(String expression) {
         this.expression = expression;
+    }
+
+    /**
+     * Set the expression of the job using an InputStream.
+     * The contents of the InputStream are converted to a String.
+     * @param inputStream the expression within an InputStream
+     * @throws IOException thrown if there is an error with the InputStream
+     */
+    public void setExpression(InputStream inputStream) throws IOException {
+        this.expression = LinkedProcess.convertStreamToString(inputStream);
     }
 
     /**
