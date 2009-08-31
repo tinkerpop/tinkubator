@@ -20,15 +20,14 @@ import java.util.ArrayList;
 public class Experiment {
 
     private static final int AMOUNT = 20;
-    private static final Jid GROOVY_FARM_JID = new Jid("lanl_countryside@lanl.linkedprocess.org/LoPFarm/IRAXDFP5");
+    private static final Jid GROOVY_FARM_JID = new Jid("lanl_countryside@lanl.linkedprocess.org/LoPFarm/F9LUIZ4S");
     private long clock = -1l;
 
     private long timer() {
         if(clock == -1l) {
             clock = System.currentTimeMillis();
             return -1l;
-        }
-        else {
+        } else {
             long x = System.currentTimeMillis() - clock;
             clock = -1l;
             return x;
@@ -49,11 +48,11 @@ public class Experiment {
         FarmProxy farmProxy = ResourceAllocationPattern.allocateFarm(villein.getCloudProxy(), GROOVY_FARM_JID, 10000);
         ResultHolder<VmProxy> result = SynchronousPattern.spawnVm(farmProxy, "groovy", 2500);
         if(!result.isSuccessful())
-            throw new Exception();
+            throw new Exception("spawn error.");
         VmProxy vmProxy = result.getSuccess();
         JobProxy jobProxy = new JobProxy();
         jobProxy.setExpression(Experiment.class.getResourceAsStream("SingleUriResolution.groovy"));
-        SynchronousPattern.submitJob(vmProxy, jobProxy, 10000);
+        SynchronousPattern.submitJob(vmProxy, jobProxy, 20000);
         jobProxy = new JobProxy();
         jobProxy.setExpression("SingleUriResolution.doBuckshotExperiment(" + resolutions + ")");
         SynchronousPattern.submitJob(vmProxy, jobProxy, -1);
@@ -67,29 +66,36 @@ public class Experiment {
 
     public static void main(String args[]) throws Exception {
 
-        int totalNumberOfExperiments = 10;
+        int maxUriResolutions = 102;
+        int uriResolutionInterval = 10;
+        int totalNumberOfExperimentsPerInterval = 5;
+
         Experiment e = new Experiment();
         List<Double> lopTimes = new ArrayList<Double>();
         List<Double> baseTimes = new ArrayList<Double>();
 
-        for(int t=1; t<100; t=t+10) {
+        for(int t=1; t<maxUriResolutions; t=t+uriResolutionInterval) {
             e.timer();
-            for(int i=0; i<totalNumberOfExperiments; i++) {
+            for(int i=0; i<totalNumberOfExperimentsPerInterval; i++) {
                 e.lopExperiment(t);
             }
             long lopTime = e.timer();
             e.timer();
-            for(int i=0; i<totalNumberOfExperiments; i++) {
+            for(int i=0; i<totalNumberOfExperimentsPerInterval; i++) {
                 e.baseExperiment(t);
             }
             long baseTime = e.timer();
 
-            double avgLopTime = (double)lopTime / (double)totalNumberOfExperiments;
-            double avgBaseTime = (double)baseTime / (double)totalNumberOfExperiments;
+            double avgLopTime = (double)lopTime / (double)totalNumberOfExperimentsPerInterval;
+            double avgBaseTime = (double)baseTime / (double)totalNumberOfExperimentsPerInterval;
+
             lopTimes.add(avgLopTime);
-            lopTimes.add(avgBaseTime);
+            baseTimes.add(avgBaseTime);
+
             System.out.println("Average LoP time for " + t + ": " + avgLopTime);
             System.out.println("Average base time for " + t + ": " + avgBaseTime);
+            System.out.println("Average LoP times: " + lopTimes);
+            System.out.println("Average Base times: " + baseTimes);
         }
         System.out.println("\n\n");
         System.out.println("Average LoP times: " + lopTimes);
