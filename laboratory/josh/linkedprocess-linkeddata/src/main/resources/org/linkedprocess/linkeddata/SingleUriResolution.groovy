@@ -1,5 +1,3 @@
-package org.linkedprocess.linkeddata;
-
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.sail.Sail;
@@ -17,10 +15,6 @@ import net.fortytwo.ripple.RippleException;
 import net.fortytwo.ripple.URIMap;
 import net.fortytwo.ripple.rdf.RDFNullSink;
 
-/**
- * @author Marko A. Rodriguez (http://markorodriguez.com)
- * @version LoPSideD 0.1
- */
 public class SingleUriResolution {
 
     private static List<URI> uris = new ArrayList<URI>();
@@ -98,11 +92,11 @@ public class SingleUriResolution {
 
     public static List<Long> doBuckshotExperiment(int numberOfRequests) throws Exception {
         Random random = new Random();
-        List<Long> times = new LinkedList<Long>();
+        List<Long> times = new LinkedList();
         for (int i = 0; i < numberOfRequests; i++) {
-            URI u = SingleUriResolution.uris.get(random.nextInt(uris.size()));
-            Long t = resolveSingleUri(u);
-            System.out.println(u + ":" + t);
+            URI u = SingleUriResolution.uris.get(random.nextInt(SingleUriResolution.uris.size()));
+            Long t = SingleUriResolution.resolveSingleUri(u);
+            System.out.println(u.toString() + ":" + t);
             times.add(t);
         }
         return times;
