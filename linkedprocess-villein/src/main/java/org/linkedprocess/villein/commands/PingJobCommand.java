@@ -9,7 +9,7 @@ package org.linkedprocess.villein.commands;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.Error;
+import org.linkedprocess.LopError;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.PingJob;
 import org.linkedprocess.villein.Handler;
@@ -27,15 +27,15 @@ import org.linkedprocess.villein.proxies.VmProxy;
  */
 public class PingJobCommand extends Command {
     private final HandlerSet<LinkedProcess.JobStatus> successHandlers;
-    private final HandlerSet<Error> errorHandlers;
+    private final HandlerSet<LopError> errorHandlers;
 
     public PingJobCommand(Villein xmppVillein) {
         super(xmppVillein);
         this.successHandlers = new HandlerSet<LinkedProcess.JobStatus>();
-        this.errorHandlers = new HandlerSet<Error>();
+        this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(VmProxy vmProxy, JobProxy jobProxy, final Handler<LinkedProcess.JobStatus> successHandler, final Handler<org.linkedprocess.Error> errorHandler) {
+    public void send(VmProxy vmProxy, JobProxy jobProxy, final Handler<LinkedProcess.JobStatus> successHandler, final Handler<LopError> errorHandler) {
 
         String id = Packet.nextID();
         PingJob pingJob = new PingJob();

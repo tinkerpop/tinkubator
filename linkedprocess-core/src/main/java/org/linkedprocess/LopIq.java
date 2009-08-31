@@ -48,7 +48,7 @@ public abstract class LopIq extends IQ {
      *
      * @param error the error of the packet
      */
-    public void setLopError(final Error error) {
+    public void setLopError(final LopError error) {
         super.setError(error);
     }
 
@@ -57,7 +57,7 @@ public abstract class LopIq extends IQ {
      *
      * @return the Linked Process IQ packet errror (null if no error exists)
      */
-    public Error getLopError() {
+    public LopError getLopError() {
         XMPPError xmppError = super.getError();
         LinkedProcess.LopErrorType errorType = null;
         for (PacketExtension extension : xmppError.getExtensions()) {
@@ -65,7 +65,7 @@ public abstract class LopIq extends IQ {
             if (errorType != null)
                 break;
         }
-        return new Error(Error.stringConditionMap.get(xmppError.getCondition()), errorType, xmppError.getMessage(), this.getPacketID());
+        return new LopError(LopError.stringConditionMap.get(xmppError.getCondition()), errorType, xmppError.getMessage(), this.getPacketID());
     }
 
 }

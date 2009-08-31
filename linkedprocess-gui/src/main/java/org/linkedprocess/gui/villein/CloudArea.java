@@ -2,6 +2,7 @@ package org.linkedprocess.gui.villein;
 
 import org.linkedprocess.Jid;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.LopError;
 import org.linkedprocess.gui.*;
 import org.linkedprocess.gui.villein.vmcontrol.VmControlFrame;
 import org.linkedprocess.villein.Handler;
@@ -96,7 +97,13 @@ public class CloudArea extends JPanel implements ActionListener, MouseListener, 
                         updateTree(vmProxy.getVmId(), true);
                     }
                 };
-                vmProxy.terminateVm(resultHandler, new GenericErrorHandler());
+                Handler<LopError> errorHandler = new Handler<LopError>() {
+                    public void handle(LopError error) {
+                        updateTree(vmProxy.getVmId(), true);
+                        new GenericErrorHandler().handle(error);
+                    }
+                };
+                vmProxy.terminateVm(resultHandler, errorHandler);
                 this.villeinGui.removeVmFrame(vmProxy);
             }
         } else if (event.getActionCommand().equals(VM_CONTROL)) {

@@ -3,7 +3,7 @@ package org.linkedprocess.farm;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.XMPPError;
-import org.linkedprocess.Error;
+import org.linkedprocess.LopError;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.os.Job;
 import org.linkedprocess.farm.os.Vm;
@@ -61,7 +61,7 @@ public class SubmitJobPacketListener extends FarmPacketListener {
                 errorMessage = null;
 
             returnSubmitJob.setType(IQ.Type.ERROR);
-            returnSubmitJob.setLopError(new org.linkedprocess.Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, errorMessage, submitJob.getPacketID()));
+            returnSubmitJob.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, errorMessage, submitJob.getPacketID()));
         } else {
             Job job = new Job(vmId, villeinJid, iqId, expression);
             try {
@@ -70,13 +70,13 @@ public class SubmitJobPacketListener extends FarmPacketListener {
                 submitJob = null;
             } catch (VmNotFoundException e) {
                 returnSubmitJob.setType(IQ.Type.ERROR);
-                returnSubmitJob.setLopError(new Error(XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.VM_NOT_FOUND, e.getMessage(), submitJob.getPacketID()));
+                returnSubmitJob.setLopError(new LopError(XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.VM_NOT_FOUND, e.getMessage(), submitJob.getPacketID()));
             } catch (VmIsFullException e) {
                 returnSubmitJob.setType(IQ.Type.ERROR);
-                returnSubmitJob.setLopError(new Error(XMPPError.Condition.service_unavailable, LinkedProcess.LopErrorType.VM_IS_BUSY, e.getMessage(), submitJob.getPacketID()));
+                returnSubmitJob.setLopError(new LopError(XMPPError.Condition.service_unavailable, LinkedProcess.LopErrorType.VM_IS_BUSY, e.getMessage(), submitJob.getPacketID()));
             } catch (JobAlreadyExistsException e) {
                 returnSubmitJob.setType(IQ.Type.ERROR);
-                returnSubmitJob.setLopError(new org.linkedprocess.Error(XMPPError.Condition.conflict, LinkedProcess.LopErrorType.JOB_ALREADY_EXISTS, e.getMessage(), submitJob.getPacketID()));
+                returnSubmitJob.setLopError(new LopError(XMPPError.Condition.conflict, LinkedProcess.LopErrorType.JOB_ALREADY_EXISTS, e.getMessage(), submitJob.getPacketID()));
             }
         }
 

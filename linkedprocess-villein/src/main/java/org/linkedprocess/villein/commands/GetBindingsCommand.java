@@ -9,7 +9,7 @@ package org.linkedprocess.villein.commands;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.Error;
+import org.linkedprocess.LopError;
 import org.linkedprocess.farm.ManageBindings;
 import org.linkedprocess.farm.os.VmBindings;
 import org.linkedprocess.villein.Handler;
@@ -29,15 +29,15 @@ import java.util.Set;
 public class GetBindingsCommand extends Command {
 
     private final HandlerSet<VmBindings> successHandlers;
-    private final HandlerSet<Error> errorHandlers;
+    private final HandlerSet<LopError> errorHandlers;
 
     public GetBindingsCommand(Villein xmppVillein) {
         super(xmppVillein);
         this.successHandlers = new HandlerSet<VmBindings>();
-        this.errorHandlers = new HandlerSet<org.linkedprocess.Error>();
+        this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(VmProxy vmProxy, Set<String> bindingNames, final Handler<VmBindings> successHandler, final Handler<Error> errorHandler) {
+    public void send(VmProxy vmProxy, Set<String> bindingNames, final Handler<VmBindings> successHandler, final Handler<LopError> errorHandler) {
 
         String id = Packet.nextID();
         ManageBindings manageBindings = new ManageBindings();

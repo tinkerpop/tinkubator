@@ -9,7 +9,7 @@ package org.linkedprocess.villein.commands;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.Error;
+import org.linkedprocess.LopError;
 import org.linkedprocess.Jid;
 import org.linkedprocess.farm.SpawnVm;
 import org.linkedprocess.villein.Handler;
@@ -28,15 +28,15 @@ import org.linkedprocess.villein.proxies.VmProxy;
  */
 public class SpawnVmCommand extends Command {
     private final HandlerSet<VmProxy> successHandler;
-    private final HandlerSet<org.linkedprocess.Error> errorHandlers;
+    private final HandlerSet<LopError> errorHandlers;
 
     public SpawnVmCommand(Villein xmppVillein) {
         super(xmppVillein);
         this.successHandler = new HandlerSet<VmProxy>();
-        this.errorHandlers = new HandlerSet<Error>();
+        this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(final FarmProxy farmProxy, final String vmSpecies, final Handler<VmProxy> successHandler, final Handler<Error> errorHandler) {
+    public void send(final FarmProxy farmProxy, final String vmSpecies, final Handler<VmProxy> successHandler, final Handler<LopError> errorHandler) {
         String id = Packet.nextID();
         SpawnVm spawnVm = new SpawnVm();
         spawnVm.setTo(farmProxy.getJid().toString());

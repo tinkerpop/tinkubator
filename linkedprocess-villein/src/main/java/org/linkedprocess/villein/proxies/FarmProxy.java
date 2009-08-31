@@ -10,6 +10,7 @@ package org.linkedprocess.villein.proxies;
 import org.jdom.Document;
 import org.linkedprocess.Jid;
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.LopError;
 import org.linkedprocess.villein.Dispatcher;
 import org.linkedprocess.villein.Handler;
 
@@ -196,7 +197,7 @@ public class FarmProxy extends XmppProxy {
      * @param successHandler the handler called when a sucessful result has occurred
      * @param errorHandler   the handler called when an error result has occurred
      */
-    public void spawnVm(final String vmSpecies, final Handler<VmProxy> successHandler, final Handler<org.linkedprocess.Error> errorHandler) {
+    public void spawnVm(final String vmSpecies, final Handler<VmProxy> successHandler, final Handler<LopError> errorHandler) {
         this.dispatcher.getSpawnVmCommand().send(this, vmSpecies, successHandler, errorHandler);
     }
 

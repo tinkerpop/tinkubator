@@ -1,6 +1,6 @@
 package org.linkedprocess.demos.primes;
 
-import org.linkedprocess.Error;
+import org.linkedprocess.LopError;
 import org.linkedprocess.farm.os.TypedValue;
 import org.linkedprocess.farm.os.VmBindings;
 import org.linkedprocess.villein.Handler;
@@ -51,8 +51,8 @@ public class VmPollProgressTask implements Runnable {
                 //System.exit(0);
             }
         };
-        Handler<Error> errorHandler = new Handler<Error>() {
-            public void handle(Error lopError) {
+        Handler<LopError> errorHandler = new Handler<LopError>() {
+            public void handle(LopError lopError) {
                 System.out.println("an error has occured: " + lopError);
                 synchronized (monitor) {
                     monitor.notify();

@@ -35,6 +35,15 @@ public class ResourceAllocationPattern {
         }
     }
 
+    /**
+     * Wait for a cloud to be populated with a given number of farms and then returns those farms as a set.
+     *
+     * @param cloudProxy    the cloud proxy to allocate the farms from
+     * @param numberOfFarms the number of farms to allocate from the cloud
+     * @param timeout       the number of milliseconds to wait for the cloud to become populated
+     * @return a set of farms in the cloud that is the size of the specified parameter
+     * @throws TimeoutException thrown if the cloud does not populate with the specified number of farms in the timeout length
+     */
     public static Set<FarmProxy> allocateFarms(final CloudProxy cloudProxy, final int numberOfFarms, final long timeout) throws TimeoutException {
         Set<FarmProxy> farmProxies = new HashSet<FarmProxy>();
         long startTime = System.currentTimeMillis();
@@ -58,14 +67,29 @@ public class ResourceAllocationPattern {
         }
     }
 
-    public static CountrysideProxy allocateCountryside(final CloudProxy cloudProxy, final Jid countrysideJid, final long timeout) throws TimeoutException {
-        CountrysideProxy countrysideProxy = null;
+    /**
+     * Wait for a cloud to be populated with a specific set of farms and then returns those farms as a set.
+     *
+     * @param cloudProxy the cloud proxy to allocate farms from
+     * @param farmJids   the jids of the farms to allocate
+     * @param timeout    the number of milliseconds to wait for the cloud to become populated with farms of those jids
+     * @return the set of farms that have the specified jids
+     * @throws TimeoutException thrown if the cloud does not populate with farms of the specified jids in the timeout length
+     */
+    public static Set<FarmProxy> allocateFarms(final CloudProxy cloudProxy, final Set<Jid> farmJids, final long timeout) throws TimeoutException {
+        Set<FarmProxy> farmProxies = new HashSet<FarmProxy>();
         long startTime = System.currentTimeMillis();
         while (true) {
             checkTimeout(startTime, timeout);
-            countrysideProxy = cloudProxy.getCountrysideProxy(countrysideJid);
-            if (null != countrysideProxy)
-                return countrysideProxy;
+            for (FarmProxy farmProxy : cloudProxy.getFarmProxies()) {
+                if (farmJids.contains(farmProxy.getJid())) {
+                    farmProxies.add(farmProxy);
+                    if (farmProxies.size() == farmJids.size()) {
+                        return farmProxies;
+                    }
+                }
+            }
+
             try {
                 Thread.sleep(150);
             } catch (InterruptedException e) {
@@ -75,13 +99,77 @@ public class ResourceAllocationPattern {
     }
 
     /**
+     * Wait for a cloud to be populated with a specified farm and return its farm proxy.
+     * This is a helper/wrapper method to the allocateFarms() method that takes a set of jids.
+     *
+     * @param cloudProxy the cloud proxy to allocate the farm from
+     * @param farmJid    the jid of the farm to allocate
+     * @param timeout    the number of milliseconds to wait for the cloud to become populated with the specified farm
+     * @return a farm with the specified farm jid
+     * @throws TimeoutException thrown if the cloud does not populate with farm in the timeout length
+     */
+    public static FarmProxy allocateFarm(final CloudProxy cloudProxy, final Jid farmJid, final long timeout) throws TimeoutException {
+        Set<Jid> farmJidSet = new HashSet<Jid>();
+        farmJidSet.add(farmJid);
+        return ResourceAllocationPattern.allocateFarms(cloudProxy, farmJidSet, timeout).iterator().next();
+    }
+
+    /**
+     * Wait for a cloud to be populated with a specific set of countrysides and then returns those countryside proxies as a set.
+     *
+     * @param cloudProxy      the cloud proxy to allocate countrysides from
+     * @param countrysideJids the jids of the countrysides to allocate (be sure these are bare jids)
+     * @param timeout         the number of milliseconds to wait for the cloud to become populated with countrysides of those jids
+     * @return the set of countrysides that have the specified jids
+     * @throws TimeoutException thrown if the cloud does not populate with countrysides of the specified jids in the timeout length
+     */
+    public static Set<CountrysideProxy> allocateCountrysides(final CloudProxy cloudProxy, final Set<Jid> countrysideJids, final long timeout) throws TimeoutException {
+        Set<CountrysideProxy> countrysideProxies = new HashSet<CountrysideProxy>();
+        long startTime = System.currentTimeMillis();
+        while (true) {
+            checkTimeout(startTime, timeout);
+            for (CountrysideProxy countrysideProxy : cloudProxy.getCountrysideProxies()) {
+                if (countrysideJids.contains(countrysideProxy.getJid())) {
+                    countrysideProxies.add(countrysideProxy);
+                    if (countrysideProxies.size() == countrysideJids.size()) {
+                        return countrysideProxies;
+                    }
+                }
+            }
+
+            try {
+                Thread.sleep(150);
+            } catch (InterruptedException e) {
+                LOGGER.warning(e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Wait for a cloud to be populated with a specified countryside and return that countryside.
+     * This is a helper/wrapper method to the allocateCountrysides() method that takes a set of jids.
+     *
+     * @param cloudProxy     the cloud proxy to allocate the countryside from
+     * @param countrysideJid the jid of the countryside to allocate (be sure that this is a bare jid)
+     * @param timeout        the number of milliseconds to wait for the cloud to become populated with the specified countryside
+     * @return a countryside with the specified countryside jid
+     * @throws TimeoutException thrown if the cloud does not populate with countryside in the timeout length
+     */
+    public static CountrysideProxy allocateCountryside(final CloudProxy cloudProxy, final Jid countrysideJid, final long timeout) throws TimeoutException {
+        Set<Jid> countrysideJidSet = new HashSet<Jid>();
+        countrysideJidSet.add(countrysideJid);
+        return ResourceAllocationPattern.allocateCountrysides(cloudProxy, countrysideJidSet, timeout).iterator().next();
+    }
+
+
+    /**
      * Filters a collection of farm proxies down to only those that support a particular virtual machine species.
      *
      * @param farmProxies the collection of farm proxies to filter
      * @param vmSpecies   the virtual machine species that must be supported
      * @return a filtered farm proxy set (this is a new set as the original collection was not altered)
      */
-    public static Set<FarmProxy> filterFarmProxiesByVmSpeciesSupport(Collection<FarmProxy> farmProxies, String vmSpecies) {
+    public static Set<FarmProxy> filterFarmProxiesByVmSpeciesSupport(final Collection<FarmProxy> farmProxies, final String vmSpecies) {
         Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
         for (FarmProxy farmProxy : farmProxies) {
             if (farmProxy.supportsSpecies(vmSpecies))
@@ -97,7 +185,7 @@ public class ResourceAllocationPattern {
      * @param minimumVmTimeToLive the minimum time to live in milliseconds
      * @return a filtered farm proxy set (this is a new set as the original collection was not altered)
      */
-    public static Set<FarmProxy> filterFarmProxiesByVmTimeToLive(Collection<FarmProxy> farmProxies, long minimumVmTimeToLive) {
+    public static Set<FarmProxy> filterFarmProxiesByVmTimeToLive(final Collection<FarmProxy> farmProxies, final long minimumVmTimeToLive) {
         Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
         for (FarmProxy farmProxy : farmProxies) {
             if (farmProxy.getVmTimeToLive() >= minimumVmTimeToLive) {
@@ -114,7 +202,7 @@ public class ResourceAllocationPattern {
      * @param minimumJobTimeout the minimum job timeout in milliseconds
      * @return a filtered farm proxy set (this is a new set as the original collection was not altered)
      */
-    public static Set<FarmProxy> filterFarmProxiesByJobTimeout(Collection<FarmProxy> farmProxies, long minimumJobTimeout) {
+    public static Set<FarmProxy> filterFarmProxiesByJobTimeout(final Collection<FarmProxy> farmProxies, final long minimumJobTimeout) {
         Set<FarmProxy> returnFarmProxies = new HashSet<FarmProxy>();
         for (FarmProxy farmProxy : farmProxies) {
             if (farmProxy.getJobTimeout() >= minimumJobTimeout) {

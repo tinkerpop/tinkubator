@@ -3,7 +3,7 @@ package org.linkedprocess.farm;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.XMPPError;
-import org.linkedprocess.Error;
+import org.linkedprocess.LopError;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.os.errors.VmNotFoundException;
 
@@ -42,7 +42,7 @@ public class TerminateVmPacketListener extends FarmPacketListener {
 
         if (null == vmId) {
             returnTerminateVm.setType(IQ.Type.ERROR);
-            returnTerminateVm.setLopError(new Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "terminate_vm XML packet is missing the vm_id attribute", terminateVm.getPacketID()));
+            returnTerminateVm.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.MALFORMED_PACKET, "terminate_vm XML packet is missing the vm_id attribute", terminateVm.getPacketID()));
         } else {
             try {
                 this.getFarm().getVmScheduler().terminateVm(vmId);
@@ -50,7 +50,7 @@ public class TerminateVmPacketListener extends FarmPacketListener {
                 returnTerminateVm.setType(IQ.Type.RESULT);
             } catch (VmNotFoundException e) {
                 returnTerminateVm.setType(IQ.Type.ERROR);
-                returnTerminateVm.setLopError(new Error(XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.VM_NOT_FOUND, e.getMessage(), terminateVm.getPacketID()));
+                returnTerminateVm.setLopError(new LopError(XMPPError.Condition.item_not_found, LinkedProcess.LopErrorType.VM_NOT_FOUND, e.getMessage(), terminateVm.getPacketID()));
             }
         }
 

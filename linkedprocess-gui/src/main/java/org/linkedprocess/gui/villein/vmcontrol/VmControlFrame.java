@@ -2,6 +2,7 @@ package org.linkedprocess.gui.villein.vmcontrol;
 
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Packet;
+import org.linkedprocess.LopError;
 import org.linkedprocess.farm.os.VmBindings;
 import org.linkedprocess.gui.GenericErrorHandler;
 import org.linkedprocess.gui.ImageHolder;
@@ -184,13 +185,18 @@ public class VmControlFrame extends JFrame implements ListSelectionListener, Act
             }
 
         } else if (event.getActionCommand().equals(TERMINATE_VM)) {
-
             Handler<Object> resultHandler = new Handler<Object>() {
                 public void handle(Object object) {
                     villeinGui.getCloudArea().updateTree(vmProxy.getVmId(), true);
                 }
             };
-            this.vmProxy.terminateVm(resultHandler, new GenericErrorHandler());
+            Handler<LopError> errorHandler = new Handler<LopError>() {
+                public void handle(LopError error) {
+                    villeinGui.getCloudArea().updateTree(vmProxy.getVmId(), true);
+                    new GenericErrorHandler().handle(error);
+                }
+            };
+            this.vmProxy.terminateVm(resultHandler, errorHandler);
             this.villeinGui.removeVmFrame(this.vmProxy);
         } else if (event.getActionCommand().equals(CLOSE)) {
             this.setVisible(false);

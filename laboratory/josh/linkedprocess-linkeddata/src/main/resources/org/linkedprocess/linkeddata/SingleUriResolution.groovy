@@ -103,6 +103,6 @@ public class SingleUriResolution {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("average: " + SingleUriResolution.averageTime(SingleUriResolution.doBuckshotExperiment(10)));
+        System.out.println("loaded.");
     }
 }

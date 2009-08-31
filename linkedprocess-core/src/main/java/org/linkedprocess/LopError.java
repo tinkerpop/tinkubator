@@ -18,7 +18,7 @@ import java.util.Map;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class Error extends XMPPError {
+public class LopError extends XMPPError {
 
     protected LinkedProcess.LopErrorType errorType;
     protected String packetId;
@@ -109,8 +109,8 @@ public class Error extends XMPPError {
     }
 
 
-    public Error(XMPPError.Condition condition, LinkedProcess.LopErrorType errorType, String errorMessage, String packetId) {
-        super(Error.conditionCodeMap.get(condition), Error.conditionErrorMap.get(condition), condition.toString().toLowerCase(), errorMessage, null);
+    public LopError(XMPPError.Condition condition, LinkedProcess.LopErrorType errorType, String errorMessage, String packetId) {
+        super(LopError.conditionCodeMap.get(condition), LopError.conditionErrorMap.get(condition), condition.toString().toLowerCase(), errorMessage, null);
         this.errorType = errorType;
         this.packetId = packetId;
     }
@@ -147,7 +147,7 @@ public class Error extends XMPPError {
     }
 
     public boolean equals(Object error) {
-        return error instanceof Error && ((Error)error).getPacketId().equals(packetId);
+        return error instanceof LopError && ((LopError)error).getPacketId().equals(packetId);
     }
 
     public int hashCode() {

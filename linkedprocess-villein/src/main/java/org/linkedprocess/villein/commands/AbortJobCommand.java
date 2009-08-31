@@ -9,7 +9,7 @@ package org.linkedprocess.villein.commands;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.Error;
+import org.linkedprocess.LopError;
 import org.linkedprocess.farm.AbortJob;
 import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.Villein;
@@ -27,15 +27,15 @@ import org.linkedprocess.villein.proxies.VmProxy;
 public class AbortJobCommand extends Command {
 
     private final HandlerSet<String> successHandlers;
-    private final HandlerSet<Error> errorHandlers;
+    private final HandlerSet<LopError> errorHandlers;
 
     public AbortJobCommand(Villein xmppVillein) {
         super(xmppVillein);
         this.successHandlers = new HandlerSet<String>();
-        this.errorHandlers = new HandlerSet<org.linkedprocess.Error>();
+        this.errorHandlers = new HandlerSet<LopError>();
     }
 
-    public void send(final VmProxy vmProxy, final JobProxy jobProxy, final Handler<String> successHandler, final Handler<Error> errorHandler) {
+    public void send(final VmProxy vmProxy, final JobProxy jobProxy, final Handler<String> successHandler, final Handler<LopError> errorHandler) {
         String id = Packet.nextID();
         AbortJob abortJob = new AbortJob();
         abortJob.setTo(vmProxy.getFarmProxy().getJid().toString());

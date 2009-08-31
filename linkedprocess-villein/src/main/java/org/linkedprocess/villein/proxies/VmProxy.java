@@ -7,7 +7,7 @@
 
 package org.linkedprocess.villein.proxies;
 
-import org.linkedprocess.Error;
+import org.linkedprocess.LopError;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.os.VmBindings;
 import org.linkedprocess.farm.os.errors.InvalidValueException;
@@ -72,7 +72,7 @@ public class VmProxy {
      * @param successHandler the handler called when a sucessful result has occurred
      * @param errorHandler   the handler called when an error result has occurred
      */
-    public void pingJob(final JobProxy jobProxy, final Handler<LinkedProcess.JobStatus> successHandler, final Handler<Error> errorHandler) {
+    public void pingJob(final JobProxy jobProxy, final Handler<LinkedProcess.JobStatus> successHandler, final Handler<LopError> errorHandler) {
         dispatcher.getPingJobCommand().send(this, jobProxy, successHandler, errorHandler);
     }
 
@@ -83,7 +83,7 @@ public class VmProxy {
      * @param successHandler the handler called when a sucessful result has occurred
      * @param errorHandler   the handler called when an error result has occurred
      */
-    public void abortJob(final JobProxy jobProxy, final Handler<String> successHandler, final Handler<org.linkedprocess.Error> errorHandler) {
+    public void abortJob(final JobProxy jobProxy, final Handler<String> successHandler, final Handler<LopError> errorHandler) {
         dispatcher.getAbortJobCommand().send(this, jobProxy, successHandler, errorHandler);
     }
 
@@ -94,7 +94,7 @@ public class VmProxy {
      * @param successHandler the handler called when a sucessful result has occurred
      * @param errorHandler   the handler called when an error result has occurred
      */
-    public void getBindings(final Set<String> bindingNames, final Handler<VmBindings> successHandler, final Handler<Error> errorHandler) {
+    public void getBindings(final Set<String> bindingNames, final Handler<VmBindings> successHandler, final Handler<LopError> errorHandler) {
         dispatcher.getGetBindingsCommand().send(this, bindingNames, successHandler, errorHandler);
     }
 
@@ -105,7 +105,7 @@ public class VmProxy {
      * @param successHandler the handler called when a sucessful result has occurred
      * @param errorHandler   the handler called when an error result has occurred
      */
-    public void setBindings(final VmBindings vmBindings, final Handler<VmBindings> successHandler, final Handler<Error> errorHandler) {
+    public void setBindings(final VmBindings vmBindings, final Handler<VmBindings> successHandler, final Handler<LopError> errorHandler) {
         dispatcher.getSetBindingsCommand().send(this, vmBindings, successHandler, errorHandler);
     }
 
@@ -115,7 +115,7 @@ public class VmProxy {
      * @param successHandler the handler called when a sucessful result has occurred
      * @param errorHandler   the handler called when an error result has occurred
      */
-    public void terminateVm(final Handler<Object> successHandler, final Handler<Error> errorHandler) {
+    public void terminateVm(final Handler<Object> successHandler, final Handler<LopError> errorHandler) {
         dispatcher.getTerminateVmCommand().send(this, successHandler, errorHandler);
     }
 

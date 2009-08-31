@@ -9,7 +9,7 @@ package org.linkedprocess.farm.os;
 
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.XMPPError;
-import org.linkedprocess.Error;
+import org.linkedprocess.LopError;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.SubmitJob;
 
@@ -99,20 +99,20 @@ public class JobResult {
 
         if (this.type == ResultType.ABORTED) {
             returnSubmitJob.setType(IQ.Type.ERROR);
-            returnSubmitJob.setLopError(new Error(XMPPError.Condition.not_allowed, LinkedProcess.LopErrorType.JOB_ABORTED, null, this.job.getJobId()));
+            returnSubmitJob.setLopError(new LopError(XMPPError.Condition.not_allowed, LinkedProcess.LopErrorType.JOB_ABORTED, null, this.job.getJobId()));
             return returnSubmitJob;
         } else if (this.type == ResultType.ERROR) {
             returnSubmitJob.setType(IQ.Type.ERROR);
             if (this.exception instanceof SecurityException) {
                 // SecurityExceptions are handled differently than all other errors.
-                returnSubmitJob.setLopError(new Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.PERMISSION_DENIED, exception.getMessage(), this.job.getJobId()));
+                returnSubmitJob.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.PERMISSION_DENIED, exception.getMessage(), this.job.getJobId()));
             } else {
-                returnSubmitJob.setLopError(new Error(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.EVALUATION_ERROR, exception.getMessage(), this.job.getJobId()));
+                returnSubmitJob.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.EVALUATION_ERROR, exception.getMessage(), this.job.getJobId()));
             }
             return returnSubmitJob;
         } else if (this.type == ResultType.PERMISSION_DENIED) {
             returnSubmitJob.setType(IQ.Type.ERROR);
-            returnSubmitJob.setLopError(new Error(XMPPError.Condition.forbidden, LinkedProcess.LopErrorType.PERMISSION_DENIED, exception.getMessage(), this.job.getJobId()));
+            returnSubmitJob.setLopError(new LopError(XMPPError.Condition.forbidden, LinkedProcess.LopErrorType.PERMISSION_DENIED, exception.getMessage(), this.job.getJobId()));
             return returnSubmitJob;
         } else if (this.type == ResultType.NORMAL_RESULT) {
             returnSubmitJob.setType(IQ.Type.RESULT);
@@ -120,7 +120,7 @@ public class JobResult {
             return returnSubmitJob;
         } else if (this.type == ResultType.TIMED_OUT) {
             returnSubmitJob.setType(IQ.Type.ERROR);
-            returnSubmitJob.setLopError(new Error(XMPPError.Condition.request_timeout, LinkedProcess.LopErrorType.JOB_TIMED_OUT, "execution of job timed out after " + job.getTimeSpent() + "ms of execution", this.job.getJobId()));
+            returnSubmitJob.setLopError(new LopError(XMPPError.Condition.request_timeout, LinkedProcess.LopErrorType.JOB_TIMED_OUT, "execution of job timed out after " + job.getTimeSpent() + "ms of execution", this.job.getJobId()));
         }
         return returnSubmitJob;
 

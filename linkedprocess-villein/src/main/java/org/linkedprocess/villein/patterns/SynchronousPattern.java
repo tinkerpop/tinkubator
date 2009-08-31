@@ -7,7 +7,7 @@
 
 package org.linkedprocess.villein.patterns;
 
-import org.linkedprocess.Error;
+import org.linkedprocess.LopError;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.os.VmBindings;
 import org.linkedprocess.villein.Handler;
@@ -73,8 +73,8 @@ public class SynchronousPattern {
                 }
             }
         };
-        Handler<Error> errorHandler = new Handler<Error>() {
-            public void handle(Error lopError) {
+        Handler<LopError> errorHandler = new Handler<LopError>() {
+            public void handle(LopError lopError) {
                 resultHolder.setLopError(lopError);
                 synchronized (monitor) {
                     monitor.notify();
@@ -139,8 +139,8 @@ public class SynchronousPattern {
                 }
             }
         };
-        Handler<Error> errorHandler = new Handler<Error>() {
-            public void handle(Error lopError) {
+        Handler<LopError> errorHandler = new Handler<LopError>() {
+            public void handle(LopError lopError) {
                 resultHolder.setLopError(lopError);
                 synchronized (monitor) {
                     monitor.notify();
@@ -175,8 +175,8 @@ public class SynchronousPattern {
                 }
             }
         };
-        Handler<Error> errorHandler = new Handler<Error>() {
-            public void handle(Error lopError) {
+        Handler<LopError> errorHandler = new Handler<LopError>() {
+            public void handle(LopError lopError) {
                 resultHolder.setLopError(lopError);
                 synchronized (monitor) {
                     monitor.notify();
@@ -212,8 +212,8 @@ public class SynchronousPattern {
                 }
             }
         };
-        Handler<Error> errorHandler = new Handler<Error>() {
-            public void handle(Error lopError) {
+        Handler<LopError> errorHandler = new Handler<LopError>() {
+            public void handle(LopError lopError) {
                 resultHolder.setLopError(lopError);
                 synchronized (monitor) {
                     monitor.notify();
@@ -249,8 +249,8 @@ public class SynchronousPattern {
                 }
             }
         };
-        Handler<org.linkedprocess.Error> errorHandler = new Handler<Error>() {
-            public void handle(Error lopError) {
+        Handler<LopError> errorHandler = new Handler<LopError>() {
+            public void handle(LopError lopError) {
                 resultHolder.setLopError(lopError);
                 synchronized (monitor) {
                     monitor.notify();
@@ -285,8 +285,8 @@ public class SynchronousPattern {
                 }
             }
         };
-        Handler<Error> errorHandler = new Handler<Error>() {
-            public void handle(Error lopError) {
+        Handler<LopError> errorHandler = new Handler<LopError>() {
+            public void handle(LopError lopError) {
                 resultHolder.setLopError(lopError);
                 synchronized (monitor) {
                     monitor.notify();

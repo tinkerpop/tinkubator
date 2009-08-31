@@ -7,7 +7,7 @@
 
 package org.linkedprocess.villein.proxies;
 
-import org.linkedprocess.Error;
+import org.linkedprocess.LopError;
 
 /**
  * ResultHolder is a "helper class" that is used to hold both succesful- and error-based results in a single data structure.
@@ -17,7 +17,7 @@ import org.linkedprocess.Error;
  */
 public class ResultHolder<T> {
     private T success;
-    private Error error;
+    private LopError error;
 
     public ResultHolder() {
     }
@@ -26,7 +26,7 @@ public class ResultHolder<T> {
         this.success = success;
     }
 
-    public ResultHolder(org.linkedprocess.Error error) {
+    public ResultHolder(LopError error) {
         this.error = error;
     }
 
@@ -34,7 +34,7 @@ public class ResultHolder<T> {
         return this.success;
     }
 
-    public Error getLopError() {
+    public LopError getLopError() {
         return this.error;
     }
 
@@ -42,7 +42,7 @@ public class ResultHolder<T> {
         this.success = success;
     }
 
-    public void setLopError(Error error) {
+    public void setLopError(LopError error) {
         this.error = error;
     }
 

@@ -8,7 +8,7 @@
 package org.linkedprocess.villein.proxies;
 
 import org.jivesoftware.smack.packet.Packet;
-import org.linkedprocess.Error;
+import org.linkedprocess.LopError;
 import org.linkedprocess.LinkedProcess;
 
 import java.io.InputStream;
@@ -27,7 +27,7 @@ public class JobProxy {
     protected String jobId;
     protected String result;
     protected String expression;
-    protected Error error;
+    protected LopError error;
     protected boolean complete = false;
 
     /**
@@ -44,7 +44,7 @@ public class JobProxy {
      *
      * @param jobId the identifier to set for the job.
      */
-    public void setJobId(String jobId) {
+    public void setJobId(final String jobId) {
         this.jobId = jobId;
     }
 
@@ -62,7 +62,7 @@ public class JobProxy {
      *
      * @param result the result of the expression
      */
-    public void setResult(String result) {
+    public void setResult(final String result) {
         this.result = result;
     }
 
@@ -71,7 +71,7 @@ public class JobProxy {
      *
      * @return the error of an evaluation if an error has occurred
      */
-    public Error getLopError() {
+    public LopError getLopError() {
         return this.error;
     }
 
@@ -80,7 +80,7 @@ public class JobProxy {
      *
      * @param error the error of an evaluation if an error has occurred
      */
-    public void setLopError(org.linkedprocess.Error error) {
+    public void setLopError(final LopError error) {
         this.error = error;
     }
 
@@ -98,7 +98,7 @@ public class JobProxy {
      *
      * @param expression the expression of the job
      */
-    public void setExpression(String expression) {
+    public void setExpression(final String expression) {
         this.expression = expression;
     }
 
@@ -108,7 +108,7 @@ public class JobProxy {
      * @param inputStream the expression within an InputStream
      * @throws IOException thrown if there is an error with the InputStream
      */
-    public void setExpression(InputStream inputStream) throws IOException {
+    public void setExpression(final InputStream inputStream) throws IOException {
         this.expression = LinkedProcess.convertStreamToString(inputStream);
     }
 
@@ -126,7 +126,7 @@ public class JobProxy {
      *
      * @param complete if the job is complete
      */
-    public void setComplete(boolean complete) {
+    public void setComplete(final boolean complete) {
         this.complete = complete;
     }
 
@@ -171,5 +171,4 @@ public class JobProxy {
         else
             return "Job(id:'" + jobId + "', complete:'" + complete + "', error:'" + error.getErrorType().toString() + "')";
     }
-
 }
