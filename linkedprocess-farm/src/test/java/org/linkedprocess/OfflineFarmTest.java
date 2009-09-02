@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.linkedprocess.farm.Farm;
 import org.linkedprocess.farm.SpawnVm;
+import org.linkedprocess.farm.TerminateVm;
 import org.linkedprocess.farm.os.Vm;
 import org.linkedprocess.testing.offline.OfflineTest;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -187,6 +188,12 @@ public class OfflineFarmTest extends OfflineTest {
         result = (SpawnVm) connection.getLastPacket();
         //assertTrue(result.toXML().contains(LinkedProcess.VM_PASSWORD_ATTRIBUTE));
         assertEquals(1, farm.getVms().size());
+        
+        //try to shut down the VM again
+        TerminateVm terminate = new TerminateVm();
+        terminate.setVmId(result.getVmId());
+        connection.receiveTerminate(terminate);
+        assertEquals(0, farm.getVms().size());
 
     }
 
@@ -278,6 +285,7 @@ public class OfflineFarmTest extends OfflineTest {
         assertEquals(Presence.Type.unavailable, ((Presence) connection
                 .getLastPacket()).getType());
     }
+    
 
     @After
     public void shutdown() {
