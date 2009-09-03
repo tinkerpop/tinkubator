@@ -7,11 +7,13 @@
 
 package org.linkedprocess.registry;
 
+import org.jivesoftware.smack.PacketInterceptor;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverItems;
@@ -47,11 +49,10 @@ public class Registry extends XmppClient {
         this.roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
 
         PacketFilter presenceFilter = new PacketTypeFilter(Presence.class);
-        PacketFilter discoInfoFilter = new PacketTypeFilter(DiscoverItems.class);
         PacketFilter subscribeFilter = new AndFilter(new PacketTypeFilter(Presence.class), new PresenceSubscriptionFilter());
         this.connection.addPacketListener(new PresenceSubscriptionListener(this), subscribeFilter);
         this.connection.addPacketListener(new PresencePacketListener(this), presenceFilter);
-        this.connection.addPacketListener(new DiscoItemsPacketListener(this), discoInfoFilter);
+        this.connection.addPacketWriterInterceptor(new DiscoItemsInterceptor(), new PacketTypeFilter(DiscoverItems.class));
 
         this.sendPresence(this.getStatus(), STATUS_MESSAGE);
     }
@@ -76,21 +77,17 @@ public class Registry extends XmppClient {
         this.activeFarms.remove(jid);
     }
 
-    public DiscoverItems createDiscoItems(Jid jid) {
-        DiscoverItems items = new DiscoverItems();
-        items.setType(IQ.Type.RESULT);
-        items.setFrom(this.getJid().toString());
-        items.setTo(jid.toString());
-        Set<String> farmCountrysides = new HashSet<String>();
-        for (Jid farmJid : this.activeFarms) {
-            farmCountrysides.add(farmJid.getBareJid().toString());
+    private class DiscoItemsInterceptor implements PacketInterceptor {
+        public void interceptPacket(Packet packet) {
+            DiscoverItems items = (DiscoverItems) packet;
+            Set<String> farmCountrysides = new HashSet<String>();
+            for (Jid farmJid : activeFarms) {
+                farmCountrysides.add(farmJid.getBareJid().toString());
+            }
+            for (String countrysideJid : farmCountrysides) {
+                items.addItem(new DiscoverItems.Item(countrysideJid));
+            }
         }
-        for (String countrysideJid : farmCountrysides) {
-            items.addItem(new DiscoverItems.Item(countrysideJid));
-        }
-
-
-        return items;
     }
 
     public static void main(final String[] args) throws Exception {
