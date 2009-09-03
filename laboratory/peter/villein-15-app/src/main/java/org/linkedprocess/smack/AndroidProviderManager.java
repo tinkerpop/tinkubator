@@ -20,6 +20,8 @@
 
 package org.linkedprocess.smack;
 
+import java.io.InputStream;
+
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.provider.IQProvider;
@@ -29,11 +31,6 @@ import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 
 import android.app.Activity;
-
-import java.io.InputStream;
-import java.net.URL;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Manages providers for parsing custom XML sub-documents of XMPP packets. Two types of

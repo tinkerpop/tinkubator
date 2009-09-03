@@ -73,5 +73,12 @@ android:layout_height="wrap_content">
 	android:layout_height="wrap_content" 
 	android:singleLine="true">
 </EditText>
+<EditText 
+	android:text="linked12" 
+	android:id="@+id/farm_password" 
+	android:layout_width="fill_parent" 
+	android:layout_height="wrap_content" 
+	android:singleLine="true">
+</EditText>
 </LinearLayout>
 </LinearLayout>

@@ -1,26 +1,11 @@
 package org.linkedprocess.villein.android;
 
-import java.util.Collection;
-
-import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.RosterListener;
-import org.jivesoftware.smack.Roster.SubscriptionMode;
-import org.jivesoftware.smack.packet.Presence;
 
-import android.app.Activity;
 import android.app.ListActivity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class VilleinOverview extends ListActivity {
 

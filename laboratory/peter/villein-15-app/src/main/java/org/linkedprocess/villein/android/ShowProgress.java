@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 import org.linkedprocess.demos.primes.PrimeFinderAsynchWithProgress;
 import org.linkedprocess.smack.AndroidProviderManager;
 import org.linkedprocess.villein.patterns.ScatterGatherPattern;
-import org.linkedprocess.villein.proxies.JobStruct;
+import org.linkedprocess.villein.proxies.JobProxy;
 import org.linkedprocess.villein.proxies.ResultHolder;
 import org.linkedprocess.villein.proxies.VmProxy;
 
@@ -75,7 +75,8 @@ public class ShowProgress extends Activity {
 							.getString(Villein.USERNAME), extras
 							.getString(Villein.PASSWORD), extras
 							.getString(Villein.SERVER), extras
-							.getInt(Villein.PORT));
+							.getInt(Villein.PORT), extras
+							.getString(Villein.FARM_PASSWORD));
 					// ////////////// ALLOCATE FARMS
 					status("waiting for farms ...");
 					PrimeFinderAsynchWithProgress.allocateFarms(1);
@@ -94,7 +95,7 @@ public class ShowProgress extends Activity {
 								android.R.attr.progressBarStyleHorizontal);
 						progress.setLayoutParams(tlp);
 						final TextView vm = new TextView(ShowProgress.this);
-						vm.setText(proxy.getResult().getJid());
+						vm.setText(proxy.getSuccess().getVmId());
 						handler.post(new Runnable() {
 							public void run() {
 								l.addView(vm);
@@ -103,7 +104,7 @@ public class ShowProgress extends Activity {
 							}
 						});
 						VmPollVisualProgressTask task = new VmPollVisualProgressTask(
-								proxy.getResult(), 1.0, 500, handler, progress);
+								proxy.getSuccess(), 1.0, 500, handler, progress);
 						tasks.add(Executors.callable(task));
 					}
 					// ////////////// DISTRIBUTE PRIME FINDER FUNCTION
@@ -121,10 +122,10 @@ public class ShowProgress extends Activity {
 									1,
 									10000,
 									System.currentTimeMillis(),
-									new org.linkedprocess.villein.Handler<Map<VmProxy, JobStruct>>() {
+									new org.linkedprocess.villein.Handler<Map<VmProxy, JobProxy>>() {
 
 										public void handle(
-												Map<VmProxy, JobStruct> t) {
+												Map<VmProxy, JobProxy> t) {
 											// TODO Auto-generated method stub
 											// ////////////// TERMINATE ALL
 											// SPAWNED VIRTUAL MACHINES
@@ -142,7 +143,7 @@ public class ShowProgress extends Activity {
 											System.out
 													.println("Gathering find primes function results...");
 											ArrayList<Integer> primes = new ArrayList<Integer>();
-											for (JobStruct jobStruct : PrimeFinderAsynchWithProgress.vmJobMap
+											for (JobProxy jobStruct : PrimeFinderAsynchWithProgress.vmJobMap
 													.values()) {
 												if (jobStruct.wasSuccessful()) {
 													for (String primeString : jobStruct

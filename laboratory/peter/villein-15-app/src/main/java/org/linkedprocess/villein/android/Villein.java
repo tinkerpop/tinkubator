@@ -3,8 +3,6 @@ package org.linkedprocess.villein.android;
 import java.io.IOException;
 import java.util.Properties;
 
-import javax.naming.Context;
-
 import org.linkedprocess.LinkedProcess;
 
 import android.app.Activity;
@@ -23,6 +21,7 @@ public class Villein extends Activity {
 	public static final String PORT = "port";
 	protected static final String SCRIPT = "script";
 	protected static final String NUMBER_OF_VMS = "number_of_vms";
+	protected static final String FARM_PASSWORD = "farm_password";
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -47,6 +46,7 @@ public class Villein extends Activity {
 				i.putExtra(USERNAME,((EditText)findViewById(R.id.username)).getText().toString());
 				i.putExtra(PASSWORD,((EditText)findViewById(R.id.password)).getText().toString());
 				i.putExtra(SERVER,((EditText)findViewById(R.id.server)).getText().toString());
+				i.putExtra(FARM_PASSWORD,((EditText)findViewById(R.id.farm_password)).getText().toString());
 				i.putExtra(PORT,Integer.parseInt(((EditText)findViewById(R.id.port)).getText().toString()));
 				
 				startActivity(i);
