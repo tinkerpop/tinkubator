@@ -13,6 +13,16 @@ import org.openrdf.sail.SailException;
 import org.openrdf.sail.nativerdf.NativeStore;
 import org.openrdf.model.Statement;
 
+import org.neo4j.api.core.EmbeddedNeo;
+import org.neo4j.api.core.NeoService;
+import org.neo4j.rdf.fulltext.FulltextIndex;
+import org.neo4j.rdf.fulltext.SimpleFulltextIndex;
+import org.neo4j.rdf.sail.NeoSail;
+import org.neo4j.rdf.store.CachingLuceneIndexService;
+import org.neo4j.rdf.store.VerboseQuadStore;
+import org.neo4j.util.index.IndexService;
+
+import javax.xml.bind.PropertyException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -40,8 +50,8 @@ public class CreateDemoTripleStore {
         File btcSmallDataSet = new File("/opt/linkedprocess/linkeddatademo/btc-2009-small.nq");
         String baseURI = "http://example.org/bogusBaseURI#";
 
-        Sail sail = new NativeStore(DemoServer.DEMO_STORE_DIRECTORY);
-        sail.initialize();
+        Sail sail = createNeoSail(DemoServer.DEMO_STORE_DIRECTORY);
+        //Sail sail = createNativeStore(DemoServer.DEMO_STORE_DIRECTORY);
 
         try {
             SailConnection c = sail.getConnection();
@@ -62,6 +72,32 @@ public class CreateDemoTripleStore {
         } finally {
             sail.shutDown();
         }
+    }
+
+    private Sail createNativeStore(final File dir) throws SailException {
+        Sail sail = new NativeStore(dir);
+        sail.initialize();
+        return sail;
+    }
+
+    private Sail createNeoSail(final File dir) throws SailException {
+        final NeoService neo = new EmbeddedNeo(dir.toString());
+        neo.enableRemoteShell();
+
+        final IndexService idx = new CachingLuceneIndexService(neo);
+        Runtime.getRuntime().addShutdownHook(new Thread("Neo shutdown hook") {
+            @Override
+            public void run() {
+                idx.shutdown();
+                neo.shutdown();
+            }
+        });
+
+        VerboseQuadStore store = new VerboseQuadStore(neo, idx);
+        Sail sail = new NeoSail(neo, store);
+        sail.initialize();
+
+        return sail;
     }
 
     private class SailAdder implements RDFHandler {

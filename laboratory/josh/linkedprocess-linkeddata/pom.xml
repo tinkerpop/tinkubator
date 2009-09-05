@@ -45,6 +45,16 @@
             <version>2.2.4</version>
         </dependency>
         <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo-rdf-sail</artifactId>
+            <version>0.2-stable-SNAPSHOT</version>
+        </dependency>                                  
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>shell</artifactId>
+            <version>1.0-b9-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.14</version>
@@ -93,6 +103,10 @@
             <id>aduna-repo</id>
             <name>Aduna repository</name>
             <url>http://repo.aduna-software.org/maven2/releases</url>
+        </repository>
+        <repository>
+            <id>neo4j-public-repository</id>
+            <url>http://m2.neo4j.org/</url>
         </repository>
         <repository>
             <id>powermock-repo</id>
