@@ -50,8 +50,8 @@ public class CreateDemoTripleStore {
         File btcSmallDataSet = new File("/opt/linkedprocess/linkeddatademo/btc-2009-small.nq");
         String baseURI = "http://example.org/bogusBaseURI#";
 
-        Sail sail = createNeoSail(DemoServer.DEMO_STORE_DIRECTORY);
-        //Sail sail = createNativeStore(DemoServer.DEMO_STORE_DIRECTORY);
+        //Sail sail = createNeoSail(DemoServer.DEMO_STORE_DIRECTORY);
+        Sail sail = createNativeStore(DemoServer.DEMO_STORE_DIRECTORY);
 
         try {
             SailConnection c = sail.getConnection();
