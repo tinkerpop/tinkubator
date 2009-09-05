@@ -27,7 +27,8 @@ import java.util.logging.Logger;
  */
 public class DemoServer {
     public static final File DEMO_STORE_DIRECTORY
-            = new File("/opt/linkedprocess/linkeddatademo/btc-2009-small-nativestore");
+            //= new File("/opt/linkedprocess/linkeddatademo/btc-2009-small-nativestore");
+            = new File("/opt/linkedprocess/linkeddatademo/linkeddata-nativestore");
             //= new File("/opt/linkedprocess/linkeddatademo/btc-2009-small-neosail");
     //= new File("/opt/nativestore/linkedData");
 
