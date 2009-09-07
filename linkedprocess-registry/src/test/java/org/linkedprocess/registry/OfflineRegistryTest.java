@@ -7,21 +7,25 @@
 
 package org.linkedprocess.registry;
 
-import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.packet.DiscoverItems;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
-import org.linkedprocess.Jid;
-import org.linkedprocess.LinkedProcess;
-import org.linkedprocess.testing.offline.OfflineTest;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 
 import java.util.ArrayList;
+
+import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.packet.DiscoverItems;
+import org.junit.Before;
+import org.junit.Test;
+import org.linkedprocess.Jid;
+import org.linkedprocess.testing.offline.OfflineTest;
 
 public class OfflineRegistryTest extends OfflineTest {
 
@@ -44,10 +48,10 @@ public class OfflineRegistryTest extends OfflineTest {
 
 	@Test
 	public void correctStartupAndShutdown() {
-		assertEquals(3, connection.packetListeners.size());
+		assertEquals(2, connection.packetListeners.size());
 		assertNotNull(connection.subscription);
 		assertNotNull(connection.presence);
-		assertNotNull(connection.discoItems);
+		assertNotNull(connection.discoItemsInterceptor);
 	}
 
 	@Test
@@ -78,15 +82,16 @@ public class OfflineRegistryTest extends OfflineTest {
 		connection.presence.processPacket(presence);
 		connection.clearPackets();
 
-		// now, send available from farm
-		presence.setType(Presence.Type.available);
-		connection.presence.processPacket(presence);
-
+//		// now, send available from farm
+//		presence.setType(Presence.Type.available);
+//		connection.presence.processPacket(presence);
+		reg.addActiveFarm(new Jid(CLIENT_JID));
 		// now, test discovering the farms countryside
 		connection.clearPackets();
 		DiscoverItems di = new DiscoverItems();
 		di.setFrom(CLIENT_JID);
-		connection.discoItems.processPacket(di);
+		//try the DiscoVerInfoPacketInterceptor to fill in the InfoItems for the farm
+		connection.sendPacket(di);
 		assertEquals(1, sentPackets.size());
 		DiscoverItems result = (DiscoverItems) connection.getLastPacket();
 //		assertEquals(new Jid(CLIENT_JID).getBareJid(), result.getItems().next()
@@ -94,12 +99,14 @@ public class OfflineRegistryTest extends OfflineTest {
 		//TODO enable this
 
 		// having the farm unavailable should exclude it from the listing
-		// now, send unavailable from farm
-		presence.setType(Presence.Type.unavailable);
-		connection.presence.processPacket(presence);
+//		// now, send unavailable from farm
+//		presence.setType(Presence.Type.unavailable);
+//		connection.presence.processPacket(presence);
+		reg.removeActiveFarm(new Jid(CLIENT_JID));
+		assertEquals(0, reg.activeFarms.size());
 		// now, test discovering the farm
 		connection.clearPackets();
-		connection.discoItems.processPacket(di);
+		connection.sendPacket(new DiscoverItems());
 		assertEquals(1, sentPackets.size());
 		result = (DiscoverItems) connection.getLastPacket();
 		assertFalse(result.getItems().hasNext());
@@ -109,18 +116,15 @@ public class OfflineRegistryTest extends OfflineTest {
 	@Test
 	public void presenceWithoutSubscriptionShouldWorkToo() {
 
-		connection.clearPackets();
-		Presence presence = new Presence(Presence.Type.available);
-		presence.setFrom(CLIENT_JID);
-		connection.presence.processPacket(presence);
+		reg.addActiveFarm(new Jid(CLIENT_JID));
 		connection.clearPackets();
 		DiscoverItems di = new DiscoverItems();
 		di.setFrom(CLIENT_JID);
-		connection.discoItems.processPacket(di);
+		connection.sendPacket(di);
 		assertEquals(1, sentPackets.size());
 		DiscoverItems result = (DiscoverItems) connection.getLastPacket();
 		//TODO enable this
-		//		assertEquals(CLIENT_JID, result.getItems().next().getEntityID());
+		assertEquals(new Jid(CLIENT_JID).getBareJid().toString(), result.getItems().next().getEntityID());
 
 	}
 }
