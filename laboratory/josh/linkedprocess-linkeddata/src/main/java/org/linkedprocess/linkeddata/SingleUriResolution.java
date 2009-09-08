@@ -29,6 +29,9 @@ public class SingleUriResolution {
         uris.add(new URIImpl("http://lanl.linkedprocess.org:8182/ns/dbpedia.org/resource/Grateful_Dead"));
         uris.add(new URIImpl("http://lanl.linkedprocess.org:8182/ns/dbpedia.org/resource/The_Beatles"));
         uris.add(new URIImpl("http://lanl.linkedprocess.org:8182/ns/dbpedia.org/resource/Led_Zeppelin"));
+        uris.add(new URIImpl("http://lanl.linkedprocess.org:8182/ns/dbpedia.org/resource/Barack_Obama"));
+        uris.add(new URIImpl("http://lanl.linkedprocess.org:8182/ns/dbpedia.org/resource/John_F._Kennedy"));
+        uris.add(new URIImpl("http://lanl.linkedprocess.org:8182/ns/dbpedia.org/resource/European_Union"));
     }
 
     public static void doBuckshotExperiment(int numberOfRequests) throws Exception {
@@ -51,10 +54,10 @@ public class SingleUriResolution {
 
     public static double average(List<Long> times) {
         double totalTime = 0.0d;
-        for(long time : times) {
+        for (long time : times) {
             totalTime = totalTime + time;
         }
-        return totalTime / (double)times.size();
+        return totalTime / (double) times.size();
     }
 
     public static List<Long> resolveUri() throws Exception {
@@ -71,7 +74,13 @@ public class SingleUriResolution {
             long startTime = System.currentTimeMillis();
             wc.extend(uri, new RDFNullSink<RippleException>());
             times.add(System.currentTimeMillis() - startTime);
-            wc.getMemos().clear(); 
+            wc.getMemos().clear();
+        }
+        for (URI uri : uris) {
+            long startTime = System.currentTimeMillis();
+            wc.extend(uri, new RDFNullSink<RippleException>());
+            times.add(System.currentTimeMillis() - startTime);
+            wc.getMemos().clear();
         }
         return times;
     }
