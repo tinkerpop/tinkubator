@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 public class ResourceAllocationPattern {
 
     private static final Logger LOGGER = LinkedProcess.getLogger(ResourceAllocationPattern.class);
+    private static final long SLEEP_TIME = 10l;
 
     private static void checkTimeout(long startTime, long timeout) throws TimeoutException {
         if (timeout > 0 && (System.currentTimeMillis() - startTime) > timeout) {
@@ -60,7 +61,7 @@ public class ResourceAllocationPattern {
             }
 
             try {
-                Thread.sleep(150);
+                Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
                 LOGGER.warning(e.getMessage());
             }
@@ -91,7 +92,7 @@ public class ResourceAllocationPattern {
             }
 
             try {
-                Thread.sleep(150);
+                Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
                 LOGGER.warning(e.getMessage());
             }
@@ -138,7 +139,7 @@ public class ResourceAllocationPattern {
             }
 
             try {
-                Thread.sleep(150);
+                Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
                 LOGGER.warning(e.getMessage());
             }

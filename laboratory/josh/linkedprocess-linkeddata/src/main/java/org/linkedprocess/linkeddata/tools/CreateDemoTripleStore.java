@@ -13,16 +13,6 @@ import org.openrdf.sail.SailException;
 import org.openrdf.sail.nativerdf.NativeStore;
 import org.openrdf.model.Statement;
 
-import org.neo4j.api.core.EmbeddedNeo;
-import org.neo4j.api.core.NeoService;
-import org.neo4j.rdf.fulltext.FulltextIndex;
-import org.neo4j.rdf.fulltext.SimpleFulltextIndex;
-import org.neo4j.rdf.sail.NeoSail;
-import org.neo4j.rdf.store.CachingLuceneIndexService;
-import org.neo4j.rdf.store.VerboseQuadStore;
-import org.neo4j.util.index.IndexService;
-
-import javax.xml.bind.PropertyException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -80,7 +70,7 @@ public class CreateDemoTripleStore {
         return sail;
     }
 
-    private Sail createNeoSail(final File dir) throws SailException {
+    /*private Sail createNeoSail(final File dir) throws SailException {
         final NeoService neo = new EmbeddedNeo(dir.toString());
         neo.enableRemoteShell();
 
@@ -98,7 +88,7 @@ public class CreateDemoTripleStore {
         sail.initialize();
 
         return sail;
-    }
+    }*/
 
     private class SailAdder implements RDFHandler {
         private final SailConnection connection;
