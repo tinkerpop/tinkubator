@@ -11,5 +11,6 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/smack"/>
 	<classpathentry exported="true" kind="lib" path="/Users/peterneubauer/code/smack/build/merge/jzlib.jar"/>
 	<classpathentry exported="true" kind="lib" path="/Users/peterneubauer/code/smack/build/merge/xpp.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/linkedprocess-farm"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

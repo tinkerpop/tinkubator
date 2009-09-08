@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.linkedprocess.LinkedProcess;
+import org.linkedprocess.farm.android.AndroidFarm;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -50,6 +51,13 @@ public class Villein extends Activity {
 				i.putExtra(PORT,Integer.parseInt(((EditText)findViewById(R.id.port)).getText().toString()));
 				
 				startActivity(i);
+			}
+		});
+		Button startFarm = (Button) findViewById(R.id.start_farm);
+		startFarm.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				AndroidFarm farm = new AndroidFarm();
 			}
 		});
 	}
