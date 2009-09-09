@@ -228,7 +228,7 @@ public class Farm extends XmppClient {
     private enum ConfigurationBasedField {
         MAX_CONCURRENT_VIRTUAL_MACHINES(FormField.TYPE_TEXT_SINGLE, LinkedProcess.MAX_CONCURRENT_VIRTUAL_MACHINES, "the number of concurrent virtual machines which this farm can support before it rejects a request to spawn a new virtual machine"),
         JOB_QUEUE_CAPACITY(FormField.TYPE_TEXT_SINGLE, LinkedProcess.JOB_QUEUE_CAPACITY, "the number of jobs which a virtual machine can hold in its queue before it rejects requests to submit additional jobs"),
-        JOB_TIMEOUT(FormField.TYPE_TEXT_SINGLE, LinkedProcess.JOB_TIMEOUT, "the number of milliseconds for which a job may execute before it is aborted by this farm"),
+        JOB_TIMEOUT(FormField.TYPE_TEXT_SINGLE, LinkedProcess.JOB_TIMEOUT, "the number of milliseconds for which a job may executeProgram before it is aborted by this farm"),
         VIRTUAL_MACHINE_TIME_TO_LIVE(FormField.TYPE_TEXT_SINGLE, LinkedProcess.VM_TIME_TO_LIVE, "the number of milliseconds for which a virtual machine may exist before it is terminated by this farm"),
         FARM_PASSWORD_REQUIRED(FormField.TYPE_BOOLEAN, LinkedProcess.FARM_PASSWORD_REQUIRED, "whether a password is required to spawn additional virtual machines on this farm"),
         FARM_START_TIME(FormField.TYPE_TEXT_SINGLE, LinkedProcess.FARM_START_TIME, "the xsd:dateTime at which this farm was started");

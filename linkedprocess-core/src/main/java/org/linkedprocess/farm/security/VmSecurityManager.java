@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 public class VmSecurityManager extends SecurityManager {
     private static final Logger LOGGER = LinkedProcess.getLogger(VmSecurityManager.class);
 
-    // TODO (maybe): make this configurable by turning it into a permission type.
+    // TODO (maybe): make this configurable by turning it into a exercisePermission type.
     private static final boolean PERMIT_READ_TO_CLASSPATH = true;
 
     private final Set<PermissionType> permittedTypes;
@@ -69,24 +69,24 @@ public class VmSecurityManager extends SecurityManager {
     }
 
     private void permissionDenied(final String msg) {
-        LOGGER.info("denying permission (" + msg + ")");
+        LOGGER.info("denying exercisePermission (" + msg + ")");
         SecurityException e = new SecurityException("operation is not allowed in VM worker threads");
         alertListeners(e, null, null);
         throw e;
     }
 
     private void permissionDenied(final PermissionType type) {
-        LOGGER.info("denying permission '" + type.getSpecName() + "'");
+        LOGGER.info("denying exercisePermission '" + type.getSpecName() + "'");
         SecurityException e = new SecurityException("operation type is not allowed in VM worker threads: " + type);
         alertListeners(e, type, null);
         throw e;
     }
 
     private void permissionDenied(final PermissionType type, final String resource) {
-        LOGGER.info("denying permission '" + type.getSpecName() + "' to resource '" + resource + "'");
+        LOGGER.info("denying exercisePermission '" + type.getSpecName() + "' to resource '" + resource + "'");
 //new Exception().printStackTrace();
 
-        SecurityException e = new SecurityException("permission '" + type + "' is not granted for resource: " + resource);
+        SecurityException e = new SecurityException("exercisePermission '" + type + "' is not granted for resource: " + resource);
         alertListeners(e, type, resource);
         throw e;
     }
@@ -100,11 +100,11 @@ public class VmSecurityManager extends SecurityManager {
     public VmSecurityManager(final Properties props) {
         permittedTypes = PermissionType.createSet(props);
 
-        setReadPermissions(findPermittedPaths(props, PermissionType.read));
-        setWritePermissions(findPermittedPaths(props, PermissionType.write));
-        setDeletePermissions(findPermittedPaths(props, PermissionType.delete));
-        setExecPermissions(findPermittedPaths(props, PermissionType.exec));
-        setLinkPermissions(findPermittedPaths(props, PermissionType.link));
+        setReadPermissions(findPermittedPaths(props, PermissionType.readFile));
+        setWritePermissions(findPermittedPaths(props, PermissionType.writeFile));
+        setDeletePermissions(findPermittedPaths(props, PermissionType.deleteFile));
+        setExecPermissions(findPermittedPaths(props, PermissionType.executeProgram));
+        setLinkPermissions(findPermittedPaths(props, PermissionType.createFileLink));
 
         listeners = new LinkedList<VmSecurityManagerListener>();
     }
@@ -134,7 +134,7 @@ public class VmSecurityManager extends SecurityManager {
     private void addClassPath(final PathPermissions perms) {
         String classpath = System.getProperty("java.class.path")
                 + ":" + System.getProperty("java.library.path");
-        LOGGER.info("adding elements of classpath/library paths as read-permitted paths: " + classpath);
+        LOGGER.info("adding elements of classpath/library paths as readFile-permitted paths: " + classpath);
         String[] paths = classpath.split(":");
         for (String p : paths) {
             perms.addPermitRule(p);
@@ -208,7 +208,7 @@ public class VmSecurityManager extends SecurityManager {
     @Override
     public void checkPermission(final Permission permission) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.permission);
+            checkPermissionType(PermissionType.exercisePermission);
         }
     }
 
@@ -216,7 +216,7 @@ public class VmSecurityManager extends SecurityManager {
     public void checkPermission(final Permission permission,
                                 final Object o) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.permission);
+            checkPermissionType(PermissionType.exercisePermission);
         }
     }
 
@@ -230,30 +230,30 @@ public class VmSecurityManager extends SecurityManager {
     @Override
     public void checkAccess(final Thread thread) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.access);
+            checkPermissionType(PermissionType.modifyThread);
         }
     }
 
     @Override
     public void checkAccess(final ThreadGroup threadGroup) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.access);
+            checkPermissionType(PermissionType.modifyThread);
         }
     }
 
     @Override
     public void checkExit(final int i) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.exit);
+            checkPermissionType(PermissionType.shutdownFarm);
         }
     }
 
     @Override
     public void checkExec(final String s) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.exec);
+            checkPermissionType(PermissionType.executeProgram);
             if (null == execPermissions || !execPermissions.isPermitted(s)) {
-                permissionDenied(PermissionType.exec, s);
+                permissionDenied(PermissionType.executeProgram, s);
             }
         }
     }
@@ -261,9 +261,9 @@ public class VmSecurityManager extends SecurityManager {
     @Override
     public void checkLink(final String s) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.link);
+            checkPermissionType(PermissionType.createFileLink);
             if (null == linkPermissions || !linkPermissions.isPermitted(s)) {
-                permissionDenied(PermissionType.link, s);
+                permissionDenied(PermissionType.createFileLink, s);
             }
         }
     }
@@ -271,21 +271,21 @@ public class VmSecurityManager extends SecurityManager {
     @Override
     public void checkRead(final FileDescriptor fileDescriptor) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.read);
+            checkPermissionType(PermissionType.readFile);
 
             // Deny anyway...
-            // FIXME: allowing read access with FileDescriptors represents a major security vulnerability.
+            // FIXME: allowing readFile modifyThread with FileDescriptors represents a major security vulnerability.
             //        We are allowing it here only for the sake of a demo, and need a better solution.
-            //permissionDenied("read permission to file by descriptor: " + fileDescriptor);
+            //permissionDenied("readFile exercisePermission to file by descriptor: " + fileDescriptor);
         }
     }
 
     @Override
     public void checkRead(final String s) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.read);
+            checkPermissionType(PermissionType.readFile);
             if (null == readPermissions || !readPermissions.isPermitted(s)) {
-                permissionDenied(PermissionType.read, s);
+                permissionDenied(PermissionType.readFile, s);
             }
         }
     }
@@ -294,29 +294,29 @@ public class VmSecurityManager extends SecurityManager {
     public void checkRead(final String s,
                           final Object o) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.read);
+            checkPermissionType(PermissionType.readFile);
             // Deny anyway...
-            permissionDenied("read permission to file: " + s + " in context: " + o);
+            permissionDenied("readFile exercisePermission to file: " + s + " in context: " + o);
         }
     }
 
     @Override
     public void checkWrite(final FileDescriptor fileDescriptor) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.write);
+            checkPermissionType(PermissionType.writeFile);
             // Deny anyway...
-            // FIXME: allowing read access with FileDescriptors represents a major security vulnerability.
+            // FIXME: allowing readFile modifyThread with FileDescriptors represents a major security vulnerability.
             //        We are allowing it here only for the sake of a demo, and need a better solution.
-            //permissionDenied("write permission to file descriptor: " + fileDescriptor);
+            //permissionDenied("writeFile exercisePermission to file descriptor: " + fileDescriptor);
         }
     }
 
     @Override
     public void checkWrite(final String s) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.write);
+            checkPermissionType(PermissionType.writeFile);
             if (null == writePermissions || !writePermissions.isPermitted(s)) {
-                permissionDenied(PermissionType.write, s);
+                permissionDenied(PermissionType.writeFile, s);
             }
         }
     }
@@ -324,9 +324,9 @@ public class VmSecurityManager extends SecurityManager {
     @Override
     public void checkDelete(final String s) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.delete);
+            checkPermissionType(PermissionType.deleteFile);
             if (null == deletePermissions || !deletePermissions.isPermitted(s)) {
-                permissionDenied(PermissionType.delete, s);
+                permissionDenied(PermissionType.deleteFile, s);
             }
         }
     }
@@ -335,7 +335,7 @@ public class VmSecurityManager extends SecurityManager {
     public void checkConnect(final String s,
                              final int i) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.connect);
+            checkPermissionType(PermissionType.openConnection);
         }
     }
 
@@ -344,14 +344,14 @@ public class VmSecurityManager extends SecurityManager {
                              final int i,
                              final Object o) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.connect);
+            checkPermissionType(PermissionType.openConnection);
         }
     }
 
     @Override
     public void checkListen(final int i) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.listen);
+            checkPermissionType(PermissionType.listenForConnection);
         }
     }
 
@@ -359,28 +359,28 @@ public class VmSecurityManager extends SecurityManager {
     public void checkAccept(final String s,
                             final int i) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.accept);
+            checkPermissionType(PermissionType.acceptConnection);
         }
     }
 
     @Override
     public void checkMulticast(final InetAddress inetAddress) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.multicast);
+            checkPermissionType(PermissionType.performMulticast);
         }
     }
 
     @Override
     public void checkPropertiesAccess() {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.propertiesAccess);
+            checkPermissionType(PermissionType.accessProperties);
         }
     }
 
     @Override
     public void checkPropertyAccess(java.lang.String s) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.propertyAccess);
+            checkPermissionType(PermissionType.accessProperty);
         }
     }
 
@@ -389,42 +389,42 @@ public class VmSecurityManager extends SecurityManager {
     @Override
     public void checkPrintJobAccess() {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.printJobAccess);
+            checkPermissionType(PermissionType.accessPrintJob);
         }
     }
 
     @Override
     public void checkSystemClipboardAccess() {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.systemClipboardAccess);
+            checkPermissionType(PermissionType.accessSystemClipboard);
         }
     }
 
     @Override
     public void checkAwtEventQueueAccess() {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.awtEventQueueAccess);
+            checkPermissionType(PermissionType.accessAWTEventQueue);
         }
     }
 
     @Override
     public void checkPackageAccess(final String s) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.packageAccess);
+            checkPermissionType(PermissionType.accessPackage);
         }
     }
 
     @Override
     public void checkPackageDefinition(final String s) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.packageDefinition);
+            checkPermissionType(PermissionType.defineClass);
         }
     }
 
     @Override
     public void checkSetFactory() {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.setFactory);
+            checkPermissionType(PermissionType.setSocketFactory);
         }
     }
 
@@ -432,14 +432,14 @@ public class VmSecurityManager extends SecurityManager {
     public void checkMemberAccess(final Class<?> aClass,
                                   final int i) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.memberAccess);
+            checkPermissionType(PermissionType.accessMember);
         }
     }
 
     @Override
     public void checkSecurityAccess(final String s) {
         if (isVMWorkerThread()) {
-            checkPermissionType(PermissionType.securityAccess);
+            checkPermissionType(PermissionType.exerciseNamedPermission);
         }
     }
 }

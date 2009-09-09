@@ -396,7 +396,7 @@ public class VmWorker {
                 return 0 == jobQueue.size();
             case ABNORMAL_ERROR:
                 // Attempt to recover in the event that the worker thread has terminated
-                // (i.e. through a call to System.exit within the script engine code.
+                // (i.e. through a call to System.shutdownFarm within the script engine code.
                 workerThread = createWorkerThread();
                 status = Status.IDLE_WAITING;
                 Exception e = new IllegalStateException("Your VM's worker thread has encountered an abnormal error. " +
@@ -571,7 +571,7 @@ public class VmWorker {
                     // Indicate that this worker should be reset.
                     status = Status.ABNORMAL_ERROR;
 
-                    // Cause this thread to exit.
+                    // Cause this thread to shutdownFarm.
                     break;
                 }
             }

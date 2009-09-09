@@ -66,18 +66,18 @@ public class ServiceDiscoveryConfiguration {
                 permittedTypes.add(type);
 
                 switch (type) {
-                    case read:
+                    case readFile:
                         readPermissions = createPathPermissions((Element) field);
                         break;
-                    case write:
+                    case writeFile:
                         writePermissions = createPathPermissions((Element) field);
                         break;
-                    case delete:
+                    case deleteFile:
                         deletePermissions = createPathPermissions((Element) field);
-                    case exec:
+                    case executeProgram:
                         execPermissions = createPathPermissions((Element) field);
                         break;
-                    case link:
+                    case createFileLink:
                         linkPermissions = createPathPermissions((Element) field);
                         break;
                     default:
@@ -121,26 +121,26 @@ public class ServiceDiscoveryConfiguration {
             x.addContent(field);
 
             switch (type) {
-                case read:
+                case readFile:
                     if (null != readPermissions) {
                         addPermittedPaths(field, readPermissions);
                     }
                     break;
-                case write:
+                case writeFile:
                     if (null != writePermissions) {
                         addPermittedPaths(field, writePermissions);
                     }
                     break;
-                case delete:
+                case deleteFile:
                     if (null != deletePermissions) {
                         addPermittedPaths(field, deletePermissions);
                     }
-                case exec:
+                case executeProgram:
                     if (null != execPermissions) {
                         addPermittedPaths(field, execPermissions);
                     }
                     break;
-                case link:
+                case createFileLink:
                     if (null != linkPermissions) {
                         addPermittedPaths(field, linkPermissions);
                     }
@@ -159,31 +159,31 @@ public class ServiceDiscoveryConfiguration {
             field.setLabel(type.getLabel());
 
             switch (type) {
-                case read:
+                case readFile:
                     field.setType(FormField.TYPE_LIST_MULTI);
                     if (null != readPermissions) {
                         addPermittedPaths(field, readPermissions);
                     }
                     break;
-                case write:
+                case writeFile:
                     field.setType(FormField.TYPE_LIST_MULTI);
                     if (null != writePermissions) {
                         addPermittedPaths(field, writePermissions);
                     }
                     break;
-                case delete:
+                case deleteFile:
                     field.setType(FormField.TYPE_LIST_MULTI);
                     if (null != deletePermissions) {
                         addPermittedPaths(field, deletePermissions);
                     }
                     break;
-                case exec:
+                case executeProgram:
                     field.setType(FormField.TYPE_LIST_MULTI);
                     if (null != execPermissions) {
                         addPermittedPaths(field, execPermissions);
                     }
                     break;
-                case link:
+                case createFileLink:
                     field.setType(FormField.TYPE_LIST_MULTI);
                     if (null != linkPermissions) {
                         addPermittedPaths(field, linkPermissions);

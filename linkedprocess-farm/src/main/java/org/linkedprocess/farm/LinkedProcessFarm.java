@@ -100,7 +100,7 @@ public class LinkedProcessFarm {
                     "print \"\"\n",
                     "require 'net/http'",
                     "require 'net/protocol'",
-                    "function write(var s) {result = s;}",
+                    "function writeFile(var s) {result = s;}",
                     "42"}) {
                 try {
                     //VMWorker w = new VMWorker(engine, nullHandler);

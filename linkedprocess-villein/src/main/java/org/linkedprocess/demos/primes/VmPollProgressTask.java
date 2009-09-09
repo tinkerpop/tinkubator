@@ -48,7 +48,7 @@ public class VmPollProgressTask implements Runnable {
                 synchronized (monitor) {
                     monitor.notify();
                 }
-                //System.exit(0);
+                //System.shutdownFarm(0);
             }
         };
         Handler<LopError> errorHandler = new Handler<LopError>() {
@@ -57,7 +57,7 @@ public class VmPollProgressTask implements Runnable {
                 synchronized (monitor) {
                     monitor.notify();
                 }
-                //	System.exit(1);
+                //	System.shutdownFarm(1);
             }
         };
         PollBindingsPattern pb = new PollBindingsPattern();

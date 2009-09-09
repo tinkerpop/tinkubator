@@ -22,7 +22,7 @@ public class ServiceDiscoveryConfigurationTest extends TestCase {
 
     public void testAll() throws Exception {
         Properties p = LinkedProcess.getConfiguration();
-        p.setProperty("org.linkedprocess.security.read", "true");
+        p.setProperty("org.linkedprocess.security.readFile", "true");
 
         VmSecurityManager m = new VmSecurityManager(p);
         PathPermissions pp = new PathPermissions();
