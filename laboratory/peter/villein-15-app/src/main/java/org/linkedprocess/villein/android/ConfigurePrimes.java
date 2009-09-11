@@ -39,15 +39,6 @@ public class ConfigurePrimes extends Activity {
 			public void onClick(View v) {
 
 				Intent i = new Intent(ConfigurePrimes.this, ShowProgress.class);
-				Bundle extras = getIntent().getExtras();
-				i.putExtra(Villein.USERNAME, extras 
-						 .getString(Villein.USERNAME));
-				i.putExtra(Villein.PASSWORD, extras 
-						 .getString(Villein.PASSWORD));
-				i.putExtra(Villein.PORT, extras 
-						 .getInt(Villein.PORT));
-				i.putExtra(Villein.SERVER, extras 
-						 .getString(Villein.SERVER));
 				i.putExtra(Villein.SCRIPT, script.getText().toString());
 				i.putExtra(Villein.NUMBER_OF_VMS, Integer.parseInt((String) numberOfMachines
 						.getSelectedItem()));
