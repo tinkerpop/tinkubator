@@ -47,9 +47,9 @@ public class LinkedProcess {
     public static String convertStreamToString(InputStream inputStream) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder stringBuilder = new StringBuilder();
-        String line = null;
+        String line;
         while ((line = reader.readLine()) != null) {
-            stringBuilder.append(line + "\n");
+            stringBuilder.append(line).append("\n");
         }
         inputStream.close();
         return stringBuilder.toString();
@@ -248,13 +248,14 @@ public class LinkedProcess {
             VIRTUAL_MACHINE_TIME_TO_LIVE_PROPERTY = "org.linkedprocess.farm.virtualMachineTimeToLive",
             SCHEDULER_CLEANUP_INTERVAL_PROPERTY = "org.linkedprocess.farm.schedulerCleanupInterval";
 
-    private static final Properties PROPERTIES;
+    private static final Properties CONFIGURATION;
     private static final Logger LOGGER;
-    private static final String LOP_DEFAULT_PROPERTIES = "lop-default.properties";
+    private static final String LOP_DEFAULT_CONFIGURATION = "lop-default.properties";
     public static final XMLOutputter xmlOut = new XMLOutputter();
 
     static {
         InputStream resourceAsStream = LinkedProcess.class.getResourceAsStream("/logging.properties");
+
         try {
             LogManager.getLogManager().readConfiguration(resourceAsStream);
         } catch (SecurityException e) {
@@ -265,24 +266,25 @@ public class LinkedProcess {
 
         LOGGER = getLogger(LinkedProcess.class);
 
-        PROPERTIES = new Properties();
+        CONFIGURATION = new Properties();
         String file = System.getProperty(CONFIGURATION_PROPERTIES_PROPERTY);
         try {
             if (null == file) {
-                file = LOP_DEFAULT_PROPERTIES;
+                file = LOP_DEFAULT_CONFIGURATION;
                 LOGGER.info("loading default configuration: " + file);
-                PROPERTIES.load(LinkedProcess.class.getResourceAsStream(file));
+                Properties p = new Properties();
+                p.load(LinkedProcess.class.getResourceAsStream(file));
+                setConfiguration(p);
             } else {
                 LOGGER.info("loading configuration from external file: " + file);
-                PROPERTIES.load(new FileInputStream(file));
+                Properties p = new Properties();
+                p.load(new FileInputStream(file));
+                setConfiguration(p);
             }
         } catch (IOException e) {
-            LOGGER.severe("unable to load properties file " + file);
-            System.exit(1);
+            LOGGER.warning("unable to load configuration file " + file
+                    + ". Configuration properties will need to be set with LinkedProcess.setConfiguration");
         }
-
-        // Necessary for sandboxing of VM threads.
-        System.setSecurityManager(new VmSecurityManager(PROPERTIES));
     }
 
     public static Logger getLogger(final Class c) {
@@ -290,7 +292,22 @@ public class LinkedProcess {
     }
 
     public static Properties getConfiguration() {
-        return PROPERTIES;
+        if (0 == CONFIGURATION.values().size()) {
+            throw new IllegalStateException("configuration properties have not been set");
+        }
+        
+        return CONFIGURATION;
+    }
+
+    public static void setConfiguration(final Properties conf) {
+        CONFIGURATION.clear();
+        for (String key : conf.stringPropertyNames()) {
+            String value = conf.getProperty(key);
+            CONFIGURATION.setProperty(key, value);
+        }
+
+        // Necessary for sandboxing of VM threads.
+        System.setSecurityManager(new VmSecurityManager(CONFIGURATION));
     }
 
     public static void main(final String[] args) throws Exception {
