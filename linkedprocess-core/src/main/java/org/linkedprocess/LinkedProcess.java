@@ -15,6 +15,7 @@ import org.jdom.output.XMLOutputter;
 import org.linkedprocess.farm.security.VmSecurityManager;
 
 import java.io.*;
+import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -301,8 +302,10 @@ public class LinkedProcess {
 
     public static void setConfiguration(final Properties conf) {
         CONFIGURATION.clear();
-        for (String key : conf.stringPropertyNames()) {
-            String value = conf.getProperty(key);
+        Enumeration propertyNames = conf.propertyNames();
+		while (propertyNames.hasMoreElements()) {
+            String key = propertyNames.nextElement().toString();
+			String value = conf.getProperty(key);
             CONFIGURATION.setProperty(key, value);
         }
 
