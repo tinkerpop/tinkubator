@@ -41,7 +41,7 @@ public class VmScheduler {
     public static final int MAX_VM;
     private static final long VM_TIMEOUT;
     private static final long SCHEDULER_CLEANUP_INTERVAL;
-    private static final long WAIT_UNTIL_FINISHED_INTERVAL = 100;
+    private static final long POLL_FOR_COMPLETION_INTERVAL = 100;
 
     static {
         Properties props = LinkedProcess.getConfiguration();
@@ -101,48 +101,6 @@ public class VmScheduler {
     }
 
     /**
-     * Sets the handler for scheduler and virtual machine status events (active/inactive/busy).
-     *
-     * @param statusHandler the new handler
-     */
-    public synchronized void setStatusEventHandler(final LopStatusEventHandler statusHandler) {
-        this.eventHandler = statusHandler;
-    }
-
-    /**
-     * Adds a job to the queue of the given machine.
-     *
-     * @param machineJID the JID of the virtual machine to execute the job
-     * @param job        the job to execute
-     * @throws org.linkedprocess.farm.os.errors.VmIsFullException
-     *          if the VM in question has a full queue
-     * @throws org.linkedprocess.farm.os.errors.VmNotFoundException
-     *          if no such VM exists
-     * @throws org.linkedprocess.farm.os.errors.JobAlreadyExistsException
-     *          if a job with the given ID already exists on the machine with the given ID
-     */
-    public synchronized void submitJob(final String machineJID,
-                                       final Job job) throws VmIsFullException, VmNotFoundException, JobAlreadyExistsException {
-        if (LinkedProcess.Status.INACTIVE == farmStatus) {
-            throw new IllegalStateException("scheduler has been terminated");
-        }
-
-        jobsReceived++;
-
-        VmWorker w = getWorkerByJID(machineJID);
-
-        // FIXME: this call may block for as long as one timeslice.
-        //        This wait could probably be eliminated.
-        if (!w.submitJob(job)) {
-            throw new VmIsFullException(machineJID);
-        }
-
-        enqueueWorker(w);
-
-        cleanup();
-    }
-
-    /**
      * Removes or cancels a job.
      *
      * @param machineJID the machine who was to have received the job
@@ -165,6 +123,136 @@ public class VmScheduler {
         w.abortJob(jobID);
 
         cleanup();
+    }
+
+    /**
+     * @param machineJID the JID of the virtual machine to query
+     * @return the set of all variable bindings in the given virtual machine
+     * @throws org.linkedprocess.farm.os.errors.VmNotFoundException
+     *          if no VM worker with the given JID exists
+     */
+    public synchronized VmBindings getAllBindings(final String machineJID) throws VmNotFoundException {
+        if (LinkedProcess.Status.INACTIVE == farmStatus) {
+            throw new IllegalStateException("scheduler has been terminated");
+        }
+
+        VmWorker w = getWorkerByJID(machineJID);
+
+        return w.getAllBindings();
+    }
+
+    /**
+     * @param machineJID   the JID of the virtual machine to query
+     * @param bindingNames the names to bind
+     * @return the bindings of the given variable names in the given virtual machine
+     * @throws org.linkedprocess.farm.os.errors.VmNotFoundException
+     *          if no VM worker with the given JID exists
+     */
+    public synchronized VmBindings getBindings(final String machineJID,
+                                               final Set<String> bindingNames) throws VmNotFoundException {
+        if (LinkedProcess.Status.INACTIVE == farmStatus) {
+            throw new IllegalStateException("scheduler has been terminated");
+        }
+
+        VmWorker w = getWorkerByJID(machineJID);
+
+        return w.getBindings(bindingNames);
+    }
+
+    /**
+     * @param machineJID the JID of the machine to execute the job
+     * @param jobID      the ID of the job of interest
+     * @return the status of the given job
+     * @throws org.linkedprocess.farm.os.errors.VmNotFoundException
+     *          if no VM worker with the given JID exists
+     * @throws org.linkedprocess.farm.os.errors.JobNotFoundException
+     *          if no job with the given ID exists
+     */
+    public synchronized LinkedProcess.JobStatus getJobStatus(final String machineJID,
+                                                             final String jobID) throws VmNotFoundException, JobNotFoundException {
+        VmWorker w = workersByJID.get(machineJID);
+
+        if (null == w) {
+            throw new VmNotFoundException(machineJID);
+        }
+
+        if (w.jobExists(jobID)) {
+            return LinkedProcess.JobStatus.IN_PROGRESS;
+        } else {
+            throw new JobNotFoundException(jobID);
+        }
+    }
+
+    /**
+     * @return the status of this scheduler
+     */
+    public synchronized LinkedProcess.Status getSchedulerStatus() {
+        return farmStatus;
+    }
+
+    /**
+     * @param machineJID the JID of the virtual machine of interest
+     * @return the status of the given virtual machine
+     */
+    public synchronized LinkedProcess.Status getVirtualMachineStatus(final String machineJID) {
+        VmWorker w = workersByJID.get(machineJID);
+        return (null == w)
+                ? LinkedProcess.Status.INACTIVE
+                : LinkedProcess.Status.ACTIVE;
+    }
+
+    /**
+     * Updates the given variable bindings of the given virtual machine
+     *
+     * @param machineJID the JID of the virtual machine to update
+     * @param bindings   the key, value bindings to update
+     * @throws org.linkedprocess.farm.os.errors.VmNotFoundException
+     *          if no VM worker with the given JID exists
+     */
+    public synchronized void setBindings(final String machineJID,
+                                         final VmBindings bindings) throws VmNotFoundException {
+        if (LinkedProcess.Status.INACTIVE == farmStatus) {
+            throw new IllegalStateException("scheduler has been terminated");
+        }
+
+        VmWorker w = getWorkerByJID(machineJID);
+
+        w.setBindings(bindings);
+    }
+ 
+    /**
+     * Sets the handler for scheduler and virtual machine status events (active/inactive/busy).
+     *
+     * @param statusHandler the new handler
+     */
+    public synchronized void setStatusEventHandler(final LopStatusEventHandler statusHandler) {
+        this.eventHandler = statusHandler;
+    }
+
+    /**
+     * Shuts down all active virtual machines and cancels all jobs.
+     */
+    public synchronized void shutdown() {
+        LOGGER.info("shutting down VMScheduler");
+
+        workerQueue.clear();
+        LOGGER.info("1");
+        for (int i = 0; i < numberOfSequencers; i++) {
+            // Add sentinel values to the queue, which will be retrieved by the
+            // sequencers and cause them to terminate.  A null value cannot be
+            // used, due to the specification of BlockingQueue.
+            workerQueue.offer(VmWorker.SCHEDULER_TERMINATED_SENTINEL);
+        }
+
+        for (String vmId : workersByJID.keySet()) {
+            VmWorker w = workersByJID.get(vmId);
+            w.terminate();
+            setVirtualMachineStatus(vmId, LinkedProcess.Status.INACTIVE);
+
+        }
+        workersByJID.clear();
+
+        setSchedulerStatus(LinkedProcess.Status.INACTIVE);
     }
 
     /**
@@ -230,6 +318,39 @@ public class VmScheduler {
     }
 
     /**
+     * Adds a job to the queue of the given machine.
+     *
+     * @param machineJID the JID of the virtual machine to execute the job
+     * @param job        the job to execute
+     * @throws org.linkedprocess.farm.os.errors.VmIsFullException
+     *          if the VM in question has a full queue
+     * @throws org.linkedprocess.farm.os.errors.VmNotFoundException
+     *          if no such VM exists
+     * @throws org.linkedprocess.farm.os.errors.JobAlreadyExistsException
+     *          if a job with the given ID already exists on the machine with the given ID
+     */
+    public synchronized void submitJob(final String machineJID,
+                                       final Job job) throws VmIsFullException, VmNotFoundException, JobAlreadyExistsException {
+        if (LinkedProcess.Status.INACTIVE == farmStatus) {
+            throw new IllegalStateException("scheduler has been terminated");
+        }
+
+        jobsReceived++;
+
+        VmWorker w = getWorkerByJID(machineJID);
+
+        // FIXME: this call may block for as long as one timeslice.
+        //        This wait could probably be eliminated.
+        if (!w.submitJob(job)) {
+            throw new VmIsFullException(machineJID);
+        }
+
+        enqueueWorker(w);
+
+        cleanup();
+    }
+
+    /**
      * Destroys an already-created virtual machine.
      *
      * @param vmId the id of the virtual machine to destroy
@@ -259,108 +380,6 @@ public class VmScheduler {
     }
 
     /**
-     * @param machineJID the JID of the virtual machine to query
-     * @return the set of all variable bindings in the given virtual machine
-     * @throws org.linkedprocess.farm.os.errors.VmNotFoundException
-     *          if no VM worker with the given JID exists
-     */
-    public synchronized VmBindings getAllBindings(final String machineJID) throws VmNotFoundException {
-        if (LinkedProcess.Status.INACTIVE == farmStatus) {
-            throw new IllegalStateException("scheduler has been terminated");
-        }
-
-        VmWorker w = getWorkerByJID(machineJID);
-
-        return w.getAllBindings();
-    }
-
-    /**
-     * @param machineJID   the JID of the virtual machine to query
-     * @param bindingNames the names to bind
-     * @return the bindings of the given variable names in the given virtual machine
-     * @throws org.linkedprocess.farm.os.errors.VmNotFoundException
-     *          if no VM worker with the given JID exists
-     */
-    public synchronized VmBindings getBindings(final String machineJID,
-                                               final Set<String> bindingNames) throws VmNotFoundException {
-        if (LinkedProcess.Status.INACTIVE == farmStatus) {
-            throw new IllegalStateException("scheduler has been terminated");
-        }
-
-        VmWorker w = getWorkerByJID(machineJID);
-
-        return w.getBindings(bindingNames);
-    }
-
-    /**
-     * @return the status of this scheduler
-     */
-    public synchronized LinkedProcess.Status getSchedulerStatus() {
-        return farmStatus;
-    }
-
-    /**
-     * @param machineJID the JID of the virtual machine of interest
-     * @return the status of the given virtual machine
-     */
-    public synchronized LinkedProcess.Status getVirtualMachineStatus(final String machineJID) {
-        VmWorker w = workersByJID.get(machineJID);
-        return (null == w)
-                ? LinkedProcess.Status.INACTIVE
-                : LinkedProcess.Status.ACTIVE;
-    }
-
-    /**
-     * @param machineJID the JID of the machine to execute the job
-     * @param jobID      the ID of the job of interest
-     * @return the status of the given job
-     * @throws org.linkedprocess.farm.os.errors.VmNotFoundException
-     *          if no VM worker with the given JID exists
-     * @throws org.linkedprocess.farm.os.errors.JobNotFoundException
-     *          if no job with the given ID exists
-     */
-    public synchronized LinkedProcess.JobStatus getJobStatus(final String machineJID,
-                                                             final String jobID) throws VmNotFoundException, JobNotFoundException {
-        VmWorker w = workersByJID.get(machineJID);
-
-        if (null == w) {
-            throw new VmNotFoundException(machineJID);
-        }
-
-        if (w.jobExists(jobID)) {
-            return LinkedProcess.JobStatus.IN_PROGRESS;
-        } else {
-            throw new JobNotFoundException(jobID);
-        }
-    }
-
-    /**
-     * Shuts down all active virtual machines and cancels all jobs.
-     */
-    public synchronized void shutdown() {
-        LOGGER.info("shutting down VMScheduler");
-
-        workerQueue.clear();
-        LOGGER.info("1");
-        for (int i = 0; i < numberOfSequencers; i++) {
-            // Add sentinel values to the queue, which will be retrieved by the
-            // sequencers and cause them to terminate.  A null value cannot be
-            // used, due to the specification of BlockingQueue.
-            workerQueue.offer(VmWorker.SCHEDULER_TERMINATED_SENTINEL);
-        }
-
-        for (String vmId : workersByJID.keySet()) {
-            VmWorker w = workersByJID.get(vmId);
-            w.terminate();
-            setVirtualMachineStatus(vmId, LinkedProcess.Status.INACTIVE);
-
-        }
-        workersByJID.clear();
-
-        setSchedulerStatus(LinkedProcess.Status.INACTIVE);
-    }
-
-    /**
      * Waits until all pending and currently executed jobs have finished.  This
      * is a convenience method (for unit tests and shutdown) which should be
      * used with caution.  Because the method is synchronized, you could wait
@@ -375,27 +394,8 @@ public class VmScheduler {
         // whose virtual machine has been terminated produce a result which is
         // counted.
         while (jobsCompleted < jobsReceived) {
-            Thread.sleep(WAIT_UNTIL_FINISHED_INTERVAL);
+            Thread.sleep(POLL_FOR_COMPLETION_INTERVAL);
         }
-    }
-
-    /**
-     * Updates the given variable bindings of the given virtual machine
-     *
-     * @param machineJID the JID of the virtual machine to update
-     * @param bindings   the key, value bindings to update
-     * @throws org.linkedprocess.farm.os.errors.VmNotFoundException
-     *          if no VM worker with the given JID exists
-     */
-    public synchronized void setBindings(final String machineJID,
-                                         final VmBindings bindings) throws VmNotFoundException {
-        if (LinkedProcess.Status.INACTIVE == farmStatus) {
-            throw new IllegalStateException("scheduler has been terminated");
-        }
-
-        VmWorker w = getWorkerByJID(machineJID);
-
-        w.setBindings(bindings);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -528,20 +528,19 @@ public class VmScheduler {
     }
 
     private class ResultCounter implements VmResultHandler {
-        private final VmResultHandler innerHandler;
-        private final Object monitor = "";
+        private final VmResultHandler handler;
 
-        public ResultCounter(final VmResultHandler innerHandler) {
-            this.innerHandler = innerHandler;
+        public ResultCounter(final VmResultHandler handler) {
+            this.handler = handler;
         }
 
-        public void handleResult(JobResult result) {
+        public void handleResult(final JobResult result) {
             try {
-                innerHandler.handleResult(result);
+                handler.handleResult(result);
             } finally {
                 // For the sake of waitUntilFinished, count the job as completed
                 // AFTER the call to the inner handler has completed (or failed).
-                synchronized (monitor) {
+                synchronized (this) {
                     jobsCompleted++;
                 }
             }
