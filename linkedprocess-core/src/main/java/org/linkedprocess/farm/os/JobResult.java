@@ -108,7 +108,7 @@ public class JobResult {
                 returnSubmitJob.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.PERMISSION_DENIED, exception.getMessage(), this.job.getJobId()));
             } else if (this.exception instanceof IllegalStateException) {
                 // IllegalStateException is a special case
-                returnSubmitJob.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.PERMISSION_DENIED, exception.getMessage(), this.job.getJobId()));
+                returnSubmitJob.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.INTERNAL_ERROR, exception.getMessage(), this.job.getJobId()));
             } else {
                 returnSubmitJob.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.EVALUATION_ERROR, exception.getMessage(), this.job.getJobId()));
             }
