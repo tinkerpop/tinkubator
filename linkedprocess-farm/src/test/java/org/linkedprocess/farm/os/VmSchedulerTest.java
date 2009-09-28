@@ -386,7 +386,7 @@ public class VmSchedulerTest extends TestCase {
         //String expr = "importPackage(java.io)\n" + "File";
         //String expr = "java.lang.Math.PI;";
         //String expr = "f = new Packages.java.io.File(\"test.txt\");";
-        String expr = "java.lang.System.shutdownFarm(0);";
+        String expr = "java.lang.System.exit(0);";
         Job job1 = randomJob(vm1, expr);
         scheduler.submitJob(vm1, job1);
         scheduler.waitUntilFinished();

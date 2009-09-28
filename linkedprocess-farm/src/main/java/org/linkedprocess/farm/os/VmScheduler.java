@@ -9,14 +9,27 @@ package org.linkedprocess.farm.os;
 
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.farm.LinkedProcessFarm;
-import org.linkedprocess.farm.os.errors.*;
+import org.linkedprocess.farm.os.errors.JobAlreadyExistsException;
+import org.linkedprocess.farm.os.errors.JobNotFoundException;
+import org.linkedprocess.farm.os.errors.UnsupportedScriptEngineException;
+import org.linkedprocess.farm.os.errors.VmAlreadyExistsException;
+import org.linkedprocess.farm.os.errors.VmIsFullException;
+import org.linkedprocess.farm.os.errors.VmNotFoundException;
+import org.linkedprocess.farm.os.errors.VmSchedulerIsFullException;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
+ * An object which functions as a miniature operating systems for the management of jobs and virtual machines.
+ * <p/>
  * Author: josh
  * Date: Jun 24, 2009
  * Time: 2:15:27 PM
@@ -87,7 +100,12 @@ public class VmScheduler {
         setSchedulerStatus(LinkedProcess.Status.ACTIVE);
     }
 
-    public synchronized void setStatusEventHandler(LopStatusEventHandler statusHandler) {
+    /**
+     * Sets the handler for scheduler and virtual machine status events (active/inactive/busy).
+     *
+     * @param statusHandler the new handler
+     */
+    public synchronized void setStatusEventHandler(final LopStatusEventHandler statusHandler) {
         this.eventHandler = statusHandler;
     }
 

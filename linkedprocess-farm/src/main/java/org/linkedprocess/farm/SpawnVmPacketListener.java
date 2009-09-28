@@ -53,7 +53,6 @@ public class SpawnVmPacketListener extends FarmPacketListener {
                 returnSpawnVm.setVmId(vm.getVmId());
                 returnSpawnVm.setVmSpecies(vmSpecies);
                 returnSpawnVm.setType(IQ.Type.RESULT);
-
             } catch (VmAlreadyExistsException e) {
                 returnSpawnVm.setType(IQ.Type.ERROR);
                 returnSpawnVm.setLopError(new LopError(XMPPError.Condition.conflict, LinkedProcess.LopErrorType.INTERNAL_ERROR, e.getMessage(), spawnVm.getPacketID()));

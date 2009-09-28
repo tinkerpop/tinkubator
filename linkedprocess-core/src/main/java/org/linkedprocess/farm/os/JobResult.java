@@ -104,7 +104,10 @@ public class JobResult {
         } else if (this.type == ResultType.ERROR) {
             returnSubmitJob.setType(IQ.Type.ERROR);
             if (this.exception instanceof SecurityException) {
-                // SecurityExceptions are handled differently than all other errors.
+                // SecurityException is a special case
+                returnSubmitJob.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.PERMISSION_DENIED, exception.getMessage(), this.job.getJobId()));
+            } else if (this.exception instanceof IllegalStateException) {
+                // IllegalStateException is a special case
                 returnSubmitJob.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.PERMISSION_DENIED, exception.getMessage(), this.job.getJobId()));
             } else {
                 returnSubmitJob.setLopError(new LopError(XMPPError.Condition.bad_request, LinkedProcess.LopErrorType.EVALUATION_ERROR, exception.getMessage(), this.job.getJobId()));
