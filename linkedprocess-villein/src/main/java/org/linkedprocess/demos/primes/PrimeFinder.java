@@ -9,7 +9,7 @@ package org.linkedprocess.demos.primes;
 
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.villein.Villein;
-import org.linkedprocess.villein.patterns.ResourceAllocationPattern;
+import org.linkedprocess.villein.patterns.EntityAllocationPattern;
 import org.linkedprocess.villein.patterns.ScatterGatherPattern;
 import org.linkedprocess.villein.proxies.FarmProxy;
 import org.linkedprocess.villein.proxies.JobProxy;
@@ -40,7 +40,7 @@ public class PrimeFinder {
         //////////////// ALLOCATE FARMS
 
         System.out.println("Waiting for " + farmCount + " available farms...");
-        Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(villein.getCloudProxy(), farmCount, 20000);
+        Set<FarmProxy> farmProxies = EntityAllocationPattern.allocateFarms(villein.getCloudProxy(), farmCount, 20000);
         for (FarmProxy farmProxy : farmProxies) {
             System.out.println("farm allocated: " + farmProxy.getJid());
         }

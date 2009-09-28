@@ -14,7 +14,7 @@ import org.linkedprocess.villein.Handler;
 import org.linkedprocess.villein.Villein;
 import org.linkedprocess.villein.patterns.BindingsChecker;
 import org.linkedprocess.villein.patterns.PollBindingsPattern;
-import org.linkedprocess.villein.patterns.ResourceAllocationPattern;
+import org.linkedprocess.villein.patterns.EntityAllocationPattern;
 import org.linkedprocess.villein.patterns.SynchronousPattern;
 import org.linkedprocess.villein.proxies.FarmProxy;
 import org.linkedprocess.villein.proxies.JobProxy;
@@ -53,8 +53,8 @@ public class ProgressPolling {
 
         //CountrysideProxy testProxy = ResourceAllocationPattern.allocateCountryside(villein.getCloudProxy(), "test_countryside@lanl.linkedprocess.org", -1);
         //Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(testProxy, 1, 20000);
-        Set<FarmProxy> farmProxies = ResourceAllocationPattern.allocateFarms(villein.getCloudProxy(), 1, 20000);
-        farmProxies = ResourceAllocationPattern.filterFarmProxiesByPasswordRequired(farmProxies, false);
+        Set<FarmProxy> farmProxies = EntityAllocationPattern.allocateFarms(villein.getCloudProxy(), 1, 20000);
+        farmProxies = EntityAllocationPattern.filterFarmProxiesByPasswordRequired(farmProxies, false);
         if (farmProxies.size() == 0) {
             System.out.println("Could not allocate a password free farm.");
             System.exit(1);

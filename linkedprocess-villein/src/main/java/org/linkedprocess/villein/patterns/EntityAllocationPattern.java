@@ -19,15 +19,15 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * The ResourceAllocationPattern is useful for allocating resources in an LoP cloud.
+ * The EntityAllocationPattern is useful for allocating entities (e.g. countrysides, farms, virtual machines) in an LoP cloud.
  * This pattern simply wraps an LoP cloud with useful methods.
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @version LoPSideD 0.1
  */
-public class ResourceAllocationPattern {
+public class EntityAllocationPattern {
 
-    private static final Logger LOGGER = LinkedProcess.getLogger(ResourceAllocationPattern.class);
+    private static final Logger LOGGER = LinkedProcess.getLogger(EntityAllocationPattern.class);
     private static final long SLEEP_TIME = 10l;
 
     private static void checkTimeout(long startTime, long timeout) throws TimeoutException {
@@ -112,7 +112,7 @@ public class ResourceAllocationPattern {
     public static FarmProxy allocateFarm(final CloudProxy cloudProxy, final Jid farmJid, final long timeout) throws TimeoutException {
         Set<Jid> farmJidSet = new HashSet<Jid>();
         farmJidSet.add(farmJid);
-        return ResourceAllocationPattern.allocateFarms(cloudProxy, farmJidSet, timeout).iterator().next();
+        return EntityAllocationPattern.allocateFarms(cloudProxy, farmJidSet, timeout).iterator().next();
     }
 
     /**
@@ -159,7 +159,7 @@ public class ResourceAllocationPattern {
     public static CountrysideProxy allocateCountryside(final CloudProxy cloudProxy, final Jid countrysideJid, final long timeout) throws TimeoutException {
         Set<Jid> countrysideJidSet = new HashSet<Jid>();
         countrysideJidSet.add(countrysideJid);
-        return ResourceAllocationPattern.allocateCountrysides(cloudProxy, countrysideJidSet, timeout).iterator().next();
+        return EntityAllocationPattern.allocateCountrysides(cloudProxy, countrysideJidSet, timeout).iterator().next();
     }
 
 
