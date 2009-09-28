@@ -46,7 +46,7 @@ public class ResultHolder<T> {
         this.error = error;
     }
 
-    public boolean isSuccessful() {
+    public boolean wasSuccessful() {
         return this.error == null;
     }
 

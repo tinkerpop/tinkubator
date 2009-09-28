@@ -81,7 +81,7 @@ public class PollBindingsPattern implements Runnable {
             }
 
             if (resultBindings != null) {
-                if (!resultBindings.isSuccessful()) {
+                if (!resultBindings.wasSuccessful()) {
                     this.errorHandler.handle(resultBindings.getLopError());
                     break;
                 } else {
