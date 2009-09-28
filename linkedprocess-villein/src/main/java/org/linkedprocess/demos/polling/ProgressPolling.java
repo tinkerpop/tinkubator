@@ -91,7 +91,7 @@ public class ProgressPolling {
                 }
             }
         };
-        Handler<VmBindings> resultHandler = new Handler<VmBindings>() {
+        Handler<VmBindings> successHandler = new Handler<VmBindings>() {
             public void handle(VmBindings vmBindings) {
                 System.out.println("progress meter value has been reached: " + vmBindings);
                 synchronized (monitor) {
@@ -112,7 +112,7 @@ public class ProgressPolling {
         PollBindingsPattern pb = new PollBindingsPattern();
         VmBindings desiredBindings = new VmBindings();
         desiredBindings.putTyped("meter", new TypedValue(VmBindings.XMLSchemaDatatype.DOUBLE, "" + meterMax));
-        pb.startPattern(vmProxyResult.getSuccess(), desiredBindings, bc, resultHandler, errorHandler, pollingInterval);
+        pb.startPattern(vmProxyResult.getSuccess(), desiredBindings, bc, successHandler, errorHandler, pollingInterval);
         synchronized (monitor) {
             monitor.wait();
         }
