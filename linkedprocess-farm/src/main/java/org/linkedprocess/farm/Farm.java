@@ -12,6 +12,7 @@ import org.jivesoftware.smackx.packet.DataForm;
 import org.linkedprocess.LinkedProcess;
 import org.linkedprocess.LopXmppException;
 import org.linkedprocess.XmppClient;
+import org.linkedprocess.Jid;
 import org.linkedprocess.farm.os.Vm;
 import org.linkedprocess.farm.os.VmScheduler;
 import org.linkedprocess.farm.os.errors.UnsupportedScriptEngineException;
@@ -272,7 +273,7 @@ public class Farm extends XmppClient {
     }
 
     public String generateVmId() {
-        return UUID.randomUUID().toString();
+        return Jid.generateRandomResourceId();
     }
 
     public static void main(final String[] args) throws Exception {

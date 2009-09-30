@@ -160,15 +160,31 @@ public class CloudProxy {
     }
 
     /**
-     * Find a virtual machine proxy in the cloud by its identifier. Note that in theory
-     * all virtual machines should have unique IDs, but this is not guarenteed.
+     * Find a virtual machine proxy in the cloud by its identifier and parent farm.
+     *
+     * @param farmProxy the parent farm proxy of the virtual machine to retrieve
+     * @param vmId      the identifier of the virtual machine to retrieve
+     * @return the virtual machine with the provided identifier
+     */
+    public VmProxy getVmProxy(FarmProxy farmProxy, String vmId) {
+        for (VmProxy vmProxy : farmProxy.getVmProxies()) {
+            if (vmProxy.getVmId().equals(vmId))
+                return vmProxy;
+        }
+        return null;
+    }
+
+    /**
+     * Find a virtual machine proxy in the cloud by its identifier.
+     * While identifiers are randomly generated, it is not guarenteed to be unique.
+     * Thus, be aware that there might be multiple vms with the same id (though very rare).
      *
      * @param vmId the identifier of the virtual machine to retrieve
      * @return the virtual machine with the provided identifier
      */
     public VmProxy getVmProxy(String vmId) {
-        for (FarmProxy farmProxies : this.getFarmProxies()) {
-            for (VmProxy vmProxy : farmProxies.getVmProxies()) {
+        for (FarmProxy farmProxy : this.getFarmProxies()) {
+            for (VmProxy vmProxy : farmProxy.getVmProxies()) {
                 if (vmProxy.getVmId().equals(vmId))
                     return vmProxy;
             }

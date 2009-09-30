@@ -209,11 +209,11 @@ public class VmProxy {
 
 
     public boolean equals(Object vmProxy) {
-        return vmProxy instanceof VmProxy && ((VmProxy) vmProxy).getVmId().equals(this.vmId);
+        return vmProxy instanceof VmProxy && ((VmProxy) vmProxy).getVmId().equals(this.vmId) && ((VmProxy)vmProxy).getFarmProxy().equals(this.farmProxy);
     }
 
     public int hashCode() {
-        return this.vmId.hashCode();
+        return (this.vmId + this.farmProxy.getJid()).hashCode();
     }
 }
 
