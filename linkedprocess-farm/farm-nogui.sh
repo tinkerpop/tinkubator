@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Path to JAR
-JAR=`dirname $0`/target/linkedprocess-*-farm-nogui.jar
+JAR=`dirname $0`/target/linkedprocess-farm-*-standalone.jar
 
 # Find Java
 if [ "$JAVA_HOME" = "" ] ; then

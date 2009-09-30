@@ -1,6 +1,6 @@
 <assembly>
 
-    <id>farm-nogui</id>
+    <id>standalone</id>
 
     <formats>
         <format>jar</format>
