@@ -8,18 +8,15 @@
                 <include>LICENSE.txt</include>
                 <include>README.txt</include>
                 <include>pom.xml</include>
-                <include>demo_fortytwo_countryside.properties</include>
-                <include>demo_lanl_countryside.properties</include>
-                <include>fortytwo_countryside.properties</include>
-                <include>lanl_countryside.properties</include>
-                <include>sweden_countryside.properties</include>
             </includes>
         </fileSet>
         <fileSet>
             <fileMode>0775</fileMode>
             <includes>
-                <include>farm-nogui.sh</include>
-                <include>farm-nogui.bat</include>
+                <include>farm-gui.sh</include>
+                <include>villein-gui.sh</include>
+                <include>farm-gui.bat</include>
+                <include>villein-gui.bat</include>
             </includes>
         </fileSet>
         <fileSet>
@@ -28,8 +25,8 @@
         <fileSet>
             <directory>target</directory>
             <includes>
-                <include>linkedprocess-farm-*.jar</include>
-                <include>linkedprocess-farm-*-standalone.jar</include>
+                <include>linkedprocess-gui-*.jar</include>
+                <include>linkedprocess-gui-*-standalone.jar</include>
                 <include>site</include>
             </includes>
         </fileSet>

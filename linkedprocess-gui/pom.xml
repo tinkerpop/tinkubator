@@ -111,9 +111,10 @@
                 </executions>
                 <configuration>
                     <descriptors>
-                        <descriptor>src/assembly/villein-gui.xml</descriptor>
+<!--                        <descriptor>src/assembly/standalone.xml</descriptor>    -->
+                        <descriptor>src/assembly/distribution.xml</descriptor>
                     </descriptors>
-                    <finalName>linkedprocess-${project.version}</finalName>
+                    <finalName>linkedprocess-gui-${project.version}</finalName>
                     <outputDirectory>target</outputDirectory>
                     <workDirectory>target/assembly/work</workDirectory>
                     <tarLongFileMode>warn</tarLongFileMode>

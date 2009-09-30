@@ -1,6 +1,6 @@
 <assembly>
 
-    <id>farm-gui</id>
+    <id>standalone</id>
 
     <formats>
         <format>jar</format>
