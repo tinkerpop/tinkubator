@@ -12,6 +12,7 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.packet.DiscoverInfo;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,9 +31,12 @@ public abstract class LopPacketListener implements PacketListener {
     protected Document getDiscoInfoDocument(Jid jid) {
         ServiceDiscoveryManager discoManager = this.xmppClient.getDiscoManager();
         try {
-            return LinkedProcess.createXMLDocument(discoManager.discoverInfo(jid.toString()).toXML());
+            DiscoverInfo discoverInfo = discoManager.discoverInfo(jid.toString());
+			String discoverInfoXml = discoverInfo.toXML();
+			return LinkedProcess.createXMLDocument(discoverInfoXml);
         } catch (Exception e) {
             XmppClient.LOGGER.warning(e.getMessage());
+            System.out.println(e);
             return null;
         }
     }
