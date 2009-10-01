@@ -14,6 +14,7 @@ import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.packet.DiscoverInfo;
+import org.jivesoftware.smackx.packet.DiscoverItems;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -73,6 +74,7 @@ public class OfflineTest {
 		mdm.addFeature(MultiCaptureMatcher
 				.multiCapture(mockConnection.disc_info_features));
 		expectLastCall().anyTimes();
+		expect(mdm.discoverItems(isA(String.class))).andReturn(new DiscoverItems()).anyTimes();
 
 		mdm.setExtendedInfo(capture(mockConnection.dataformCapture));
 		expectLastCall().anyTimes();
