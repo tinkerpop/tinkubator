@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.linkedprocess</groupId>
     <artifactId>linkedprocess</artifactId>
-    <version>alpha1</version>
+    <version>0.1-proto</version>
     <packaging>pom</packaging>
     <name>LoPSideD: An Implementation of the Linked Process Protocol</name>
     <description>Web-Scale Distributed Computing</description>

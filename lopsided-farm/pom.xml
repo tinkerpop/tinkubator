@@ -4,14 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.linkedprocess</groupId>
     <artifactId>lopsided-farm</artifactId>
-    <version>alpha1</version>
+    <version>0.1-proto</version>
     <packaging>jar</packaging>
     <name>LoPSideD Farm</name>
 
     <parent>
         <groupId>org.linkedprocess</groupId>
         <artifactId>linkedprocess</artifactId>
-        <version>alpha1</version>
+        <version>0.1-proto</version>
     </parent>
 
     <!--<properties>
@@ -22,12 +22,12 @@
         <dependency>
             <groupId>org.linkedprocess</groupId>
             <artifactId>lopsided-core</artifactId>
-            <version>alpha1</version>
+            <version>0.1-proto</version>
         </dependency>
         <dependency>
             <groupId>org.linkedprocess</groupId>
             <artifactId>lopsided-util</artifactId>
-            <version>alpha1</version>
+            <version>0.1-proto</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

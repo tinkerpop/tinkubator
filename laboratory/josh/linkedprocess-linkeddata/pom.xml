@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.linkedprocess</groupId>
     <artifactId>lopsided-linkeddata</artifactId>
-    <version>alpha1</version>
+    <version>0.1-proto</version>
     <packaging>jar</packaging>
     <name>Linked Process, Linked Data</name>
 
@@ -12,17 +12,17 @@
         <dependency>
             <groupId>net.fortytwo.rdfwiki</groupId>
             <artifactId>rdfwiki</artifactId>
-            <version>alpha1</version>
+            <version>0.1-proto</version>
         </dependency>
         <dependency>
             <groupId>org.linkedprocess</groupId>
             <artifactId>lopsided-farm</artifactId>
-            <version>alpha1</version>
+            <version>0.1-proto</version>
         </dependency>
         <dependency>
             <groupId>org.linkedprocess</groupId>
             <artifactId>lopsided-villein</artifactId>
-            <version>alpha1</version>
+            <version>0.1-proto</version>
         </dependency>
         <dependency>
             <groupId>org.openrdf.sesame</groupId>
