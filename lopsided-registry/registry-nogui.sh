@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Path to JAR
-JAR=`dirname $0`/target/linkedprocess-*-registry-nogui.jar
+JAR=`dirname $0`/target/lopsided-*-registry-nogui.jar
 
 # Find Java
 if [ "$JAVA_HOME" = "" ] ; then

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Path to JAR
-JAR=`dirname $0`/target/linkedprocess-linkeddata-*-full.jar
+JAR=`dirname $0`/target/lopsided-linkeddata-*-full.jar
 
 # Find Java
 if [ "$JAVA_HOME" = "" ] ; then

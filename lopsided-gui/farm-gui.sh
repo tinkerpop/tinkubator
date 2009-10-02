@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Path to JAR
-JAR=`dirname $0`/target/linkedprocess-gui-*-standalone.jar
+JAR=`dirname $0`/target/lopsided-gui-*-standalone.jar
 
 # Find Java
 if [ "$JAVA_HOME" = "" ] ; then
