@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.linkedprocess</groupId>
-    <artifactId>linkedprocess-util</artifactId>
+    <artifactId>lopsided-util</artifactId>
     <version>alpha1</version>
     <packaging>jar</packaging>
     <name>LoPSideD Util</name>
@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>org.linkedprocess</groupId>
-            <artifactId>linkedprocess-core</artifactId>
+            <artifactId>lopsided-core</artifactId>
             <version>alpha1</version>
         </dependency>
                                        

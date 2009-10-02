@@ -10,7 +10,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.linkedprocess</groupId>
-    <artifactId>linkedprocess-registry</artifactId>
+    <artifactId>lopsided-registry</artifactId>
     <version>alpha1</version>
     <packaging>jar</packaging>
     <name>LoPSideD Registry</name>
@@ -28,12 +28,12 @@
     <dependencies>
         <dependency>
             <groupId>org.linkedprocess</groupId>
-            <artifactId>linkedprocess-core</artifactId>
+            <artifactId>lopsided-core</artifactId>
             <version>alpha1</version>
         </dependency>
         <dependency>
             <groupId>org.linkedprocess</groupId>
-            <artifactId>linkedprocess-util</artifactId>
+            <artifactId>lopsided-util</artifactId>
             <version>alpha1</version>
         </dependency>
         <dependency>
@@ -141,7 +141,7 @@
                     <descriptors>
                         <descriptor>src/assembly/registry-nogui.xml</descriptor>
                     </descriptors>
-                    <finalName>linkedprocess-${project.version}</finalName>
+                    <finalName>lopsided-${project.version}</finalName>
                     <outputDirectory>target</outputDirectory>
                     <workDirectory>target/assembly/work</workDirectory>
                     <tarLongFileMode>warn</tarLongFileMode>

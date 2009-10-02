@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.linkedprocess</groupId>
-    <artifactId>linkedprocess-villein</artifactId>
+    <artifactId>lopsided-villein</artifactId>
     <version>alpha1</version>
     <packaging>jar</packaging>
     <name>LoPSideD Villein</name>
@@ -21,7 +21,7 @@
     <dependencies>
         <dependency>
             <groupId>org.linkedprocess</groupId>
-            <artifactId>linkedprocess-core</artifactId>
+            <artifactId>lopsided-core</artifactId>
             <version>alpha1</version>
         </dependency>
         <dependency>
@@ -114,7 +114,7 @@
                     <descriptors>
                         <descriptor>src/assembly/distribution.xml</descriptor>
                     </descriptors>
-                    <finalName>linkedprocess-villein-${project.version}</finalName>
+                    <finalName>lopsided-villein-${project.version}</finalName>
                     <outputDirectory>target</outputDirectory>
                     <workDirectory>target/assembly/work</workDirectory>
                     <tarLongFileMode>warn</tarLongFileMode>

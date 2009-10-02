@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.linkedprocess</groupId>
-    <artifactId>linkedprocess-farm</artifactId>
+    <artifactId>lopsided-farm</artifactId>
     <version>alpha1</version>
     <packaging>jar</packaging>
     <name>LoPSideD Farm</name>
@@ -21,12 +21,12 @@
     <dependencies>
         <dependency>
             <groupId>org.linkedprocess</groupId>
-            <artifactId>linkedprocess-core</artifactId>
+            <artifactId>lopsided-core</artifactId>
             <version>alpha1</version>
         </dependency>
         <dependency>
             <groupId>org.linkedprocess</groupId>
-            <artifactId>linkedprocess-util</artifactId>
+            <artifactId>lopsided-util</artifactId>
             <version>alpha1</version>
         </dependency>
         <dependency>
@@ -298,7 +298,7 @@
                         <descriptor>src/assembly/standalone.xml</descriptor>
                         <!--<descriptor>src/assembly/distribution.xml</descriptor>-->
                     </descriptors>
-                    <finalName>linkedprocess-farm-${project.version}</finalName>
+                    <finalName>lopsided-farm-${project.version}</finalName>
                     <outputDirectory>target</outputDirectory>
                     <workDirectory>target/assembly/work</workDirectory>
                     <tarLongFileMode>warn</tarLongFileMode>

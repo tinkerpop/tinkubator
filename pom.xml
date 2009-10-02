@@ -35,12 +35,12 @@
     </developers>
 
     <modules>
-        <module>linkedprocess-core</module>
-        <module>linkedprocess-farm</module>
-        <module>linkedprocess-villein</module>
-        <module>linkedprocess-registry</module>
-        <module>linkedprocess-gui</module>
-        <module>linkedprocess-util</module>
+        <module>lopsided-core</module>
+        <module>lopsided-farm</module>
+        <module>lopsided-villein</module>
+        <module>lopsided-registry</module>
+        <module>lopsided-gui</module>
+        <module>lopsided-util</module>
     </modules>
 
     <build>
