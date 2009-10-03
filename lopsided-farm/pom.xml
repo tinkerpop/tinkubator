@@ -199,11 +199,11 @@
         </dependency> -->
 
         <!-- Linked Data demo dependencies -->
-        <dependency>
+        <!--<dependency>
             <groupId>net.fortytwo</groupId>
             <artifactId>linked-data-sail</artifactId>
             <version>0.5</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.openrdf.sesame</groupId>
             <artifactId>sesame-sail-memory</artifactId>
