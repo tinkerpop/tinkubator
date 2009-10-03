@@ -24,8 +24,8 @@
         <fileSet>
             <directory>target</directory>
             <includes>
-                <include>linkedprocess-registry-*.jar</include>
-                <include>linkedprocess-registry-*-standalone.jar</include>
+                <include>lopsided-registry-*.jar</include>
+                <include>lopsided-registry-*-standalone.jar</include>
                 <include>site</include>
             </includes>
         </fileSet>

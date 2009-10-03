@@ -28,8 +28,8 @@
         <fileSet>
             <directory>target</directory>
             <includes>
-                <include>linkedprocess-farm-*.jar</include>
-                <include>linkedprocess-farm-*-standalone.jar</include>
+                <include>lopsided-farm-*.jar</include>
+                <include>lopsided-farm-*-standalone.jar</include>
                 <include>site</include>
             </includes>
         </fileSet>

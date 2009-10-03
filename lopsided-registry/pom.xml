@@ -140,6 +140,7 @@
                 <configuration>
                     <descriptors>
                         <descriptor>src/assembly/standalone.xml</descriptor>
+                        <!--<descriptor>src/assembly/distribution.xml</descriptor>-->
                     </descriptors>
                     <finalName>lopsided-registry-${project.version}</finalName>
                     <outputDirectory>target</outputDirectory>
