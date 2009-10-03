@@ -139,9 +139,9 @@
                 </executions>
                 <configuration>
                     <descriptors>
-                        <descriptor>src/assembly/registry-nogui.xml</descriptor>
+                        <descriptor>src/assembly/standalone.xml</descriptor>
                     </descriptors>
-                    <finalName>lopsided-${project.version}</finalName>
+                    <finalName>lopsided-registry-${project.version}</finalName>
                     <outputDirectory>target</outputDirectory>
                     <workDirectory>target/assembly/work</workDirectory>
                     <tarLongFileMode>warn</tarLongFileMode>
