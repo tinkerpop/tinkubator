@@ -28,7 +28,7 @@ import org.linkedprocess.testing.offline.OfflineTest;
 
 public class OfflineVmTest extends OfflineTest {
 
-	private static final String PETER_HAR_SETT_MÅNGA_SNYGGA_FLICKOR = "Peter har sett många snygga flickor";
+	private static final String PETER_HAR_SETT_M√ÖNGA_SNYGGA_FLICKOR = "Peter har sett m√•nga snygga flickor";
 	private static final String FIRST_NAME = "name";
 	private static final String FULL_NAME = "full_name";
 	private MockFarmXmppConnection connection;
@@ -148,11 +148,11 @@ public class OfflineVmTest extends OfflineTest {
 		job.setFarmPassword(farm.getPassword());
 		// job.setVmPassword(vm.getVmPassword());
 		job
-				.setExpression("full_name = name + ' har sett många snygga flickor'");
+				.setExpression("full_name = name + ' har sett mÔøΩnga snygga flickor'");
 		connection.submitJob.processPacket(job);
 		connection.waitForResponse(2000);
 		SubmitJob jobresult = (SubmitJob) connection.getLastPacket();
-		assertEquals(PETER_HAR_SETT_MÅNGA_SNYGGA_FLICKOR, jobresult
+		assertEquals(PETER_HAR_SETT_M√ÖNGA_SNYGGA_FLICKOR, jobresult
 				.getExpression());
 
 		// now, the same should be bound to full_name now.
@@ -165,7 +165,7 @@ public class OfflineVmTest extends OfflineTest {
 		connection.manageBindings.processPacket(getResult);
 		// connection.waitForResponse(1000);
 		ManageBindings resBinings = (ManageBindings) connection.getLastPacket();
-		assertEquals(PETER_HAR_SETT_MÅNGA_SNYGGA_FLICKOR, resBinings
+		assertEquals(PETER_HAR_SETT_M√ÖNGA_SNYGGA_FLICKOR, resBinings
 				.getBindings().getTyped(FULL_NAME).getValue());
 
 	}
