@@ -11,14 +11,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.linkedprocess</groupId>
     <artifactId>lopsided-registry</artifactId>
-    <version>0.1-proto</version>
+    <version>proto-0.1</version>
     <packaging>jar</packaging>
     <name>LoPSideD Registry</name>
 
     <parent>
         <groupId>org.linkedprocess</groupId>
         <artifactId>linkedprocess</artifactId>
-        <version>0.1-proto</version>
+        <version>proto-0.1</version>
     </parent>
 
     <properties>
@@ -29,12 +29,12 @@
         <dependency>
             <groupId>org.linkedprocess</groupId>
             <artifactId>lopsided-core</artifactId>
-            <version>0.1-proto</version>
+            <version>proto-0.1</version>
         </dependency>
         <dependency>
             <groupId>org.linkedprocess</groupId>
             <artifactId>lopsided-util</artifactId>
-            <version>0.1-proto</version>
+            <version>proto-0.1</version>
         </dependency>
         <dependency>
             <groupId>jivesoftware</groupId>
