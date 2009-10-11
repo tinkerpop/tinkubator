@@ -203,7 +203,7 @@
             <groupId>net.fortytwo</groupId>
             <artifactId>linked-data-sail</artifactId>
             <version>0.5</version>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>org.openrdf.sesame</groupId>
             <artifactId>sesame-sail-memory</artifactId>
@@ -228,7 +228,7 @@
             <groupId>org.openrdf.sesame</groupId>
             <artifactId>sesame-rio-trix</artifactId>
             <version>2.2.4</version>
-        </dependency>
+        </dependency>-->
 
     </dependencies>
 
