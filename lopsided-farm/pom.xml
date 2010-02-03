@@ -10,7 +10,7 @@
 
     <parent>
         <groupId>org.linkedprocess</groupId>
-        <artifactId>linkedprocess</artifactId>
+        <artifactId>lopsided</artifactId>
         <version>proto-0.1</version>
     </parent>
 

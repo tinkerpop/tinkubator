@@ -5,19 +5,13 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.linkedprocess</groupId>
-    <artifactId>linkedprocess</artifactId>
+    <artifactId>lopsided</artifactId>
     <version>proto-0.1</version>
     <packaging>pom</packaging>
     <name>LoPSideD: An Implementation of the Linked Process Protocol</name>
-    <description>Web-Scale Distributed Computing</description>
+    <description>Internet-Scale Distributed Computing</description>
     <url>http://linkedprocess.org/</url>
     <inceptionYear>2009</inceptionYear>
-    <contributors>
-    	<contributor>
-    		<name>Peter Neubauer</name>
-    		<email>peter@neubauer.se</email>
-    	</contributor>
-    </contributors>
     <licenses>
         <license>
             <name>BSD</name>
@@ -27,13 +21,29 @@
         <developer>
             <name>Marko A. Rodriguez</name>
             <email>marko@markorodriguez.com</email>
+            <url>http://markorodriguez.com</url>
         </developer>
         <developer>
             <name>Joshua Shinavier</name>
             <email>josh@fortytwo.net</email>
+            <url>http://fortytwo.net</url>
         </developer>
     </developers>
-
+    <contributors>
+        <contributor>
+            <name>Peter Neubauer</name>
+            <email>peter@neubauer.se</email>
+            <url>http://www.linkedin.com/in/neubauer</url>
+        </contributor>
+    </contributors>
+    <mailingLists>
+        <mailingList>
+            <name>Gremlin Users</name>
+            <subscribe>http://groups.google.com/group/linkedprocess</subscribe>
+            <unsubscribe>http://groups.google.com/group/linkedprocess</unsubscribe>
+            <archive>http://groups.google.com/group/linkedprocess/topics</archive>
+        </mailingList>
+    </mailingLists>
     <modules>
         <module>lopsided-core</module>
         <module>lopsided-farm</module>
