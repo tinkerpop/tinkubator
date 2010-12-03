@@ -1,4 +1,4 @@
-!http://github.com/tinkerpop/lopsided/raw/master/doc/images/lopsided-logo.png!
+!https://github.com/tinkerpop/lopsided/raw/master/doc/images/lopsided-logo.png!
 
 LoPSideD is a Java 1.6+ implementation of the "Linked Process":http://linkedprocess.org protocol. This implementation can be used to create a distributed compute cloud that can be supported and leveraged by any device with an Internet connection.
 
