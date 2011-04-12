@@ -1,0 +1,8 @@
+Linux version 2.6.35-23-server
+CPU	2 x Six-Core AMD Opteron(tm) Processor 2435 (2.6 GHz)
+RAM	32 GB
+FS	ext2 or ext4
+JVM	HotSpot(TM) 64-Bit Server VM (build 17.1-b03, mixed mode)
+JRE	JRE 1.6.0_22-b04
+
+

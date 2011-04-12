@@ -1,0 +1,12 @@
+!https://github.com/tinkerpop/graphdb-bench/raw/master/doc/images/graphdb-bench-logo.png!
+
+GraphDB-Bench is a collection of benchmarks for analyzing the performance of various graph frameworks. In order to use GraphDB-Bench, please ensure that the following are installed on the testing system:
+
+* "Java 1.6+":http://java.sun.com/: All benchmarks are currently evaluated from the perspective of using Java as the primary graph accessing language
+* Statistical Framework
+** "R:Statistics":http://www.r-project.org/: Used to generate graphs and plot analyses
+*** "iGraph":http://igraph.sourceforge.net/: Used to generate artificial graphs
+** "Python":http://python.org/: Used to generate graphs and plot analyses
+*** "iGraph":http://igraph.sourceforge.net/: Used to generate artificial graphs
+
+The documentation for GraphDB-Bench can be found at this "location":http://graphdb-bench.tinkerpop.com. Questions can be asked on the "Gremlin mailing list":http://groups.google.com/group/gremlin-users/topics. Finally, please visit "TinkerPop":http://tinkerpop.com for other software products.

@@ -1,0 +1,5 @@
+!https://github.com/tinkerpop/wrender/raw/master/doc/images/wrender-logo.png!
+
+Wrender is a lightweight graph visualization tool for "Blueprints":http://blueprints.tinkerpop.com. Along with various graph-based "TinkerPop":http://tinkerpop.com products, the "JUNG":http://jung.sourceforge.net and "Swing":http://en.wikipedia.org/wiki/Swing_%28Java%29 visualization toolkits are used to support the lazy rendering of Blueprints-based graphs.
+
+The documentation for Wrender can be found at this "location":http://wrender.tinkerpop.com. Finally, please visit "TinkerPop":http://tinkerpop.com for other software products.

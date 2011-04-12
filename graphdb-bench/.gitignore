@@ -1,0 +1,20 @@
+*.log
+*.edgelist
+#*.graphml
+*.pyc
+*~
+target/
+bin/
+wiki/
+blog/
+doc/old wiki entries/
+#data/datasets/
+#!data/datasets/barabasi.graphml
+#data/results/
+.settings/
+.project
+.pydevproject
+.classpath
+.idea/
+graphdb-bench.iml
+

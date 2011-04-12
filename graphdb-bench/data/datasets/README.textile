@@ -1,0 +1,2 @@
+This directory is the primary location whereby graph datasets are saved and loaded.
+Please refer to bench.properties in order to change this location.
