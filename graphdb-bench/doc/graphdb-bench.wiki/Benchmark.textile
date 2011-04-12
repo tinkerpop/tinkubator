@@ -1,0 +1,39 @@
+You've defined your "operations":http://github.com/tinkerpop/graphdb-bench/wiki/Operation and "factories":http://github.com/tinkerpop/graphdb-bench/wiki/OperationFactory. All that's left is to create your own @Benchmark@ definition that puts everything together. Fortunately this is also the easiest part, as @Benchmark@ is simply a convenient place to specify what type of operations your benchmark will comprise of.
+
+h3. Create your own Benchmark
+
+To create your own @Benchmark@ only one method (@getOperationFactories()@) needs to be overriden. Note however that the constructor of parent class @Benchmark@ must also be invoked (i.e. @super(log)@).
+
+bc. public class BenchmarkExample extends Benchmark {
+	// constructor
+	public BenchmarkBasic(String log) { super(log); }
+	@Override
+	protected ArrayList<OperationFactory> getOperationFactories() { return new ArrayList<OperationFactory>(); }
+}
+
+Here's what the method does:
+* *getOperationFactories():* This method is automatically called when the benchmark is started. Nearly all of the logic associated with running a benchmark (including invocation of @BenchRunner@) is already contained within @Benchmark@, all you need to do let @Benchmark@ know what type of operations are to be benchmarked - that is the sole purpose of this method. This is achieved by returning a collection of @OperationFactory@ instances, which will later be passed to @BenchRunner@ for execution. The order of execution is well defined: @BenchRunner@ executes all @Operation@ instances from the first factory, then moves onto the next factory, until all factories have been exhausted.
+
+h3. Example Benchmark implementation
+
+To support the explanations above, an example @Benchmark@ implementation follows:
+
+* This example creates a benchmark that's composed of the two operation types we introduced in [[Operation]] and [[OperationFactory]]. In this case, 10 instances of each operation will be created when the benchmark is run. 
+
+bc. public class BenchmarkExample extends Benchmark {
+	//
+	private static String PROPERTY_KEY = "name";
+	private static int OP_COUNT_GET = 10;
+	private static int OP_COUNT_NEIGHBORS = 10;
+	//
+	public BenchmarkBasic(String log) {
+		super(log);
+	}
+	@Override
+	protected ArrayList<OperationFactory> getOperationFactories() {
+		ArrayList<OperationFactory> operationFactories = new ArrayList<OperationFactory>();
+		operationFactories.add(new OperationFactoryGetVertex(OP_COUNT_GET, PROPERTY_KEY));
+		operationFactories.add(new OperationFactoryGremlinOutNeighbors(OP_COUNT_NEIGHBORS, PROPERTY_KEY)));
+		return operationFactories;
+	}
+}

@@ -1,0 +1,16 @@
+Before a graph system can be tested, a graph dataset is required. With GraphDB-Bench it's possible to run benchmarks on your existing database (and dataset), and in many cases this is desirable. However, you may be using GraphDB-Bench to compare multiple different graph databases (@Graph@ implementations). Alternatively, your benchmark might involve writing to (and potentially destroying) your dataset. In such cases you'll need a way to import the *same* graph dataset multiple times, into each database.
+
+"Blueprints":http://github.com/tinkerpop/blueprints/wiki provides the functionality to populate a graph database by importing "GraphML":http://graphml.graphdrawing.org/ files. Given that GraphDB-Bench is built on top of Blueprints (and the rest of the "TinkerPop":http://github.com/tinkerpop stack), it's natural to take advantage of this ability. 
+
+GraphDB-Bench comes with scripts for generating synthetic graphs of different topologies, and exporting those graphs to GraphML files. At present "R:Statistics":http://www.r-project.org/ and "Python":http://python.org/ scripts are provided, both using the "iGraph":http://igraph.sourceforge.net/ library's artificial graph generation functions. They can be found at: 
+* @src/main/r/graph-creator.r@
+* @src/main/python/graph-creator.py@
+
+*Important:* If you intend on using these scripts you will need to install iGraph. The "iGraph Ubuntu Repository is here.":https://launchpad.net/~igraph/+archive/ppa
+
+Finally, when using @src/main/python/graph-creator.py@ note that it reads some of its parameters from @src/main/resources/com/tinkerpop/bench/bench.properties@. The relevant parts of this properties file are displayed below: 
+
+bc. bench.datasets.directory=data/datasets/		<-- directory where .graphml file will be saved
+bench.graph.barabasi.file=barabasi.graphml	<-- at present, this is the name of the generated file
+bench.graph.barabasi.vertices=1000		<-- number of vertices the graph will have
+bench.graph.barabasi.degree=5			<-- average degree (approximately) of vertices in the generated graph

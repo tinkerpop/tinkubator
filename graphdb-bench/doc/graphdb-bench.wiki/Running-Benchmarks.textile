@@ -1,0 +1,46 @@
+Until now we've covered how to define an [[Operation]], an [[OperationFactory]], and a [[Benchmark]], but we've said nothing about how to actually do what we want: ultimately our goal is to *run a benchmark*. Here's how to do that:
+
+# Instantiate an implementation of @Benchmark@, providing a path (@operationLog@) that specifies where you would like the operation log to be written (or where one already exists). As mentioned in [[Overview]], during a benchmark execution @BenchRunner@ not only executes each @Operation@ but also logs them. @operationLog@ refers to this operation log, *not* to where results will be written. 
+*IMPORTANT:* If the path you pass in actually points to an existing operation log, this log will be loaded and executed. The @OperationFactory@ instances you return from @Benchmark.getOperationFactories()@ *will be ignored*.
+# Instantiate a @Graph@ instance (@graph@) that you wish to benchmark.
+# Call @benchmark.loadOperationLogs(Graph graph, String resultsLog)@ on your @Benchmark@ instance, passing in @graph@ and a path to where this benchmark's results should be stored. Invoking this method will check if @operationLog@ exists. If it does not it will be created and populated according to @getOperationFactories()@. @operationLog@ will then be loaded and its operations executed against @graph@. Finally, the results (time taken for each operation to complete) will be logged to @resultsLog@.
+# Shutdown @graph@.
+# Return to 2) and repeat for all @Graph@ implementations that you wish to compare.
+# Create a summary file - condense all results into a concise human-readable format. The @resultsLog@ s that we've now created contain a lot of useful information, but they are also very long and not entirely human-readable. For this reason we provide @LogUtils.makeResultsSummary(String summaryFilePath, Map<String, String> resultFilePaths)@. This method calculates the *average* running time that each @Operation@ takes on each @Graph@ implementation. It then writes these summarized results to @summaryFilePath@. See code snippet below for example usage, then see [[Reading Result Logs]] for information on reading the generated file(s).
+
+* Please note that although we make a distinction between "operation logs" and "results logs" their format and content are identical, it's only their creation process that differs. The reason for treating them differently here is that you (the user of GraphDB-Bench) have no control over which @Graph@ implementation is used to create "operation logs". For that reason, their is little point in comparing the contents of "operation logs" with that of "result logs". Basically, "operation logs" are only used as a means of persisting benchmark runs for later re-use.
+
+The example below shows how to run the [[Benchmark]] that we defined previously:
+
+bc. public class Example {
+	public static void main(String[] args) {
+		Graph graph = null;
+		Benchmark benchmark = new BenchmarkExample("operation_log.csv");
+		//
+		// Load operation logs with Neo4j
+		//
+		graph = new Neo4jGraph("db_neo4j/");
+		benchmark.loadOperationLogs(graph, "results_log_neo4j.csv");
+		graph.shutdown();
+		//
+		// Load operation logs with OrientDB
+		//
+		graph = new OrientGraph("local:/db_orient/db/");
+		benchmark.loadOperationLogs(graph, "results_log_orient.csv");
+		graph.shutdown();
+		//
+		// Load operation logs with TinkerGraph
+		//
+		graph = new TinkerGraph();
+		benchmark.loadOperationLogs(graph, "results_log_tinker.csv");
+		graph.shutdown();
+		//
+		// Create file with summarized results of all benchmark runs
+		//
+		LinkedHashMap<String, String> resultFiles = new LinkedHashMap<String, String>();
+		resultFiles.put("neo4j", "results_log_neo4j.csv");
+		resultFiles.put("orient", "results_log_orient.csv");
+		resultFiles.put("tinker", "results_log_tinker.csv");
+		LogUtils.makeResultsSummary("summary.csv", resultFiles);
+	}
+}

@@ -1,0 +1,78 @@
+As mentioned in the [[Overview]], operations are the actions/algorithms that execute on a database during benchmark runs. Clearly though, the definition of "operation" will differ greatly between domains and even between applications within the same domain. Because of this, GraphDB-Bench makes it very easy to create new operations that accurately reflect the usage of *your* application.
+
+h3. Create your own Operation
+
+To implement your own operation, simply extend the @Operation@ class, override two methods (@onInitialize(String[] args)@ and @onExecute()@), and you're done. 
+
+bc.  public class OperationExample extends Operation {
+	@Override
+	protected void onInitialize(String[] args) {}
+	@Override
+	protected boolean onExecute() { return true; }
+}
+
+Here's what these methods do:
+* *onInitialize(String[] args):* Has one input parameter, an array of arguments @String[] args@.
+The purpose of this method is to allow the operation to carry out any "setup" tasks. For example, if the operation "gets all neighbor vertices of a given start vertex" then it may be desirable to ignore how long it takes to retrieve the "start vertex". In this case the start vertex could be retrieved within @onInitialize(String[] args)@, and then stored in a class variable until @onExecute()@ needs it.
+Note, to access the @Graph@ database @Operation@ provides the setter method @getGraph()@.
+* *onExecute():* Takes no input parameters. The code it contains (and only the code it contains) is what will be timed when the operation is executed during a benchmark. It's quite straightforward, @onExecute()@ should contain the calculation/algorithm/traversal/operation that you are interested in benchmarking.
+Note, (for debugging purposes only) it's possible to store the result of your operation by calling @setResult(Object result)@. When comparing the performance of two different databases this is useful, as it allows you to check if each database is returning the exact same results for the exact same operation (*if their results differ something is wrong*).
+
+h3. Example Operation implementations
+
+To support the explanations above, a number of example @Operation@ implementations follow:
+
+* A basic operation that uses "Blueprints":http://github.com/tinkerpop/blueprints/wiki to perform a vertex lookup. It returns the name(s) of found vertex/vertices.
+
+bc.  public class OperationIndexGetVertex extends Operation {
+	private String propertyKey = null;
+	private String propertyValue = null;
+	// 
+	// args [0 -> property key, 1 -> property value]
+	// 
+	@Override
+	protected void onInitialize(String[] args) {
+		this.propertyKeys = args[0];
+		this.propertyValues = args[1];
+	}
+	@Override
+	protected boolean onExecute() {
+		try {
+			ArrayList<Element> elements = new ArrayList<Element>();
+			for (Element element : getGraph().getIndex().get(propertyKey, propertyValue))
+				elements.add(element);
+			setResult(elements);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+}
+
+* A basic operation that uses "Gremlin":http://github.com/tinkerpop/gremlin/wiki to retrieve all neighbor vertices of a given start vertex. In this case there is only one input parameter - the Gremlin script. It returns the number of neighbors that were found.
+
+bc.  public class OperationGremlinOutNeighbors extends Operation {
+	private String gremlinScript = null;
+	//
+	// args = [0 -> gremlinScript]
+	//
+	@Override
+	protected void onInitialize(String[] args) {
+		this.gremlinScript = args[0];
+	}	
+	@Override
+	protected boolean onExecute() {
+		try {
+			int neighbors = 0;
+			Iterable<Object> resultVertices;
+			resultVertices = (Iterable<Object>) BenchRunner.getGremlinScriptEngine().eval(gremlinScript);
+			Object vertices = resultVertices.iterator().next();
+			for (Vertex vertex : (Iterable<Vertex>) vertices) {
+				neighbor++;
+			setResult(neighbors);
+		} catch (ScriptException e) {
+			return false;
+		}
+		return true;
+	}
+}

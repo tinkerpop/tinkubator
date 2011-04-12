@@ -1,0 +1,17 @@
+ A basic demo of a draft of Wrender (*proof of concept*). Note, this is very alpha and provided here to get community feedback on direction.
+
+Wrender maintains two graphs--the graph of interest and an in-memory TinkerGraph that is actually visualized. The TinkerGraph is intended to be a subset of the larger graph.
+
+!https://github.com/tinkerpop/wrender/raw/master/doc/images/demo-screen-1.png!
+
+Use Gremlin to grab portions of the backend graph and place into the in-memory TinkerGraph.
+
+!https://github.com/tinkerpop/wrender/raw/master/doc/images/demo-screen-2.png!
+
+The "render" checkbox states that any vertices/edges that are returned by a Gremlin query are visualized (i.e. placed in the in-memory TinkerGraph)
+
+!https://github.com/tinkerpop/wrender/raw/master/doc/images/demo-screen-3.png!
+
+Of course, simply do @$_g/V/outE@ to render the entire graph.
+
+!https://github.com/tinkerpop/wrender/raw/master/doc/images/demo-screen-4.png!

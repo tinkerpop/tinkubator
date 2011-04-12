@@ -1,0 +1,31 @@
+!https://github.com/tinkerpop/graphdb-bench/raw/master/doc/images/graphdb-bench-logo.png!
+
+GraphDB-Bench is an extensible graph database benchmarking tool. Its goal is to provide an easy-to-use library for defining and running application/domain-specific benchmarks against different graph database implementations. To achieve this the core code-base has been kept relatively simple, through extensive use of lower layers in the "TinkerPop":http://github.com/tinkerpop stack.
+
+In addition to the benchmarking framework, GraphDB-Bench also includes a collection of artificial graph generation code.
+
+The documentation herein will provide all the information necessary for understanding how to define benchmarks, generate synthetic graphs, run benchmarks on these loaded graphs, and evaluate benchmark results. 
+
+Finally, note that each benchmark described in this documentation has provided results for those not desiring to run the benchmarks on their local machines.
+
+==<hr/>==
+
+# [[Introduction]]
+# [[Creating Artificial Graphs]]
+# Defining Benchmarks
+  ** [[Overview]]
+  ** Extending [[Operation]]
+  ** Extending [[OperationFactory]]
+  *** About [[Evaluator]]
+  ** Extending [[Benchmark]]
+# [[Running Benchmarks]]
+# Analyzing Benchmark Results
+  ** [[Reading Result Logs]]
+  ** [[Plotting Results]] *TODO*
+# [[Published Benchmark Results]]
+# [[Frequently Asked Questions]] *TODO*
+# [[Acknowledgements]]
+
+==<hr/>==
+
+For more details please ask questions on the "Gremlin mailing list":http://groups.google.com/group/gremlin-users/topics or git clone!

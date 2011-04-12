@@ -1,0 +1,57 @@
+h2>. --- IMPORTANT ---
+
+Please take the current results with a grain of salt. These were run against very small graphs, so the persistence engines and caching layers of these databases are not being stressed at all. *These are just proof-of-concept results to give people an idea of what's to come*. In the near future we hope to start working with much larger datasets (10x - 1000x bigger), and to benchmark using more complex and interesting access patterns.
+
+h3>. Execution Environment
+ * *Operating System:* Ubuntu Linux version 2.6.35-23-server
+ * *CPU:* 2 x Six-Core AMD Opteron(tm) Processor 2435 (2.6 GHz)
+ * *RAM:* 32 GB
+ * *File System:* ext4
+ * *Java*
+  ** *JVM:* HotSpot(TM) 64-Bit Server VM (build 17.1-b03, mixed mode)
+  ** *JRE:* 1.6.0_22-b04
+  ** *JVM Arguments:* -server -XX : +UseConcMarkSweepGC -XX : +UseParNewGC -Xms15G -Xmx15G
+
+h3. Echo Traversal
+
+This operation tests the read performance of the Graph when performing deep traversals.
+
+Start vertex is selected randomly using "EvaluatorOutDegree":https://github.com/tinkerpop/graphdb-bench/blob/master/src/main/java/com/tinkerpop/bench/evaluators/EvaluatorOutDegree.java. "Pipes":http://pipes.tinkerpop.com is then used to retrieve the out edges connected to the start vertex, followed by the in vertices of those edges - this represents a traversal of depth one. At depth two the result vertices from depth one are used as start vertices, etc. Benchmark was run against the same dataset (*100,000 vertices* & *500,000 edges*) and the *depth was varied between 1-7*. To get a good sample *1,000 operations were performed at each depth*, and the mean was calculated. The results below display the *mean time to completion in milliseconds*.
+
+| |_. Depth 1|_. Depth 2|_. Depth 3|_. Depth 4|_. Depth 5|_. Depth 6|_. Depth 7|
+|"TinkerGraph [in-memory]":https://github.com/tinkerpop/blueprints/wiki/TinkerGraph|_. 0.02|_. 0.19|_. 1.85|_. 24.99|_. 126.27|772.87|5066.27|
+|"Neo4j [persistent]":https://github.com/tinkerpop/blueprints/wiki/Neo4j-Graph-Database|0.15|0.88|5.59|64.6|330.82|2019.95|13618.61|
+|"OrientDB [persistent]":https://github.com/tinkerpop/blueprints/wiki/OrientDB-Graph-Database|9.05|59.1|119.71|154.11|228.52|_. 760.26|_. 4174.01|
+
+h3. Load GraphML File
+
+This operation tests the write performance of the Graph.
+
+GraphML files of different sizes are loaded: *Tiny* (1,000 vertices & 5,000 edges), *Small* (10,000 vertices & 50,000 edges), *Medium* (100,000 vertices & 500,000 edges), *Large* (1,000,000 vertices & 5,000,000 edges). The results below display the *time to load a GraphML file, in milliseconds*.
+
+| |_. Tiny|_. Small|_. Medium|_. Large|
+|"TinkerGraph [in-memory]":https://github.com/tinkerpop/blueprints/wiki/TinkerGraph|_. 33|_. 377|_. 5746|_. 62269|
+|"Neo4j [persistent]":https://github.com/tinkerpop/blueprints/wiki/Neo4j-Graph-Database|2973|5933|61128|884124|
+|"OrientDB [persistent]":https://github.com/tinkerpop/blueprints/wiki/OrientDB-Graph-Database|2551|51823|26356819|n/a|
+
+h3. Index Write
+
+This operation tests the write performance of the Graph's index.
+
+All the elements (vertices and edges) of a graph are indexed using a property that is stored on every element. In this benchmark the name of the *property to index is "_id"* and the *property value is a @String@*. Benchmark was run against different datasets: *Tiny* (1,000 vertices & 5,000 edges), *Small* (10,000 vertices & 50,000 edges), *Medium* (100,000 vertices & 500,000 edges), *Large* (1,000,000 vertices & 5,000,000 edges). The results below display the *time to index all graph elements, in milliseconds*.
+
+| |_. Tiny|_. Small|_. Medium|_. Large|
+|"TinkerGraph [in-memory]":https://github.com/tinkerpop/blueprints/wiki/TinkerGraph|_. 5|_. 62|_. 811|_. 8223|
+|"Neo4j [persistent]":https://github.com/tinkerpop/blueprints/wiki/Neo4j-Graph-Database|1405|8313|138445|2237960|
+|"OrientDB [persistent]":https://github.com/tinkerpop/blueprints/wiki/OrientDB-Graph-Database|561|2527|77610|n/a|
+
+h3. Index Read
+
+This operation tests the read performance of the Graph's index.
+
+Each operation performs 100 index lookups/reads. The vertices to lookup are selected at random using "EvaluatorUniform":https://github.com/tinkerpop/graphdb-bench/blob/master/src/main/java/com/tinkerpop/bench/evaluators/EvaluatorUniform.java. Vertices are looked up using a property that is stored on every vertex. In this benchmark the name of the *property to index is "_id"* and the *property value is a @String@*. Benchmark was run against three different datasets: *Tiny* (1,000 vertices & 5,000 edges), *Small* (10,000 vertices & 50,000 edges), *Medium* (100,000 vertices & 500,000 edges), *Large* (1,000,000 vertices & 5,000,000 edges). To get a good sample *1,000* operations were performed on each graph size, and the mean was calculated. The results below display the *mean time to perform 100 lookups, in milliseconds*.
+
+| |_. Tiny|_. Small|_. Medium|_. Large|
+|"TinkerGraph [in-memory]":https://github.com/tinkerpop/blueprints/wiki/TinkerGraph|_. 0.05|_. 0.13|_. 0.15|_. 0.19|
+|"Neo4j [persistent]":https://github.com/tinkerpop/blueprints/wiki/Neo4j-Graph-Database|1.96|2.68|8.79|8.87|
+|"OrientDB [persistent]":https://github.com/tinkerpop/blueprints/wiki/OrientDB-Graph-Database|1.95|2.79|15.04|n/a|

@@ -1,0 +1,94 @@
+There are two ways to interact with Mutant--by using the interactive Mutant console or by evaluating a plain text Mutant script file. This section will demonstrate both mechanisms by way of some basic examples.
+
+# "Mutant Console":#console
+# "Mutant Scripts":#scripts
+
+h2(#console). Mutant Console
+
+Loading up the Mutant console is simple.
+
+```text
+marko:~/software/mutant$ ./mutant.sh 
+
+      //
+     oO ~~-_
+___m(___m___~.___  MuTanT 0.1-SNAPSHOT
+_|__|__|__|__|__|     [ ?h = help ]
+
+[gremlin] gremlin 0.6-SNAPSHOT
+[Groovy] Groovy Scripting Engine 2.0
+[ruby] JSR 223 JRuby Engine 1.5.5
+[ECMAScript] Mozilla Rhino 1.6 release 2
+[AppleScript] AppleScriptEngine 1.0
+
+mutant[gremlin]> 
+```
+
+In this particular instance of Mutant there are 5 available ScriptEngines (i.e. virtual machines, languages). Lets flip between them. The console control token @?x@ moves to the "next" engine in the list of engines (use @?z@ to move in the opposite direction). Feel free, at any time to get help @?h@ on the console commands.
+
+```text
+mutant[gremlin]> $x := 12
+[12]
+mutant[gremlin]> ?x
+mutant[AppleScript]> ?x
+mutant[Groovy]> $x
+12
+mutant[Groovy]> ?x
+mutant[ruby]> $x
+12
+mutant[ruby]> ?x
+mutant[ECMAScript]> $x
+12
+```
+
+We can jump to a particular engine using @?<language-name>@.
+
+```text
+mutant[ECMAScript]> ?Groovy
+Switched to Groovy
+mutant[Groovy]> ?ruby
+Switched to ruby
+mutant[ruby]> ?gremlin
+Switched to gremlin
+mutant[gremlin]> 
+```
+
+Lets do a multi-line statement in Groovy.
+
+```text
+mutant[Groovy]> for(i=0;i<5;i++) { .
+                  System.out.print(i); .
+                } .
+                System.out.println(); 
+01234
+null
+mutant[Groovy]> 
+```
+
+Note the use of @.@ to alert Mutant that you want to add a newline character and not submit the console text to the virtual machine. This is not needed in scripts, only in the console. The reason for this is that Mutant has not concept of the underlying language and thus, does not know what a compound (multi-line) statement is. As such, the user must specify when a multi-line statement is in effect--hence, @.@.
+
+h2(#scripts). Mutant Scripts
+
+Assume the following plain text file @example.mut@.
+
+```text
+?gremlin
+$x := 1+2
+?Groovy
+for(int i=0;i<10;i++) {
+  $x = $x + i;
+}
+?gremlin
+$x
+```
+
+To run the script, call it with the reserved @?s@ (script) Mutant keyword.
+
+```text
+mutant[ruby]> ?s example.mut
+[48]
+mutant[gremlin]> 
+```
+
+That's all there is to it.
+

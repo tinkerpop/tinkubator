@@ -1,0 +1,26 @@
+In a nut shell, GraphDB-Bench measures how much time it takes for a graph database to execute (to completion) a given type of operation - be it simple reads and writes, or complex traversals. For an overview of how this is achieved, see the graphical representation below and the explanation that follows it.
+
+!=https://github.com/tinkerpop/graphdb-bench/raw/master/doc/images/graphdb-bench-structure.png!
+
+There are three main concepts to understand when working with GraphDB-Bench:
+* *Operation:* The actions that are executed on a database during benchmark runs.
+  ** An @Operation@ defines one traversal/algorithm to be executed (e.g. one execution of a Breadth First Search traversal, from a defined starting position). When combined, many @Operation@ s form one benchmark. 
+  ** To implement an @Operation@ only two methods need to be overriden, @onInitialize(String[] args)@ and @onExecute()@ . 
+Tasks performed in @onInitialize@ should take care of (computationally uninteresting) initialization, and will have no impact on the measured running time. In contrast, @onExecute@ defines the computation for which running time will be measured (e.g. Breath First Search traversal code).
+** See [[Operation]]
+
+* *OperationFactory:* The source of all operations that a benchmark will execute.
+  ** The purpose of an @OperationFactory@ is to create a stream of @Operation@ objects. In general, the @Operation@ instances created by an @OperationFactory@ will be composed into a benchmark.
+  ** In more detail, @OperationFactory@ implementations are responsible for instantiating @Operation@ objects, and generating their input @args@ .
+E.g., an @OperationFactoryBreadthFirstSearch@ may select the vertex from which to start searching and the maximum amount of hops to traverse. In this case, @args = String[] {startVertexId, maxHops}@ .
+** See [[OperationFactory]]
+
+* *BenchRunner*: Responsible for initializing, running, measuring/monitoring, and logging of operations.
+  ** As the name implies, @BenchRunner@ runs a benchmark. It takes a collection of @OperationFactory@ instances as input and executes the @Operation@ instances that they create. The order of execution is well defined: @BenchRunner@ executes all @Operation@ instances from the first factory, then moves onto the next factory, until all factories have been exhausted.
+  ** @BenchRunner@ also logs each @Operation@ , its results, and its run-time, to a .csv file. This .csv file can later be used when analyzing the benchmark results and for plotting. Additionally, a special implementation of @OperationFactory@ called @OperationFactoryLog@ makes it possible to load these .csv files and re-run the exact same sequence of @Operation@ s at a later time (and against a different @Graph@ database).
+  ** @BenchRunner@ exposes two methods: the constructor and @startBench()@.
+    *** The constructor, @BenchRunner(Graph db, File logFile, ArrayList<OperationFactory> operationFactories)@, works as follows:
+      **** @Graph db@ specifies the database to run the benchmark on (e.g. "Neo4j":http://neo4j.org/, "OrientDB":http://www.orientechnologies.com/, "TinkerGraph":http://github.com/tinkerpop/gremlin/wiki/TinkerGraph, etc). 
+      **** @File logFile@ specifies the file to write the operations & results to.
+      **** @ArrayList<OperationFactory> operationFactories@ specifies the type of algorithms to perform.
+** Note, developers should never work with @BenchRunner@ directly. See [[Benchmark]] for more about running benchmarks.

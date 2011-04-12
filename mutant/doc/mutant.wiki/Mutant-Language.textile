@@ -1,0 +1,21 @@
+The Mutant language is simple. Or, thought of another way, the Mutant language is the most complex language ever developed. Given that it can contain any other language, it is all languages in one. However, this latter vantage point is not productive with respects to grasping how to use Mutant. 
+
+In short, there are two language statements in Mutant:
+
+* @?<language-name>@: switch to another ScriptEngine by language name (e.g. for Groovy, do @?Groovy@).
+* @?s <mutant-script-name>@: load a mutant script.
+
+Everything else is in the programming language of a particular ScriptEngine virtual machine (even comments). The typical Mutant script looks as below. When switching to a new ScriptEngine, the code that follows is the code specific to that language. That's all there is to it.
+
+```text
+?language-x
+// a comment in the language x
+do something
+  in language x
+done.
+?language-y
+set g in y
+?language-x
+read g
+print g
+```

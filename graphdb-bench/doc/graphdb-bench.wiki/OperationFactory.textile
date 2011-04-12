@@ -1,0 +1,98 @@
+Defining an [[Operation]] is the first step in creating your domain-specific benchmark, but you're not done yet. To use your newly created @Operation@ in a benchmark you must first implement an accompanying @OperationFactory@. This is because @BenchRunner@ only deals with subclasses of @OperationFactory@, which provide it with the @Operation@ instances to execute.
+
+Briefly, @OperationFactory@ implementations are tasked with two jobs.They generate the input parameters for operations, then they instantiate operations using those input parameters.
+
+h3. Create your own OperationFactory
+
+To create your own @OperationFactory@ implementation, simply extend the @OperationFactoryBase@ (*not* @OperationFactory@) class, override three methods (@onInitialize()@, @hasNext()@, and @onCreateOperation()@), and you're done.
+
+bc. public class OperationFactoryExample extends OperationFactoryBase {
+	// Constructor
+	public OperationFactoryExample(...) {}
+	@Override
+	public void onInitialize() {}
+	@Override
+	public boolean hasNext() { return true }
+	@Override
+	protected OperationArgs onCreateOperation() { return new OperationArgs(...) }
+}
+
+Here's what these methods do:
+* *onInitialize():* This is the place to perform any "setup" tasks. For example, regardless of the type of operations that this factory creates, the operations will (nearly) always begin from some start vertex/vertices. To select these start vertices the @Graph@ must be accessed, which can be expensive/slow when working with larger graphs. Moreover, this vertex selection process generally only needs to be performed once to begin with, then the selected vertices (or their identifiers) can be stored in memory until they are required. Such tasks should be performed in @onInitialize()@.
+Note, the @StatisticsHelper@ class provides a helper method (@Object[] getSampleVertexIds(Graph db, Evaluator evaluator, int sampleSize)@) that returns a collection of randomly selected start vertices given some selection criteria (defined by an @Evaluator@). See [[Evaluator]] for more details.
+* *hasNext():* Needed because @OperationFactory@ implements the @Iterable<Operation>@ interface. Lets @BenchRunner@ know if the factory has any more goodies for it.
+* *onCreateOperation():* This method will be automatically called from within @next()@ (remember that @OperationFactory@ is an @Iterable@), and is where your factory will specify what type of operation is to be created next. Note however that @onCreateOperation()@ returns an @OperationArgs@ object and *not* an @Operation@ object. This is because the actual instantiation is handled by @OperationFactoryBase@. 
+What you need to return is an @OperationArgs(String[] args, Class<?> type)@ instance, which specifies the type of operation and the input arguments it should receive (these are the arguments that are passed into @Operation.onInitialize(String[] args)@). See below for concrete examples.
+
+(e.g. @new OperationArgs(new String[] {arg1, arg2, ...}, OperationExample.class)@)
+
+h3. Example OperationFactory implementations
+
+To support the explanations above, a number of example @OperationFactory@ implementations follow:
+
+* This factory creates the vertex lookup operation that was explained in [[Operation]]:
+
+bc. public class OperationFactoryGetVertex extends OperationFactoryBase {
+	// 
+	private String propertyKey = null;
+	private int opCount = 0;
+	private ArrayList<Object> vertexSamples = null;
+	// 
+	public OperationFactoryGetVertex(int opCount, String propertyKey) {
+		this.opCount = opCount;
+		this.propertyKey = propertyKey;
+	}
+	@Override
+	public void onInitialize() {
+		// Select start vertices uniformly at random from the input graph
+		Object[] temp = StatisticsHelper.getSampleVertexIds(getGraph(), new EvaluatorUniform(), opCount));
+		vertexSamples = new ArrayList<Object>(Arrays.asList(temp));
+	}
+	@Override
+	public boolean hasNext() { return vertexSamples.isEmpty() == false; }
+	@Override
+	protected OperationArgs onCreateOperation() {
+		Object startVertexId = vertexSamples.remove(0);
+		Vertex startVertex = getGraph().getVertex(startVertexId);
+		String propertyValue = startVertex.getProperty(propertyKey).toString();
+		// 
+		// args = [0 -> property key, 1 -> property value]
+		// 
+		String[] args = new String[] {propertyKey, propertyValue};
+		return new OperationArgs(args, OperationIndexGetElements.class);
+	}
+}
+
+* This factory creates the Gremlin get neighbors operation that was explained in [[Operation]]:
+
+bc. public class OperationFactoryGremlinOutNeighbors extends OperationFactoryBase {
+	//
+	private int opCount = 0;
+	private String propertyKey = null;
+	private ArrayList<Object> vertexSamples = null;
+	//
+	public OperationFactoryGremlinOutNeighbors(int opCount, String propertyKey) {
+		this.opCount = opCount;
+		this.propertyKey = propertyKey;
+	}
+	@Override
+	public void onInitialize() {
+		// Select vertices randomly (probability of selecting a vertex is proportional to its out-degree)
+		Object[] temp = StatisticsHelper.getSampleVertexIds(getGraph(), new EvaluatorOutDegree(), opCount));
+		vertexSamples = new ArrayList<Object>(Arrays.asList(temp));
+	}
+	@Override
+	public boolean hasNext() { return vertexSamples.isEmpty() == false; }
+	@Override
+	protected OperationArgs onCreateOperation() throws Exception {
+		Object startVertexId = vertexSamples.remove(0);
+		Vertex startVertex = getGraph().getVertex(startVertexId);
+		String propertyValue = startVertex.getProperty(propertyKey).toString();
+		String gremlinScript = String.format("g:key-v('%s','%s')/outE/inV", propertyKey, propertyValue);
+		//
+		// args = [0 -> gremlinScript]
+		// 
+		String[] args = new String[] { gremlinScript };
+		return new OperationArgs(args, OperationGremlinOutNeighbors.class);
+	}
+}

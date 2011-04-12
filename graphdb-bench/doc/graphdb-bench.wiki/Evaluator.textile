@@ -1,0 +1,43 @@
+As previously covered in the [[OperationFactory]] section, almost all operations will only compute on a subset of the total graph. They will generally start from some start vertex/vertices, then perform a "traversal":http://arxiv.org/abs/1004.1001 from there.
+The way these start vertices are selected can be interesting for many reasons. For example, to more closely model a real-world application you may want your benchmark to access certain vertices more frequently than others. Alternatively, you may want reduce the impact of caching by accessing every vertex with equal frequency.
+The purpose of @Evaluator@ classes is to provide developers with an easy means of controlling how these start vertices are selected.
+
+h3. Random Vertex Sampling
+
+To retrieve a random vertex sample is straight forward, the @StatisticsHelper.getSampleVertexIds(Graph db, Evaluator evaluator, int sampleSize)@ helper method provides this functionality. However, the way it does so is the interesting part. The following flow of events provides a general explanation of the selection process:
+# Every vertex in the graph gets assigned some @score@ - a floating point number. 
+# The sum of all vertices' @scores@ is calculated and stored in @scoreSum@.
+ ** A vertex's score denotes how much of the region [0,@scoreSum@] it "owns".
+# A floating point number is uniformly randomly generated in the range [0,@scoreSum@].
+# The vertex that owns the region in which the random number resides is selected.
+# Return to 3) and repeat until a large enough sample has been retrieved.
+
+h3. Standard Evaluator Implementations
+
+By taking an @Evaluator@ instance as one of its input parameters the @getSampleVertexIds@ method gives the developer control over how vertex @scores@ are calculated. The following list presents some of the standard @Evaluator@ implementations:
+* *EvaluatorUniform:* All vertices are assigned the same @score@.
+* *EvaluatorDegree:* A vertex's score is proportional to its degree (the number of edges entering it and leaving it).
+* *EvaluatorInDegree:* A vertex's score is proportional to its in-degree (the number of edges entering it).
+* *EvaluatorOutDegree:* A vertex's score is proportional to its out-degree (the number of edges leaving it).
+* *EvaluatorProperty:* A vertex's score is retrieved from a specified property (e.g. age, weight, coordinates, etc).
+
+h3. An Example
+
+To better explain the concept, consider the example graph below:
+
+!=https://github.com/tinkerpop/graphdb-bench/raw/master/doc/images/graphdb-bench-evaluator-graph.png!
+
+If vertices were selected from this graph using an @EvaluatorUniform@, every vertex would be equally likely to be selected. In contrast, if we were to use @EvaluatorDegree@ then the vertices with higher degree would be selected with higher probability (and therefore higher frequency). The image below visually illustrates this:
+
+!=https://github.com/tinkerpop/graphdb-bench/raw/master/doc/images/graphdb-bench-evaluator-distribution.png!
+
+h3. Extending Evaluator
+
+Finally, although the standard @Evaluator@ implementations are sufficient for many (most?) benchmarks, there will always be those that want more. When the standard implementations don't do the trick, defining your own is easy. Here's what you need to do, in code-snippet form:
+
+bc. public class EvaluatorExample extends Evaluator {
+	@Override
+	public double evaluate(Vertex vertex) {
+		return //<CALCULATE SCORE DETERMINISTICALLY>
+	}
+}

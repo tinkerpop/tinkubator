@@ -1,0 +1,14 @@
+!https://github.com/tinkerpop/wrender/raw/master/doc/images/wrender-logo.png!
+
+Wrender is a lightweight visualization tool for "Blueprints":http://blueprints.tinkerpop.com based property graphs. "JUNG":http://jung.sourceforge.net/ and "Swing":http://en.wikipedia.org/wiki/Swing_%28Java%29 visualization toolkits are used to support the lazy rendering of any Blueprints-enable graph database/framework.
+
+
+==<hr/>==
+
+* [[Introduction]]
+* Working with JungGraph
+* Release Notes
+
+==<hr/>==
+
+fn1. Wrender documentation is up to date with the current Wrender "codebase":http://github.com/tinkerpop/wrender/tree/master, not with the latest Wrender "release":http://github.com/tinkerpop/wrender/downloads.

@@ -1,0 +1,33 @@
+Our benchmark has finished running, the logs (operation log, results logs, and summary log) have been created, and you now want to know how to decipher results. Read on!
+
+h3. Disclaimer
+
+The actual running times presented in this section were pulled out of nowhere, they're *not real*.
+
+h3. Operation/Results Logs
+
+These are .csv files with five columns and a ';' column separator. The columns are as follows:
+# *id:* is simply a unique identifier. It can be useful when debugging very long logs, when comparing different runs of same benchmark that were run on different @Graph@ implementations, etc.
+# *type:* the name of the @Operation@ instance that this entry was created by.
+# *args:* input arguments that were passed to the @Operation@ instance that created this entry.
+# *time:* time in milliseconds that this @Operation@ took to complete its @onExecute()@ method.
+# *result:* what ever this @Operation@ placed into its @setResult(Object result)@ method (if it was not called, this column will contain @null@).
+
+In [[Running Benchmarks]] we ran a benchmark, creating three results logs and one operation log. The snippet below contains excerpts from one of those files:
+
+bc. id ;	type ;						args ;					time ;		result ;
+1 ;	com.tinkerpop.OperationIndexGetVertex ;		[_id, v68] ;				2 ;		[v[68]] ;
+2 ;	com.tinkerpop.OperationIndexGetVertex ;		[_id, v30] ;				2 ;		[v[30]] ;
+...
+11 ;	com.tinkerpop.OperationGremlinOutNeighbors ;	[g:key-v('_id','v29')/outE/inV] ;	4 ;		4;
+12 ;	com.tinkerpop.OperationGremlinOutNeighbors ;	[g:key-v('_id','v14')/outE/inV] ;	7 ;		9;
+
+By throwing these files into a spreadsheet application it's possible to extract a range of interesting information. For example, the min/max/standard-deviation/mean time that each operation type took complete. Additionally, this format makes it relatively easy to generate plots/charts. However, as these files may be (many) thousands of lines in length, that can be a laborious process and one that most users don't want to go through - at least at first. That's why we have the @LogUtils.makeResultsSummary()@ method (see [[Running Benchmarks]]), which converts your collection of long results logs into one, short summary file...
+
+h3. Summary Logs
+
+Summary files contain nothing more than the mean running time of each @Operation@ implementation, on each @Graph@ implementation. The snippet below shows the entire contents of @summary.csv@, which we created in [[Running Benchmarks]]:
+
+bc. operation ;					neo4j ;		orient ;	tinker ;
+com.tinkerpop.OperationIndexGetVertex ;		2.9 ;		2.1 ;		0.2 ;
+com.tinkerpop.OperationGremlinOutNeighbors ;	7.3 ;		7.7 ;		3.3 ;

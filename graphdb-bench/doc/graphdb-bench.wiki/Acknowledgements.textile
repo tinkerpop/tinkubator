@@ -1,0 +1,9 @@
+This section provides a list of the people that have contributed in some way to the creation of GraphDB-Bench.
+
+# "Alex Averbuch":http://se.linkedin.com/in/alexaverbuch -- co-designed core concepts, main developer, and documenter of GraphDB-Bench.
+# "Marko A. Rodriguez":http://markorodriguez.com -- creator of GraphDB-Bench, and writer of initial code base and documentation.
+# "Martin Neumann":http://se.linkedin.com/pub/martin-neumann/19/5a6/553 --  co-designed core concepts, and helped develop initial version of current code base.
+
+Please review GraphDB-Bench's "pom.xml":http://github.com/tinkerpop/graphdb-bench/blob/master/pom.xml. GraphDB-Bench would not be possible without the work done by others to create these useful packages.
+
+For more information join the Gremlin (GraphDB-Bench does not have a users group at present) users group at "http://groups.google.com/group/gremlin-users":http://groups.google.com/group/gremlin-users.

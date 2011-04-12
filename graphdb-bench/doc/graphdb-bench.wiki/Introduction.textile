@@ -1,0 +1,6 @@
+GraphDB-Bench is a collection of benchmarks for graph database systems. There are four primary aspects to the benchmarking process:
+
+# *Generating Graph Datasets:* creates the datasets that are loaded into the various graph systems for analysis. For more on this see [[Creating Artificial Graphs]].
+# *Defining Benchmarks:* creation of a benchmark definition that contains a set of interesting algorithms/operations. For more on this start at [[Overview]].
+# *Generating Benchmark Results:* evaluates algorithms that test the performance of various graph systems. For more on this see [[Running Benchmarks]]
+# *Analyzing Benchmark Results:* creating informative plots/charts from the benchmark results. For more on this see [[Plotting Results]]

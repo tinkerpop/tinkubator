@@ -1,0 +1,25 @@
+!https://github.com/tinkerpop/mutant/raw/master/doc/images/mutant-logo.png!
+
+Mutant supports the use of multiple "JSR 223":http://jcp.org/en/jsr/detail?id=223 "ScriptEngines":https://scripting.dev.java.net/ over the same variable pool. In this way, its possible to make use of each language's unique expressive qualities when manipulating a collection of variables. Mutant can be seen as a ScriptEngine of ScriptEngines--a programming language of programming languages.[1]
+
+```text
+mutant[Groovy]> x = 12
+12
+mutant[Groovy]> ?ruby
+Switched to ruby
+mutant[ruby]> x.to_s + " is a number."
+12 is a number.
+```
+
+==<hr/>==
+
+# [[Introduction]]
+  ** [[Supported Engines]]
+  ** [[Basic Examples]]
+# [[Mutant Language]]
+# Conclusion
+** Release Notes
+
+==<hr/>==
+
+fn1. Mutant documentation is up to date with the current Mutant "codebase":http://github.com/tinkerpop/mutant/tree/master, not with the latest Mutant "release":http://github.com/tinkerpop/mutant/downloads.

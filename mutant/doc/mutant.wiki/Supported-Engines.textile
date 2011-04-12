@@ -1,0 +1,15 @@
+Mutant currently distributes with the following @ScriptEngine@ implementations. These engines are included through Mutant's "pom.xml":https://github.com/tinkerpop/mutant/blob/master/pom.xml @<dependencies/>@. Finally, note that currently, not all implementations of @ScriptEngine@ implement "JSR 223":http://jcp.org/en/jsr/detail?id=223 correctly. This is a problem with the particular engines and not with Mutant. We have submitted bugs to respective engines with @ScriptEngine@ issues.
+
+* "AppleScript":http://developer.apple.com/applescript/ Engine 1.0
+** Only available for Mac OSX
+* "Clojure":http://clojure.org/ Engine 1.0
+** Variables bound in the engine are not preserved in the @GLOBAL_SCOPE@.
+* "Gremlin":http://gremlin.tinkerpop.com Engine 0.6-SNAPSHOT
+* "Groovy":http://groovy.codehaus.org/ Engine 2.0
+* "JavaScript":http://www.mozilla.org/rhino/ Engine Rhino 1.6 release 2
+* "JRuby":http://jruby.org/ Engine 1.5.5
+** Variables bound in the engine are not preserved in the @GLOBAL_SCOPE@.
+* "Jython":http://www.jython.org/ Engine 2.5.1
+** Variables in @GLOBA_SCOPE@ are not available inside or outside the engine.
+
+
