@@ -24,7 +24,6 @@ Here is how the graph directory next to this README was created:
     cd tinkubator
     git add gitgraph-sandbox
     cd gitgraph-sandbox
-    mkdir graph
     
 [Java]
     Graph graph = new GitGraph(new File("/Users/josh/projects/tinkerpop/tinkubator/gitgraph-sandbox/graph"));
@@ -69,8 +68,6 @@ Here is how the graph directory next to this README was created:
 
 [bash]
     git commit -a -m "Added a new edge from a top-level vertex to a vertex defined in a child graph."
-    vim README.txt
-    git add README.txt
     git push origin master
     
 
