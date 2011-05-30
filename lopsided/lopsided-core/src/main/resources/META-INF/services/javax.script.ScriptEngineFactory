@@ -1,4 +1,0 @@
-com.sun.script.jruby.JRubyScriptEngineFactory
-com.sun.script.groovy.GroovyScriptEngineFactory
-com.sun.script.jython.JythonScriptEngineFactory
-org.linkedprocess.JavaScriptEngineFactory
