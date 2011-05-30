@@ -1,8 +1,0 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-	
-<PreferenceCategory android:title="Account"><EditTextPreference android:key="username" android:title="Username" android:summary="Username" android:defaultValue="linked.process.1"></EditTextPreference>
-<EditTextPreference android:summary="Password" android:key="password" android:defaultValue="linked12" android:title="Password"></EditTextPreference>
-<EditTextPreference android:summary="Port" android:key="port" android:defaultValue="5222" android:title="Port"></EditTextPreference>
-<EditTextPreference android:summary="Server" android:key="server" android:defaultValue="talk.l.google.com" android:title="Server"></EditTextPreference>
-</PreferenceCategory>
-</PreferenceScreen>
