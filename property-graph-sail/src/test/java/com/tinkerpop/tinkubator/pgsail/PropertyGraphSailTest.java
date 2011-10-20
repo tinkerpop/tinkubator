@@ -370,14 +370,8 @@ public class PropertyGraphSailTest {
 
     @Test
     public void testSPARQL() throws Exception {
-        SPARQLParser parser = new SPARQLParser();
-        BindingSet bindings = new EmptyBindingSet();
-        String baseURI = "http://example.org/bogus/";
-        String queryStr;
-        ParsedQuery query;
-        CloseableIteration<? extends BindingSet, QueryEvaluationException> results;
         int count;
-        queryStr = "PREFIX pgm: <" + PropertyGraphSail.ONTOLOGY_NS + ">\n" +
+        String queryStr = "PREFIX pgm: <" + PropertyGraphSail.ONTOLOGY_NS + ">\n" +
                 "PREFIX prop: <" + PropertyGraphSail.PROPERTY_NS + ">\n" +
                 "SELECT ?project ?name WHERE {\n" +
                 "   ?marko prop:name \"marko\".\n" +
@@ -390,8 +384,9 @@ public class PropertyGraphSailTest {
                 "   ?project prop:name ?name.\n" +
                 "}";
         System.out.println(queryStr);
-        query = parser.parseQuery(queryStr, baseURI);
-        results = sc.evaluate(query.getTupleExpr(), query.getDataset(), bindings, false);
+        ParsedQuery query = new SPARQLParser().parseQuery(queryStr, "http://example.org/bogus/");
+        CloseableIteration<? extends BindingSet, QueryEvaluationException> results
+                = sc.evaluate(query.getTupleExpr(), query.getDataset(), new EmptyBindingSet(), false);
         try {
             count = 0;
             while (results.hasNext()) {
