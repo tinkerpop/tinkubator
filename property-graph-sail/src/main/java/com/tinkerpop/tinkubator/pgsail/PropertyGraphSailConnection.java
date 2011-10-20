@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
  */
- class PropertyGraphSailConnection implements SailConnection {
+class PropertyGraphSailConnection implements SailConnection {
     private static final Map<String, Namespace> namespaces = new HashMap<String, Namespace>();
 
     static {
@@ -201,7 +201,7 @@ import java.util.Map;
         Iterator<Vertex> vertexIterator = context.graph.getVertices().iterator();
         Source<Edge> edges = new Source<Edge>(edgeIterator, allEdgeStatements);
         Source<Vertex> vertices = new Source<Vertex>(vertexIterator, allVertexStatements);
-        return new StatementIteration(edges, vertices);
+        return new StatementIteration(vertices, edges);
     }
 
     private CloseableIteration<Statement, SailException> getStatements_Sxx(final Resource subject) throws SailException {
@@ -664,7 +664,7 @@ import java.util.Map;
                 Source<Vertex> vertices = new Source<Vertex>(
                         context.graph.getVertices().iterator(),
                         vertexPropertiesWithKeyAndValue(key, predicate, value, (Literal) object));
-                return new StatementIteration(edges, vertices);
+                return new StatementIteration(vertices, edges);
             }
         } else {
             return new StatementIteration();
@@ -675,11 +675,11 @@ import java.util.Map;
         if (predicate.equals(RDF.TYPE)) {
             Source<Edge> edges = new Source<Edge>(context.graph.getEdges().iterator(), edgeTypes);
             Source<Vertex> vertices = new Source<Vertex>(context.graph.getVertices().iterator(), vertexTypes);
-            return new StatementIteration(edges, vertices);
+            return new StatementIteration(vertices, edges);
         } else if (predicate.equals(PropertyGraphSail.ID)) {
             Source<Edge> edges = new Source<Edge>(context.graph.getEdges().iterator(), edgeIds);
             Source<Vertex> vertices = new Source<Vertex>(context.graph.getVertices().iterator(), vertexIds);
-            return new StatementIteration(edges, vertices);
+            return new StatementIteration(vertices, edges);
         } else if (predicate.equals(PropertyGraphSail.LABEL)) {
             Iterator<Edge> edgeIterator = context.graph.getEdges().iterator();
             Source<Edge> edges = new Source<Edge>(edgeIterator, labels);
@@ -701,7 +701,7 @@ import java.util.Map;
             Source<Vertex> vertices = new Source<Vertex>(
                     context.graph.getVertices().iterator(),
                     vertexPropertiesWithKey(key, predicate));
-            return new StatementIteration(edges, vertices);
+            return new StatementIteration(vertices, edges);
         } else {
             return new StatementIteration();
         }
