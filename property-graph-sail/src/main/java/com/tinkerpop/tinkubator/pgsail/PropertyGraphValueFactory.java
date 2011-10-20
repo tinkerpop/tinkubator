@@ -15,7 +15,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
  */
-public class PropertyGraphValueFactory implements ValueFactory {
+class PropertyGraphValueFactory implements ValueFactory {
     private final ValueFactory other = new ValueFactoryImpl();
 
     private final Graph graph;

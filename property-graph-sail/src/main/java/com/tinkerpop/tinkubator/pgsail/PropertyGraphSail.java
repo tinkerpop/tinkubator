@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * A Sail implementation which provides an RDF view of any Blueprints graph.
+ * @see <a href="https://github.com/tinkerpop/tinkubator/wiki/PropertyGraphSail">PropertyGraphSail</a>
+ *
  * @author Joshua Shinavier (http://fortytwo.net)
  */
 public class PropertyGraphSail implements Sail {
@@ -38,7 +41,12 @@ public class PropertyGraphSail implements Sail {
 
     private final PropertyGraphContext context;
 
-    public PropertyGraphSail(Graph graph) {
+    /**
+     * Instantiates a Sail based on a given Graph.
+     *
+     * @param graph the Blueprints Graph to expose as an RDF dataset
+     */
+    public PropertyGraphSail(final Graph graph) {
         context = new PropertyGraphContext(graph, new PropertyGraphValueFactory(graph));
 
         //graph.getIndex("", Vertex.class);

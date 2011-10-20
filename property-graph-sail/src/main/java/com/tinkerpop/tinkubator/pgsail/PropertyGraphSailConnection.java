@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
  */
-public class PropertyGraphSailConnection implements SailConnection {
+ class PropertyGraphSailConnection implements SailConnection {
     private static final Map<String, Namespace> namespaces = new HashMap<String, Namespace>();
 
     static {
