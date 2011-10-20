@@ -8,12 +8,18 @@ import net.fortytwo.sesametools.StatementComparator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openrdf.model.Literal;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.vocabulary.RDF;
+import org.openrdf.query.BindingSet;
+import org.openrdf.query.QueryEvaluationException;
+import org.openrdf.query.impl.EmptyBindingSet;
+import org.openrdf.query.parser.ParsedQuery;
+import org.openrdf.query.parser.sparql.SPARQLParser;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.sail.SailRepository;
@@ -30,6 +36,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 /**
@@ -359,6 +366,47 @@ public class PropertyGraphSailTest {
         } finally {
             rc.close();
         }
+    }
+
+    @Test
+    public void testSPARQL() throws Exception {
+        SPARQLParser parser = new SPARQLParser();
+        BindingSet bindings = new EmptyBindingSet();
+        String baseURI = "http://example.org/bogus/";
+        String queryStr;
+        ParsedQuery query;
+        CloseableIteration<? extends BindingSet, QueryEvaluationException> results;
+        int count;
+        queryStr = "PREFIX pgm: <" + PropertyGraphSail.ONTOLOGY_NS + ">\n" +
+                "PREFIX prop: <" + PropertyGraphSail.PROPERTY_NS + ">\n" +
+                "SELECT ?project ?name WHERE {\n" +
+                "   ?marko prop:name \"marko\".\n" +
+                "   ?e1 pgm:label \"knows\".\n" +
+                "   ?e1 pgm:tail ?marko.\n" +
+                "   ?e1 pgm:head ?friend.\n" +
+                "   ?e2 pgm:label \"created\".\n" +
+                "   ?e2 pgm:tail ?friend.\n" +
+                "   ?e2 pgm:head ?project.\n" +
+                "   ?project prop:name ?name.\n" +
+                "}";
+        System.out.println(queryStr);
+        query = parser.parseQuery(queryStr, baseURI);
+        results = sc.evaluate(query.getTupleExpr(), query.getDataset(), bindings, false);
+        try {
+            count = 0;
+            while (results.hasNext()) {
+                count++;
+                BindingSet set = results.next();
+                URI project = (URI) set.getValue("project");
+                Literal name = (Literal) set.getValue("name");
+                assertNotNull(project);
+                assertNotNull(name);
+                System.out.println("project = " + project + ", name = " + name);
+            }
+        } finally {
+            results.close();
+        }
+        assertEquals(2, count);
     }
 
     private long count(final CloseableIteration iter) throws Exception {

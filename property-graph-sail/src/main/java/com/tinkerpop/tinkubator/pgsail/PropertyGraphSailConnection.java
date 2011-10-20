@@ -4,6 +4,7 @@ import com.tinkerpop.blueprints.pgm.Edge;
 import com.tinkerpop.blueprints.pgm.Element;
 import com.tinkerpop.blueprints.pgm.Vertex;
 import info.aduna.iteration.CloseableIteration;
+import net.fortytwo.sesametools.SailConnectionTripleSource;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Namespace;
 import org.openrdf.model.Resource;
@@ -18,6 +19,8 @@ import org.openrdf.query.Dataset;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.algebra.TupleExpr;
 import org.openrdf.query.algebra.UpdateExpr;
+import org.openrdf.query.algebra.evaluation.TripleSource;
+import org.openrdf.query.algebra.evaluation.impl.EvaluationStrategyImpl;
 import org.openrdf.sail.SailConnection;
 import org.openrdf.sail.SailException;
 
@@ -115,8 +118,17 @@ public class PropertyGraphSailConnection implements SailConnection {
         open = false;
     }
 
-    public CloseableIteration<? extends BindingSet, QueryEvaluationException> evaluate(TupleExpr tupleExpr, Dataset dataset, BindingSet bindingSet, boolean b) throws SailException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public CloseableIteration<? extends BindingSet, QueryEvaluationException> evaluate(final TupleExpr query,
+                                                                                       final Dataset dataset,
+                                                                                       final BindingSet bindings,
+                                                                                       final boolean includeInferred) throws SailException {
+        try {
+            TripleSource tripleSource = new SailConnectionTripleSource(this, context.valueFactory, includeInferred);
+            EvaluationStrategyImpl strategy = new EvaluationStrategyImpl(tripleSource, dataset);
+            return strategy.evaluate(query, bindings);
+        } catch (QueryEvaluationException e) {
+            throw new SailException(e);
+        }
     }
 
     public void executeUpdate(UpdateExpr updateExpr, Dataset dataset, BindingSet bindingSet, boolean b) throws SailException {
