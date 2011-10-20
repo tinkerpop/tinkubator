@@ -30,12 +30,18 @@
                 <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
+        <repository>
+            <id>fortytwo</id>
+            <name>fortytwo.net Maven repository</name>
+            <url>http://fortytwo.net/maven2</url>
+        </repository>
     </repositories>
 
     <properties>
         <sesame.version>2.5.1</sesame.version>
         <blueprints.version>1.0</blueprints.version>
         <junit.version>4.5</junit.version>
+        <sesametools.version>1.6-SNAPSHOT</sesametools.version>
     </properties>
 
     <dependencies>
@@ -71,6 +77,12 @@
             <groupId>org.openrdf.sesame</groupId>
             <artifactId>sesame-repository-sail</artifactId>
             <version>${sesame.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.fortytwo.sesametools</groupId>
+            <artifactId>common</artifactId>
+            <version>${sesametools.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

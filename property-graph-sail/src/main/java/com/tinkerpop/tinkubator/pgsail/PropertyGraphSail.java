@@ -18,9 +18,9 @@ import java.util.Map;
  * @author Joshua Shinavier (http://fortytwo.net)
  */
 public class PropertyGraphSail implements Sail {
-    public static final String PROPERTIES_NS = "http://tinkerpop.com/pgm/properties/";
-    public static final String EDGES_NS = "http://tinkerpop.com/pgm/edges/";
-    public static final String VERTICES_NS = "http://tinkerpop.com/pgm/vertices/";
+    public static final String PROPERTY_NS = "http://tinkerpop.com/pgm/property/";
+    public static final String VERTEX_NS = "http://tinkerpop.com/pgm/vertex/";
+    public static final String EDGE_NS = "http://tinkerpop.com/pgm/edge/";
     public static final String ONTOLOGY_NS = "http://tinkerpop.com/pgm/ontology#";
 
     public static final URI
