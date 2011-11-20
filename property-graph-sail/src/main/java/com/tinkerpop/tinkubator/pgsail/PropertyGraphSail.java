@@ -93,6 +93,8 @@ public class PropertyGraphSail implements Sail {
         return context.valueFactory;
     }
 
+
+
     static class PropertyGraphContext {
         public final Graph graph;
 
