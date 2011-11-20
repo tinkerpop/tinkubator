@@ -16,6 +16,9 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
+ * An IndexableGraph implementation which wraps another IndexableGraph implementation,
+ * enabling custom element IDs even for those graphs which don't otherwise support them.
+ *
  * @author Joshua Shinavier (http://fortytwo.net)
  */
 public class IdIndexGraph implements IndexableGraph {
@@ -30,10 +33,22 @@ public class IdIndexGraph implements IndexableGraph {
     private final Index<Edge> edgeIds;
     private final IdFactory idFactory;
 
+    /**
+     * Adds custom ID functionality to the given graph.
+     *
+     * @param base the base graph which does not permit custom element IDs
+     */
     public IdIndexGraph(final IndexableGraph base) {
         this(base, null);
     }
 
+    /**
+     * Adds custom ID functionality to the given graph, also specifying a factory for new element IDs.
+     *
+     * @param base the base graph which may or may not permit custom element IDs
+     * @param idFactory a factory for new element IDs.
+     * When vertices or edges are created using null IDs, the actual IDs are chosen based on this factory.
+     */
     public IdIndexGraph(final IndexableGraph base,
                         final IdFactory idFactory) {
         this.base = base;
@@ -255,6 +270,9 @@ public class IdIndexGraph implements IndexableGraph {
         }
     }
 
+    /**
+     * A factory for IDs of newly-created vertices and edges (where an ID is not otherwise specified).
+     */
     public static interface IdFactory {
         Object createId();
     }
