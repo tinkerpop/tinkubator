@@ -432,4 +432,8 @@ public class IdIndexGraph implements IndexableGraph {
             base.remove();
         }
     }
+
+    public static void main(final String[] args) throws Exception {
+        System.out.println(UUID.randomUUID().toString());
+    }
 }
