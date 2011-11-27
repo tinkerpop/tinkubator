@@ -5,7 +5,8 @@ import com.tinkerpop.blueprints.pgm.Element;
 import com.tinkerpop.blueprints.pgm.Vertex;
 
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
@@ -13,30 +14,45 @@ import java.util.LinkedList;
 class MultiVertex extends MultiElement implements Vertex {
     private final Collection<Vertex> bases;
 
-    public MultiVertex(final Object id,
+    public MultiVertex(final MultiGraph graph,
+                       final Object id,
                        final Collection<Vertex> bases) {
-        super(id);
+        super(graph, id);
         this.bases = bases;
     }
 
     public Iterable<Edge> getOutEdges(String... labels) {
-        Collection<Iterable<Edge>> bases = new LinkedList<Iterable<Edge>>();
+        // TODO: the hashmap is time-efficient but not scalable
+        Map<Object, Edge> results = new HashMap<Object, Edge>();
 
-        for (Vertex v : this.bases) {
-            bases.add(v.getOutEdges(labels));
+        for (Vertex v : bases) {
+            for (Edge e : v.getOutEdges(labels)) {
+                Object id = e.getId();
+
+                if (null == results.get(id)) {
+                    results.put(id, graph.getEdge(id));
+                }
+            }
         }
 
-        return new MultiIterable<Edge>(bases);
+        return results.values();
     }
 
     public Iterable<Edge> getInEdges(String... labels) {
-        Collection<Iterable<Edge>> bases = new LinkedList<Iterable<Edge>>();
+        // TODO: the hashmap is time-efficient but not scalable
+        Map<Object, Edge> results = new HashMap<Object, Edge>();
 
-        for (Vertex v : this.bases) {
-            bases.add(v.getInEdges(labels));
+        for (Vertex v : bases) {
+            for (Edge e : v.getInEdges(labels)) {
+                Object id = e.getId();
+
+                if (null == results.get(id)) {
+                    results.put(id, graph.getEdge(id));
+                }
+            }
         }
 
-        return new MultiIterable<Edge>(bases);
+        return results.values();
     }
 
     protected Collection<Element> getBases() {

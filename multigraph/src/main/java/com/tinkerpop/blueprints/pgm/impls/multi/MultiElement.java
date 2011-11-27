@@ -11,9 +11,12 @@ import java.util.Set;
  */
 abstract class MultiElement implements Element {
     protected final Object id;
+    protected final MultiGraph graph;
 
-    public MultiElement(Object id) {
+    public MultiElement(final MultiGraph graph,
+                        final Object id) {
         this.id = id;
+        this.graph = graph;
     }
 
     protected abstract Collection<Element> getBases();

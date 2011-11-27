@@ -51,7 +51,7 @@ public class MultiGraph implements Graph {
         }
 
         if (baseVertices.size() > 0) {
-            return new MultiVertex(id, baseVertices);
+            return new MultiVertex(this, id, baseVertices);
         } else {
             return null;
         }
@@ -77,7 +77,7 @@ public class MultiGraph implements Graph {
         }
 
         if (baseEdges.size() > 0) {
-            return new MultiEdge(id, baseEdges);
+            return new MultiEdge(this, id, baseEdges);
         } else {
             return null;
         }

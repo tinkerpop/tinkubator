@@ -94,15 +94,23 @@ public class MultiGraphTest {
         assertEquals("Earth", e.getInVertex().getId());
 
         Vertex arthur = graph.getVertex("Arthur");
+        Vertex ford = graph.getVertex("Ford");
         Vertex zaphod = graph.getVertex("Zaphod");
 
         Collection<Edge> edges;
 
         edges = asCollection(arthur.getOutEdges("knows"));
         assertEquals(2, edges.size());
+        for (Edge ed : edges) {
+            assertTrue(ed instanceof MultiEdge);
+        }
 
         edges = asCollection(zaphod.getInEdges("knows"));
         assertEquals(2, edges.size());
+
+        // Only one of the conflicting edges is chosen.
+        edges = asCollection(ford.getOutEdges("home planet"));
+        assertEquals(1, edges.size());
     }
 
     @Test

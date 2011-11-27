@@ -12,9 +12,10 @@ import java.util.Collection;
 class MultiEdge extends MultiElement implements Edge {
     private final Collection<Edge> bases;
 
-    public MultiEdge(final Object id,
+    public MultiEdge(final MultiGraph graph,
+                     final Object id,
                      final Collection<Edge> bases) {
-        super(id);
+        super(graph, id);
         this.bases = bases;
     }
 
@@ -23,11 +24,11 @@ class MultiEdge extends MultiElement implements Edge {
     }
 
     public Vertex getOutVertex() {
-        return bases.iterator().next().getOutVertex();
+        return graph.getVertex(bases.iterator().next().getOutVertex().getId());
     }
 
     public Vertex getInVertex() {
-        return bases.iterator().next().getInVertex();
+        return graph.getVertex(bases.iterator().next().getInVertex().getId());
     }
 
     public String getLabel() {
