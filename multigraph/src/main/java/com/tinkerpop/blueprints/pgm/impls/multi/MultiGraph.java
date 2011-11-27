@@ -9,6 +9,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
+ * A read-only Graph implementation which wraps multiple lower-level graphs,
+ * providing a unified view of their vertices and edges.
+ * Vertices with corresponding ids are unified into single vertices,
+ * while edges with corresponding ids are unified to single edges.
+ *
  * @author Joshua Shinavier (http://fortytwo.net)
  */
 public class MultiGraph implements Graph {
@@ -16,7 +21,17 @@ public class MultiGraph implements Graph {
 
     private final Graph[] bases;
 
-    public MultiGraph(Graph... bases) {
+    /**
+     * Constructs a unified, read-only view of the given graphs.
+     *
+     * @param bases the lower-level graphs which are unified in the view.
+     *              The order in which the graphs are specified is relevant:
+     *              if corresponding vertices or edges have conflicting values, in different graphs, for a given property,
+     *              then the property value in the first graph takes precedence.
+     *              Similarly, if corresponding edges have different in or out vertices (i.e. vertices with different ids) in different graphs,
+     *              then the vertices in the first graph takes precedence.
+     */
+    public MultiGraph(final Graph... bases) {
         this.bases = bases;
     }
 

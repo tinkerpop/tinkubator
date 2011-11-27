@@ -9,7 +9,7 @@ import java.util.Collection;
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
  */
-public class MultiEdge extends MultiElement implements Edge {
+class MultiEdge extends MultiElement implements Edge {
     private final Collection<Edge> bases;
 
     public MultiEdge(final Object id,

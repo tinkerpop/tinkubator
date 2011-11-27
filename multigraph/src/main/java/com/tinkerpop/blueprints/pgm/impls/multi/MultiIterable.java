@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
-* @author Joshua Shinavier (http://fortytwo.net)
-*/
+ * @author Joshua Shinavier (http://fortytwo.net)
+ */
 class MultiIterable<T> implements Iterable<T> {
     private final Collection<Iterable<T>> bases;
 

@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
  */
-public abstract class MultiElement implements Element {
+abstract class MultiElement implements Element {
     protected final Object id;
 
     public MultiElement(Object id) {
