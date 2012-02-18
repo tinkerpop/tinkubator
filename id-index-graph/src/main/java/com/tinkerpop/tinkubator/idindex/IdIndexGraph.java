@@ -7,6 +7,7 @@ import com.tinkerpop.blueprints.pgm.Element;
 import com.tinkerpop.blueprints.pgm.Index;
 import com.tinkerpop.blueprints.pgm.IndexableGraph;
 import com.tinkerpop.blueprints.pgm.Vertex;
+import com.tinkerpop.blueprints.pgm.impls.Parameter;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -14,6 +15,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 /**
  * An IndexableGraph implementation which wraps another IndexableGraph implementation,
@@ -22,6 +24,8 @@ import java.util.UUID;
  * @author Joshua Shinavier (http://fortytwo.net)
  */
 public class IdIndexGraph implements IndexableGraph {
+    private static final Logger LOGGER = Logger.getLogger(IdIndexGraph.class.getName());
+
     public static final String ID = "_id";
 
     public static final String
@@ -45,9 +49,9 @@ public class IdIndexGraph implements IndexableGraph {
     /**
      * Adds custom ID functionality to the given graph, also specifying a factory for new element IDs.
      *
-     * @param base the base graph which may or may not permit custom element IDs
+     * @param base      the base graph which may or may not permit custom element IDs
      * @param idFactory a factory for new element IDs.
-     * When vertices or edges are created using null IDs, the actual IDs are chosen based on this factory.
+     *                  When vertices or edges are created using null IDs, the actual IDs are chosen based on this factory.
      */
     public IdIndexGraph(final IndexableGraph base,
                         final IdFactory idFactory) {
@@ -72,7 +76,13 @@ public class IdIndexGraph implements IndexableGraph {
                 : base.getIndex(EDGE_IDS, Edge.class);
     }
 
-    public <T extends Element> Index<T> createManualIndex(String s, Class<T> tClass) {
+    public <T extends Element> Index<T> createManualIndex(final String s,
+                                                          final Class<T> tClass,
+                                                          final Parameter... params) {
+        if (0 < params.length) {
+            LOGGER.warning("index parameters will be ignored");
+        }
+
         if (s.equals(VERTEX_IDS) || s.equals(EDGE_IDS)) {
             throw new IllegalArgumentException("can't create index with reserved name '" + s + "'");
         }
@@ -88,7 +98,14 @@ public class IdIndexGraph implements IndexableGraph {
         }
     }
 
-    public <T extends Element> AutomaticIndex<T> createAutomaticIndex(String s, Class<T> tClass, Set<String> strings) {
+    public <T extends Element> AutomaticIndex<T> createAutomaticIndex(final String s,
+                                                                      final Class<T> tClass,
+                                                                      final Set<String> strings,
+                                                                      final Parameter... params) {
+        if (0 < params.length) {
+            LOGGER.warning("index parameters will be ignored");
+        }
+
         if (s.equals(VERTEX_IDS) || s.equals(EDGE_IDS)) {
             throw new IllegalArgumentException("can't create index with reserved name '" + s + "'");
         }

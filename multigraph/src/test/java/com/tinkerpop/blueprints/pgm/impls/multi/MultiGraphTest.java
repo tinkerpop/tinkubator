@@ -111,6 +111,7 @@ public class MultiGraphTest {
         // Only one of the conflicting edges is chosen.
         edges = asCollection(ford.getOutEdges("home planet"));
         assertEquals(1, edges.size());
+        assertEquals("Earth", edges.iterator().next().getInVertex().getId());
     }
 
     @Test
