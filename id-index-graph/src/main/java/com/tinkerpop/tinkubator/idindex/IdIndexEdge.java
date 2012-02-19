@@ -37,4 +37,15 @@ class IdIndexEdge extends IdIndexElement implements Edge {
     public String getLabel() {
         return ((Edge) base).getLabel();
     }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof IdIndexEdge
+                && ((Edge) other).getId().equals(getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return 808068 + getId().hashCode();
+    }
 }
