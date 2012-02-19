@@ -222,7 +222,9 @@ public class IdIndexGraph implements IndexableGraph {
     }
 
     public void removeVertex(Vertex vertex) {
-        throw new UnsupportedOperationException("vertices may only be added by id");
+        verifyNativeElement(vertex);
+
+        base.removeVertex(((IdIndexVertex) vertex).getBase());
     }
 
     public Iterable<Vertex> getVertices() {
