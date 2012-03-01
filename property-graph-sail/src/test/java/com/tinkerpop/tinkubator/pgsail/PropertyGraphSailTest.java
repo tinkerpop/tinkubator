@@ -2,7 +2,7 @@ package com.tinkerpop.tinkubator.pgsail;
 
 import com.tinkerpop.blueprints.pgm.Graph;
 import com.tinkerpop.blueprints.pgm.impls.tg.TinkerGraph;
-import com.tinkerpop.blueprints.pgm.util.graphml.GraphMLReader;
+import com.tinkerpop.blueprints.pgm.util.io.graphml.GraphMLReader;
 import info.aduna.iteration.CloseableIteration;
 import net.fortytwo.sesametools.StatementComparator;
 import org.junit.After;
