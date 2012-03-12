@@ -41,7 +41,7 @@
         <sesame.version>2.5.1</sesame.version>
         <blueprints.version>1.0</blueprints.version>
         <junit.version>4.5</junit.version>
-        <sesametools.version>1.6-SNAPSHOT</sesametools.version>
+        <sesametools.version>1.6</sesametools.version>
     </properties>
 
     <dependencies>
