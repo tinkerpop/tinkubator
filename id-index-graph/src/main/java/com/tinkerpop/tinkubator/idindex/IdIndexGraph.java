@@ -26,11 +26,12 @@ import java.util.logging.Logger;
 public class IdIndexGraph implements IndexableGraph {
     private static final Logger LOGGER = Logger.getLogger(IdIndexGraph.class.getName());
 
-    public static final String ID = "_id";
+    // Note: using "__id" instead of "_id" avoids collision with Rexster's "_id"
+    public static final String ID = "__id";
 
     public static final String
-            VERTEX_IDS = "_vertex-ids",
-            EDGE_IDS = "_edge-ids";
+            VERTEX_IDS = "__vertex-ids",
+            EDGE_IDS = "__edge-ids";
 
     private final IndexableGraph base;
     private final Index<Vertex> vertexIds;
