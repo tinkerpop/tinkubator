@@ -1,8 +1,9 @@
 package com.tinkerpop.gremlin.scala
 
 import com.tinkerpop.gremlin.java.GremlinPipeline
-import com.tinkerpop.blueprints.pgm._
+import com.tinkerpop.blueprints._
 import com.tinkerpop.pipes.{PipeFunction, Pipe}
+import com.tinkerpop.pipes.util.{FluentUtility, StartPipe}
 import com.tinkerpop.pipes.branch.LoopPipe.LoopBundle
 import java.util.{Map => JMap, List => JList, Iterator => JIterator, Collection => JCollection, ArrayList => JArrayList}
 import com.tinkerpop.gremlin.Tokens
@@ -44,8 +45,8 @@ class GremlinScalaPipeline[S, E] extends GremlinPipeline[S, E] {
   override def bothV: GremlinScalaPipeline[S, Vertex] =
     super.bothV.asInstanceOf[GremlinScalaPipeline[S, Vertex]]
 
-  override def E: GremlinScalaPipeline[S, Edge] =
-    super.E.asInstanceOf[GremlinScalaPipeline[S, Edge]]
+  def E(graph: Graph): GremlinScalaPipeline[Edge, Edge] =
+    manualStart(graph.getEdges)
 
   override def idEdge(graph: Graph): GremlinScalaPipeline[S, Edge] =
     super.idEdge(graph).asInstanceOf[GremlinScalaPipeline[S, Edge]]
@@ -83,8 +84,8 @@ class GremlinScalaPipeline[S, E] extends GremlinPipeline[S, E] {
   def property[F <: Element](key: String): GremlinScalaPipeline[S, Object] =
     super.property(key).asInstanceOf[GremlinScalaPipeline[S, Object]]
 
-  override def V: GremlinScalaPipeline[S, Vertex] =
-    super.V.asInstanceOf[GremlinScalaPipeline[S, Vertex]]
+  def V(graph: Graph): GremlinScalaPipeline[Vertex, Vertex] =
+    manualStart(graph.getVertices)
 
   def step[F](f: JIterator[E] => F): GremlinScalaPipeline[S, F] =
     super.step(f).asInstanceOf[GremlinScalaPipeline[S, F]]
@@ -354,5 +355,11 @@ class GremlinScalaPipeline[S, E] extends GremlinPipeline[S, E] {
 
   override def start(starts: S): GremlinScalaPipeline[S, S] = {
     super.start(starts).asInstanceOf[GremlinScalaPipeline[S, S]]
+  }
+
+  private def manualStart[T](start: Any): GremlinScalaPipeline[T, T] = {
+    val pipe = this.add(new StartPipe[S](start));
+    FluentUtility.setStarts(this, start);
+    pipe.asInstanceOf[GremlinScalaPipeline[T, T]]
   }
 }

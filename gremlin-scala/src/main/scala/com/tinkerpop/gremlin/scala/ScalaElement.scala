@@ -1,6 +1,6 @@
 package com.tinkerpop.gremlin.scala
 
-import com.tinkerpop.blueprints.pgm.Element
+import com.tinkerpop.blueprints.Element
 import java.util.{Map => JMap}
 
 /**
