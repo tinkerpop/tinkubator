@@ -79,8 +79,8 @@ class GremlinScalaPipeline[S, E] extends GremlinPipeline[S, E] {
   def map[F <: Element]: GremlinScalaPipeline[S, JMap[String, Object]] = //TODO use scala Map here?
     super.map.asInstanceOf[GremlinScalaPipeline[S, JMap[String, Object]]]
 
-  def property[F <: Element](key: String): GremlinScalaPipeline[S, Object] =
-    super.property(key).asInstanceOf[GremlinScalaPipeline[S, Object]]
+  def property[F <: Element](key: String) =
+    super.property(key).asInstanceOf[GremlinScalaPipeline[S, String]]
 
   def step[F](f: JIterator[E] => F): GremlinScalaPipeline[S, F] =
     super.step(new ScalaPipeFunction(f)).asInstanceOf[GremlinScalaPipeline[S, F]]
