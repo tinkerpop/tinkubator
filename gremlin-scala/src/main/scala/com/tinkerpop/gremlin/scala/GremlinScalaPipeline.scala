@@ -1,7 +1,7 @@
 package com.tinkerpop.gremlin.scala
 
 import com.tinkerpop.gremlin.java.GremlinPipeline
-import com.tinkerpop.blueprints.pgm._
+import com.tinkerpop.blueprints._
 import com.tinkerpop.pipes.{PipeFunction, Pipe}
 import com.tinkerpop.pipes.branch.LoopPipe.LoopBundle
 import java.util.{Map => JMap, List => JList, Iterator => JIterator, Collection => JCollection, ArrayList => JArrayList}

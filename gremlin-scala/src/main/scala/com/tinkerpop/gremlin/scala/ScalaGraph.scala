@@ -1,8 +1,8 @@
 package com.tinkerpop.gremlin.scala
 
-import com.tinkerpop.blueprints.pgm.{Graph, Vertex, Edge}
+import com.tinkerpop.blueprints.{Graph, Vertex, Edge}
 
-/**Adds convenience methods to [[com.tinkerpop.blueprints.pgm.Graph]]. */
+/**Adds convenience methods to [[com.tinkerpop.blueprints.Graph]]. */
 class ScalaGraph(val graph: Graph) {
   /**Returns all vertices. */
   def V: GremlinScalaPipeline[Graph, Vertex] =
@@ -32,7 +32,7 @@ class ScalaGraph(val graph: Graph) {
   //TODO def += for addVertex and addEdge?
 }
 
-/**Implicit conversions between [[com.tinkerpop.blueprints.pgm.Graph]] and [[com.tinkerpop.gremlin.scala.ScalaGraph]]. */
+/**Implicit conversions between [[com.tinkerpop.blueprints.Graph]] and [[com.tinkerpop.gremlin.scala.ScalaGraph]]. */
 object ScalaGraph {
   implicit def wrap(graph: Graph) = new ScalaGraph(graph)
 

@@ -1,9 +1,9 @@
 package com.tinkerpop.gremlin.scala.sideeffect
 
-import com.tinkerpop.blueprints.pgm.impls.tg.TinkerGraphFactory
+import com.tinkerpop.blueprints.impls.tg.TinkerGraphFactory
 import com.tinkerpop.gremlin.test.ComplianceTest
 import com.tinkerpop.gremlin.scala._
-import com.tinkerpop.blueprints.pgm.{Graph, Vertex}
+import com.tinkerpop.blueprints.{Graph, Vertex}
 import com.tinkerpop.pipes.Pipe
 import com.tinkerpop.pipes.util.structures.{Pair => TPair}
 

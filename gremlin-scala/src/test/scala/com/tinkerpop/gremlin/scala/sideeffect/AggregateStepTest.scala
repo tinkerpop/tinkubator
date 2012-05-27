@@ -1,11 +1,11 @@
 package com.tinkerpop.gremlin.scala.sideeffect
 
-import com.tinkerpop.blueprints.pgm.impls.tg.TinkerGraphFactory
+import com.tinkerpop.blueprints.impls.tg.TinkerGraphFactory
 import com.tinkerpop.gremlin.test.ComplianceTest
 import com.tinkerpop.gremlin.scala._
 import java.util.ArrayList
 import com.tinkerpop.pipes.Pipe
-import com.tinkerpop.blueprints.pgm.{Vertex, Graph}
+import com.tinkerpop.blueprints.{Vertex, Graph}
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)

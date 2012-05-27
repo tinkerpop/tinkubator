@@ -1,8 +1,8 @@
 package com.tinkerpop.gremlin.scala
 
-import com.tinkerpop.blueprints.pgm.impls.tg.TinkerGraphFactory
+import com.tinkerpop.blueprints.impls.tg.TinkerGraphFactory
 import com.tinkerpop.gremlin.test.ComplianceTest
-import com.tinkerpop.blueprints.pgm.Vertex
+import com.tinkerpop.blueprints.Vertex
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
