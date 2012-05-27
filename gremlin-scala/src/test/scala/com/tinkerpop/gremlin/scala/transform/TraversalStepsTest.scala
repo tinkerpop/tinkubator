@@ -68,7 +68,7 @@ class TraversalStepsTest extends com.tinkerpop.gremlin.test.transform.TraversalS
   }
 
   def test_g_V_out_out() {
-    super.test_g_V_out_out(g.V.out.out)
+    super.test_g_V_out_out(g.v(1).out.out)
   }
 
   def test_g_v1_out_out_out() {

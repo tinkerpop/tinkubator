@@ -21,7 +21,7 @@ class GroupCountStepTest extends com.tinkerpop.gremlin.test.sideeffect.GroupCoun
 
   def test_g_V_outXcreatedX_groupCountXm__nameX() {
     val m = new java.util.HashMap[String, Number]();
-    super.test_g_V_outXcreatedX_groupCountXm__nameX(g.V.out("created").groupCount(m, {v: Vertex => v("name")}).asInstanceOf[Pipe[Graph, Vertex]], m);
+    super.test_g_V_outXcreatedX_groupCountXm__nameX(g.V.out("created").groupCount(m, {v: Vertex => v("name")}).asInstanceOf[Pipe[Vertex, Vertex]], m);
   }
 
   // TODO: Why is the implicit converstion of a => to a PipeFunction not being respected?
@@ -32,13 +32,13 @@ class GroupCountStepTest extends com.tinkerpop.gremlin.test.sideeffect.GroupCoun
     //val pipeline = g.V.out("created").groupCount(m, {v: Vertex => v("name")}, com.tinkerpop.gremlin.scala.functionToPipeFunction({p: TPair[_, Number] => (p.getB.longValue() + 2l).asInstanceOf[Number]})).asInstanceOf[Pipe[Graph, Vertex]]
 
     //attempting to get implicit working
-    val pipeline = g.V.out("created").groupCount(m, {v: Vertex => v("name")}, {p: TPair[_, Number] => (p.getB.longValue() + 2l).asInstanceOf[Number]}).asInstanceOf[Pipe[Graph, Vertex]]
+    val pipeline = g.V.out("created").groupCount(m, {v: Vertex => v("name")}, {p: TPair[_, Number] => (p.getB.longValue() + 2l).asInstanceOf[Number]}).asInstanceOf[Pipe[Vertex, Vertex]]
 
     super.test_g_V_outXcreatedX_groupCountXm__name__plus_2X(pipeline, m);
   }
 
   def test_g_V_outXcreatedX_groupCountXnameX_cap() {
-    super.test_g_V_outXcreatedX_groupCountXnameX_cap(g.V.out("created").groupCount {v: Vertex => v("name")}.cap.asInstanceOf[Pipe[Graph, java.util.Map[String, Number]]]);
+    super.test_g_V_outXcreatedX_groupCountXnameX_cap(g.V.out("created").groupCount {v: Vertex => v("name")}.cap.asInstanceOf[Pipe[Vertex, java.util.Map[String, Number]]]);
   }
 }
 

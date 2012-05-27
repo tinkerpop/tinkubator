@@ -28,11 +28,16 @@ class LoopStepTest extends com.tinkerpop.gremlin.test.branch.LoopStepTest {
   }
 
   def test_g_V_out_loopX1_loops_lt_3X_propertyXnameX() {
-    super.test_g_V_out_loopX1_loops_lt_3X_propertyXnameX(g.V.out.loop(1, {lb: LoopBundle[Vertex] => lb.loops < 3}).property("name").asInstanceOf[Pipe[Graph, String]]);
+    super.test_g_V_out_loopX1_loops_lt_3X_propertyXnameX(
+            g.V.out.loop(1, {lb: LoopBundle[Vertex] => lb.loops < 3})
+            .property("name")
+            .asInstanceOf[Pipe[Vertex, String]]);
   }
 
   def test_g_V_asXhereX_out_loopXhere_loops_lt_3X_propertyXnameX() {
-    super.test_g_V_asXhereX_out_loopXhere_loops_lt_3X_propertyXnameX(g.V.as("here").out().loop("here", {lb: LoopBundle[Vertex] => lb.loops < 3}).property("name").asInstanceOf[Pipe[Graph, String]]);
+    super.test_g_V_asXhereX_out_loopXhere_loops_lt_3X_propertyXnameX(
+            g.V.as("here").out().loop("here", {lb: LoopBundle[Vertex] => lb.loops < 3})
+            .property("name").asInstanceOf[Pipe[Vertex, String]]);
   }
 
 
