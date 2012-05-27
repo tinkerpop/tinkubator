@@ -108,13 +108,13 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
-            <scope>test</scope>
+<!--             <scope>test</scope> -->
         </dependency>
         <dependency>
             <groupId>com.tinkerpop.gremlin</groupId>
             <artifactId>gremlin-test</artifactId>
             <version>${gremlin.version}</version>
-            <scope>test</scope>
+<!--             <scope>test</scope> -->
         </dependency>
     </dependencies>
     <repositories>
@@ -172,7 +172,7 @@
             <plugin>
                 <groupId>org.scala-tools</groupId>
                 <artifactId>maven-scala-plugin</artifactId>
-                <!-- <version>2.15.3-SNAPSHOT</version> --> <!-- 2.15.3 includes JLine in scala:console, but has issues after exit -->
+<!--                 <version>2.15.3-SNAPSHOT</version> 2.15.3 includes JLine in scala:console, but has issues after exit -->
                 <version>2.15.2</version>
                 <executions>
                     <execution>
@@ -189,7 +189,7 @@
                 <configuration>
                     <additionalProjectnatures>
                         <projectnature>org.scala-ide.sdt.core.scalanature</projectnature>
-<!--                         <projectnature>org.eclipse.jdt.core.javanature</projectnature> -->
+                        <projectnature>org.eclipse.jdt.core.javanature</projectnature>
                     </additionalProjectnatures>
                     <classpathContainers>
                        <classpathContainer>org.scala-ide.sdt.launching.SCALA_CONTAINER</classpathContainer>
