@@ -108,13 +108,13 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
-<!--             <scope>test</scope> -->
+             <scope>test</scope> 
         </dependency>
         <dependency>
             <groupId>com.tinkerpop.gremlin</groupId>
             <artifactId>gremlin-test</artifactId>
             <version>${gremlin.version}</version>
-<!--             <scope>test</scope> -->
+             <scope>test</scope> 
         </dependency>
     </dependencies>
     <repositories>
@@ -219,7 +219,6 @@
                         <configuration>
                             <sources>
                                 <source>src/main/scala</source>
-                                <source>src/test/scala</source>
                             </sources>
                         </configuration>
                     </execution>
