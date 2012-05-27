@@ -1,9 +1,9 @@
 package com.tinkerpop.gremlin.scala
 
 import java.util.{Map => JMap}
-import com.tinkerpop.blueprints.pgm.{Vertex, Edge}
+import com.tinkerpop.blueprints.{Vertex, Edge}
 
-/**Adds convenience methods to [[com.tinkerpop.blueprints.pgm.Vertex]]. */
+/**Adds convenience methods to [[com.tinkerpop.blueprints.Vertex]]. */
 class ScalaVertex(val vertex: Vertex) extends ScalaElement(vertex) {
   def out: GremlinScalaPipeline[Vertex, Vertex] =
     new GremlinScalaPipeline[Vertex, Vertex].start(vertex).out().asInstanceOf[GremlinScalaPipeline[Vertex, Vertex]]
@@ -45,7 +45,7 @@ class ScalaVertex(val vertex: Vertex) extends ScalaElement(vertex) {
     new GremlinScalaPipeline[Vertex, Vertex].start(vertex).asInstanceOf[GremlinScalaPipeline[Vertex, Vertex]];
 }
 
-/**Implicit conversions between [[com.tinkerpop.blueprints.pgm.Vertex]] and [[com.tinkerpop.gremlin.scala.ScalaVertex]]. */
+/**Implicit conversions between [[com.tinkerpop.blueprints.Vertex]] and [[com.tinkerpop.gremlin.scala.ScalaVertex]]. */
 object ScalaVertex {
   implicit def wrap(vertex: Vertex) = new ScalaVertex(vertex)
 
