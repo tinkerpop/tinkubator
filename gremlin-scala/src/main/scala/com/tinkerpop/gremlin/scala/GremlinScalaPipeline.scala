@@ -5,9 +5,10 @@ import com.tinkerpop.blueprints._
 import com.tinkerpop.pipes.{PipeFunction, Pipe}
 import com.tinkerpop.pipes.branch.LoopPipe.LoopBundle
 import java.util.{Map => JMap, List => JList, Iterator => JIterator, Collection => JCollection, ArrayList => JArrayList}
-import java.lang.{Boolean => JBoolean}
+import java.lang.{Boolean => JBoolean, Integer => JInteger}
 import com.tinkerpop.gremlin.Tokens
 import com.tinkerpop.pipes.util.structures.{Tree, Table, Row, Pair => TPair}
+
 
 class GremlinScalaPipeline[S, E] extends GremlinPipeline[S, E] {
 
@@ -337,6 +338,10 @@ class GremlinScalaPipeline[S, E] extends GremlinPipeline[S, E] {
 
   def transform[T](function: E => T): GremlinScalaPipeline[S, T] = {
     super.transform(new ScalaPipeFunction(function)).asInstanceOf[GremlinScalaPipeline[S, T]]
+  }
+  
+  def order[T](compareFunction: com.tinkerpop.pipes.util.structures.Pair[E,E] => JInteger): GremlinScalaPipeline[S, T] = {
+    super.order(new ScalaPipeFunction(compareFunction)).asInstanceOf[GremlinScalaPipeline[S, T]]
   }
 
   //////////////////////
