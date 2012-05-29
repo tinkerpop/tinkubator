@@ -1,8 +1,8 @@
 package com.tinkerpop.gremlin.scala.filter
 
-import com.tinkerpop.blueprints.pgm.impls.tg.TinkerGraphFactory
+import com.tinkerpop.blueprints.impls.tg.TinkerGraphFactory
 import com.tinkerpop.gremlin.test.ComplianceTest
-import com.tinkerpop.blueprints.pgm.Vertex
+import com.tinkerpop.blueprints.Vertex
 import java.util.{ArrayList, HashSet}
 import com.tinkerpop.gremlin.scala._
 import com.tinkerpop.pipes.Pipe
