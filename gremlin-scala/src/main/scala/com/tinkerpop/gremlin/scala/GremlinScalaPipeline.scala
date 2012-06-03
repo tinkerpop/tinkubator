@@ -347,10 +347,7 @@ class GremlinScalaPipeline[S, E] extends GremlinPipeline[S, E] {
   }
 
   def order(compareFunction: PipeFunction[TPair[E, E], Int]): GremlinScalaPipeline[S, E] = {
-    val convertToJInteger = new PipeFunction[TPair[E, E], JInteger]() {
-      def compute(arg: TPair[E, E]) = compareFunction.compute(arg)
-    }
-    super.order(convertToJInteger).asInstanceOf[GremlinScalaPipeline[S, E]];
+    super.order({ x: TPair[E, E] => compareFunction.compute(x).asInstanceOf[JInteger] }).asInstanceOf[GremlinScalaPipeline[S, E]];
   }
 
   //////////////////////
