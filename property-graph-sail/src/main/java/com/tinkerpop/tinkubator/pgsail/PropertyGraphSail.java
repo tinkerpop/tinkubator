@@ -1,8 +1,6 @@
 package com.tinkerpop.tinkubator.pgsail;
 
-import com.tinkerpop.blueprints.pgm.Graph;
-import com.tinkerpop.blueprints.pgm.Index;
-import com.tinkerpop.blueprints.pgm.Vertex;
+import com.tinkerpop.blueprints.Graph;
 import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.URIImpl;
@@ -11,8 +9,6 @@ import org.openrdf.sail.SailConnection;
 import org.openrdf.sail.SailException;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A Sail implementation which provides an RDF view of any Blueprints graph.
@@ -100,7 +96,7 @@ public class PropertyGraphSail implements Sail {
 
         public final ValueFactory valueFactory;
 
-        public final Map<String, Index<Vertex>> indices = new HashMap<String, Index<Vertex>>();
+        //public final Map<String, Index<Vertex>> indices = new HashMap<String, Index<Vertex>>();
 
         public PropertyGraphContext(final Graph graph,
                                     final ValueFactory valueFactory) {

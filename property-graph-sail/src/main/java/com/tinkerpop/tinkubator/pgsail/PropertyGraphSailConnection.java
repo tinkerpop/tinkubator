@@ -1,8 +1,9 @@
 package com.tinkerpop.tinkubator.pgsail;
 
-import com.tinkerpop.blueprints.pgm.Edge;
-import com.tinkerpop.blueprints.pgm.Element;
-import com.tinkerpop.blueprints.pgm.Vertex;
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Element;
+import com.tinkerpop.blueprints.Vertex;
 import info.aduna.iteration.CloseableIteration;
 import net.fortytwo.sesametools.SailConnectionTripleSource;
 import org.openrdf.model.Literal;
@@ -339,13 +340,13 @@ class PropertyGraphSailConnection implements SailConnection {
             }
 
             // head
-            if (null != e && null != vObj && e.getInVertex().equals(vObj)) {
+            if (null != e && null != vObj && e.getVertex(Direction.IN).equals(vObj)) {
                 Source<Edge> s = new Source<Edge>(new SingleItemIterator<Edge>(e), heads);
                 sources.add(s);
             }
 
             // tail
-            if (null != e && null != vObj && e.getOutVertex().equals(vObj)) {
+            if (null != e && null != vObj && e.getVertex(Direction.OUT).equals(vObj)) {
                 Source<Edge> s = new Source<Edge>(new SingleItemIterator<Edge>(e), tails);
                 sources.add(s);
             }
@@ -464,7 +465,7 @@ class PropertyGraphSailConnection implements SailConnection {
             } else {
                 Edge e = edgeForURI((URI) subject);
                 Vertex v = vertexForURI((URI) object);
-                if (null == e || null == v || !e.getInVertex().equals(v)) {
+                if (null == e || null == v || !e.getVertex(Direction.IN).equals(v)) {
                     return new StatementIteration();
                 } else {
                     Source<Edge> s = new Source<Edge>(new SingleItemIterator<Edge>(e), heads);
@@ -477,7 +478,7 @@ class PropertyGraphSailConnection implements SailConnection {
             } else {
                 Edge e = edgeForURI((URI) subject);
                 Vertex v = vertexForURI((URI) object);
-                if (null == e || null == v || !e.getOutVertex().equals(v)) {
+                if (null == e || null == v || !e.getVertex(Direction.OUT).equals(v)) {
                     return new StatementIteration();
                 } else {
                     Source<Edge> s = new Source<Edge>(new SingleItemIterator<Edge>(e), tails);
@@ -527,8 +528,8 @@ class PropertyGraphSailConnection implements SailConnection {
                     return new StatementIteration();
                 }
             } else {
-                Source<Edge> ins = new Source<Edge>(v.getInEdges().iterator(), heads);
-                Source<Edge> outs = new Source<Edge>(v.getOutEdges().iterator(), tails);
+                Source<Edge> ins = new Source<Edge>(v.getEdges(Direction.IN).iterator(), heads);
+                Source<Edge> outs = new Source<Edge>(v.getEdges(Direction.OUT).iterator(), tails);
                 return new StatementIteration(ins, outs);
             }
         } else {
@@ -636,7 +637,7 @@ class PropertyGraphSailConnection implements SailConnection {
             if (null == v) {
                 return new StatementIteration();
             } else {
-                Iterator<Edge> edgeIterator = v.getInEdges().iterator();
+                Iterator<Edge> edgeIterator = v.getEdges(Direction.IN).iterator();
                 Source<Edge> edges = new Source<Edge>(edgeIterator, heads);
                 return new StatementIteration(edges);
             }
@@ -647,7 +648,7 @@ class PropertyGraphSailConnection implements SailConnection {
             if (null == v) {
                 return new StatementIteration();
             } else {
-                Iterator<Edge> edgeIterator = v.getOutEdges().iterator();
+                Iterator<Edge> edgeIterator = v.getEdges(Direction.OUT).iterator();
                 Source<Edge> edges = new Source<Edge>(edgeIterator, tails);
                 return new StatementIteration(edges);
             }
@@ -951,12 +952,12 @@ class PropertyGraphSailConnection implements SailConnection {
             }
 
             if (doHead) {
-                URI headUri = uriForVertex(source.getInVertex());
+                URI headUri = uriForVertex(source.getVertex(Direction.IN));
                 generateHeadStatement(uri, headUri, results);
             }
 
             if (doTail) {
-                URI tailUri = uriForVertex(source.getOutVertex());
+                URI tailUri = uriForVertex(source.getVertex(Direction.OUT));
                 generateTailStatement(uri, tailUri, results);
             }
         }
