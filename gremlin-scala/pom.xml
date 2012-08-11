@@ -5,10 +5,10 @@
     <parent>
         <groupId>com.tinkerpop.gremlin</groupId>
         <artifactId>gremlin</artifactId>
-        <version>2.0.0</version>
+        <version>2.1.0</version>
     </parent>
     <artifactId>gremlin-scala</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
     <packaging>jar</packaging>
     <name>Gremlin-Scala: Gremlin for the Scala Language</name>
     <developers>
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>com.tinkerpop.gremlin</groupId>
             <artifactId>gremlin-java</artifactId>
-            <version>${gremlin.version}</version>
+            <version>2.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.tinkerpop</groupId>
@@ -113,7 +113,7 @@
         <dependency>
             <groupId>com.tinkerpop.gremlin</groupId>
             <artifactId>gremlin-test</artifactId>
-            <version>${gremlin.version}</version>
+            <version>2.1.0</version>
              <scope>test</scope> 
         </dependency>
     </dependencies>
