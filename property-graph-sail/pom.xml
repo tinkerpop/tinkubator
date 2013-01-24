@@ -38,10 +38,10 @@
     </repositories>
 
     <properties>
-        <sesame.version>2.6.5</sesame.version>
+        <sesame.version>2.6.10</sesame.version>
         <blueprints.version>2.3.0-SNAPSHOT</blueprints.version>
         <junit.version>4.5</junit.version>
-        <sesametools.version>1.6</sesametools.version>
+        <sesametools.version>1.7-SNAPSHOT</sesametools.version>
     </properties>
 
     <dependencies>
