@@ -6,6 +6,7 @@ import com.tinkerpop.pipes.{PipeFunction, Pipe}
 import com.tinkerpop.pipes.util.{FluentUtility, StartPipe}
 import com.tinkerpop.pipes.branch.LoopPipe.LoopBundle
 import java.util.{Map => JMap, List => JList, Iterator => JIterator, Collection => JCollection, ArrayList => JArrayList}
+import java.lang.{Integer => JInteger}
 import com.tinkerpop.gremlin.Tokens
 import com.tinkerpop.pipes.util.structures.{Tree, Table, Row, Pair => TPair}
 
@@ -343,6 +344,10 @@ class GremlinScalaPipeline[S, E] extends GremlinPipeline[S, E] {
 
   def transform[T](function: E => T): GremlinScalaPipeline[S, T] = {
     super.transform(function).asInstanceOf[GremlinScalaPipeline[S, T]]
+  }
+
+  def order(compareFunction: PipeFunction[TPair[E, E], Int]): GremlinScalaPipeline[S, E] = {
+    super.order({ x: TPair[E, E] => compareFunction.compute(x).asInstanceOf[JInteger] }).asInstanceOf[GremlinScalaPipeline[S, E]];
   }
 
   //////////////////////
