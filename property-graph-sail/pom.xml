@@ -12,15 +12,17 @@
     <description>Blueprints property graphs in RDF</description>
 
     <repositories>
-        <repository>
-            <id>tinkerpop-repository</id>
-            <name>TinkerPop Maven2 Repository</name>
-            <url>http://tinkerpop.com/maven2</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
+	<repository>
+		<id>sonatype-nexus-snapshots</id>
+		<name>Sonatype Nexus Snapshots</name>
+		<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		<releases>
+			<enabled>false</enabled>
+		</releases>
+		<snapshots>
+			<enabled>true</enabled>
+		</snapshots>
+	</repository>
         <repository>
             <id>aduna-repo</id>
             <name>Aduna repository</name>
